@@ -181,16 +181,16 @@ EMAIL_PORT = 587
 
 
 #Celery Stuff
-BROKER_URL = 'amqp://guest:guest@localhost:5672//'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-# BROKER_TRANSPORT = 'redis'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+# BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TIMEZONE = 'UTC'
+# # BROKER_TRANSPORT = 'redis'
+# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
@@ -202,7 +202,7 @@ DATABASES['default'] = dj_database_url.config()
 
 #These were different than static
 ALLOWED_HOSTS = ['*'] 
-DEBUG = False
+DEBUG = True
 
 #if i include this, then i don't get errors with collecting static
 # try:
