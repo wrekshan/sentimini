@@ -1,0 +1,10 @@
+#!/Users/williamrekshan/emojinsei/emojinseive/bin/python3
+# EASY-INSTALL-ENTRY-SCRIPT: 'python-nvd3==0.14.2','console_scripts','nvd3'
+__requires__ = 'python-nvd3==0.14.2'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('python-nvd3==0.14.2', 'console_scripts', 'nvd3')()
+    )

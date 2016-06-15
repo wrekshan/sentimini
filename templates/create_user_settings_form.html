@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% crispy form %}
+
+
+<!--DOCTYPE html -->
+
+<html>
+
+
+<body>
+
+
+
+{% block content %}
+{% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+{% endif %}
+
+<div class="row">
+<h1>{{ intro_text }}</h1>
+<h3>Settings</h3>
+	<div class="col-md-8">
+		<form method='POST' action=''>
+		{% csrf_token %}
+		{% crispy form  %}
+		</form>
+	</div>
+</div>
+</body>
+
+</html>
+{% endblock %}

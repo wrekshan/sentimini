@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+{% block content %}
+
+
+<div class="row">
+	<div class="col-md-4">
+	{{user}}
+	you have {{num_entries}} entries
+		<h2>User Stats</h2>
+		<p>
+	    Response Time: 0.0
+	    <br/>
+	    Response Rate: 0.0
+	    </p>
+	</div>
+	<div class="col-md-4">
+
+		<h2>New views to come</h2>
+		<p>
+	    A number of different views will be added in the future.  By time of day, by month, compariing to others, etc.
+	    </p>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-18">
+	    <h2>Average Emotion Intensity</h2>
+		Chart will be displayed when there are more entires.
+	</div>     
+</div>
+
+{% endblock %}

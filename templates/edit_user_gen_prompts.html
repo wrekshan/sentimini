@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% crispy form %}
+
+
+<!--DOCTYPE html -->
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+      <a class="close" data-dismiss="alert" href="#">&times;</a>
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<html>
+<body>
+<div class="row">
+	<div class="col-md-8">
+		<h1>Add Your Own Prompts</h1>
+		Don't forget to update your settings
+		</br>
+		</br>
+		<form action="." method="post">
+		    {% csrf_token %}
+		    {{ formset|crispy }}
+		    <input type="submit" value="Submit" class="btn btn-success">
+		</form>
+	</div>
+</div>
+
+
+</body>
+</html>
+{% endblock %}
