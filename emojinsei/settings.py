@@ -139,14 +139,25 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 ######## THIS IS FROM THE HEROKU DOCS
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
-STATIC_URL = '/static/'
+# PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
+# STATIC_URL = '/static/'
 
-# Extra places for collectstatic to find static files.
+# # Extra places for collectstatic to find static files.
+# STATICFILES_DIRS = (
+#     os.path.join(PROJECT_ROOT, 'static'),
+# )
+
+STATIC_URL = '/static/'
+######## MAYBE DELETE
+#This just assumps the
+
+##### YOU NEED THIS FOR BOOTSTRAP
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(BASE_DIR, "static"),
+
 )
+
 ######## THIS IS FROM THE HEROKU DOCS
 
 
@@ -198,13 +209,14 @@ import dj_database_url
 DATABASES['default'] = dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
 
-ALLOWED_HOSTS = ['*']
 
+#These were different than static
+ALLOWED_HOSTS = [] 
 DEBUG = False
 
-
-try:
-    from .local_settings import *
-except ImportError:
-    pass
+#if i include this, then i don't get errors with collecting static
+# try:
+#     from .local_settings import *
+# except ImportError:
+#     pass
 
