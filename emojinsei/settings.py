@@ -136,17 +136,20 @@ USE_TZ = True
 #This was default.  THis is assuming that the static files are wihtin the app directory
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+
+
+######## THIS IS FROM THE HEROKU DOCS
+PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles')
 STATIC_URL = '/static/'
-######## MAYBE DELETE
-#This just assumps the
 
-##### YOU NEED THIS FOR BOOTSTRAP
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-
+    os.path.join(PROJECT_ROOT, 'static'),
 )
-
+######## THIS IS FROM THE HEROKU DOCS
 
 
 ######## MAYBE DELETE
