@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'emojinsei.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dcjbln5fi78m2',
-        'USER': 'gtxhkakngdfeqc',
-        'PASSWORD': 'gnLgDdvoOBvTS6MqytHjR3uMH',
-        'HOST': 'ec2-54-221-229-37.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
