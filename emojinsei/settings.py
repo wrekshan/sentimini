@@ -23,10 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '%l(q-u@mf%m43cw(3jw0*u1ajed27atox$#e^64(u4bil#du3r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['emojinsei.herokuapp.com']
-
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -85,6 +84,17 @@ WSGI_APPLICATION = 'emojinsei.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'emojinsei_db',
+#         'USER': 'williamrekshan',
+#         'PASSWORD': 'wr579351',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 
 # Password validation
@@ -187,5 +197,4 @@ CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 
 ####### DJ GIRLS TOLD ME TO ADD THIS:
 import dj_database_url
-
-DATABASES['default'] =  dj_database_url.config()
+DATABASES['default'] = dj_database_url.config()
