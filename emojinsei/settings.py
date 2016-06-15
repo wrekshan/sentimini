@@ -141,6 +141,7 @@ STATIC_URL = '/static/'
 #This just assumps the
 
 ##### YOU NEED THIS FOR BOOTSTRAP
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 
