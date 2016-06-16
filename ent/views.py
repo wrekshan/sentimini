@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from django.forms import modelformset_factory
 import pytz
 
-Create your views here.
+# Create your views here.
 from .forms import  UserSettingForm_Prompt, UserGenPromptForm
 from .models import Emotion, Entry, UserSetting, Carrier, Respite, UserGenPrompt
 
