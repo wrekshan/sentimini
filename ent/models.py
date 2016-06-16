@@ -16,39 +16,39 @@ class Emotion(models.Model):
 	def __str__(self):
 		return self.emotion
 
-# #This is to allow to add their own prompts
-# class UserGenPrompt(models.Model):
-# 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-# 	prompt = models.CharField(max_length=160,default='',null=True) 
-# 	date_created = models.DateTimeField(blank=True,null=True)
-# 	active = models.BooleanField(default=True) #Does the user want this sent
-# 	show_user = models.BooleanField(default=True) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
+#This is to allow to add their own prompts
+class UserGenPrompt(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	prompt = models.CharField(max_length=160,default='',null=True) 
+	date_created = models.DateTimeField(blank=True,null=True)
+	active = models.BooleanField(default=True) #Does the user want this sent
+	show_user = models.BooleanField(default=True) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
 	
-# 	def __str__(self):
-# 		return self.prompt
+	def __str__(self):
+		return self.prompt
 
-# #These are the instructions to be given at the beginning of the texting. 
-# #Please note that I want to include more instructions to be periodically given.
-# class NewUserPrompt(models.Model):
-# 	prompt = models.CharField(max_length=160,default='',null=True)
-# 	prompt_type = models.CharField(max_length=120,default='',null=True) # I don't really know why I have this.
-# 	NUP_seq = models.IntegerField(default=0) #This is to determine the order to text them.
-# 	send_next_immediately = models.BooleanField(default=False) #This is just a switch to tell the task file to send the next one immediately (i.e. randomly generate a time.).  I'm not 100% sure why I have this right now.
+#These are the instructions to be given at the beginning of the texting. 
+#Please note that I want to include more instructions to be periodically given.
+class NewUserPrompt(models.Model):
+	prompt = models.CharField(max_length=160,default='',null=True)
+	prompt_type = models.CharField(max_length=120,default='',null=True) # I don't really know why I have this.
+	NUP_seq = models.IntegerField(default=0) #This is to determine the order to text them.
+	send_next_immediately = models.BooleanField(default=False) #This is just a switch to tell the task file to send the next one immediately (i.e. randomly generate a time.).  I'm not 100% sure why I have this right now.
 
 
-# #This is just a log of when the user asked for a respite (break from texting)
-# class Respite(models.Model):
-# 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-# 	date_request = models.DateTimeField(blank=True,null=True)
-# 	respite_type = models.CharField(max_length=120,default='',null=True) #1 day, 3 day, 7 day, start again
+#This is just a log of when the user asked for a respite (break from texting)
+class Respite(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	date_request = models.DateTimeField(blank=True,null=True)
+	respite_type = models.CharField(max_length=120,default='',null=True) #1 day, 3 day, 7 day, start again
 
-# #This just stores the email addresss, the @blah.com, to email texts to person
-# class Carrier(models.Model):
-# 	carrier = models.CharField(blank=True,max_length=100,default='Verizon')
-# 	sms_address = models.CharField(max_length=100,default='',null=True)
+#This just stores the email addresss, the @blah.com, to email texts to person
+class Carrier(models.Model):
+	carrier = models.CharField(blank=True,max_length=100,default='Verizon')
+	sms_address = models.CharField(max_length=100,default='',null=True)
 	
-# 	def __str__(self):
-# 		return self.carrier
+	def __str__(self):
+		return self.carrier
 
 # #This is just a log of the incoming emails
 # class Incoming(models.Model):
