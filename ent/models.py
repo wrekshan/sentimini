@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 #Emotion is the model where the emotions are listed out.  Perhaps I will group them or something of that nature later.
 class Emotion(models.Model):
-	emotion = models.CharField(max_length=160,default='') #This is the emotion, of course
+	emotion = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	emotion_type = models.CharField(max_length=120,default='CORE') #this is the type of emotion.
 	#CORE = default set of 5-8 that I will ask about intensively
 	#Top100 = set of 100 most frequently used.
@@ -19,7 +19,7 @@ class Emotion(models.Model):
 #This is to allow to add their own prompts
 class UserGenPrompt(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	prompt = models.CharField(max_length=160,default='') 
+	prompt = models.CharField(max_length=160,default='',null=True) 
 	date_created = models.DateTimeField(blank=True,null=True)
 	active = models.BooleanField(default=True) #Does the user want this sent
 	show_user = models.BooleanField(default=True) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
@@ -30,8 +30,8 @@ class UserGenPrompt(models.Model):
 #These are the instructions to be given at the beginning of the texting. 
 #Please note that I want to include more instructions to be periodically given.
 class NewUserPrompt(models.Model):
-	prompt = models.CharField(max_length=160,default='')
-	prompt_type = models.CharField(max_length=120,default='') # I don't really know why I have this.
+	prompt = models.CharField(max_length=160,default='',null=True)
+	prompt_type = models.CharField(max_length=120,default='',null=True) # I don't really know why I have this.
 	NUP_seq = models.IntegerField(default=0) #This is to determine the order to text them.
 	send_next_immediately = models.BooleanField(default=False) #This is just a switch to tell the task file to send the next one immediately (i.e. randomly generate a time.).  I'm not 100% sure why I have this right now.
 
@@ -40,19 +40,19 @@ class NewUserPrompt(models.Model):
 class Respite(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	date_request = models.DateTimeField(blank=True,null=True)
-	respite_type = models.CharField(max_length=120,default='') #1 day, 3 day, 7 day, start again
+	respite_type = models.CharField(max_length=120,default='',null=True) #1 day, 3 day, 7 day, start again
 
 #This just stores the email addresss, the @blah.com, to email texts to person
 class Carrier(models.Model):
 	carrier = models.CharField(blank=True,max_length=100,default='Verizon')
-	sms_address = models.CharField(max_length=100,default='')
+	sms_address = models.CharField(max_length=100,default='',null=True)
 	
 	def __str__(self):
 		return self.carrier
 
 #This is just a log of the incoming emails
 class Incoming(models.Model):
-	email_user = models.CharField(max_length=120,default='')
+	email_user = models.CharField(max_length=120,default='',null=True)
 	email_date = models.DateTimeField(blank=True,null=True)
 	email_message = models.TextField(null=True)
 	email_content = models.TextField(null=True)
@@ -60,7 +60,7 @@ class Incoming(models.Model):
 
 #This is just a log of the outgoing emails
 class Outgoing(models.Model):
-	addressee = models.CharField(max_length=120,default='')
+	addressee = models.CharField(max_length=120,default='',null=True)
 	date_sent = models.DateTimeField(blank=True,null=True)
 	message = models.TextField(null=True)
 	entry_id = models.IntegerField(blank=True,null=True)
@@ -70,8 +70,8 @@ class Outgoing(models.Model):
 class Entry(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 
-	prompt = models.CharField(max_length=160,default='') #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-	prompt_type = models.CharField(max_length=160,default='') #This is the prompt type
+	prompt = models.CharField(max_length=160,default='',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
+	prompt_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
 	prompt_reply = models.IntegerField(null=True, blank=True) #This is the reply from the user
 	
 	#These are datetime objects.  Should be clear
@@ -102,9 +102,9 @@ class UserSetting(models.Model):
 	
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
 
-	phone = models.CharField(max_length=30,default='') #This is the user phone number
+	phone = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	carrier = models.CharField(blank=True,max_length=100,default='CHANGE ME') #THis is the carrier
-	sms_address = models.EmailField(default='') #This is the address actually used.  Calculated from phone and carrier lookup
+	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup
 	timezone = models.CharField(max_length=30,default='UTC') #THis is the timezone.  User encouraged to update when travelling.  Not sure if I want a stable timezone too.
 
 	sleep_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
@@ -134,7 +134,7 @@ class UserSetting(models.Model):
 class UserSummary(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	age = models.IntegerField(default=18)
-	gender = models.CharField(max_length=120,default='')
+	gender = models.CharField(max_length=120,default='',null=True)
 	years_of_education = models.IntegerField(default=12)
-	sexual_orientation = models.CharField(max_length=120,default='')
-	ethnicity = models.CharField(max_length=120,default='')
+	sexual_orientation = models.CharField(max_length=120,default='',null=True)
+	ethnicity = models.CharField(max_length=120,default='',null=True)
