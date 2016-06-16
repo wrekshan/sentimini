@@ -193,19 +193,20 @@ import dj_database_url
 # Update database configuration with $DATABASE_URL.
 
 #### LOCAL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'emojinsei_db',
-#         'USER': 'williamrekshan',
-#         'PASSWORD': 'wr579351',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'emojinsei_db',
+        'USER': 'williamrekshan',
+        'PASSWORD': 'wr579351',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
+}
 
 #### PRODUCTION
 db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES = {}
 DATABASES['default'].update(db_from_env)
 # DATABASES['default'] = dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
