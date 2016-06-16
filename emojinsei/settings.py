@@ -31,6 +31,10 @@ SECRET_KEY = '%l(q-u@mf%m43cw(3jw0*u1ajed27atox$#e^64(u4bil#du3r'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+     #ALL AUTH STUFF
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -38,10 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sites', #i think you need this for all auth
     'crispy_forms', #for forms
 
-    #ALL AUTH STUFF
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+   
 
     #my apps
     'ent',
@@ -192,34 +193,34 @@ EMAIL_PORT = 587
 
 # Update database configuration with $DATABASE_URL.
 
-#### LOCAL
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'emojinsei_db',
-#         'USER': 'williamrekshan',
-#         'PASSWORD': 'wr579351',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
-
-
+### LOCAL
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dbo9tubl0p4ue9',
-        'USER': 'jliibbzetyxcmm',
-        'PASSWORD': 'Af3WfW7nzNanLM8ttrU87Zc5JQ',
-        'HOST': 'ec2-54-235-195-226.compute-1.amazonaws.com',
-        'PORT': '5432',
+        'NAME': 'emojinsei_db',
+        'USER': 'williamrekshan',
+        'PASSWORD': 'wr579351',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'dbo9tubl0p4ue9',
+#         'USER': 'jliibbzetyxcmm',
+#         'PASSWORD': 'Af3WfW7nzNanLM8ttrU87Zc5JQ',
+#         'HOST': 'ec2-54-235-195-226.compute-1.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
 
 #### PRODUCTION
 # db_from_env = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(db_from_env)
-# DATABASES['default'] = dj_database_url.config()
+DATABASES['default'] = dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
 
 
