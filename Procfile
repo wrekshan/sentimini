@@ -1,1 +1,1 @@
-web: gunicorn emojinsei.wsgi
+web: gunicorn emojinsei.wsgi --log-file -
