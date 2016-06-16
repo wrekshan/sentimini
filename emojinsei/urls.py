@@ -22,6 +22,6 @@ urlpatterns = [
 	url(r'^$', landing_page, name='index'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^ent/', include('ent.urls',namespace="ent")),
-    url(r'^vis/', include('vis.urls',namespace="vis")),
+    # url(r'^ent/', include('ent.urls',namespace="ent")),
+    # url(r'^vis/', include('vis.urls',namespace="vis")),
 ]
