@@ -84,16 +84,7 @@ WSGI_APPLICATION = 'emojinsei.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'emojinsei_db',
-        'USER': 'williamrekshan',
-        'PASSWORD': 'wr579351',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
+
 
 
 # Password validation
@@ -200,6 +191,20 @@ EMAIL_PORT = 587
 ####### DJ GIRLS TOLD ME TO ADD THIS:
 import dj_database_url
 # Update database configuration with $DATABASE_URL.
+
+#### LOCAL
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'emojinsei_db',
+#         'USER': 'williamrekshan',
+#         'PASSWORD': 'wr579351',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
+
+#### PRODUCTION
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 # DATABASES['default'] = dj_database_url.config()
