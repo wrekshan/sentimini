@@ -49,7 +49,7 @@ class UserGenPromptForm(forms.ModelForm):
 class UserSettingForm_Prompt(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones],label="What timezone are you currently in? (Please update this if you travel)")
-	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()])
+	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier (this is needed to be able to text you)")
 	
 
 	class Meta:
