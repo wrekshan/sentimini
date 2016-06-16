@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites', #i think you need this for all auth
     'crispy_forms', #for forms
-    
+
     #ALL AUTH STUFF
     'allauth',
     'allauth.account',
@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'emojinsei.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
+        'NAME': 'emojinsei_db',
+        'USER': 'williamrekshan',
+        'PASSWORD': 'wr579351',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
