@@ -207,12 +207,12 @@ EMAIL_PORT = 587
 
 DATABASES = {
     'default': {
-        'ENGINE': '',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'dbo9tubl0p4ue9',
+        'USER': 'jliibbzetyxcmm',
+        'PASSWORD': 'Af3WfW7nzNanLM8ttrU87Zc5JQ',
+        'HOST': 'ec2-54-235-195-226.compute-1.amazonaws.com',
+        'PORT': '5432',
     }
 }
 
