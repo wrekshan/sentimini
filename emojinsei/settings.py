@@ -220,9 +220,11 @@ DATABASES = {
 #### PRODUCTION
 # db_from_env = dj_database_url.config(conn_max_age=500)
 # DATABASES['default'].update(db_from_env)
+
+### COMMET AND UNCOMMENT THESE
 DATABASES['default'] = dj_database_url.config()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
-
+### COMMET AND UNCOMMENT THESE
 
 #These were different than static
 ALLOWED_HOSTS = ['*'] 

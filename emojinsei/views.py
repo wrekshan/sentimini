@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-# from ent.models import UserSetting
+from ent.models import UserSetting
 
 def landing_page(request):
 	if request.user.is_authenticated():	
