@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites', #i think you need this for all auth
     'crispy_forms', #for forms
-    'south', #this is to try to get the DB up and running
+    
     #ALL AUTH STUFF
     'allauth',
     'allauth.account',
