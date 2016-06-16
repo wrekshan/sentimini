@@ -49,7 +49,7 @@ class UserGenPromptForm(forms.ModelForm):
 class UserSettingForm_Prompt(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.common_timezones],label="What timezone are you currently in? (Please update this if you travel)")
-	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],widget=Select(attrs={'class': 'carrier'}))
+	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()])
 	
 
 	class Meta:
@@ -74,7 +74,6 @@ class UserSettingForm_Prompt(forms.ModelForm):
 
 		help_texts = {
 			'phone': (''),
-			'carrier': ('This is used to '),
         	'sleep_time': ('CHANGE THIS: We try not to text you when you are asleep'),
         	'sleep_duration': ('CHANGE THIS: We try not to text you when you are asleep'),
         	'prompts_per_day': ('ADVANCED OPTION: Please note that this is only an average'),
@@ -87,7 +86,6 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
 		self.helper.form_class = 'form-horizontal'
-		
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
 		self.helper.add_input(Submit('submit', 'Submit'))
