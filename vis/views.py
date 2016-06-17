@@ -41,7 +41,7 @@ def user_vis(request):
 			latest_entry = Entry.objects.filter(user=current_user)
 			latest_entry = latest_entry.exclude(prompt_type__icontains="NUP")
 			latest_entry = latest_entry.exclude(prompt_type__icontains="User Generated")
-			latest_entry = latest_entry.order_by('time_sent')[:10]
+			latest_entry = latest_entry.order_by('time_sent')[:450]
 			
 			#Reshape it to get something useable.  i don't like this but it might work
 			# name=[]
