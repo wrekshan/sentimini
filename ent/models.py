@@ -98,7 +98,6 @@ class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	teaching_period_on = models.BooleanField(default=True) #This is just a yes/no switch that tells the tasks to get the NUP prompts instead of the usual emotion prompts
-	intensive_period_on = models.BooleanField(default=True) #THis is a yes/no swith that will text the user a lot.  THis is used right after intructions are sent and up to 100 responses
 	
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
 

@@ -39,7 +39,6 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 		"user",
 		"send_text",
 		"teaching_period_on",
-		"intensive_period_on",
 		"text_request_stop",
 		"respite_until_datetime",
 		"prompts_per_day",

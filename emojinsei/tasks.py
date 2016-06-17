@@ -299,12 +299,6 @@ def determine_next_prompt():
 				print("END OF TEACHING")
 				working_settings.teaching_period_on = False
 				working_settings.save()
-
-
-			if Entry.objects.filter(user=working_settings.user).filter(prompt_type="CORE").count()==100:
-				print("END OF INTENSIVE")
-				working_settings.intensive_period_on = False
-				working_settings.save()
 			
 
 			#Check to see if we are in a respite period.  If this is the case, then update the time to send.  This will be run pretty much once
@@ -357,35 +351,6 @@ def determine_next_prompt():
 						working_entry_new.save()
 						print("NEW PROMPT line 363")
 
-					elif working_settings.intensive_period_on == True:
-						print("Intensive Period")
-						working_entry_new = Entry(user=working_entry.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
-						working_entry_new.prompt, working_entry_new.prompt_type = set_next_prompt(user=working_entry.user,typer="CORE")
-
-						print(working_entry_new.prompt)
-						print(working_entry_new.prompt_type)
-						# working_entry_new.emotion_type = prompt_type_lookup(user=working_entry.user, prompt=working_entry_new.emotion)
-						working_entry_new.series = determine_next_prompt_series(user=working_entry.user)
-											
-						if working_entry.send_next_immediately == True:
-							working_entry_new.time_to_add = 0
-						else:
-							working_entry_new.time_to_add = int(triangular(1, 45, 10)) 
-
-						if 0 < working_entry_new.series <= 2:
-							working_entry_new.time_to_add = 0
-							working_entry_new.ready_for_next = False
-							working_entry_new.send_next_immediately = True
-
-						if working_entry_new.series == 3:
-							working_entry_new.time_to_add = 0
-							working_entry_new.ready_for_next = False
-							working_entry_new.send_next_immediately = False
-
-
-						working_entry_new.time_to_send = set_prompt_time(user=working_entry.user,minutes_to_add=working_entry_new.time_to_add)
-						working_entry_new.save()
-						print("NEW PROMPT line 390")
 
 					else:
 						print("Normal Period")
