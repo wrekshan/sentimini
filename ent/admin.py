@@ -26,7 +26,6 @@ class EntryModelAdmin(admin.ModelAdmin):
 	]
 	list_display_links = ["prompt"]
 	list_filter = [
-		"id",
 		"user",
 		"prompt",
 	]
@@ -89,7 +88,7 @@ admin.site.register(Carrier,CarrierModelAdmin)
 
 
 class IncomingModelAdmin(admin.ModelAdmin):
-	list_display = ["email_user","email_date","email_message","email_content","processed"]
+	list_display = ["email_user","email_date","email_content","processed","email_message"]
 	list_display_links = ["email_user"]
 	list_filter = ["email_user"]
 	search_fields = ["email_user"]
