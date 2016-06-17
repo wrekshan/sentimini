@@ -55,7 +55,7 @@ def user_vis(request):
 			context = {
 				'user': request.user,
 			    'working_entry': working_entry,
-			    'lastest_entry': latest_entry,
+			    'latest_entry': latest_entry,
 
 			    'summary_response_time': summary_response_time,
 			    'summary_response_percent': summary_response_percent,

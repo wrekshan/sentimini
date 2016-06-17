@@ -33,12 +33,14 @@
 	    <tr>
 	        <th>Prompt</th>
 	        <th>Value (Range: 0-100)</th>
+	        <th>Date Time</th>
 	        <
 	    </tr>
 	    {% for ent in latest_entry %}
 	    <tr>
 		    <td>{{ ent.prompt  }}</td> 
 	        <td>{{ ent.prompt_reply }}</td>
+	        <td>{{ ent.time_sent }}</td>
 	    </tr>
 	    {% endfor %}
 		</table>
