@@ -175,7 +175,7 @@ end_of_teaching_period = "NUP5"
 unanswered_series_wait_time_in_minutes = 2
 
 
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=5))
 def send_emotion_prompt():
 	print("TASK 1 - SENDING")
 	today_date = datetime.now(pytz.utc)
@@ -259,7 +259,7 @@ def send_emotion_prompt():
 			print("Time is during respite")
 
 
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=5))
 def determine_next_prompt():
 	print("TASK 2- UPDATING NEW PROMPTS")
 	today_date = datetime.now(pytz.utc)
@@ -416,7 +416,7 @@ def determine_next_prompt():
 
 
 
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=5))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -456,7 +456,7 @@ def check_email_for_new():
 		
 
 
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=5))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
