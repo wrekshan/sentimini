@@ -9,8 +9,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'emojinsei.settings')
 
 from django.conf import settings
 
-app = celery.Celery('emojinsei')
-
+app = celery.Celery('emojinsei',include=['emojinsei.tasks'])
+ 
 app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 
