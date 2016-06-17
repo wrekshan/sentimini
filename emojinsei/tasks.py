@@ -118,29 +118,30 @@ def set_next_prompt(user,typer):
 	if tmp <= working_settings.user_generated_prompt_rate and UserGenPrompt.objects.filter(user=user).count()>0:
 		emo_type= "User Generated"
 		working_emotion = UserGenPrompt.objects.filter(user=user).filter(active=True).filter(show_user=True).order_by('?').first()
-
-	elif typer=="any":
-		#Determine if Emotion, instruction, or series
-		tmp = randint(1,100)
-		core_max = int(working_settings.emotion_core_rate*100)
-		top_max = int(working_settings.emotion_top100_rate*100) + core_max
-		other_max = int(working_settings.emotion_other_rate*100) + top_max 
-
-		if tmp <= core_max:
-			emo_type= "CORE"
-		if core_max < tmp <= top_max:
-			emo_type = "Top100"
-		if top_max < tmp <= other_max:	
-			
-			emo_type = "Other"
 	else:
-		emo_type= "CORE"
+		if typer=="any":
+			#Determine if Emotion, instruction, or series
+			tmp = randint(1,100)
+			core_max = int(working_settings.emotion_core_rate*100)
+			top_max = int(working_settings.emotion_top100_rate*100) + core_max
+			other_max = int(working_settings.emotion_other_rate*100) + top_max 
+
+			if tmp <= core_max:
+				emo_type= "CORE"
+			if core_max < tmp <= top_max:
+				emo_type = "Top100"
+			if top_max < tmp <= other_max:	
+				emo_type = "Other"
+		else:
+			emo_type= "CORE"
+			
+		working_emotion = Emotion.objects.filter(emotion_type=emo_type).order_by('?').first()
 
 
 		# working_entry = Entry.objects.all().filter(user=user) # I don't know why I have this here
 		# working_entry_last = working_entry.latest('time_sent') # I don't know why I have this here
 
-		working_emotion = Emotion.objects.filter(emotion_type=emo_type).order_by('?').first()
+		
 
 	return working_emotion, emo_type
 
@@ -225,9 +226,9 @@ def send_emotion_prompt():
 					if not working_entry.prompt_type == 'User Generated' and not "NUP" in working_entry.prompt_type :
 
 						if working_entry.series > 0:
-							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-100)? This is " + str(working_entry.series) + " out of 3 prompts."
+							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-10)? This is " + str(working_entry.series) + " out of 3 prompts."
 						else:
-							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-100)?"
+							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-10)?"
 					else:
 						message_to_send = str(working_entry.prompt)
 
