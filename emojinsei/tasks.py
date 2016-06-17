@@ -505,33 +505,33 @@ print("CHECKING FOR MESSAGES DONE")
 
 
 
-CELERYBEAT_SCHEDULE = {
-    'every-second': {
-        'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=15),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'every-second': {
+#         'task': 'check_email_for_new',
+#         'schedule': timedelta(seconds=15),
+#     },
+# }
 
-CELERYBEAT_SCHEDULE = {
-    'every-second': {
-        'task': 'determine_next_prompt',
-        'schedule': timedelta(seconds=15),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'every-second': {
+#         'task': 'determine_next_prompt',
+#         'schedule': timedelta(seconds=15),
+#     },
+# }
 
-CELERYBEAT_SCHEDULE = {
-    'every-second': {
-        'task': 'send_emotion_prompt',
-        'schedule': timedelta(seconds=15),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'every-second': {
+#         'task': 'send_emotion_prompt',
+#         'schedule': timedelta(seconds=15),
+#     },
+# }
 
-CELERYBEAT_SCHEDULE = {
-    'every-second': {
-        'task': 'process_new_mail',
-        'schedule': timedelta(seconds=15),
-    },
-}
+# CELERYBEAT_SCHEDULE = {
+#     'every-second': {
+#         'task': 'process_new_mail',
+#         'schedule': timedelta(seconds=15),
+#     },
+# }
 
 
 
