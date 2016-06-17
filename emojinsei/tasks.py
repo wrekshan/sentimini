@@ -370,7 +370,7 @@ def determine_next_prompt():
 						if working_entry.send_next_immediately == True:
 							working_entry_new.time_to_add = 0
 						else:
-							working_entry_new.time_to_add = int(triangular(1, 30, 10)) 
+							working_entry_new.time_to_add = int(triangular(1, 18, 8)) 
 
 						if 0 < working_entry_new.series <= 2:
 							working_entry_new.time_to_add = 0
