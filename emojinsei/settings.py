@@ -228,7 +228,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what t
 
 #These were different than static
 ALLOWED_HOSTS = ['*'] 
-DEBUG = True
+DEBUG = False
 
 #if i include this, then i don't get errors with collecting static
 # try:
