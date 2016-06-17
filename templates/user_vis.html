@@ -35,10 +35,10 @@
 	        <th>Value (Range: 0-100)</th>
 	        <
 	    </tr>
-	    {% for entry in latest_entry %}
+	    {% for ent in latest_entry %}
 	    <tr>
-		    <td>{{ entry.prompt  }}</td> 
-	        <td>{{ entry.prompt_reply }}</td>
+		    <td>{{ ent.prompt  }}</td> 
+	        <td>{{ ent.prompt_reply }}</td>
 	    </tr>
 	    {% endfor %}
 		</table>
