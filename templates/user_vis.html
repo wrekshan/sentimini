@@ -34,7 +34,6 @@
 	        <th>Prompt</th>
 	        <th>Value (Range: 0-100)</th>
 	        <th>Date Time</th>
-	        <
 	    </tr>
 	    {% for ent in latest_entry %}
 	    <tr>
@@ -61,7 +60,7 @@
 	    {% for entry in working_entry %}
 	    <tr>
 		    <td>{{ entry.prompt  }}</td> 
-	        <td>{{ entry.prompt_reply__avg }}</td>
+	        <td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
 	        <td>{{ entry.prompt__count }} </td>
 
 	    </tr>
