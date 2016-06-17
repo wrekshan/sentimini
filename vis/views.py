@@ -37,6 +37,11 @@ def user_vis(request):
 			working_entry = Entry.objects.filter(user=current_user).values('prompt').annotate(Avg('prompt_reply')).annotate(Count('prompt'))
 			working_entry = working_entry.exclude(prompt_type__icontains="NUP")
 			working_entry = working_entry.exclude(prompt_type__icontains="User Generated")
+
+			latest_entry = Entry.objects.filter(user=current_user)
+			latest_entry = latest_entry.exclude(prompt_type__icontains="NUP")
+			latest_entry = latest_entry.exclude(prompt_type__icontains="User Generated")
+			latest_entry = latest_entry.order_by('time_sent')[:10]
 			
 			#Reshape it to get something useable.  i don't like this but it might work
 			# name=[]
@@ -50,6 +55,7 @@ def user_vis(request):
 			context = {
 				'user': request.user,
 			    'working_entry': working_entry,
+			    'lastest_entry': latest_entry,
 
 			    'summary_response_time': summary_response_time,
 			    'summary_response_percent': summary_response_percent,
