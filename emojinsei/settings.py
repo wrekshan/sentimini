@@ -175,18 +175,7 @@ EMAIL_PORT = 587
 
 
 
-#Celery Stuff
-# BROKER_URL = 'amqp://guest:guest@localhost:5672//'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-# # BROKER_TRANSPORT = 'redis'
-# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
-
-CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
 ####### DJ GIRLS TOLD ME TO ADD THIS:
