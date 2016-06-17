@@ -185,8 +185,8 @@ CELERY_TIMEZONE = 'UTC'
 # CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
-# CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
-# CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 
 ####### DJ GIRLS TOLD ME TO ADD THIS:
