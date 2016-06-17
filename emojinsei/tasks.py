@@ -468,10 +468,12 @@ def process_new_mail():
 			
 			#check to see if the user wants to stop
 			print("CHECKING FOR STOP")
-			if 'stop' in tp.email_content.lower():
-				print("STOP PRESENT")
-				working_user.text_request_stop = True
-				working_user.save()
+			if tp.email_content is not None: #this is new
+
+				if 'stop' in tp.email_content.lower():
+					print("STOP PRESENT")
+					working_user.text_request_stop = True
+					working_user.save()
 
 			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True) 
 			working_entry = working_entry.filter(time_sent__lte=tp.email_date)
