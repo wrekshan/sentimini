@@ -73,7 +73,7 @@ class UserSettingForm_Prompt(forms.ModelForm):
         }
 
 		help_texts = {
-			'phone': (''),
+			'phone': ('CHANGE THIS: No dashes or anything yet.  Just XXXXXXXXXX'),
         	'sleep_time': ('CHANGE THIS: We try not to text you when you are asleep'),
         	'sleep_duration': ('CHANGE THIS: We try not to text you when you are asleep'),
         	'prompts_per_day': ('ADVANCED OPTION: Please note that this is only an average'),
