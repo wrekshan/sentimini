@@ -10,7 +10,7 @@ import re
 import imaplib
 import email
 from celery.task.control import discard_all
-discard_all()
+# discard_all()
 
 # from django.db import models
 # from django.conf import settings
