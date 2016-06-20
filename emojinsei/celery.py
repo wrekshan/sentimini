@@ -8,11 +8,38 @@ import celery
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'emojinsei.settings')
 
 from django.conf import settings
+import socket
 
-app = celery.Celery('emojinsei',include=['emojinsei.tasks'])
+#Grab this for later with the local vs web shit
+
+if socket.gethostname().startswith('myhost.local'):
+    LIVEHOST = False
+else: 
+    LIVEHOST = True
+
+
+
  
-app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+if LIVEHOST:
+	app = celery.Celery('emojinsei',include=['emojinsei.tasks'])
+
+	app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+   
+   BROKER_TRANSPORT = 'redis'
+else:
+    ### LOCAL
+    BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+    app = Celery('emojinsei',
+             broker='amqp://',
+             backend='amqp://',
+             include=['emojinsei.tasks'])
+
+
+
+
+
+
 
 
 # Optional configuration, see the application user guide.
@@ -26,7 +53,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-BROKER_TRANSPORT = 'redis'
+
 
 
 
