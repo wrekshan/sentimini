@@ -198,7 +198,7 @@ def send_emotion_prompt():
 
 		#Check to see if the is not respite.  if good, then send.  ALSO SHOULD ADD IN THE ADDITIONAL CHECKS (number of prompts, not night time)
 		working_settings = UserSetting.objects.all().get(user=working_entry.user)
-		if now > working_settings.respite_until_datetime or 'Pausing' in working_entry.prompt:
+		if now > working_settings.respite_until_datetime or 'Pause' in working_entry.prompt_type:
 			print("Time is not during respite")
 			################################################################################
 			##### GET THE SMART WAKE AND SLEEP TIMES (THAT ACCOUNT FOR TIMEZONES AND SHIT)
@@ -480,7 +480,7 @@ def process_new_mail():
 				if 'start' in tp.email_content.lower():
 					print("START PRESENT")
 					working_user.respite_until_datetime = datetime.now(pytz.utc)
-					working_user.text_request_stop = True
+					working_user.text_request_stop = False
 					working_user.save()
 
 					#create new entry to send
