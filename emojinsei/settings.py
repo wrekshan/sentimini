@@ -215,7 +215,7 @@ if LIVEHOST:
 
     #These were different than static
     ALLOWED_HOSTS = ['emojinsei.com','www.emojinsei.com'] 
-    DEBUG = False
+    DEBUG = True
 else:
     ### LOCAL
     DATABASES = {
