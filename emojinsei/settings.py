@@ -199,7 +199,7 @@ if LIVEHOST:
     ### COMMET AND UNCOMMENT THESE
 
     #These were different than static
-    ALLOWED_HOSTS = ['*'] 
+    ALLOWED_HOSTS = ['emojinsei.com','www.emojinsei.com'] 
     DEBUG = False
 else:
     ### LOCAL
