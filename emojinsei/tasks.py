@@ -472,7 +472,7 @@ def process_new_mail():
 					#create new entry to send
 					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
 					working_entry_new.time_to_add = 0
-					working_entry_new.time_to_send = set_prompt_time(user=working_settings.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "Pausing"
 					working_entry_new.prompt_type = "Pausing"
 					working_entry_new.save()
