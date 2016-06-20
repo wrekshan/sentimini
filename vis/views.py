@@ -16,8 +16,8 @@ def get_response_time(request):
 		
 def get_response_rate(request):
 	current_user = request.user
-	tmp_total_num_entires = Entry.objects.filter(user=current_user).exclude(prompt_reply__isnull=True).count()
-	tmp_responded_num_entires = Entry.objects.filter(user=current_user).filter(response_time_seconds__gt=0).exclude(prompt_reply__isnull=True).count()
+	tmp_total_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").count()
+	tmp_responded_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").filter(response_time_seconds__gt=0).exclude(prompt_reply__isnull=True).count()
 	summary_response_percent = (tmp_responded_num_entires / tmp_total_num_entires)*100
 	return(summary_response_percent)
 
