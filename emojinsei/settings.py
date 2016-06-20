@@ -171,7 +171,7 @@ AUTHENTICATION_BACKENDS = (
 # ACTIVATION STUFF END
 
 
-ACCOUNT_EMAIL_VERIFICATION = True # Set this to wait for the email to register account
+# ACCOUNT_EMAIL_VERIFICATION = True # Set this to wait for the email to register account
 
 
 
