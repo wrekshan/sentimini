@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 import dj_database_url
+import socket
+
+#Grab this for later with the local vs web shit
+
+if socket.gethostname().startswith('myhost.local'):
+    LIVEHOST = False
+else: 
+    LIVEHOST = True
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -173,55 +181,45 @@ EMAIL_HOST_USER = 'emojinsei@gmail.com'
 EMAIL_HOST_PASSWORD = 'wr579351'
 EMAIL_PORT = 587
 
+DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': '',
+            'USER': '',
+            'PASSWORD': '',
+            'HOST': '',
+            'PORT': '',
+        }
+    }
 
+if LIVEHOST:
+    ### THESE ARE THE NON-LOCAL STUFF
+    DATABASES['default'] = dj_database_url.config()
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
+    ### COMMET AND UNCOMMENT THESE
 
-
+    #These were different than static
+    ALLOWED_HOSTS = ['*'] 
+    DEBUG = False
+else:
+    ### LOCAL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'emojinsei_db',
+            'USER': 'williamrekshan',
+            'PASSWORD': 'wr579351',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+    }
+    ALLOWED_HOSTS = ['*'] 
+    DEBUG = True
 
 
 ####### DJ GIRLS TOLD ME TO ADD THIS:
 
 # Update database configuration with $DATABASE_URL.
 
-### LOCAL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'emojinsei_db',
-        'USER': 'williamrekshan',
-        'PASSWORD': 'wr579351',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
 
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'dbo9tubl0p4ue9',
-#         'USER': 'jliibbzetyxcmm',
-#         'PASSWORD': 'Af3WfW7nzNanLM8ttrU87Zc5JQ',
-#         'HOST': 'ec2-54-235-195-226.compute-1.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
-
-#### PRODUCTION
-# db_from_env = dj_database_url.config(conn_max_age=500)
-# DATABASES['default'].update(db_from_env)
-
-### COMMET AND UNCOMMENT THESE
-DATABASES['default'] = dj_database_url.config()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
-### COMMET AND UNCOMMENT THESE
-
-#These were different than static
-ALLOWED_HOSTS = ['*'] 
-DEBUG = False
-
-#if i include this, then i don't get errors with collecting static
-# try:
-#     from .local_settings import *
-# except ImportError:
-#     pass
 
