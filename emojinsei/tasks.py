@@ -456,6 +456,7 @@ def process_new_mail():
 					now = datetime.now(pytz.utc)
 
 					dater = cal.parseDT(tp.email_content.lower(), now)[0] #get the date that this is pause to
+					dater = pytz.utc.localize(dater)
 					
 					#Check to see if there was just a 'pause'
 					differ = now - dater
