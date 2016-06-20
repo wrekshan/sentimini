@@ -170,6 +170,21 @@ AUTHENTICATION_BACKENDS = (
 )
 # ACTIVATION STUFF END
 
+
+ACCOUNT_EMAIL_VERIFICATION = True # Set this to wait for the email to register account
+
+
+
+
+
+
+
+
+
+
+
+
+
 #Email Stuff
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' # this is to print to console
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -215,11 +230,5 @@ else:
     }
     ALLOWED_HOSTS = ['*'] 
     DEBUG = True
-
-
-####### DJ GIRLS TOLD ME TO ADD THIS:
-
-# Update database configuration with $DATABASE_URL.
-
 
 
