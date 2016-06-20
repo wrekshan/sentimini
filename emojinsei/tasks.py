@@ -10,6 +10,12 @@ import re
 import imaplib
 import email
 from celery.task.control import discard_all
+
+import parsedatetime as pdt # for parsing of datetime shit for NLP
+
+
+
+
 # discard_all()
 
 # from django.db import models
@@ -434,12 +440,42 @@ def process_new_mail():
 			
 			#check to see if the user wants to stop
 			print("CHECKING FOR STOP")
+			############################################################
+			############### CHECK FOR RESPONSE AND DETERMINE WHAT IT IS
+			############################################################
 			if tp.email_content is not None: #this is new
 
 				if 'stop' in tp.email_content.lower():
 					print("STOP PRESENT")
 					working_user.text_request_stop = True
 					working_user.save()
+
+				if 'pause' in tp.email_content.lower():
+					print("pause PRESENT")
+					cal = pdt.Calendar() #intialize caldener for parser
+					now = datetime.now(pytz.utc)
+
+					dater = cal.parseDT(tp.email_content.lower(), now)[0] #get the date that this is pause to
+					
+					#Check to see if there was just a 'pause'
+					differ = now - dater
+					differ = differ.total_seconds()
+
+					if -10 < differ < 10:
+						dater = cal.parseDT('1 day', now)[0] #get the date that this is pause to
+
+					working_user.respite_until_datetime = dater
+					working_user.save()
+
+
+					#create new entry to send
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_settings.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "Pausing"
+					working_entry_new.prompt_type = "Pausing"
+					working_entry_new.save()
+
 
 			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True) 
 			working_entry = working_entry.filter(time_sent__lte=tp.email_date)

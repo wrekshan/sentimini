@@ -32,8 +32,6 @@ SECRET_KEY = '%l(q-u@mf%m43cw(3jw0*u1ajed27atox$#e^64(u4bil#du3r'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,8 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites', #i think you need this for all auth
     'crispy_forms', #for forms
-
-   
 
     #my apps
     'ent',
