@@ -229,7 +229,7 @@ def send_emotion_prompt():
 					addressee = UserSetting.objects.all().get(user=working_entry.user).sms_address
 
 					#Check to see if instruction or user generated or what not
-					if not working_entry.prompt_type == 'User Generated' and not "NUP" in working_entry.prompt_type and not "Pausing" in working_entry.prompt_type :
+					if not working_entry.prompt_type == 'User Generated' and not "NUP" in working_entry.prompt_type and not "Pause" in working_entry.prompt_type :
 
 						if working_entry.series > 0:
 							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-10)? This is " + str(working_entry.series) + " out of 3 prompts."
@@ -476,6 +476,23 @@ def process_new_mail():
 					working_entry_new.prompt = "Pausing for now"
 					working_entry_new.prompt_type = "Pause"
 					working_entry_new.save()
+
+				if 'start' in tp.email_content.lower():
+					print("START PRESENT")
+					working_user.respite_until_datetime = datetime.now(pytz.utc)
+					working_user.text_request_stop = True
+					working_user.save()
+
+					#create new entry to send
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "Starting again"
+					working_entry_new.prompt_type = "Pause"
+					working_entry_new.save()
+
+					
+					
 
 
 			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True) 
