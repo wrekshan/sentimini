@@ -26,11 +26,11 @@ if LIVEHOST:
 	app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
    
-   BROKER_TRANSPORT = 'redis'
+	BROKER_TRANSPORT = 'redis'
 else:
     ### LOCAL
     BROKER_URL = 'amqp://guest:guest@localhost:5672//'
-    app = Celery('emojinsei',
+    app = celery.Celery('emojinsei',
              broker='amqp://',
              backend='amqp://',
              include=['emojinsei.tasks'])
