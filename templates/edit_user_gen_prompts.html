@@ -18,18 +18,31 @@
 <html>
 <body>
 <div class="row">
-	<div class="col-md-8">
-		<h1>Add Your Own Prompts</h1>
-		Don't forget to update your settings.  You'll be able to send yourself whatever you want once you answer 100 emotion prompts.  Also, on your settings page, there is an option for:
-		</br></br>Percentage of prompts from user generated list</br></br>
-		0 = All prompts will be emotion</br>
-		100 = All prompts will be user generated</br>
+	<div class="col-md-6">
+		<h1>
+		Make this your own!
+		</h1>
 		</br>
+
+		<h4>Want to focus on only one emotion?</h4>
+		<li>Add the emotion (or emotions) you want.</li>
+		<li>Change the prompt percent to 100 to recieve only the prompts you entered.</li>
 		</br>
-		<form action="." method="post">
+
+		<h4>Want to have a periodic reminder of something, but still keep the emotion prompts?</h4>
+		<li>Add the emotion (or emotions) you want.</li>
+		<li>Change the prompt percent to 50 to recieve 50% default prompts and 50% your prompts.</li>
+
+
+	</div>
+
+	<div class="col-md-6">
+		<form method='POST' action='' class="form-horizontal">
 		    {% csrf_token %}
-		    {{ formset|crispy }}
-		    <input type="submit" value="Submit" class="btn btn-success">
+		    {{prompt_rate_form|crispy}}
+		    
+		    {{formset|crispy}}
+		    <input type="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
 		</form>
 	</div>
 </div>

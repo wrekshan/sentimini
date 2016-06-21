@@ -8,7 +8,7 @@ from ent.models import Emotion, Entry
 def get_response_time(request):
 	current_user = request.user
 	#Get the response time stuff
-	summary_response_time = Entry.objects.filter(user=current_user).aggregate(response_time=Avg('response_time_seconds'))
+	summary_response_time = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").aggregate(response_time=Avg('response_time_seconds'))
 	# tmp_num_entires = Entry.objects.filter(user=current_user).count()
 	summary_response_time = summary_response_time['response_time']
 	return(summary_response_time)
@@ -34,7 +34,7 @@ def user_vis(request):
 			summary_response_percent = get_response_rate(request)
 
 	# 		#Calculate the average values and counts for each emotion
-			working_entry = Entry.objects.filter(user=current_user).values('prompt').annotate(Avg('prompt_reply')).annotate(Count('prompt'))
+			working_entry = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").values('prompt').annotate(Avg('prompt_reply')).annotate(Count('prompt'))
 			working_entry = working_entry.exclude(prompt_type__icontains="NUP")
 			working_entry = working_entry.exclude(prompt_type__icontains="User Generated")
 

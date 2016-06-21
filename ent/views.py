@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 import pytz
 
 # Create your views here.
-from .forms import  UserSettingForm_Prompt, UserGenPromptForm
+from .forms import  UserSettingForm_Prompt, UserGenPromptForm, UserSettingForm_PromptRate, ExampleFormSetHelper
 from .models import Emotion, Entry, UserSetting, Carrier, Respite, UserGenPrompt
 
 
@@ -20,33 +20,47 @@ def edit_user_gen_prompt_settings(request):
 			working_settings = UserSetting(user=request.user).save()
 
 		if UserGenPrompt.objects.filter(user=request.user).count()>0:
-			working_user_gen = UserGenPrompt.objects.all().filter(user=request.user).filter(show_user=True)
+			working_user_gen = UserGenPrompt.objects.all().filter(user=request.user).filter(show_user=False)
 		else:
 			working_user_gen = UserGenPrompt(user=request.user).save()
 	
-		UGPFormset = modelformset_factory(UserGenPrompt, fields=('prompt', 'active', 'show_user'),extra=1)
-
+		UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
+		prompt_rate_form = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
+		helper = ExampleFormSetHelper()
 		
 		if request.method == "POST":
+			print("FORM SET STUFF")
+			#do the formset stuff
 			formset = UGPFormset(request.POST, queryset = working_user_gen )
-			if formset.is_valid():
-				messages.add_message(request, messages.INFO, 'User Prompts Changed')			
+			
+
+			if formset.is_valid and prompt_rate_form.is_valid():
+				messages.add_message(request, messages.INFO, 'User prompt settings changed!')			
 				for form in formset:
 					if form.has_changed():
 						tmp = form.save(commit=False)
 						tmp.user = request.user
 						tmp.date_create = datetime.now(pytz.utc)
 						tmp.save()
+
+				tmp = prompt_rate_form.save(commit=False)
+				working_settings.user_generated_prompt_rate = tmp.user_generated_prompt_rate
+				working_settings.save()
+
 				return HttpResponseRedirect(reverse('ent:edit_user_gen_prompt_settings'))
 			else:
 				context = {
+					"helper": helper,
+					"prompt_rate_form": prompt_rate_form, 
 					"query_results": working_user_gen,
 					"formset": formset,
 				}
-			return render(request, "edit_user_gen_prompts.html", context)
+				return render(request, "edit_user_gen_prompts.html", context)
 		else:
 			formset = UGPFormset(queryset = working_user_gen)
 			context = {
+				"helper": helper,
+				"prompt_rate_form": prompt_rate_form, 
 				"query_results": working_user_gen,
 				"formset": formset,
 			}
@@ -59,13 +73,14 @@ def edit_prompt_settings(request):
 	if request.user.is_authenticated():	
 		if  UserSetting.objects.filter(user=request.user).exists():
 			working_settings = UserSetting.objects.all().get(user=request.user)
-			intro_text = "Welcome back " + str(request.user) + "!  Please make sure this is all correct."
+			intro_text = "Welcome " + str(request.user) + "!"
 		else: 
 			working_settings = UserSetting(user=request.user).save()
-			intro_text = "Welcome back " + str(request.user) + "!  Please just fill out this form.  You'll have to complete the full form for this to begin working."
+			intro_text = "Welcome " + str(request.user) + "!"
 
 		form = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
-		
+	
+
 		if form.is_valid():
 			working_settings = form.save(commit=False)
 			min_awake = (24 - working_settings.sleep_duration)*60

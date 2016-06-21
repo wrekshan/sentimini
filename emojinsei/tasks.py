@@ -123,7 +123,7 @@ def set_next_prompt(user,typer):
 	tmp = randint(0,100)
 	if tmp <= working_settings.user_generated_prompt_rate and UserGenPrompt.objects.filter(user=user).count()>0:
 		emo_type= "User Generated"
-		working_emotion = UserGenPrompt.objects.filter(user=user).filter(active=True).filter(show_user=True).order_by('?').first()
+		working_emotion = UserGenPrompt.objects.filter(user=user).filter(active=True).filter(show_user=False).order_by('?').first()
 	else:
 		if typer=="any":
 			#Determine if Emotion, instruction, or series

@@ -22,7 +22,7 @@ class UserGenPrompt(models.Model):
 	prompt = models.CharField(max_length=160,default='',null=True) 
 	date_created = models.DateTimeField(blank=True,null=True)
 	active = models.BooleanField(default=True) #Does the user want this sent
-	show_user = models.BooleanField(default=True) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
+	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
 	
 	def __str__(self):
 		return self.prompt
