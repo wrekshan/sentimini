@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     #my apps
     'ent',
     'vis',
+    'scaffold',
 ]
 
 MIDDLEWARE_CLASSES = [
