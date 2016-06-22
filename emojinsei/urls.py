@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'^ent/', include('ent.urls',namespace="ent")),
     url(r'^vis/', include('vis.urls',namespace="vis")),
+    url(r'^scaffold/', include('scaffold.urls',namespace="scaffold")),
     url(r'^chat/', include('chat.urls',namespace="chat")),
 ]
