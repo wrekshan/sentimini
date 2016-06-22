@@ -15,32 +15,40 @@
           {% endfor %}
 {% endif %}
 
-<div class="span12 pagination-centered">
-	<div class="col-md-8">
-	<h1>Usage</h1>
-	 {% for quest in faq_usage %}
-	    <h3>{{ quest.question }}</h3>
-	    
-	    <blockquote>{{ quest.answer|linebreaks  }}</blockquote>
-	    
-    {% endfor %}
-	</br>
-    <h1>Concept</h1>
 
+<div class="row">
+	<div class="col-md-8">
+	<h3>Usage</h3>
+	{% for quest in faq_usage %}
+		<li><a href="/scaffold/faq/{{ quest.id }}/">{{ quest.question }}</a></li>
+		{% if quest.id = faq_detail.id %}
+		<blockquote>{{ quest.answer|linebreaks  }}</blockquote>
+		{% endif %}
+
+	{% endfor %}
+	<h3>Concept</h3>
 	{% for quest in faq_concept %}
-	    <h3>{{ quest.question }}</h3>
-	     <blockquote>{{ quest.answer|linebreaks }}</blockquote>
-    {% endfor %}
+		<li><a href="/scaffold/faq/{{ quest.id }}/">{{ quest.question }}</a></li>
+
+		{% if quest.id = faq_detail.id %}
+		<blockquote>{{ quest.answer|linebreaks  }}</blockquote>
+		{% endif %}
+
+	{% endfor %}
 	</div>
 
-<div class="col-md-4">
+
+	<div class="col-md-4">
 		<form method='POST' action='' class="form-horizontal">
 		{% csrf_token %}
 		{{form|crispy}}
 		<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
 		</form>
+	</div>
+
 </div>
-</div>
-</br>
+
+
+
 
 {% endblock %}
