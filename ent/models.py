@@ -111,7 +111,7 @@ class UserSetting(models.Model):
 
 	respite_until_datetime = models.DateTimeField(blank=True,null=True) #The respite buttons change this field.  Email will only send if now greater than this value
 	
-	prompts_per_day = models.IntegerField(default=6) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+	prompts_per_day = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
 	prompt_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
 	prompt_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion

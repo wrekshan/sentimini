@@ -178,7 +178,7 @@ def set_next_prompt_instruction(user):
 # 		prompt_type = "Unknown"
 # 	return prompt_type
 
-end_of_teaching_period = "NUP5"
+end_of_teaching_period = "NUP1"
 unanswered_series_wait_time_in_minutes = 2
 
 
@@ -222,6 +222,7 @@ def send_emotion_prompt():
 				print("Time is not during respite but during sleep")
 				working_entry.time_to_send = utc_wake_time + timedelta(hours=0, minutes=randint(1,60))
 				working_entry.save()
+				print("working entry save on line 225")
 			else:
 				print("Time is not during respite or sleep")
 				
@@ -290,6 +291,7 @@ def determine_next_prompt():
 			working_entry_new.time_to_send = set_prompt_time(user=working_settings.user,minutes_to_add=working_entry_new.time_to_add)
 			working_entry_new.prompt = working_prompt.prompt
 			working_entry_new.prompt_type = 'NUP'+ str(working_prompt.NUP_seq)
+			working_entry_new.ready_for_next = False
 
 			working_entry_new.send_next_immediately = working_prompt.send_next_immediately
 			working_entry_new.save()
@@ -306,6 +308,7 @@ def determine_next_prompt():
 				print("END OF TEACHING")
 				working_settings.teaching_period_on = False
 				working_settings.save()
+
 			
 
 			#Check to see if we are in a respite period.  If this is the case, then update the time to send.  This will be run pretty much once
@@ -314,6 +317,7 @@ def determine_next_prompt():
 				print("Time is during respite, time to send updated")
 				working_entry.time_to_send = working_settings.respite_until_datetime
 				working_entry.save()
+				
 			else:
 				#do a quick check to see if the series has been forgotten
 				if working_entry.series > 0 and working_entry.time_response == None and not working_entry.time_sent == None:
@@ -333,6 +337,7 @@ def determine_next_prompt():
 						working_entry.failed_series = 1
 						working_entry.ready_for_next = True
 						working_entry.save()
+						
 						print("EDITED PROMPT line 340")
 
 
@@ -356,6 +361,7 @@ def determine_next_prompt():
 
 						working_entry_new.send_next_immediately = working_prompt.send_next_immediately
 						working_entry_new.save()
+						print("working entry save on line 361")
 						print("NEW PROMPT line 363")
 
 
@@ -384,7 +390,8 @@ def determine_next_prompt():
 
 						working_entry_new.time_to_send = set_prompt_time(user=working_entry.user,minutes_to_add=working_entry_new.time_to_add)
 						working_entry_new.save()
-						print("NEW PROMPT line 416")
+						print("working entry save on line 390")
+						
 
 
 
@@ -504,7 +511,7 @@ def process_new_mail():
 				# working_entry = working_entry.order_by('time_sent')[0] #EARLIEST.  I ON'Y HAVE THIS HERE FOR TESTING
 
 				#Look for only the digits
-				if hasNumbers(tp.email_content) == True:
+				if hasNumbers(tp.email_content) == True and working_entry.prompt_reply is None:
 					print("EMAIL HAS DIGITS")
 
 					working_entry.time_response = tp.email_date
