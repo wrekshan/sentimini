@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from ent.models import UserSetting
 
@@ -12,4 +14,7 @@ def landing_page(request):
 		else:
 			print("User has Settings")
 
-	return render(request,"index.html")
+		return render(request,"index.html")
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+

@@ -24,7 +24,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
         }
 
 		help_texts = {
-        	'user_generated_prompt_rate': ('0 = All default texts.  100 = All user generated prompts.'),
+        	'user_generated_prompt_rate': ('0 = All default texts.  50 = Half default/half user generated.  100 = All user generated prompts.'),
         	
         }
 
