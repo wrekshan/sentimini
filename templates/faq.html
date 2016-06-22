@@ -1,17 +1,46 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% load crispy_forms_tags %}
+{% crispy form %}
 
-</br>
+
+{% block content %}
+{% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+{% endif %}
+
 <div class="span12 pagination-centered">
 	<div class="col-md-8">
-	test test
-	</br></br>
-	{{pizza}}	
-	</br></br>
-	
+	<h1>Usage</h1>
+	 {% for quest in faq_usage %}
+	    <h3>{{ quest.question }}</h3>
+	    
+	    <blockquote>{{ quest.answer|linebreaks  }}</blockquote>
+	    
+    {% endfor %}
+	</br>
+    <h1>Concept</h1>
+
+	{% for quest in faq_concept %}
+	    <h3>{{ quest.question }}</h3>
+	     <blockquote>{{ quest.answer|linebreaks }}</blockquote>
+    {% endfor %}
 	</div>
+
+<div class="col-md-4">
+		<form method='POST' action='' class="form-horizontal">
+		{% csrf_token %}
+		{{form|crispy}}
+		<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+		</form>
+</div>
 </div>
 </br>
+
 {% endblock %}

@@ -4,7 +4,7 @@ from django.conf import settings
 # Create your models here.
 class FAQ(models.Model):
 	question = models.CharField(max_length=1000,default='',null=True) 
-	answer = models.CharField(max_length=3200,default='',null=True) 
+	answer = models.TextField(default='') 
 	category = models.CharField(max_length=1000,default='',null=True) 
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_updated = models.DateTimeField(auto_now=True)
