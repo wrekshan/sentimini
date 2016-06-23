@@ -19,3 +19,5 @@ class FAQuserquestions(models.Model):
 	question = models.CharField(max_length=1000,default='',null=True) 
 	date_created = models.DateTimeField(auto_now_add=True)
 
+
+

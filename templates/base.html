@@ -45,7 +45,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'index' %}">Emojinsei</a>
+          <a class="navbar-brand" href="{% url 'index' %}">Emojinsei<sub>alpha</sub></a>
         </div>
         {% if user.is_authenticated %}
         <div id="navbar" class="collapse navbar-collapse">
@@ -99,21 +99,14 @@
               <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
             </ul>
             </div>
-
-            
-            
-            <!-- sign up -->
-
             {% endif %}
-
-
           </ul>
-
-            </form>
         </div><!--/.nav-collapse -->  
 
       </div>
     </nav>
+
+    
       <div class="starter-template">
         <p <div class="container">
         <div id="content">
