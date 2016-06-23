@@ -1,11 +1,22 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content %}
+{% load crispy_forms_tags %}
+{% crispy form %}
 
+
+{% block content %}
+{% if messages %}
+          {% for message in messages %}
+            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+              <a class="close" data-dismiss="alert" href="#">&times;</a>
+              {{ message }}
+            </div>
+          {% endfor %}
+{% endif %}
 </br>
-<div class="span12 pagination-centered">
-	<div class="col-md-8">
+<div class="col-lg-12"">
+	<div class="col-lg-8">
 	<h2>Emojinsei is a smart emotion tracking app</h2>
 	After you'll sign up, you'll recieve text messages asking about how you are experiencing emotions during that present moment.
 	</br></br>
@@ -28,6 +39,14 @@
 	</br></br>
 	
 	</div>
+	<div class="col-lg-4">
+		<form method='POST' action='' class="form-horizontal">
+		{% csrf_token %}
+		<h3>Give a suggest, comment, or feedback!</h3>
+		{{form|crispy}}
+		<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+		</form>
+	</div>
+
 </div>
-</br>
 {% endblock %}

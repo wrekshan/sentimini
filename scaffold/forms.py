@@ -20,7 +20,7 @@ class FAQuserquestionsForm(forms.ModelForm):
 		]
 
 		labels = {
-            'question': ('Ask a question!'),
+            'question': (''),
         }
 
 		help_texts = {
