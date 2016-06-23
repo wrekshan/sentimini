@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     #my apps
     'ent',
     'vis',
-    'chat',
     'scaffold',
 ]
 
