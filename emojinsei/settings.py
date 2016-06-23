@@ -187,11 +187,7 @@ AUTHENTICATION_BACKENDS = (
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = os.sep.join([os.path.dirname(os.path.dirname(__file__)), 'tmp_email'])
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'emojinsei@gmail.com'
-EMAIL_HOST_PASSWORD = 'wr579351'
-EMAIL_PORT = 587
+
 
 DATABASES = {
         'default': {
@@ -205,6 +201,12 @@ DATABASES = {
     }
 
 if LIVEHOST:
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'emojinsei@gmail.com'
+    EMAIL_HOST_PASSWORD = 'wr579351'
+    EMAIL_PORT = 587
+
     ### THESE ARE THE NON-LOCAL STUFF
     DATABASES['default'] = dj_database_url.config()
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') #don't know what this line is doing
@@ -215,6 +217,12 @@ if LIVEHOST:
     DEBUG = True
 else:
     ### LOCAL
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = 'emojinseidev@gmail.com'
+    EMAIL_HOST_PASSWORD = 'wr579351'
+    EMAIL_PORT = 587
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',

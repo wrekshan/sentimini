@@ -18,7 +18,10 @@ def get_response_rate(request):
 	current_user = request.user
 	tmp_total_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").count()
 	tmp_responded_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").filter(response_time_seconds__gt=0).exclude(prompt_reply__isnull=True).count()
-	summary_response_percent = (tmp_responded_num_entires / tmp_total_num_entires)*100
+	if tmp_responded_num_entires > 0:
+		summary_response_percent = (tmp_responded_num_entires / tmp_total_num_entires)*100
+	else:
+		summary_response_percent = 0
 	return(summary_response_percent)
 
 def user_vis(request):

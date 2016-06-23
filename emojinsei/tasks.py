@@ -12,6 +12,9 @@ import email
 from celery.task.control import discard_all
 
 import parsedatetime as pdt # for parsing of datetime shit for NLP
+from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+
+import string
 
 
 
@@ -198,7 +201,7 @@ def send_emotion_prompt():
 
 		#Check to see if the is not respite.  if good, then send.  ALSO SHOULD ADD IN THE ADDITIONAL CHECKS (number of prompts, not night time)
 		working_settings = UserSetting.objects.all().get(user=working_entry.user)
-		if now > working_settings.respite_until_datetime or 'Pause' in working_entry.prompt_type:
+		if now > working_settings.respite_until_datetime or 'Pause' in working_entry.prompt_type or 'CHAT' in working_entry.prompt_type:
 			print("Time is not during respite")
 			################################################################################
 			##### GET THE SMART WAKE AND SLEEP TIMES (THAT ACCOUNT FOR TIMEZONES AND SHIT)
@@ -230,7 +233,7 @@ def send_emotion_prompt():
 					addressee = UserSetting.objects.all().get(user=working_entry.user).sms_address
 
 					#Check to see if instruction or user generated or what not
-					if not working_entry.prompt_type == 'User Generated' and not "NUP" in working_entry.prompt_type and not "Pause" in working_entry.prompt_type :
+					if not working_entry.prompt_type == 'User Generated' and not "NUP" in working_entry.prompt_type and not "Pause" in working_entry.prompt_type and not "CHAT" in working_entry.prompt_type:
 
 						if working_entry.series > 0:
 							message_to_send = "How much " + str(working_entry.prompt) + " is in your present moment (0-10)? This is " + str(working_entry.series) + " out of 3 prompts."
@@ -298,7 +301,7 @@ def determine_next_prompt():
 
 		else:
 			print("NOT NUP SERIES")
-			working_entries = Entry.objects.filter(user=working_settings.user)
+			working_entries = Entry.objects.filter(user=working_settings.user).exclude(prompt_type="CHAT").exclude(prompt_type="Pause")
 			working_entry = working_entries.latest('time_to_send')
 
 		
@@ -400,8 +403,9 @@ def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
 	mail = imaplib.IMAP4_SSL('imap.gmail.com')
-	mail.login('emojinsei@gmail.com', 'wr579351')
+	mail.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
 	mail.list()
+
 	# Out: list of "folders" aka labels in gmail.
 	mail.select("inbox") # connect to inbox.
 
@@ -457,7 +461,7 @@ def process_new_mail():
 					working_user.text_request_stop = True
 					working_user.save()
 
-				if 'pause' in tp.email_content.lower():
+				elif 'pause' in tp.email_content.lower():
 					print("pause PRESENT")
 					cal = pdt.Calendar() #intialize caldener for parser
 					now = datetime.now(pytz.utc)
@@ -482,9 +486,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "Pausing for now"
 					working_entry_new.prompt_type = "Pause"
-					working_entry_new.save()
+					
 
-				if 'start' in tp.email_content.lower():
+				elif 'start' in tp.email_content.lower():
 					print("START PRESENT")
 					working_user.respite_until_datetime = datetime.now(pytz.utc)
 					working_user.text_request_stop = False
@@ -496,19 +500,60 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "Starting again"
 					working_entry_new.prompt_type = "Pause"
-					working_entry_new.save()
+					
 
+				elif 'cat' in tp.email_content.lower():
+					print("CAT PRESENT")
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "CAT PICTURE"
+					working_entry_new.prompt_type = "CHAT"
 					
+
+				elif 'monkey' in tp.email_content.lower():
+					print("MONKEY PRESENT")
+					#create new entry to send
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "monkey" 
+					working_entry_new.prompt_type = "CHAT"
 					
+
+				elif 'instruct' in tp.email_content.lower():
+					print("MONKEY PRESENT")
+					#create new entry to send
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "monkey" 
+					working_entry_new.prompt_type = "CHAT"
+					
+
+				elif len(str(tp.email_content.lower())) > 1:
+					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+					working_entry_new.time_to_add = 0
+					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
+					working_entry_new.prompt = "I did not understand.  Text ‘pause’ to take a break, ‘start’ to start again, ‘instruct’ for instructions, and ‘cat’ for cat pictures." 
+					working_entry_new.prompt_type = "CHAT"
+					
+				#This code is to avoid doubles in chatting.  might have to change it if i use probability prompts to chate
+				working_entry = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+
+				if working_entry.count()>0:
+					print("DOUBLE LINE 544")
+				else:
+					working_entry_new.save()
+					print("NOT DOUBLE LINE 544")
+
 
 
 			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True) 
 			working_entry = working_entry.filter(time_sent__lte=tp.email_date)
 			print(working_entry.count())
 			if working_entry.count() > 0:
-				print("more than 0")
-				working_entry = working_entry.latest('time_sent') #YOU DO INDDED WANT LATEST
-				# working_entry = working_entry.order_by('time_sent')[0] #EARLIEST.  I ON'Y HAVE THIS HERE FOR TESTING
+				working_entry = working_entry.latest('time_sent')
 
 				#Look for only the digits
 				if hasNumbers(tp.email_content) == True and working_entry.prompt_reply is None:
@@ -519,8 +564,12 @@ def process_new_mail():
 					working_entry.response_time_seconds = int(td.seconds)
 					email_content_int = int(re.search(r'\d+', tp.email_content).group())
 					working_entry.prompt_reply = email_content_int
+					working_entry.ready_for_next = True
 				
-				working_entry.ready_for_next = True #this tells me there is a response, so i can sent the next instruction
+				#this is to make sure the chats and cats don't mess with the series and stuff.
+				if "NUP" in working_entry.prompt_type:
+					working_entry.ready_for_next = True #this tells me there is a response, so i can sent the next instruction
+
 				working_entry.save()		
 		else:
 			print("User doesn't exist, so make it")
