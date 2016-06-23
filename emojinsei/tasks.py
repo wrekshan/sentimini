@@ -24,7 +24,7 @@ import string
 # from django.db import models
 # from django.conf import settings
 from ent.models import Emotion, Entry, UserSetting, Incoming, NewUserPrompt, Outgoing, UserGenPrompt
-from chat.models import Funpic
+
 # from emojinsei import settings
 def get_first_text_part(msg):
     maintype = msg.get_content_maintype()

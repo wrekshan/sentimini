@@ -148,7 +148,7 @@ def respite_start_again(request):
 	working_settings.respite_until_datetime = today_date  
 	tmp_msg = "Starting again"
 	
-	working_settings.text_request_stop = bool('False')
+	working_settings.text_request_stop = False
 	working_settings.save()
 	Respite(user=request.user,respite_type='start_again',date_request=today_date).save()
 	messages.add_message(request, messages.INFO, 'Starting prompts again')
