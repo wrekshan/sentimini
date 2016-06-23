@@ -490,6 +490,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "Pausing for now"
 					working_entry_new.prompt_type = "Pause"
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
 
 				elif 'start' in tp.email_content.lower():
@@ -504,6 +507,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "Starting again"
 					working_entry_new.prompt_type = "Pause"
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
 
 				elif 'cat' in tp.email_content.lower():
@@ -513,6 +519,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "CAT PICTURE"
 					working_entry_new.prompt_type = "CHAT"
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
 
 				elif 'monkey' in tp.email_content.lower():
@@ -523,6 +532,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "MONKEY PICTURE" 
 					working_entry_new.prompt_type = "CHAT"
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
 
 				elif 'instruct' in tp.email_content.lower():
@@ -533,6 +545,9 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "instructions" 
 					working_entry_new.prompt_type = "CHAT"
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
 
 				elif len(str(tp.email_content.lower())) > 1:
@@ -541,15 +556,13 @@ def process_new_mail():
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
 					working_entry_new.prompt = "I did not understand.  Text ‘pause’ to take a break, ‘start’ to start again, ‘instruct’ for instructions, and ‘cat’ for cat pictures." 
 					working_entry_new.prompt_type = "CHAT"
+					#This code is to avoid doubles in chatting.  might have to change it if i use probability prompts to chate
+					entry_check = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+					if entry_check.count()<1:
+						working_entry_new.save()
 					
-				#This code is to avoid doubles in chatting.  might have to change it if i use probability prompts to chate
-				working_entry = Entry.objects.all().filter(user=working_user.user).filter(prompt=working_entry_new.prompt).exclude(time_sent__isnull=False)
+				
 
-				if working_entry.count()>0:
-					print("DOUBLE LINE 544")
-				else:
-					working_entry_new.save()
-					print("NOT DOUBLE LINE 544")
 
 
 
