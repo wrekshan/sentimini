@@ -114,6 +114,7 @@ def determine_next_prompt_series(user):
 	else:
 		if tmp <= series_max:
 			series_num = 1
+
 	
 	return series_num
 
@@ -377,7 +378,10 @@ def determine_next_prompt():
 						working_entry_new = Entry(user=working_entry.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
 						working_entry_new.prompt, working_entry_new.prompt_type = set_next_prompt(user=working_entry.user,typer="any")
 						# working_entry_new.emotion_type = prompt_type_lookup(user=working_entry.user, prompt=working_entry_new.emotion)
-						working_entry_new.series = determine_next_prompt_series(user=working_entry.user)
+						if 'User Generated' in working_entry_new.prompt_type:
+							working_entry_new.series = 0
+						else:
+							working_entry_new.series = determine_next_prompt_series(user=working_entry.user)
 											
 						if working_entry.send_next_immediately == True:
 							working_entry_new.time_to_add = 0
@@ -566,7 +570,7 @@ def process_new_mail():
 
 
 
-			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True) 
+			working_entry = Entry.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True).exclude(prompt_type="CHAT")
 			working_entry = working_entry.filter(time_sent__lte=tp.email_date)
 			print(working_entry.count())
 			if working_entry.count() > 0:
