@@ -24,6 +24,7 @@ import string
 # from django.db import models
 # from django.conf import settings
 from ent.models import Emotion, Entry, UserSetting, Incoming, NewUserPrompt, Outgoing, UserGenPrompt
+from chat.models import Funpic
 # from emojinsei import settings
 def get_first_text_part(msg):
     maintype = msg.get_content_maintype()
@@ -182,7 +183,7 @@ def set_next_prompt_instruction(user):
 # 	return prompt_type
 
 end_of_teaching_period = "NUP1"
-unanswered_series_wait_time_in_minutes = 2
+unanswered_series_wait_time_in_minutes = 60
 
 
 @periodic_task(run_every=timedelta(seconds=2))
@@ -252,6 +253,8 @@ def send_emotion_prompt():
 						print("SMS SENT!")
 
 						Outgoing(addressee=UserSetting.objects.all().get(user=working_entry.user).sms_address,date_sent=datetime.now(pytz.utc),message=working_entry.prompt,entry_id=working_entry.id).save()
+
+						#switch out and see if you can send a monky pic
 						send_mail('',message_to_send,'emojinsei@gmail.com', [addressee], fail_silently=False)
 						working_entry.time_sent = datetime.now(pytz.utc)
 
@@ -335,9 +338,10 @@ def determine_next_prompt():
 					print(int(td_mins))
 
 					#This is if the last prompt was unanswered
-					if int(td_mins) > unanswered_series_wait_time_in_minutes and td2_mins>2:
+					if int(td_mins) > unanswered_series_wait_time_in_minutes and td2_mins>unanswered_series_wait_time_in_minutes:
 
 						working_entry.failed_series = 1
+						working_entry.send_next_immediately = False
 						working_entry.ready_for_next = True
 						working_entry.save()
 						
@@ -517,7 +521,7 @@ def process_new_mail():
 					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
 					working_entry_new.time_to_add = 0
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
-					working_entry_new.prompt = "monkey" 
+					working_entry_new.prompt = "MONKEY PICTURE" 
 					working_entry_new.prompt_type = "CHAT"
 					
 
@@ -527,7 +531,7 @@ def process_new_mail():
 					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
 					working_entry_new.time_to_add = 0
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
-					working_entry_new.prompt = "monkey" 
+					working_entry_new.prompt = "instructions" 
 					working_entry_new.prompt_type = "CHAT"
 					
 

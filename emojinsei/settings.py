@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     #my apps
     'ent',
     'vis',
+    'chat',
     'scaffold',
 ]
 
@@ -206,6 +207,7 @@ if LIVEHOST:
     EMAIL_HOST_USER = 'emojinsei@gmail.com'
     EMAIL_HOST_PASSWORD = 'wr579351'
     EMAIL_PORT = 587
+
 
     ### THESE ARE THE NON-LOCAL STUFF
     DATABASES['default'] = dj_database_url.config()
