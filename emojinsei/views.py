@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 from ent.models import UserSetting
 
-
+from .forms import SignupFormWithoutAutofocus
 
 from scaffold.forms import  FAQuserquestionsForm
 from scaffold.models import FAQuserquestions
@@ -37,3 +37,11 @@ def landing_page(request):
 		return render(request,"index.html",context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')		
+
+
+from allauth.account.views import SignupView
+
+class SignupViewWithCustomForm(SignupView):
+    form_class = SignupFormWithoutAutofocus
+
+signup_view = SignupViewWithCustomForm.as_view()
