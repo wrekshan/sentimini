@@ -1,52 +1,225 @@
-{% extends "base.html" %}
+
 {% load i18n %}
-
 {% load crispy_forms_tags %}
-{% crispy form %}
+{% load staticfiles %}
 
 
-{% block content %}
-{% if messages %}
-          {% for message in messages %}
-            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
-              <a class="close" data-dismiss="alert" href="#">&times;</a>
-              {{ message }}
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Script Tutorials" />
+  <title>Emojinsei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- attach CSS styles -->
+
+  <link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
+  <link href={% static "css/style.css" %} rel="stylesheet" />
+</head>
+<body>
+
+  <!-- navigation panel -->
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'index' %}">Emojinsei<sub>alpha</sub></a>
+        </div>
+        {% if user.is_authenticated %}
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+          <li><a href="{% url 'vis:user_vis' %}">Visualize</a></li>
+          <li><a href="{% url 'scaffold:faq' %}">FAQ</a></li>
+          </ul>
+
+          
+          <ul class="nav navbar-nav navbar-right">
+          
+             <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Edit Settings <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></li>
+                <li><a href="{% url 'ent:edit_user_gen_prompt_settings' %}">My Prompts</a></li>
+                
+
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pause or Start Prompts <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'ent:respite_one_day' %}">Pause 1 Day</a></li>
+                <li><a href="{% url 'ent:respite_three_day' %}">Pause 3 Days</a></li>
+                <li><a href="{% url 'ent:respite_seven_day' %}">Pause 7 Days</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'ent:respite_start_again' %}">Start Again</a></li>
+
+              </ul>
+              
+            </li>
+
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log Out Stuff  <span class="caret"></span></a>
+              <ul class="dropdown-menu">
+              <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+              <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+              <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+                
+              </ul>
+            </li>
+
+            {% else %}
+            <!-- log in -->
+            <div id="navbar" class="collapse navbar-collapse">
+             <ul class="nav navbar-nav navbar-right">
+
+              <li><a href="{% url 'account_login' %}">Sign In</a></li>
+              <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+            </ul>
             </div>
-          {% endfor %}
-{% endif %}
-</br>
-<div class="col-lg-12"">
-	<div class="col-lg-8">
-	<h2>Emojinsei is a smart emotion tracking app</h2>
-	After you'll sign up, you'll recieve text messages asking about how you are experiencing emotions during that present moment.
-	</br></br>
-	Just breath and pay attention to yourself and the world.  Respond with a number between 0 and 10.  It is that simple.
-	
-	
-	<h3>Emojinsei might be good for you</h3>
-	You'll be reminded to <b>breath</b> and <b>pay attention</b> to your <b>present moment</b>, living in this <b>wonderful world</b>.  
-	</br></br>
-	This is a easy structure, designed to require <b>very little work</b>, for you to <b>learn about emotions</b>.
-	</br></br>
-	It is designed to <b>provides meaningful data</b> about how you experience emotions.
+            {% endif %}
+          </ul>
+        </div><!--/.nav-collapse -->  
 
-	<h3>Emojinsei might be good for society</h3>
-	Emojinsei is designed to provide meaningful data about how large groups of people are experiencing emotions.  At minimum, this could look like a map of emotions across the cities, states, and countries.  
-	</br></br>
-	Psychology research:  What emotions do people experience?  Are angier people happy?  Is money related to happiness?  
-	</br></br>
-	Providing data to make better civic decisions:  Are people in cities happier than rural?  What would the effect of installing public libraries be?  
-	</br></br>
-	
-	</div>
-	<div class="col-lg-4">
-		<form method='POST' action='' class="form-horizontal">
-		{% csrf_token %}
-		<h3>Give a suggest, comment, or feedback!</h3>
-		{{form|crispy}}
-		<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
-		</form>
-	</div>
+      </div>
+    </nav>
 
-</div>
-{% endblock %}
+
+  <!-- first section - Home -->
+  <div id="home" class="home">
+    <div class="text-vcenter">
+      <h1>Emojinsei</h1>
+      <h3>The <b>easiest, smartest, and kindest</b> emotion tracker</h3>
+      <a href="#information" class="btn btn-primary btn-lg">Add your thoughts</a>
+    </div>
+  </div>
+  <!-- /first section -->
+
+  
+
+  <!-- third section - Services -->
+  <div id="services" class="pad-section">
+    <div class="container">
+      <h2 class="text-center">The Process</h2> <hr />
+      <div class="row text-center">
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-phone-alt"> </i>
+          <h4>Receive a text</h4>
+          <p>For example: </br>How much happiness is in your present moment (0-10)?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-leaf"> </i>
+          <h4>Breathe</h4>
+          <p>Take a second.  You are alive in this wonderful world, feeling a multitude of different emotions.</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-search"> </i>
+          <h4>Look for the emotion</h4>
+          <p>You could be angry.  You could be happy.  You could be both.  But look for the emotion in the experience.  Is it there?  What does it feel like?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-pencil"> </i>
+          <h4>Rate from 0-10</h4>
+          <p>Don't worry.  A number will never capture your experience, so you can't do this wrong.  </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /third section -->
+  <!-- second section - About -->
+  <div id="why" class="pad-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4 text-center">
+          <h2>Easy</h2>
+          <p class="lead">
+            All you have to do is sign up and respond to a <b>few texts a day</b> asking about a wide range of emotions.</br>
+            You can <b>take breaks</b> whenever you need by texting, "pause".</br>
+
+
+          </p>
+        </div>
+        <div class="col-sm-4 text-center">
+          <h2>Smart</h2>
+          <p class="lead">
+            Since the time and the emotion of the <b>texts are randomized</b>, quantitative patterns can be examined.  What emotions exist?  Do I experience emotions like my fellow humans?
+          </p>
+        </div>
+        <div class="col-sm-4 text-center">
+          <h2>Kind</h2>
+          <p class="lead">
+          Your time is respected by requiring <b>little effort</b> and providing a sensible structure to evaluate quantitative patterns of your emotional life and <b>experience emotions</b> in your present moment.
+
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /second section -->
+
+  <!-- fourth section - Information -->
+  <div id="information" class="pad-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">Alpha Status</h2>
+            </div>
+            <div class="panel-body lead">
+              Currently, Emojinsei is in Alpha status.  It is early stage software.  There may be bugs.  There may be changes.  
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">Add Your Thoughts!</h2>
+            </div>
+            <div id="signup" class="panel-body lead">
+             <form class="signup" method="post" action=''>
+        		  {% csrf_token %}
+        		  <h3>Add your thoughts below!</h3>
+        		  Want a new feature?
+        		  Have and idea?  
+        		  Just let us know:
+        		  {{ form|crispy }}
+        		 <input type="submit" name ="submit" value="Add your thoughts!" class="btn btn-primary btn-lg btn-block">
+        		</form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /fourth section -->
+
+ 
+ 
+
+  <!-- footer -->
+  <footer>
+    <hr />
+    <div class="container">
+      <p class="text-right">Copyright &copy; Emojinsei 2016</p>
+    </div>
+  </footer>
+  <!-- /footer -->
+
+  <!-- attach JavaScripts -->
+
+  <script src={% static "js/jquery.min.js" %}></script>
+  <script src={% static "js/bootstrap.min.js" %}></script>
+  <script src={% static "js/main.js" %}></script>
+
+</body>
+</html>
+
+
