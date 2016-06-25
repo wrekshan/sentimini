@@ -32,7 +32,7 @@ html, body {
   height: 100%;
   position: relative;
   width: 100%;
-  -webkit-background-size: auto 20%;
+  -webkit-background-size: 20%;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
