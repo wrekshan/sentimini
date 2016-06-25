@@ -27,7 +27,7 @@ html, body {
 
 /* additional sections */
 #home {
-  background: url(../images/first.jpg) no-repeat center center fixed; 
+  background: url(../images/first.jpg) no-repeat center center scroll; 
   display: table;
   height: 100%;
   position: relative;
