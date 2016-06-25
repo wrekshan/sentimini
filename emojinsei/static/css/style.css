@@ -17,6 +17,8 @@ html, body {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
+  color: #ffffff
+
 }
 .text-vcenter h1 {
   font-size: 4.5em;
