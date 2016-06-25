@@ -37,14 +37,14 @@ html, body {
   -o-background-size: cover;
   background-size: cover;
 
+  @media (max-width: @iphone-screen) {
+        background-attachment: scroll;
+        height: 50%;
+        width: 50%;
+    }
+
 }
 
-
-@media only screen and (min-width : 320px) and (max-width : 480px) {
-  background: url(../images/mobile.jpg) no-repeat center center fixed;
-  height: 50%;
-  width: 50%;
-}
 
 #about {
 }
