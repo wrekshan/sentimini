@@ -36,9 +36,7 @@ html, body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  @media (max-width: @iphone-screen) {
-        background-attachment: scroll;
-    }
+  
 }
 
 #about {
