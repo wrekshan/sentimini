@@ -28,7 +28,6 @@ html, body {
 /* additional sections */
 #home {
   background: url(../images/first.jpg) no-repeat center center fixed; 
-  display: table;
   background-repeat: no-repeat; 
   height: 100%;
   position: relative;
