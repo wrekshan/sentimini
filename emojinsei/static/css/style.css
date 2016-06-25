@@ -29,9 +29,11 @@ html, body {
 #home {
   background: url(../images/first.jpg) no-repeat center center fixed; 
   display: table;
+  background-repeat: no-repeat; 
   height: 100%;
-  position: center;
+  position: relative;
   width: 100%;
+  background-attachment: fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
