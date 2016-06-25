@@ -36,7 +36,14 @@ html, body {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  
+
+}
+
+
+@media only screen and (min-width : 320px) and (max-width : 480px) {
+  background: url(../images/mobile.jpg) no-repeat center center fixed;
+  height: 50%;
+  width: 50%;
 }
 
 #about {
