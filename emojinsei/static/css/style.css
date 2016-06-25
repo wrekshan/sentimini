@@ -64,15 +64,19 @@ html, body {
 }
 
 #information {
-  background: url(../images/second.jpg) no-repeat center center fixed; 
+  background: url(../images/second.jpg) no-repeat center center scroll; 
   display: table;
   height: 800px;
   position: relative;
   width: 100%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
+ -webkit-background-size: 100%; 
+  -moz-background-size: 100%; 
+  -o-background-size: 100%; 
+  background-size: 100%; 
+  -webkit-background-size: cover; 
+  -moz-background-size: cover; 
+  -o-background-size: cover; 
+  background-size: cover; 
 }
 #information .panel {
   opacity: 0.85;
