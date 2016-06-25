@@ -30,7 +30,7 @@ html, body {
   background: url(../images/first.jpg) no-repeat center center fixed; 
   display: table;
   height: 100%;
-  position: relative;
+  position: center;
   width: 100%;
   -webkit-background-size: cover;
   -moz-background-size: cover;

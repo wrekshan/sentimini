@@ -554,7 +554,7 @@ def process_new_mail():
 						working_entry_new.save()
 					
 
-				elif len(str(tp.email_content.lower())) > 1:
+				elif len(str(tp.email_content.lower())) > 3:
 					working_entry_new = Entry(user=working_user.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
 					working_entry_new.time_to_add = 0
 					working_entry_new.time_to_send = set_prompt_time(user=working_user.user,minutes_to_add=working_entry_new.time_to_add)
