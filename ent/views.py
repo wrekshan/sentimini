@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 import pytz
 
 # Create your views here.
-from .forms import  UserSettingForm_Prompt, UserGenPromptForm, UserSettingForm_PromptRate, ExampleFormSetHelper
+from .forms import  UserSettingForm_Prompt, UserGenPromptForm, UserSettingForm_PromptRate, ExampleFormSetHelper, UserSettingForm_Prompt_Paid
 from .models import Emotion, Entry, UserSetting, Carrier, Respite, UserGenPrompt
 
 
@@ -78,29 +78,88 @@ def edit_prompt_settings(request):
 			working_settings = UserSetting(user=request.user).save()
 			intro_text = "Welcome " + str(request.user) + "!"
 
-		form = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
-	
-
-		if form.is_valid():
-			working_settings = form.save(commit=False)
-			min_awake = (24 - working_settings.sleep_duration)*60
-			working_settings.prompt_interval_minute_avg = min_awake / working_settings.prompts_per_day #used in the random draw for the number of minutes to next prompt
-			working_settings.send_text = bool(True)	#just a switch to say the person can be texted
-			working_settings.sms_address =  working_settings.phone + str(carrier_lookup(working_settings.carrier)) #Figures otu the address the promtps need to be sent to
-			working_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
-			working_settings.save()
-
-			messages.add_message(request, messages.INFO, 'Prompt Settings Changed')			
-			context = {
-				"intro_text": intro_text,
-				"form": form,
-		} 
+		if UserGenPrompt.objects.filter(user=request.user).count()>0:
+			working_user_gen = UserGenPrompt.objects.all().filter(user=request.user).filter(show_user=False)
 		else:
+			working_user_gen = UserGenPrompt(user=request.user).save()
+
+		form_free = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
+		form_paid = UserSettingForm_Prompt_Paid(request.POST or None, instance=working_settings)
+		UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
+		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
+		formset = UGPFormset(queryset = working_user_gen)
+		helper = ExampleFormSetHelper()
+
+
+		if request.method == "POST":
+			formset = UGPFormset(request.POST, queryset = working_user_gen )
+			if 'submit_formset' in request.POST:
+				if formset.is_valid:
+					print("FORMSET VALID")
+					messages.add_message(request, messages.INFO, 'User prompt settings changed!')			
+					for form in formset:
+						print("FORMSET LOOP")
+						if form.has_changed():
+							print("FORMSET CHANGED")
+							tmp = form.save(commit=False)
+							tmp.user = request.user
+							tmp.date_create = datetime.now(pytz.utc)
+							tmp.save()
+					working_settings.save()
+				return HttpResponseRedirect('/ent/edit_prompt_settings/#usergen')	
+
+			elif 'submit_paid' in request.POST:
+				print("SUBMIT PAID")
+				if form_paid.is_valid():
+					print("SUBMIT PAID VALID")
+					tmp_settings = form_paid.save(commit=False)
+					min_awake = (24 - tmp_settings.sleep_duration)*60
+					tmp_settings.prompt_interval_minute_avg = min_awake / tmp_settings.prompts_per_day #used in the random draw for the number of minutes to next prompt
+					tmp_settings.save()
+					messages.add_message(request, messages.INFO, 'Paid Settings Changed')
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
+
+			elif 'submit_unpaid' in request.POST:
+				print("SUBMIT UNPAID")
+				if form_free.is_valid():
+					print("SUBMIT UNPAID VALID")
+					tmp_settings = form_free.save(commit=False)
+					tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
+					tmp_settings.sms_address =  tmp_settings.phone + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
+					tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
+					tmp_settings.save()
+					messages.add_message(request, messages.INFO, 'Unpaid Settings Changed')		
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#free')		
+
+			elif 'submit_prompt_percent' in request.POST:
+				print("PROMPT PERCENT PAID")
+				if form_prompt_percent.is_valid():
+					print("SUBMIT PAID VALID")
+					tmp_settings = form_prompt_percent.save(commit=False)
+					min_awake = (24 - tmp_settings.sleep_duration)*60
+					tmp_settings.prompt_interval_minute_avg = min_awake / tmp_settings.prompts_per_day #used in the random draw for the number of minutes to next prompt
+					tmp_settings.save()
+					messages.add_message(request, messages.INFO, 'Paid usergen Changed')
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
+				
+		else:
+			print("ELSE")
+			form_free = UserSettingForm_Prompt(request.POST or None, instance=UserSetting.objects.all().get(user=request.user))
+			form_paid = UserSettingForm_Prompt_Paid(request.POST or None, instance=UserSetting.objects.all().get(user=request.user))
+			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
+			UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
+			formset = UGPFormset(queryset = working_user_gen)
 			context = {
+				"helper": helper,
+				"form_prompt_percent": form_prompt_percent, 
 				"intro_text": intro_text,
-				"form": form,
+				"form_free": form_free,
+				"form_paid": form_paid,
+				"form_prompt_percent": form_prompt_percent,
+				"formset": formset,
 			}
-		return render(request, "create_user_settings_form.html", context)
+			return render(request, "settings_prompts.html", context)
+
 	else:
 		return render(request, "index_not_logged_in.html")
 

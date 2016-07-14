@@ -92,24 +92,17 @@ class UserSettingForm_Prompt(forms.ModelForm):
 			"sleep_time",
 			"sleep_duration",
 			"timezone",
-			"prompts_per_day",
-		
 		]
 
 		labels = {
             'sleep_time': ('Bed Time'),
             'sleep_duration': ('Time Asleep (Hours)'),
-            'prompts_per_day': ('Texts per day?'),
-        
         }
 
 		help_texts = {
 			'phone': (''),
         	'sleep_time': (''),
         	'sleep_duration': (''),
-        	'prompts_per_day': (''),
-        
-        	
         }
 
 	def __init__(self, *args, **kwargs):
@@ -117,8 +110,39 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
 		self.helper.form_class = 'form-horizontal'
-		self.helper.label_class = 'col-lg-3'
-		self.helper.field_class = 'col-lg-9'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-2'
+		self.helper.form_method = 'post'
+		self.helper.form_action = 'login'
+		# self.helper.add_input(Submit('submit', 'Submit'))
+
+class UserSettingForm_Prompt_Paid(forms.ModelForm):
+	#These are declared here to get the choice field
+
+	
+	class Meta:
+		model = UserSetting
+
+		fields = [
+			"prompts_per_day",
+		]
+
+		labels = {
+            'prompts_per_day': ('Texts per day?'),
+        
+        }
+
+		help_texts = {
+        	'prompts_per_day': (''),
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(UserSettingForm_Prompt_Paid, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-form'
+		self.helper.form_class = 'form-horizontal'
+		self.helper.label_class = 'col-sm-2'
+		self.helper.field_class = 'col-sm-2'
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
 		# self.helper.add_input(Submit('submit', 'Submit'))

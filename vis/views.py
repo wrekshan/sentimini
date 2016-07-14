@@ -46,6 +46,7 @@ def user_vis(request):
 			latest_entry = latest_entry.exclude(prompt_type__icontains="User Generated")
 			latest_entry = latest_entry.order_by('time_sent')[:5]
 			
+			
 			#Reshape it to get something useable.  i don't like this but it might work
 			# name=[]
 			# value=[]

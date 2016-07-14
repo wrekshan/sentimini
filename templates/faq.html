@@ -7,43 +7,43 @@
 
 {% block content %}
 {% if messages %}
-          {% for message in messages %}
-            <div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
-              <a class="close" data-dismiss="alert" href="#">&times;</a>
-              {{ message }}
-            </div>
-          {% endfor %}
+{% for message in messages %}
+<div{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+<a class="close" data-dismiss="alert" href="#">&times;</a>
+{{ message }}
+</div>
+{% endfor %}
 {% endif %}
 
 
 <div class="row">
 	<div class="col-md-8">
-	<h3>Usage</h3>
-	{% for quest in faq_usage %}
+		<h3>Usage</h3>
+		{% for quest in faq_usage %}
 		<li><a href="/scaffold/faq/{{ quest.id }}/">{{ quest.question }}</a></li>
 		{% if quest.id = faq_detail.id %}
 		<blockquote>{{ quest.answer|linebreaks  }}</blockquote>
 		{% endif %}
 
-	{% endfor %}
-	<h3>Concept</h3>
-	{% for quest in faq_concept %}
+		{% endfor %}
+		<h3>Concept</h3>
+		{% for quest in faq_concept %}
 		<li><a href="/scaffold/faq/{{ quest.id }}/">{{ quest.question }}</a></li>
 
 		{% if quest.id = faq_detail.id %}
 		<blockquote>{{ quest.answer|linebreaks  }}</blockquote>
 		{% endif %}
 
-	{% endfor %}
+		{% endfor %}
 	</div>
 
 
 	<div class="col-md-4">
 		<form method='POST' action='' class="form-horizontal">
-		{% csrf_token %}
-		<h3>Ask a question!</h3>
-		{{form|crispy}}
-		<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
+			{% csrf_token %}
+			<h3>Ask a question!</h3>
+			{{form|crispy}}
+			<input type="submit" name ="submit" value="Submit" class="btn btn-primary btn-lg btn-block">
 		</form>
 	</div>
 

@@ -5,69 +5,150 @@
 
 {% block content %}
 
+<div class="container">
+	<div id="navbar" class="nav nav-justified">
+		<ul class="nav navbar-nav">
 
+			<li><a href="#charts">Charts</a></li>
+			<li><a href="#tables_prompt">Tables - Prompt</a></li>
+			<li><a href="#tables_emotion">Tables - Emotion</a></li>
 
-<div class="row">
-	<div class="col-md-4">
-
-		<h2>User Stats</h2>
-		<p>
-	    Response Time: {{summary_response_time|floatformat:2}} seconds.
-	    <br/>
-	    Response Rate: {{summary_response_percent|floatformat:2}}%.
-	    </p>
-	</div>
-	<div class="col-md-4">
-
-		<h2>New views to come</h2>
-		<p>
-	    A number of different views will be added in the future.  By time of day, by month, compariing to others, etc.
-	    </p>
+		</ul>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-18">
-	    <h2>Latest Responses</h2>
-		<table class="table table-striped">
-	    <tr>
-	        <th>Prompt</th>
-	        <th>Value (Range: 0-10)</th>
-	        <th>Date Time</th>
-	    </tr>
-	    {% for ent in latest_entry %}
-	    <tr>
-		    <td>{{ ent.prompt  }}</td> 
-	        <td>{{ ent.prompt_reply }}</td>
-	        <td>{{ ent.time_sent }}</td>
-	    </tr>
-	    {% endfor %}
-		</table>
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-center">Data Vis?</h1>
+		</br>
+		 <div class="row text-center">
+		<div class="col-sm-4 col-xs-6">
+          <h2>Summary information</h2>
+          <p>Provide or change your basic contact information</p>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <h2>Export Data</h2>
+          <p>You can share all of your graphs and tables.  Don't forget that you can also save a pdf report or csv files.</p>
+          
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <h2>Therapist ad</h2>
+          <p>You can </p>
+          <p><a class="btn btn-primary btn-lg" href="#pad" role="button" >Get Pro &raquo;</a></p>
+        </div>
+        </div>
 		
-	</div>     
+	</div>
+	
 </div>
 
 
-<div class="row">
-	<div class="col-md-8">
-	    <h2>Average Emotion Intensity</h2>
-		<table class="table table-striped">
-	    <tr>
-	        <th>Prompt</th>
-	        <th>Average Value (Range: 0-100)</th>
-	        <th>Count</th>
-	    </tr>
-	    {% for entry in working_entry %}
-	    <tr>
-		    <td>{{ entry.prompt  }}</td> 
-	        <td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
-	        <td>{{ entry.prompt__count }} </td>
+<div class="container">
+	<div class="row" id = "charts">
+		<div class="col-md-3">
+			<h1>Charts</h1>
+			<p>This is just basic stuff</p>
+		</div>
+		<div class="col-md-9">
+		</br>
+			<p>
+				Response Time: {{summary_response_time|floatformat:2}} seconds.
+				<br/>
+				Response Rate: {{summary_response_percent|floatformat:2}}%.
+			</p>
+		</div>
+	</div>
+	
+	<hr>
+	<div class="row" id="tables_prompt">
+		<div class="col-md-3">
+			<h1>Tables - Prompts</h1>
+			<p>This will show a table of the latest prompts (each row is a prompt)</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Latest Responses</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Value (Range: 0-10)</th>
+					<th>Date Time</th>
+				</tr>
+				{% for ent in latest_entry %}
+				<tr>
+					<td>{{ ent.prompt  }}</td> 
+					<td>{{ ent.prompt_reply }}</td>
+					<td>{{ ent.time_sent }}</td>
+				</tr>
+				{% endfor %}
+			</table>
 
-	    </tr>
-	    {% endfor %}
-		</table>
-		
-	</div>     
+		</div>     
+	</div>
+
+	<hr>
+	<div class="row" id="tables_emotion">
+	<div class="col-md-3">
+			<h1>Tables - Emotion</h1>
+			<p>This will show a table of the summary of all of the prompts (each row is an emotion and there can only be one row for emotion)</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Average Emotion Intensity</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Average Value (Range: 0-100)</th>
+					<th>Count</th>
+				</tr>
+				{% for entry in working_entry %}
+				<tr>
+					<td>{{ entry.prompt  }}</td> 
+					<td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
+					<td>{{ entry.prompt__count }} </td>
+
+				</tr>
+				{% endfor %}
+			</table>
+
+		</div>     
+	</div>
+
+
+
+
+
+<footer>
+<div id="services" class="pad-section">
+    <div class="container">
+      <h2 class="text-center">The Process</h2> <hr />
+      <div class="row text-center">
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-phone-alt"> </i>
+          <h4>Receive a text</h4>
+          <p>For example: </br>How much happiness is in your present moment (0-10)?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-leaf"> </i>
+          <h4>Breathe</h4>
+          <p>Take a second.  You are alive in this wonderful world, feeling a multitude of different emotions.</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-search"> </i>
+          <h4>Look for the emotion</h4>
+          <p>You could be angry.  You could be happy.  You could be both.  But look for the emotion in the experience.  Is it there?  What does it feel like?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-pencil"> </i>
+          <h4>Rate from 0-10</h4>
+          <p>Don't worry.  A number will never capture your experience, so you can't do this wrong.  </p>
+        </div>
+      </div>
+      <hr>
+    </div>
+  </div>
+	<p>&copy; 2016 Emojinsei</p>
+</footer>
 </div>
+
 
 {% endblock %}
