@@ -9,12 +9,19 @@ from .forms import SignupFormWithoutAutofocus
 from scaffold.forms import  FAQuserquestionsForm
 from scaffold.models import FAQuserquestions
 
+from vis.views import get_response_time, get_response_rate
+from ent.models import Entry
+
 def landing_page(request):
 	if request.user.is_authenticated():	
 		#test is has working settings
 		if UserSetting.objects.all().filter(user=request.user).count() < 1:
 			working_settings = UserSetting(user=request.user)
 			working_settings.save()
+		
+		if Entry.objects.filter(user=request.user).count() > 1:
+			summary_response_time = get_response_time(request)
+			summary_response_percent = get_response_rate(request)
 
 		if request.method == "POST":
 
@@ -32,9 +39,11 @@ def landing_page(request):
 		
 		context = {
 			"form": form,
+			'summary_response_time': summary_response_time,
+		    'summary_response_percent': summary_response_percent,
 		}			
 
-		return render(request,"index.html",context)
+		return render(request,"dashboard.html",context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')		
 

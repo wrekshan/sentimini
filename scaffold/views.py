@@ -6,6 +6,22 @@ from django.core.urlresolvers import reverse
 from .forms import  FAQuserquestionsForm
 from .models import FAQ, FAQuserquestions
 # Create your views here.
+
+def working_with_others(request):
+	if request.user.is_authenticated():	
+		
+		return render(request,"therapist.html")
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+def experiences(request):
+	if request.user.is_authenticated():	
+		
+		return render(request,"experiences.html")
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
 def faq(request):
 	if request.user.is_authenticated():	
 		#don't forget to add form for user generated question
@@ -29,7 +45,7 @@ def faq(request):
 			"form": form,
 		}			
 
-		return render(request,"faq.html",context)
+		return render(request,"learn.html",context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
@@ -59,6 +75,6 @@ def detail(request, question_id):
 			"form": form,
 		}			
 
-		return render(request,"faq.html",context)
+		return render(request,"learn.html",context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')

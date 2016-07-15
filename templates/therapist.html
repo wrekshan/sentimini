@@ -1,0 +1,189 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+<!--DOCTYPE html -->
+
+<html>
+
+<body>
+{% block content %}
+
+<div class="container">
+	<div id="navbar" class="nav nav-justified">
+		<ul class="nav navbar-nav">
+
+			<li><a href="#prompt_gen">Prompt Generation</a></li>
+			<li><a href="#ind_report">Individual Reports</a></li>
+			<li><a href="#groups">Set Up Groups</a></li>
+			<li><a href="#group_report">Group Reports</a></li>
+			<li><a href="#pricing">Pricing</a></li>
+
+		</ul>
+	</div>
+</div>
+
+ {% if messages %} {% for message in messages %}
+<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
+</div>
+{% endfor %} {% endif %}
+
+
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+	<div class="container">
+		<h1 class="text-center"> Working with others</h1>
+		</br>
+		 <div class="row text-center">
+		<div class="col-sm-4 col-xs-6">
+          <h2>Set up experiences</h2>
+          <p>Use the prompt generation to set up experiences for others.  You can see the reports for the individuals</p>
+          <p><a class="btn btn-primary btn-lg" href="#prompt_gen" role="button" >Begin editing settings &raquo;</a></p>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <h2>Groups</h2>
+          <p>Add groups of people to look at differences.</p>
+          <p><a class="btn btn-primary btn-lg" href="#groups" role="button" >Get Pro &raquo;</a></p>
+        </div>
+        <div class="col-sm-4 col-xs-6">
+          <h2>2 dollars per month per person</h2>
+          <p><a class="btn btn-primary btn-lg" href="#pricing" role="button" >Sign up &raquo;</a></p>
+        </div>
+        </div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row" id = "prompt_gen">
+		<div class="col-md-3">
+			<h1>Generate Experiences</h1>
+			<p>You have control</p>
+		</div>
+		<div class="col-md-9">
+		</br>
+			<p>
+				Response Time: {{summary_response_time|floatformat:2}} seconds.
+				<br/>
+				Response Rate: {{summary_response_percent|floatformat:2}}%.
+			</p>
+		</div>
+	</div>
+	
+	<hr>
+	<div class="row" id="ind_report">
+		<div class="col-md-3">
+			<h1>Individual Reports</h1>
+			<p>This will how basic graphs for the individual</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Latest Responses</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Value (Range: 0-10)</th>
+					<th>Date Time</th>
+				</tr>
+				{% for ent in latest_entry %}
+				<tr>
+					<td>{{ ent.prompt  }}</td> 
+					<td>{{ ent.prompt_reply }}</td>
+					<td>{{ ent.time_sent }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+
+		</div>     
+	</div>
+
+	<hr>
+	<div class="row" id="Groupins">
+	<div class="col-md-3">
+			<h1>Set up groups</h1>
+			<p>This will show a list of people and the groups to set them up</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Average Emotion Intensity</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Average Value (Range: 0-100)</th>
+					<th>Count</th>
+				</tr>
+				{% for entry in working_entry %}
+				<tr>
+					<td>{{ entry.prompt  }}</td> 
+					<td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
+					<td>{{ entry.prompt__count }} </td>
+
+				</tr>
+				{% endfor %}
+			</table>
+
+		</div>     
+	</div>
+
+
+	<hr>
+	<div class="row" id="Group Reports">
+	<div class="col-md-3">
+			<h1>Group Reports</h1>
+			<p>This is a basic comparision between two groups</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Average Emotion Intensity</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Average Value (Range: 0-100)</th>
+					<th>Count</th>
+				</tr>
+				{% for entry in working_entry %}
+				<tr>
+					<td>{{ entry.prompt  }}</td> 
+					<td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
+					<td>{{ entry.prompt__count }} </td>
+
+				</tr>
+				{% endfor %}
+			</table>
+
+		</div>     
+	</div>
+
+		<hr>
+	<div class="row" id="pricing">
+	<div class="col-md-3">
+			<h1>Pricing</h1>
+			<p>This will be a small fee.</p>
+		</div>
+		<div class="col-md-9">
+			<h2>Average Emotion Intensity</h2>
+			<table class="table table-striped">
+				<tr>
+					<th>Prompt</th>
+					<th>Average Value (Range: 0-100)</th>
+					<th>Count</th>
+				</tr>
+				{% for entry in working_entry %}
+				<tr>
+					<td>{{ entry.prompt  }}</td> 
+					<td>{{ entry.prompt_reply__avg|floatformat:1 }}</td>
+					<td>{{ entry.prompt__count }} </td>
+
+				</tr>
+				{% endfor %}
+			</table>
+
+		</div>     
+	</div>
+</div>
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}
