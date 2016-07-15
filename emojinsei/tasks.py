@@ -186,7 +186,7 @@ def set_next_prompt_instruction(user):
 end_of_teaching_period = "NUP1"
 unanswered_series_wait_time_in_minutes = 60
 
-@periodic_task(run_every=timedelta(mintues=60))
+@periodic_task(run_every=timedelta(seconds=300))
 def clean_up_outgoing():
 	print("CLEAN UP")
 	one_day = datetime.now(pytz.utc) - timedelta(days=1)
