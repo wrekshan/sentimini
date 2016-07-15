@@ -185,7 +185,7 @@ def set_next_prompt_instruction(user):
 
 end_of_teaching_period = "NUP1"
 unanswered_series_wait_time_in_minutes = 60
-unanswered_prompt_wait_time_in_minutes = 60
+unanswered_prompt_wait_time_in_minutes = 5
 
 
 @periodic_task(run_every=timedelta(seconds=300))
