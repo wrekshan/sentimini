@@ -185,6 +185,8 @@ def set_next_prompt_instruction(user):
 
 end_of_teaching_period = "NUP1"
 unanswered_series_wait_time_in_minutes = 60
+unanswered_prompt_wait_time_in_minutes = 60
+
 
 @periodic_task(run_every=timedelta(seconds=300))
 def clean_up_outgoing():
@@ -314,6 +316,17 @@ def determine_next_prompt():
 			working_entries = Entry.objects.filter(user=working_settings.user).exclude(prompt_type="CHAT").exclude(prompt_type="Pause")
 			working_entry = working_entries.latest('time_to_send')
 
+			#Do a check to see if the person is "ready for next".  This should be changed if the person responds to it or else there is a delay
+			if working_entry.ready_for_next == False and not working_entry.time_sent == None:
+				td = datetime.now(pytz.utc) - working_entry.time_sent
+				td_mins = td / timedelta(minutes=1)
+
+				if int(td_mins) > unanswered_prompt_wait_time_in_minutes:
+					working_entry.ready_for_next = True
+					working_entry.save()
+
+			
+
 		
 			#Check to see if they have just reach their teaching period
 			if working_entry.prompt_type == end_of_teaching_period:
@@ -381,7 +394,7 @@ def determine_next_prompt():
 
 					else:
 						print("Normal Period")
-						working_entry_new = Entry(user=working_entry.user,prompt_reply=None,time_created=datetime.now(pytz.utc))
+						working_entry_new = Entry(user=working_entry.user,ready_for_next = False, prompt_reply=None,time_created=datetime.now(pytz.utc))
 						working_entry_new.prompt, working_entry_new.prompt_type = set_next_prompt(user=working_entry.user,typer="any")
 						# working_entry_new.emotion_type = prompt_type_lookup(user=working_entry.user, prompt=working_entry_new.emotion)
 						if 'User Generated' in working_entry_new.prompt_type:
