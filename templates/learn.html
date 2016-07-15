@@ -61,9 +61,7 @@
 		<div class="col-md-9">
 		</br>
 		<p>
-			Response Time: {{summary_response_time|floatformat:2}} seconds.
-			<br/>
-			Response Rate: {{summary_response_percent|floatformat:2}}%.
+			There will be a bar chart and a selector of emotions to display.  Then a quotation or some basic statement about what this emotion is.
 		</p>
 	</div>
 	</div>
@@ -77,21 +75,7 @@
 		<p>This will show the different experiences</p>
 	</div>
 	<div class="col-md-9">
-		<h2>Latest Responses</h2>
-		<table class="table table-striped">
-			<tr>
-				<th>Prompt</th>
-				<th>Value (Range: 0-10)</th>
-				<th>Date Time</th>
-			</tr>
-			{% for ent in latest_entry %}
-			<tr>
-				<td>{{ ent.prompt  }}</td> 
-				<td>{{ ent.prompt_reply }}</td>
-				<td>{{ ent.time_sent }}</td>
-			</tr>
-			{% endfor %}
-		</table>
+		This be the latest entry, but then a link to the blog or things like that. 
 
 	</div>     
 </div>
@@ -147,12 +131,7 @@
 			<p>This will show the summary of the current experience</p>
 		</div>
 		<div class="col-md-9">
-		</br>
-		<p>
-			Response Time: {{summary_response_time|floatformat:2}} seconds.
-			<br/>
-			Response Rate: {{summary_response_percent|floatformat:2}}%.
-		</p>
+		This is where I can talk about some cool stuff, the mission, etc.
 	</div>
 	</div>
 </div>
