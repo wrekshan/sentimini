@@ -82,18 +82,6 @@ def user_vis(request):
 					
 
 
-		
-			graph_data_line_chart = get_graph_data_line_chart(request, simulated_val=magic_simulated_value)
-
-			
-			graph_data_line_chart_smoothed = get_graph_data_line_chart_smoothed(request,simulated_val=magic_simulated_value,number_of_days=10)
-
-			#This gets the average and stuff for emotion centered table
-			# graph_data_by_prompt_dim, graph_data_by_prompt_cat = get_graph_data_by_prompt_bar(request,simulated_val=magic_simulated_value)
-
-			graph_data_by_prompt_dim = get_graph_data_by_prompt(request,simulated_val=magic_simulated_value,response_type="0 to 10")
-			graph_data_by_prompt_cat = get_graph_data_by_prompt(request,simulated_val=magic_simulated_value,response_type="cat")
-
 
 
 			context = {
@@ -102,20 +90,12 @@ def user_vis(request):
 				
 			    'table_emotion_centered': table_emotion_centered,
 			    'table_latest_entry': table_latest_entry,
-			    'graph_data_line_chart_smoothed': graph_data_line_chart_smoothed,
-			    'graph_data_line_chart': graph_data_line_chart,
-			    'graph_data_by_prompt_dim': graph_data_by_prompt_dim,
-			    'graph_data_by_prompt_cat': graph_data_by_prompt_cat,
-			    # 'graph_data_day_in_week': graph_data_day_in_week,
-				# 'graph_data_time_of_day': graph_data_time_of_day,
-
 			}
 			
 			return render_to_response('visual.html', context)
 		else:
 			context = {
-				'user': request.user,
-				
+				'user': request.user,			
 			}
 
 		

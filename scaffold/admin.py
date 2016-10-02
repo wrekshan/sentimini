@@ -39,13 +39,10 @@ admin.site.register(Business,BusinessAdmin)
 
 
 class BlogAdmin(admin.ModelAdmin):
-	list_display = ["user","author","title","content","the_tags","date_created","date_altered"]
+	list_display = ["user","author","title","content","date_created","date_altered"]
 	list_display_links = ["title"]
 	list_filter = ["title"]
 	search_fields = ["title"]
-	def the_tags(self, obj):
-		return "%s" % (obj.tags.all(), )
-	the_tags.short_description = 'tags'
 
 	class Meta:
 		model = Blog
