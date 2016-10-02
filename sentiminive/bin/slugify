@@ -1,0 +1,10 @@
+#!/Users/williamrekshan/sentimini/sentiminive/bin/python3
+# EASY-INSTALL-ENTRY-SCRIPT: 'python-slugify==1.1.4','console_scripts','slugify'
+__requires__ = 'python-slugify==1.1.4'
+import sys
+from pkg_resources import load_entry_point
+
+if __name__ == '__main__':
+    sys.exit(
+        load_entry_point('python-slugify==1.1.4', 'console_scripts', 'slugify')()
+    )

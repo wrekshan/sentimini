@@ -1,81 +1,128 @@
 from django.db.models import Avg, Count, F, Case, When
 from django.shortcuts import render, render_to_response
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.urlresolvers import reverse
+from datetime import datetime, timedelta
+import pytz
+from django import forms
+from random import random, triangular, randint
+from django.core import serializers
 
-
+from django.forms import modelformset_factory
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 # Create your views here.
-from ent.models import Emotion, Entry
 
-def get_response_time(request):
-	current_user = request.user
-	#Get the response time stuff
-	summary_response_time = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").aggregate(response_time=Avg('response_time_seconds'))
-	# tmp_num_entires = Entry.objects.filter(user=current_user).count()
-	summary_response_time = summary_response_time['response_time']
-	return(summary_response_time)
+from ent.models import PossibleTextSTM, ActualTextSTM, UserSetting, ActualTextLTM
+from .models import EntryDEV, UserSettingDEV, EntryDEVSUM, EmotionToShow
+from .forms import UserSettingDEVForm, UserSettingDEVForm_RUN, EmotionToShowForm, ExampleFormSetHelper
 
-		
-def get_response_rate(request):
-	current_user = request.user
-	tmp_total_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").count()
-	tmp_responded_num_entires = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").filter(response_time_seconds__gt=0).exclude(prompt_reply__isnull=True).count()
-	if tmp_responded_num_entires > 0:
-		summary_response_percent = (tmp_responded_num_entires / tmp_total_num_entires)*100
-	else:
-		summary_response_percent = 0
-	return(summary_response_percent)
+from sentimini.tasks import set_next_prompt_instruction
+
+from sentimini.sentimini_functions import get_user_summary_info, get_table_emotion_centered, get_graph_data_line_chart, get_graph_data_by_prompt, get_graph_data_day_in_week, get_graph_data_time_of_day, get_graph_data_line_chart_smoothed, get_graph_data_by_prompt_bar
+from sentimini.scheduler_functions import generate_random_prompts_to_show
+
+import csv
+
 
 def user_vis(request):
 	if request.user.is_authenticated():	
-		print("USER")
-		if Entry.objects.filter(user=request.user).count() > 1:
-			print("has more 1 entry")
-
+		magic_simulated_value = 1
+		generate_random_prompts_to_show(request,exp_resp_rate=.8,week=0,number_of_prompts=100) #set up 20 random prompts based upon the settings
+		
+		if ActualTextLTM.objects.filter(user=request.user).count() > 1:
 			current_user = request.user
-			
-			#Get the response time stuff
-			summary_response_time = get_response_time(request)
-			summary_response_percent = get_response_rate(request)
 
-	# 		#Calculate the average values and counts for each emotion
-			working_entry = Entry.objects.filter(user=current_user).filter(prompt_type="CORE").values('prompt').annotate(Avg('prompt_reply')).annotate(Count('prompt'))
-			working_entry = working_entry.exclude(prompt_type__icontains="NUP")
-			working_entry = working_entry.exclude(prompt_type__icontains="User Generated")
+			user_summary_info = get_user_summary_info(request, simulated_val=magic_simulated_value)
 
-			latest_entry = Entry.objects.filter(user=current_user)
-			latest_entry = latest_entry.exclude(prompt_type__icontains="NUP")
-			latest_entry = latest_entry.exclude(prompt_type__icontains="User Generated")
-			latest_entry = latest_entry.order_by('time_sent')[:5]
+			#This gets the average and stuff for emotion centered table
+			table_emotion_centered = get_table_emotion_centered(request,simulated_val=magic_simulated_value)
+
+			#This gets the average and stuff for prompt centered table
+			table_latest_entry = ActualTextLTM.objects.filter(user=request.user).filter(text_type="user").filter(simulated=magic_simulated_value)
+			table_latest_entry = table_latest_entry.order_by('time_sent')
+
 			
+
+			# for poop in formset:
+				# print(poop)
+			if request.GET.get('export_csv_responses'):
+				print("BUTTON PRESED")
+				# Create the HttpResponse object with the appropriate CSV header.
+				response = HttpResponse(content_type='text/csv')
+				response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
+				writer = csv.writer(response)
+
+				headers = ["prompt","reply","time_sent"]
+				writer.writerow(headers)
+
+				for tmp in table_latest_entry:
+					row = [tmp.prompt,tmp.prompt_reply,tmp.time_sent]
+					writer.writerow(row)
+				return response
+
+
+			if request.GET.get('export_csv_text_centered'):
+				print("BUTTON PRESED")
+				# Create the HttpResponse object with the appropriate CSV header.
+				response = HttpResponse(content_type='text/csv')
+				response['Content-Disposition'] = 'attachment; filename="sentimini_text_centered_data.csv"'
+				writer = csv.writer(response)
+
+				headers = ["text","response_average","response_counts"]
+				writer.writerow(headers)
+
+				for tmp in table_emotion_centered:
+					row = [tmp['text'],tmp['response__avg'],tmp['response__count']]
+					writer.writerow(row)
+				return response
+					
+
+
+		
+			graph_data_line_chart = get_graph_data_line_chart(request, simulated_val=magic_simulated_value)
+
 			
-			#Reshape it to get something useable.  i don't like this but it might work
-			# name=[]
-			# value=[]
-			# for we in working_entry:
-			# 	# print(we['emotion'])
-			# 	name.append(we['prompt'])
-			# 	value.append(we['prompt_reply__avg'])
-			
-			print(working_entry)
+			graph_data_line_chart_smoothed = get_graph_data_line_chart_smoothed(request,simulated_val=magic_simulated_value,number_of_days=10)
+
+			#This gets the average and stuff for emotion centered table
+			# graph_data_by_prompt_dim, graph_data_by_prompt_cat = get_graph_data_by_prompt_bar(request,simulated_val=magic_simulated_value)
+
+			graph_data_by_prompt_dim = get_graph_data_by_prompt(request,simulated_val=magic_simulated_value,response_type="0 to 10")
+			graph_data_by_prompt_cat = get_graph_data_by_prompt(request,simulated_val=magic_simulated_value,response_type="cat")
+
+
+
 			context = {
 				'user': request.user,
-			    'working_entry': working_entry,
-			    'latest_entry': latest_entry,
+				'user_summary_info': user_summary_info,
+				
+			    'table_emotion_centered': table_emotion_centered,
+			    'table_latest_entry': table_latest_entry,
+			    'graph_data_line_chart_smoothed': graph_data_line_chart_smoothed,
+			    'graph_data_line_chart': graph_data_line_chart,
+			    'graph_data_by_prompt_dim': graph_data_by_prompt_dim,
+			    'graph_data_by_prompt_cat': graph_data_by_prompt_cat,
+			    # 'graph_data_day_in_week': graph_data_day_in_week,
+				# 'graph_data_time_of_day': graph_data_time_of_day,
 
-			    'summary_response_time': summary_response_time,
-			    'summary_response_percent': summary_response_percent,
 			}
 			
-			return render_to_response('user_vis.html', context)
+			return render_to_response('visual.html', context)
 		else:
-			print("has more no entry")
 			context = {
 				'user': request.user,
-				"num_entries": Entry.objects.filter(user=request.user).count(),
+				
 			}
 
 		
-			return render_to_response('user_vis_no_entries.html',context)
+			return render_to_response('visual.html',context)
 
 	else:
 		return render(request, "index_not_logged_in.html")
+
+
 

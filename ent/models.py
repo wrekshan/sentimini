@@ -1,39 +1,153 @@
 from django.db import models
 from django.conf import settings
-from datetime import datetime
+from datetime import datetime, time
 from decimal import *
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
 
-#Emotion is the model where the emotions are listed out.  Perhaps I will group them or something of that nature later.
-class Emotion(models.Model):
-	emotion = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
-	emotion_type = models.CharField(max_length=120,default='CORE') #this is the type of emotion.
-	#CORE = default set of 5-8 that I will ask about intensively
-	#Top100 = set of 100 most frequently used.
-
-	def __str__(self):
-		return self.emotion
-
-#This is to allow to add their own prompts
-class UserGenPrompt(models.Model):
+#This is the major spot to keep the texts.  
+class PossibleTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	prompt = models.CharField(max_length=160,default='',null=True) 
-	date_created = models.DateTimeField(blank=True,null=True)
-	active = models.BooleanField(default=True) #Does the user want this sent
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	system_text = models.IntegerField(default=0)
+	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	text_importance = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
+	response_type = models.CharField(max_length=100,default='Open') 
 	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
+	date_created = models.DateTimeField(blank=True,null=True)
+	date_altered = models.DateTimeField(blank=True,null=True)
 	
-	def __str__(self):
-		return self.prompt
 
-#These are the instructions to be given at the beginning of the texting. 
-#Please note that I want to include more instructions to be periodically given.
-class NewUserPrompt(models.Model):
-	prompt = models.CharField(max_length=160,default='',null=True)
-	prompt_type = models.CharField(max_length=120,default='',null=True) # I don't really know why I have this.
-	NUP_seq = models.IntegerField(default=0) #This is to determine the order to text them.
-	send_next_immediately = models.BooleanField(default=False) #This is just a switch to tell the task file to send the next one immediately (i.e. randomly generate a time.).  I'm not 100% sure why I have this right now.
+	def __str__(self):
+		return self.text
+
+#This is the long term storage of the texts.  this is intended to keep a log of all of the texts a person may want.
+class PossibleTextLTM(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	system_text = models.IntegerField(default=0)
+	text_importance = models.IntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
+	response_type = models.CharField(max_length=100,default='Open') 
+	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
+	date_created = models.DateTimeField(blank=True,null=True)
+	date_altered = models.DateTimeField(blank=True,null=True)
+	stm_id = models.IntegerField(default=0)
+
+	
+
+	def __str__(self):
+		return self.text
+
+#
+class ActualTextSTM(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	system_text = models.IntegerField(default=0)
+	text_id = models.IntegerField(default=0)
+	textstore_id = models.IntegerField(default=0)
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	response = models.CharField(max_length=160,default='',null=True,blank=True) #This is the prompt type
+	response_type = models.CharField(max_length=100,default='Open') 
+	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	time_to_send = models.DateTimeField(blank=True,null=True)
+	time_sent = models.DateTimeField(blank=True,null=True)
+	simulated = models.IntegerField(default=0) #this is so that I can develop on the model, but not wait forever for texts.
+	time_response = models.DateTimeField(blank=True,null=True)
+	response_time = models.IntegerField(default=0)
+	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
+	time_to_add = models.IntegerField(default=0)
+	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
+	ready_for_next = models.IntegerField(default=0) #This is a yes/no to determine if the next one shoudl be sent.  This is used primarily to wait for responses (in instruction and in series)
+	consolidated = models.IntegerField(default=0)
+
+	def __str__(self):
+		return self.text
+
+class ActualTextLTM(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	text_id = models.IntegerField(default=0)
+	stm_id = models.IntegerField(default=0)
+	textstore_id = models.IntegerField(default=0)
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	response_type = models.CharField(max_length=100,default='Open') 
+	response = models.CharField(max_length=160,default='',null=True) #This is the prompt type
+	response_cat = models.CharField(max_length=160,default='',null=True) #This is the prompt type
+	response_cat_bin = models.IntegerField(blank=True,null=True) #This is the prompt type
+	response_dim = models.IntegerField(null=True, blank=True) #This is the reply from the user
+	response_time = models.IntegerField(default=0)
+	time_response = models.DateTimeField(blank=True,null=True)
+	time_to_send = models.DateTimeField(blank=True,null=True)
+	time_to_send_circa = models.CharField(max_length=160,default='AM',null=True)
+	time_to_send_day = models.CharField(max_length=160,default='',null=True)
+	time_sent = models.DateTimeField(blank=True,null=True)
+	simulated = models.IntegerField(default=0) #this is so that I can develop on the model, but not wait forever for texts.
+	time_to_add = models.IntegerField(default=0)
+	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
+	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
+
+	def __str__(self):
+		return self.text		
+
+
+
+
+# # Create your models here.
+# #This is the main workhorse.  Currently I'm not sure if it is better to have a queue of messages to be sent out or to use this as the queue.  
+# class Entry(models.Model):
+# 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+# 	scheduler_type = models.CharField(max_length=160,default="System",null=False)
+
+
+# 	prompt = models.CharField(max_length=160,default='',null=False) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
+# 	prompt_full = models.CharField(max_length=500,default='',null=False) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
+# 	prompt_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
+# 	prompt_reply_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
+# 	prompt_reply = models.IntegerField(null=True, blank=True) #This is the reply from the user
+# 	prompt_reply_bin = models.IntegerField(null=True, blank=True) #This is the reply from the user
+# 	prompt_reply_dim = models.IntegerField(null=True, blank=True) #This is the reply from the user
+# 	prompt_reply_open = models.IntegerField(null=True, blank=True) #This is the reply from the user
+# 	prompt_id = models.IntegerField(default=0)
+	
+# 	#These are datetime objects.  Should be clear
+# 	time_to_add = models.IntegerField(default=0)
+# 	time_created = models.DateTimeField(blank=True,null=True)
+# 	time_to_send = models.DateTimeField(blank=True,null=True)
+# 	time_to_send_localtz = models.DateTimeField(blank=True,null=True)
+# 	time_sent = models.DateTimeField(blank=True,null=True)
+	
+# 	time_to_send_circa = models.CharField(max_length=160,default='AM',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
+# 	time_to_send_day = models.CharField(max_length=160,default='',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
+# 	time_to_send_time = models.TimeField(blank=True,null=True)
+# 	time_to_send_hour = models.IntegerField(default=0)
+	
+# 	time_response = models.DateTimeField(blank=True,null=True)
+
+# 	response_time_seconds = models.IntegerField(default=0)
+# 	response_time = models.IntegerField(default=0)
+
+# 	ready_for_next = models.BooleanField(default=True) #This is a yes/no to determine if the next one shoudl be sent.  This is used primarily to wait for responses (in instruction and in series)
+# 	send_next_immediately = models.BooleanField(default=False) #This is used to determine if the next one should be sent immediately.  Used primarily in instructions and series
+
+# 	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
+# 	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
+
+# 	simulated = models.IntegerField(default=0) #this is so that I can develop on the model, but not wait forever for texts.
+
+# 	#you should have a log of the settings used for each prompt.  This meanings that you'll just reference the usersettings and save that information here everytime you send out a prompt.  in this way you'll be able to log, what settings generated what prompts to do analysis
+	
+# 	def __str__(self):
+# 		return self.prompt
+
+
+
+
+#This is just needed to display the respo;nse types
+class ResponseTypeStore(models.Model):
+	response_type = models.CharField(blank=True,max_length=100,default='0-10')
+	ordering_num = models.IntegerField(default=10) #probability that this should be choosen	
+	def __str__(self):
+		return self.response_type
 
 
 #This is just a log of when the user asked for a respite (break from texting)
@@ -66,74 +180,93 @@ class Outgoing(models.Model):
 	entry_id = models.IntegerField(blank=True,null=True)
 
 
-#This is the main workhorse.  Currently I'm not sure if it is better to have a queue of messages to be sent out or to use this as the queue.  
-class Entry(models.Model):
-	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 
-	prompt = models.CharField(max_length=160,default='',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-	prompt_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
-	prompt_reply = models.IntegerField(null=True, blank=True) #This is the reply from the user
-	
-	#These are datetime objects.  Should be clear
-	time_to_add = models.IntegerField(default=0)
-	time_created = models.DateTimeField(blank=True,null=True)
-	time_to_send = models.DateTimeField(blank=True,null=True)
-	time_sent = models.DateTimeField(blank=True,null=True)
-	time_response = models.DateTimeField(blank=True,null=True)
-	response_time_seconds = models.IntegerField(default=0)
 
-	ready_for_next = models.BooleanField(default=True) #This is a yes/no to determine if the next one shoudl be sent.  This is used primarily to wait for responses (in instruction and in series)
-	send_next_immediately = models.BooleanField(default=False) #This is used to determine if the next one should be sent immediately.  Used primarily in instructions and series
-
-	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
-	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
-
-	#you should have a log of the settings used for each prompt.  This meanings that you'll just reference the usersettings and save that information here everytime you send out a prompt.  in this way you'll be able to log, what settings generated what prompts to do analysis
-	
-	def __str__(self):
-		return self.prompt
 
 #This is the other main workhorse that keeps user preferences.  
 class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
-	teaching_period_on = models.BooleanField(default=True) #This is just a yes/no switch that tells the tasks to get the NUP prompts instead of the usual emotion prompts
-	
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
-
 	phone = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	carrier = models.CharField(blank=True,max_length=100,default='CHANGE ME') #THis is the carrier
 	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup
 	timezone = models.CharField(max_length=30,default='UTC') #THis is the timezone.  User encouraged to update when travelling.  Not sure if I want a stable timezone too.
-
 	sleep_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
-	sleep_duration = models.DecimalField(max_digits=3,decimal_places=2,default=Decimal('8.0')) #This is the time the user wakes.  Used to calculate deadtimes
-
+	sleep_duration = models.IntegerField(default=8)
 	respite_until_datetime = models.DateTimeField(blank=True,null=True) #The respite buttons change this field.  Email will only send if now greater than this value
+	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	
-	prompts_per_day = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+
+	#these are for modeling the responses
+	exp_response_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.6')) #core 8 emotions
+	exp_response_time_avg =  models.IntegerField(default=5)
+	exp_response_time_min =  models.IntegerField(default=1)
+	exp_response_time_max =  models.IntegerField(default=60)
+
+	def __str__(self):
+		return self.user.username
+	
+
+class ExperienceSetting(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+	experience = models.CharField(max_length=30,default='user') #This is the user phone number
+	active =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
+	prompts_per_week = models.IntegerField(default=3,validators=[MinValueValidator(0), MaxValueValidator(100)]) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
 	prompt_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
 	prompt_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion
-
-	#these will be the different types of emotion prompts.  These should add up to 1.  These are lower level.  If 50% of prompts are emotions, then X% are for core
-	emotion_core_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.6')) #core 8 emotions
-	emotion_top100_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.3')) #top 100 word freq emtions
-	emotion_other_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.1')) #whateverelse I think is interesting
-
-	# These figure out the type of prompt to give.  
-	user_generated_prompt_rate = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(100)])   #Are these from the user generated prompts?
-	prompt_multiple_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #These are the proportion of time a series is given
-	instruction_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #Instructions.  This is just placeholder and I have coded this in yet.
+	time_to_declare_lost =  models.IntegerField(default=61)
+	research_instr_dim_rate = models.IntegerField(default=90,validators=[MinValueValidator(0), MaxValueValidator(100)])   #Are these from the user generated prompts?
+	research_prompt_multiple_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #These are the proportion of time a series is given
 	
 	def __str__(self):
-		return self.user.username
+		return self.experience
 
-#This is a basic model that will keep summary information filled out.
-class UserSummary(models.Model):
+
+
+
+class Ontology(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	age = models.IntegerField(default=18)
-	gender = models.CharField(max_length=120,default='',null=True)
-	years_of_education = models.IntegerField(default=12)
-	sexual_orientation = models.CharField(max_length=120,default='',null=True)
-	ethnicity = models.CharField(max_length=120,default='',null=True)
+	ontological_type = models.CharField(max_length=300,default='prompt',null=True) #I.E. instruction or prompt
+	ontological_name= models.CharField(max_length=300,default='system',null=True) #I.E. Default, List One, Depression List
+	prompt_set = models.CharField(max_length=300,default='',null=True) #I.E. Core, Expanded, Open
+	prompt_set_percent = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each ontological_set
+	prompt_set_percent_calc = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each ontological_set
+
+	def __str__(self):
+		return self.prompt_set
+
+
+class Prompttext(models.Model):
+	text = models.CharField(max_length=500,default='How much XXX is in your present moment (0-10)?',null=True) #this is the type of emotion.
+	text_type = models.CharField(max_length=500,default='DIM',null=True) #this is the type.  it coudl be different.
+	text_percent = models.IntegerField(default=10) #probability that this should be choosen
+
+
+	def __str__(self):
+		return self.text
+
+
+class UserGenPromptFixed(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	prompt = models.CharField(max_length=160,default='',null=True) 
+	date_created = models.DateTimeField(blank=True,null=True)
+	hr_range = models.IntegerField(default='1') #This should add up to 100% for each emotion
+
+	active = models.BooleanField(default=True) #Does the user want this sent
+	response_type = models.CharField(blank=True,max_length=100,default='Open') #THis is the carrier
+	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
+
+
+	repeat_denomination = models.CharField(blank=True,max_length=100,default='day') #THis is the carrier
+	repeat_number = models.IntegerField(default='1') #This should add up to 100% for each emotion
+
+	begin_datetime =  models.DateTimeField(default=datetime.now, blank=True)
+	end_datetime = models.DateTimeField(default=datetime(2020,1,1,0,00))
+
+	
+	def __str__(self):
+		return self.prompt

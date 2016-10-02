@@ -1,0 +1,119 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+<!--DOCTYPE html -->
+{% block content %}
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+	<script>
+		$(document).ready(function() {
+			$('#core_table').DataTable({
+				"columns": [
+				{ "width": "80%" },
+				{ "width": "20%" },
+				]
+
+			});
+		} );
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$('#expanded_table').DataTable({
+				"columns": [
+				{ "width": "80%" },
+				{ "width": "20%" },
+				]
+
+			});
+		} );
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$('#interest_table').DataTable({
+				"columns": [
+				{ "width": "80%" },
+				{ "width": "20%" },
+				]
+
+			});
+		} );
+	</script>
+
+	<script>
+		$(document).ready(function() {
+			$('#open_table').DataTable({
+				"columns": [
+				{ "width": "80%" },
+				{ "width": "20%" },
+				]
+
+			});
+		} );
+	</script>
+
+</head>
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#emotions">Research</a></li>
+				<li><a href="#about">About</a></li>
+				<li><a href="#blog">Blog</a></li>
+				<li><a href="#faq">FAQ</a></li>
+
+			</ul>
+		</div>
+	</div>
+
+	{% if messages %} {% for message in messages %}
+	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
+</div>
+{% endfor %} {% endif %}
+
+
+
+
+
+<div class="container">
+	<hr>
+	<div class="row" id="">
+		<div class="col-md-2">
+			<h1>Texts</h1>
+			All these should represent counts from EVERYONE
+		</div>
+
+		<div class="col-md-10">
+			<table id="core_table" class="display" cellspacing="0" width="100%">
+				<thead>
+					<tr>
+						<th>Prompt</th>
+						<th>Count</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for emo in core_list %}
+					<tr>
+						<td><a href="/scaffold/emotion/{{ emo.prompt_id }}/">{{ emo.prompt }}</a></td> 
+						<td>{{ emo.user_count }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>
+{% endblock %}

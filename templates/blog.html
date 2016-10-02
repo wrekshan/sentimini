@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+$(document).ready(function() {
+    $('#blog_archive').DataTable({
+    	"columns": [
+    { "width": "50%" },
+    { "width": "25%" },
+    { "width": "25%" },
+  ]
+
+    });
+} );
+</script>
+
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#post">Post</a></li>
+				<li><a href="#archive">Archive</a></li>
+			</ul>
+		</div>
+	</div>
+
+
+<div class="container">
+	<hr>
+	<div class="row" id="post">
+		<div class="col-md-2">
+			<h1>{{featured_blog.title}}</h1>
+			{{featured_blog.author}}
+		</div>
+		<div class="col-md-10">
+		<h3>Description</h3>
+		{{featured_blog.description|safe}}
+		<h3>Content</h3>
+			
+			{{featured_blog.content|safe}}
+		</div>     
+	</div>
+	<hr>
+	<div class="row" id="archive">
+		<div class="col-md-2">
+			<h1>Archive</h1>
+		</div>
+		<div class="col-md-10">
+		<table id="blog_archive" class="display" cellspacing="0" width="100%">
+				<thead>
+		        <tr>
+		            <th>Title</th>
+		            <th>Author</th>
+					<th>Content</th>
+					
+		        </tr>
+		    </thead>
+		    <tbody>
+		       {% for blog in blogs %}
+				<tr>
+					<td><a href="/scaffold/blog/{{ blog.id }}/">{{ blog.title }}</a></td> 
+					<td>{{blog.author}}</td>
+					<td>{{blog.description|safe}}</td>
+				</tr>
+				{% endfor %}
+		    </tbody>
+		</table>
+		</div>     
+	</div>
+
+
+
+
+</div>
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}

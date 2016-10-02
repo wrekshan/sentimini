@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+
+
+{% block content %}
+<script src="http://www.d3plus.org/js/d3.js"></script>
+<script src="http://www.d3plus.org/js/d3plus.js"></script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+$(document).ready(function() {
+    $('#last_responses_table').DataTable({
+    	"columns": [
+    { "width": "35%" },
+    { "width": "15%" },
+    { "width": "10%" },
+    { "width": "10%" },
+    { "width": "20%" },
+  ]
+
+    });
+} );
+</script>
+<script>
+$(document).ready(function() {
+    $('#example_table2').DataTable({
+    	"columns": [
+    { "width": "60%" },
+    { "width": "10%" },
+    { "width": "10%" },
+    { "width": "10%" },
+    { "width": "10%" },
+  ]
+
+    });
+} );
+</script>
+
+
+<div class="container">
+	<div id="navbar" class="nav nav-justified">
+		<ul class="nav navbar-nav">
+
+			<li><a href="#graphics">Data</a></li>
+			<li><a href="#texts">Texts</a></li>
+			<li><a href="#summary">Summary</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+
+
+
+
+<div class="container">
+<hr>
+	<!-- Example row of columns -->
+	<div class="row" id="graphics">
+		<div class="col-md-2">
+			<h1>Data</h1>
+		</div>
+
+	<!-- Example row of columns -->
+	
+
+		<div class="col-sm-5 ">
+		 Sentimini sends periodic text messages with varying content of your choosing at semi-random times.
+		 </br></br>
+		 You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+		</div>
+
+		<div class="col-sm-5 ">
+        You can view graphs and download data on this page.
+        <li><b>Click on the text to view detailed information</b></li>
+        <li>Download .csv files for use with any data orientated software program (like excel or numbers)</li>
+		</div>
+		</div>
+	<hr>
+	<!-- Example row of columns -->
+	
+
+
+<div class="row" id="texts">
+	<div class="col-md-2">
+		<h1>Texts</h1>
+		
+
+	</div>
+	<div class="col-md-10">
+	<table id="last_responses_table" class="display" cellspacing="0" width="100%">
+			<thead>
+	        <tr>
+	            <th>Text</th>
+	            <th>Response</th>
+	            <th>0-10</th>
+	            <th>Yes/ No</th>
+				<th>Time and Date</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	       {% for ent in table_latest_entry %}
+			<tr>
+				<td><a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a></td> 
+				<td>{{ ent.response }}</td>
+				<td>{{ ent.response_dim }}</td>
+				<td>{{ ent.response_cat }}</td>
+				<td>{{ ent.time_sent }}</td>
+			</tr>
+			{% endfor %}
+	    </tbody>
+	</table>
+
+
+		
+		<form action="#" method="get">
+		 <input type="submit" class="btn-primary btn-sm" value="Download .csv" name="export_csv_responses">
+		</form>
+
+	</div>     
+</div>
+
+<hr>
+
+
+
+<div class="row" id="summary">
+	<div class="col-md-2">
+		<h1>Summary</h1>
+		
+	</div>
+	<div class="col-md-10">
+	<table id="example_table2" class="display" cellspacing="0" width="100%">
+			<thead>
+	        <tr>
+	            <th>Text</th>
+				<th>Average 0-10</th>
+				<th>Number of Texts</th>
+				<th>% Yes</th>
+				<th>Number of Texts</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	       {% for entry in table_emotion_centered %}
+			<tr>
+				<td><a href="/scaffold/emotion/{{ entry.text_id }}/">{{ entry.text }}</a></td> 
+				<td>{{ entry.response_dim__avg|floatformat:1 }}</td>
+				<td>{{ entry.response_dim__count }} </td>
+				<td>{{ entry.response_cat_bin__avg|floatformat:1 }}</td>
+				<td>{{ entry.response_cat_bin__count }} </td>
+			</tr>
+			{% endfor %}
+	    </tbody>
+	</table>
+
+		
+
+		
+		<form action="#" method="get">
+		 <input type="submit" class="btn-primary btn-sm" value="Download .csv" name="export_csv_text_centered">
+		</form>
+
+	</div>     
+</div>
+
+
+</div>
+
+
+{% endblock %}

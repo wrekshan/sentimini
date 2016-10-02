@@ -1,0 +1,193 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+<!--DOCTYPE html -->
+
+<html>
+
+<body>
+	{% block content %}
+	<script src="http://www.d3plus.org/js/d3.js"></script>
+	<script src="http://www.d3plus.org/js/d3plus.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+	<script>
+	$(document).ready(function() {
+	    $('#table_latest_entry_table').DataTable({
+	    	"columns": [
+	    { "width": "50%" },
+	    { "width": "10%" },
+	    { "width": "10%" },
+	    { "width": "10%" },
+	    { "width": "20%" },
+	  ]
+
+	    });
+	} );
+	</script>
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#text">Text</a></li>
+				<li><a href="#summary">Summary</a></li>
+				<li><a href="#time">Timeline</a></li>
+				<li><a href="#rhythmic">Rhythmic</a></li>
+				<li><a href="#texts">Texts</a></li>
+
+			</ul>
+		</div>
+	</div>
+
+	{% if messages %} {% for message in messages %}
+	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
+</div>
+{% endfor %} {% endif %}
+
+
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+
+
+<div class="container">
+
+<hr>
+	<div class="row" id = "text">
+		<div class="col-md-2">
+				<h1>Text:</h1>
+				
+		</div>
+			
+
+			<div class="col-md-10">
+			<h1>{{emotion_name}}</h1>
+			</br>
+			 Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+	        </br></br>
+	        You can view detailed graphs and download data specifically realted to this specific text.  You can view and access the data for all texts at the <a href="{% url 'vis:user_vis' %}">home page.</a> 
+	        
+				
+			</div>
+	</div>
+<hr>
+	<div class="row" id = "summary">
+		<div class="col-md-2">
+			<h1>Summary</h1>
+			
+		</div>
+		
+
+		<div class="col-md-5">
+		<h3>Histogram</h3>
+		<p>This shows how many times you replied with a certain value.</p>
+			
+			
+			<div style="width:100%;height:800">
+				{{ graph_data_histogram|safe }}
+			</div>
+		</div>
+		<div class="col-md-5">
+		<h3>Summary Statistics</h3>
+	
+
+			XX Mean
+			</br></br>
+			XX SD
+			</br></br>
+			XX Count
+			
+		</div>
+	</div>
+
+
+
+
+		<hr>
+		<div class="row" id = "time">
+			<div class="col-md-2">
+				<h1>Timeline</h1>
+				
+			</div>
+			<div class="col-md-10">
+			
+			This is across time.  It is smoothed, meaning it takes rolling average of X days.
+			
+			<div style="width:100%;height:800">
+				{{ graph_data_line_chart_plotly|safe }}
+			</div>
+		</div>
+		</div>
+
+		<hr>
+		<div class="row" id = "rhythmic">
+			<div class="col-md-2">
+				<h1>Rhythmic</h1>
+				
+			</div>
+			<div class="col-md-5">
+				<h3>Time of Day</h3>
+				This shows before noon vs. afternoon.
+				<div style="width:100%;height:800">
+					{{ graph_data_time_of_day|safe }}
+				</div>
+			</div>
+			<div class="col-md-5">
+				<h3>Time of Day</h3>
+				This shows your values by the day of the week.
+				<div style="width:100%;height:800">
+					{{ graph_data_day_in_week|safe }}
+				</div>
+			</div>
+		</div>
+
+				
+		
+
+<hr>
+
+
+<div class="row" id="texts">
+	<div class="col-md-2">
+		<h1>Texts</h1>
+	</div>
+	<div class="col-md-10">
+	<table id="table_latest_entry_table" class="display" cellspacing="0" width="100%">
+			<thead>
+	        <tr>
+	            <th>Text</th>
+				<th>Open</th>
+				<th>0-10</th>
+				<th>Yes/No</th>
+				<th>Time and Date</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	       {% for ent in table_latest_entry %}
+			<tr>
+				<td><a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a></td> 
+				<td>{{ ent.response }}</td>
+				<td>{{ ent.response_dim }}</td>
+				<td>{{ ent.response_cat_bin }}</td>
+				<td>{{ ent.time_sent }}</td>
+			</tr>
+			{% endfor %}
+	    </tbody>
+	</table>
+
+
+		
+		<form action="#" method="get">
+		 <input type="submit" class="btn-primary btn-sm" value="Download .csv" name="export_csv_responses">
+		</form>
+
+	</div>     
+</div>
+
+
+</body>
+
+</html>
+{% endblock %}

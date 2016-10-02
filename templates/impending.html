@@ -1,0 +1,326 @@
+
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="author" content="Script Tutorials" />
+  <title>Sentimini!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- attach CSS styles -->
+
+  <link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
+  <link href={% static "css/style.css" %} rel="stylesheet" />
+</head>
+<body>
+
+  <!-- navigation panel -->
+
+
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{% url 'index' %}">Sentimini!<sub>alpha</sub></a>
+    </div>
+
+
+    {% if user.is_authenticated %}
+    <div id="navbar" class="nav nav-justified">
+      <ul class="nav navbar-nav">
+
+        <li><a href="{% url 'vis:user_vis' %}" data-toggle="collapse" data-target="#vis">Visualize</a></li>
+        <li><a href="{% url 'scaffold:emotion' %}" data-toggle="collapse" data-target="#exp">Emotions</a></li>
+        <li><a href="{% url 'ent:edit_prompt_settings' %}" data-toggle="collapse" data-target="#set">Settings</a></li>
+        <li><a href="{% url 'scaffold:about' %}" data-toggle="collapse" data-target="#about">About</a></li>
+      </ul>
+
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pause or Start Prompts <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'ent:respite_one_day' %}">Pause 1 Day</a></li>
+            <li><a href="{% url 'ent:respite_three_day' %}">Pause 3 Days</a></li>
+            <li><a href="{% url 'ent:respite_seven_day' %}">Pause 7 Days</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'ent:respite_start_again' %}">Start Again</a></li>
+          </ul>
+        </li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log Out Stuff  <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
+            <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+
+          </ul>
+        </li>
+
+        {% else %}
+        <!-- log in -->
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{% url 'account_login' %}">Sign In</a></li>
+          <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+        </ul>
+        {% endif %}
+      </div>
+    </ul>        
+  </nav>
+</div>
+
+
+
+
+
+
+
+  <!-- first section - Home -->
+  <div id="home" class="home">
+    <div class="text-vcenter">
+      <h1>Sentimini!</h1>
+      <h3>The <b>easiest, smartest, and kindest</b> emotion tracker</h3>
+      <a href="#information" class="btn btn-primary btn-lg">Sign Up</a>
+    </div>
+  </div>
+  <!-- /first section -->
+
+  <div id="services" class="pad-section">
+    <div class="container">
+      
+      <div class="row text-center">
+        <div class="col-sm-12 col-xs-6">
+          
+          <h4>System to recieve texts.</h4>
+          elevator
+          </br>
+          sign up
+          </br>
+          recieve texts
+          </br>
+          meditate
+          </br>
+          track emotions
+          </br>
+          </br>
+          </br>
+          </br>
+          </br>
+        </div>
+        </div>
+    </div>
+  </div>
+
+
+<div class="container">
+
+  <!-- Example row of columns -->
+  <div class="row" id="quotation">
+    <div class="col-md-3">
+      <h1>What is your favorite quotation about emotions?</h1>
+      <p></p>
+      <hr>
+      These will be used to provide instructions to people about what emotions are.
+      <hr>
+      <font size="6">{{emo_quot_num}}</font> total number of quotations
+      from a total of <font size="6">{{email_quot_num}}</font> people.
+      <hr>
+
+    </div>
+
+    <div class="col-md-9">
+    </br>
+    <form method='POST' action='' class="form-horizontal">
+      {% csrf_token %} {{form_emo_quotations|crispy}}
+      <input type="submit" name="form_emo_quotations" value="Submit Quotation" class="btn btn-primary btn-lg btn-block">
+    </form>
+
+      Please add as many as you like.
+  </div>
+</div>
+</div>
+  <!-- fourth section - Information -->
+  <div id="information" class="pad-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">Alpha Status</h2>
+            </div>
+            <div class="panel-body lead">
+              Currently, Sentimini is in Alpha status.  It is early stage software.  There may be bugs.  There may be changes.  
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">Alpha Status</h2>
+            </div>
+            <div class="panel-body lead">
+              Currently, Sentimini is in Alpha status.  It is early stage software.  There may be bugs.  There may be changes.  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /fourth section -->
+
+<hr>
+<div class="container">
+
+<div class="row" id="instruction">
+  <div class="col-md-3">
+    <h1>Pick an emotion and describe it to your 16 year old self.</h1>
+    <p></p>
+    <hr>
+    These will be used to provide instructions to people about what emotions are.
+      <hr>
+      
+    
+
+      <font size="6">{{emo_inst_num}}</font> total number of descriptions
+      from a total of <font size="6">{{email_inst_num}}</font> people.
+      <hr>
+   
+  </div>
+
+  <div class="col-md-9">
+  </br>
+  <form method='POST' action='' class="form-horizontal">
+    {% csrf_token %} {{form_emo_instructions|crispy}}
+    <input type="submit" name="form_emo_instructions" value="Submit Description" class="btn btn-primary btn-lg btn-block">
+  </form>
+  Please add as many as you like.
+  </div>
+</div>
+</br>
+</br>
+
+
+</div>
+</div>
+  
+  <hr>
+  
+  </div>
+
+  <!-- third section - Services -->
+  <div id="services" class="pad-section">
+    <div class="container">
+      <h2 class="text-center">The Process</h2> <hr />
+      <div class="row text-center">
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-phone-alt"> </i>
+          <h4>Receive a text</h4>
+          <p>For example: </br>How much happiness is in your present moment (0-10)?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-leaf"> </i>
+          <h4>Breathe</h4>
+          <p>Take a second.  You are alive in this wonderful world, feeling a multitude of different emotions.</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-search"> </i>
+          <h4>Look for the emotion</h4>
+          <p>You could be angry.  You could be happy.  You could be both.  But look for the emotion in the experience.  Is it there?  What does it feel like?</p>
+        </div>
+        <div class="col-sm-3 col-xs-6">
+          <i class="glyphicon glyphicon-pencil"> </i>
+          <h4>Rate from 0-10</h4>
+          <p>Don't worry.  A number will never capture your experience, so you can't do this wrong.  </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- /third section -->
+  <!-- second section - About -->
+  <div id="why" class="pad-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-4 text-center">
+          <h2>Easy</h2>
+          <p class="lead">
+            All you have to do is sign up and respond to a <b>few texts a day</b> asking about a wide range of emotions.</br>
+            You can <b>take breaks</b> whenever you need by texting, "pause".</br>
+
+
+          </p>
+        </div>
+        <div class="col-sm-4 text-center">
+          <h2>Smart</h2>
+          <p class="lead">
+            Since the time and the emotion of the <b>texts are randomized</b>, quantitative patterns can be examined.  What emotions exist?  Do I experience emotions like my fellow humans?
+          </p>
+        </div>
+        <div class="col-sm-4 text-center">
+          <h2>Kind</h2>
+          <p class="lead">
+          Your time is respected by requiring <b>little effort</b> and providing a sensible structure to evaluate quantitative patterns of your emotional life and <b>experience emotions</b> in your present moment.
+
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /second section -->
+
+  <!-- fourth section - Information -->
+
+<hr>
+  <!-- /first section -->
+<div class="container">
+  <!-- Example row of columns -->
+  <div class="row" id="free">
+    <div class="col-md-3">
+      <h1>FAQ</h1>
+      
+      <p>These are so that we can contact you, but also not wake you up.</p>
+    </div>
+
+    <div class="col-md-9">
+    </br>
+      <form class="signup" method="post" action=''>
+              {% csrf_token %}
+              <h3>Add your thoughts below!</h3>
+              Want a new feature?
+              Have and idea?  
+              Just let us know:
+              {{ form|crispy }}
+<input type="submit" name ="submit" value="Add your thoughts!" class="btn btn-primary btn-lg btn-block">
+  </div>
+</div>
+
+
+
+</div>
+</div>
+ 
+ 
+
+  <!-- footer -->
+  <footer>
+    <hr />
+    <div class="container">
+      <p class="text-right">Copyright &copy; sentimini 2016</p>
+    </div>
+  </footer>
+  <!-- /footer -->
+
+  <!-- attach JavaScripts -->
+
+  <script src={% static "js/jquery.min.js" %}></script>
+  <script src={% static "js/bootstrap.min.js" %}></script>
+  <script src={% static "js/main.js" %}></script>
+
+</body>
+</html>
+
+

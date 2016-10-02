@@ -1,0 +1,30 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 20px 70px;
+  text-align: left;
+}
+
+
+.table-borderless tbody tr td, .table-borderless tbody tr th, .table-borderless thead tr th {
+    border: none;
+}
+
+.form-horizontal .control-label{
+/* text-align:right; */
+text-align:left;
+
+}
+
+
+.my_fancy_class_name {
+    font-size: 100%;  /* You can change the font size */
+    color: green;    /* You can change the font color */
+    
+}
+
+.asteriskField {
+    display: none;
+}
+

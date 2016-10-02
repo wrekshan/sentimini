@@ -2,164 +2,237 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from django.forms import modelformset_factory
 import pytz
-
+from random import random, triangular, randint
+from django.db.models import Avg, Count, F, Case, When
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+from time import strptime
 # Create your views here.
-from .forms import  UserSettingForm_Prompt, UserGenPromptForm, UserSettingForm_PromptRate, ExampleFormSetHelper, UserSettingForm_Prompt_Paid
-from .models import Emotion, Entry, UserSetting, Carrier, Respite, UserGenPrompt
+from .forms import  UserSettingForm_Prompt, PossibleTextSTMForm, UserSettingForm_PromptRate, ExampleFormSetHelper, EmotionOntologyForm, EmotionOntologyFormSetHelper, UserGenPromptFixedForm, UserGenPromptFixedFormSetHelper, TimingForm, PossibleTextSTMForm_detail
+from .models import PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, ExperienceSetting
+
+from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap, get_graph_data_histogram_timing
+from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes
+
+from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse
 
 
-#This is the main view to edit the user generated prompts
-def edit_user_gen_prompt_settings(request):
+
+def texter(request):
 	if request.user.is_authenticated():	
-		if  UserSetting.objects.all().filter(user=request.user).exists():
-			working_settings = UserSetting.objects.all().get(user=request.user)
-		else: 
-			working_settings = UserSetting(user=request.user).save()
 
-		if UserGenPrompt.objects.filter(user=request.user).count()>0:
-			working_user_gen = UserGenPrompt.objects.all().filter(user=request.user).filter(show_user=False)
-		else:
-			working_user_gen = UserGenPrompt(user=request.user).save()
-	
-		UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
-		prompt_rate_form = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
-		helper = ExampleFormSetHelper()
-		
-		if request.method == "POST":
-			print("FORM SET STUFF")
-			#do the formset stuff
-			formset = UGPFormset(request.POST, queryset = working_user_gen )
+		#Create the Text
+		if request.GET.get('create_unsent_text'):
+			print("Creating Unsent Texts")
+			text_new = ActualTextSTM(user=request.user, response=None,simulated=0,text_type="user")
+			text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,text_type="user")
+			text_new.text, text_new.response_type = determine_prompt_texts(user=request.user,prompt=text_new.text,typer=text_new.text_type)
+			text_new.time_to_send = set_prompt_time(text=text_new,send_now=1)
+			text_new.save()
 			
+			return HttpResponseRedirect('/ent/texter/')
+			
+		# Send the text	
+		if request.GET.get('check_for_unsent'):
+			print("button pressed . sending texts")
+			send_texts()
+			return HttpResponseRedirect('/ent/texter/')
 
-			if formset.is_valid and prompt_rate_form.is_valid():
-				messages.add_message(request, messages.INFO, 'User prompt settings changed!')			
-				for form in formset:
-					if form.has_changed():
-						tmp = form.save(commit=False)
-						tmp.user = request.user
-						tmp.date_create = datetime.now(pytz.utc)
-						tmp.save()
+		if request.GET.get('schedule'):
+			print("SCHEDULE")
+			schedule_texts()
+			return HttpResponseRedirect('/ent/texter/')
 
-				tmp = prompt_rate_form.save(commit=False)
-				working_settings.user_generated_prompt_rate = tmp.user_generated_prompt_rate
-				working_settings.save()
+		if request.GET.get('check_email_for_new'):
+			print("check_email_for_new")
+			check_email_for_new()
+			return HttpResponseRedirect('/ent/texter/')
 
-				return HttpResponseRedirect(reverse('ent:edit_user_gen_prompt_settings'))
-			else:
-				context = {
-					"helper": helper,
-					"prompt_rate_form": prompt_rate_form, 
-					"query_results": working_user_gen,
-					"formset": formset,
-				}
-				return render(request, "edit_user_gen_prompts.html", context)
-		else:
-			formset = UGPFormset(queryset = working_user_gen)
-			context = {
-				"helper": helper,
-				"prompt_rate_form": prompt_rate_form, 
-				"query_results": working_user_gen,
-				"formset": formset,
-			}
-			return render(request, "edit_user_gen_prompts.html", context)
+		if request.GET.get('process_new_mail'):
+			print("process_new_mail")
+			process_new_mail()
+			return HttpResponseRedirect('/ent/texter/')
+
+		if request.GET.get('actual_text_consolidate'):
+			print("actual_text_consolidate")
+			actual_text_consolidate()
+			return HttpResponseRedirect('/ent/texter/')
+
+		if request.GET.get('check_for_nonresponse'):
+			print("check_for_nonresponse")
+			check_for_nonresponse()
+			return HttpResponseRedirect('/ent/texter/')					
+
+			
+	
+		
+		context = {
+			
+		}			
+
+		return render(request,"texter.html",context)
 	else:
-		return render(request, "index_not_logged_in.html")
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+
+
 
 #User settings
 def edit_prompt_settings(request):
 	if request.user.is_authenticated():	
 		if  UserSetting.objects.filter(user=request.user).exists():
 			working_settings = UserSetting.objects.all().get(user=request.user)
-			intro_text = "Welcome " + str(request.user) + "!"
 		else: 
-			working_settings = UserSetting(user=request.user).save()
-			intro_text = "Welcome " + str(request.user) + "!"
+			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc)).save()
 
-		if UserGenPrompt.objects.filter(user=request.user).count()>0:
-			working_user_gen = UserGenPrompt.objects.all().filter(user=request.user).filter(show_user=False)
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+		else: 
+			working_experience = ExperienceSetting(user=request.user,experience='user').save()
+
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
 		else:
-			working_user_gen = UserGenPrompt(user=request.user).save()
+			tmp = ExperienceSetting(user=request.user,experience='research',prompts_per_week=1)
+			tmp.save()
 
-		form_free = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
-		form_paid = UserSettingForm_Prompt_Paid(request.POST or None, instance=working_settings)
-		UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
-		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
-		formset = UGPFormset(queryset = working_user_gen)
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+			min_awake = (24 - working_settings.sleep_duration)*60
+			working_research.prompt_interval_minute_avg = ((24 - working_settings.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+			working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+			working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+			working_research.save()
+
+		#UGPR
+		if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()>0:
+			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user")
+		else:
+			PossibleTextSTM(user=request.user,text='How much goodness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+			PossibleTextSTM(user=request.user,text='How much badness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+			PossibleTextSTM(user=request.user,text='How much dullness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+
+			tmp1=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much goodness is in your present moment (0-10)?').first()
+			tmp2=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much badness is in your present moment (0-10)?').first()
+			tmp3=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much dullness is in your present moment (0-10)?').first()
+
+			PossibleTextLTM(user=request.user,stm_id=tmp1.id,text='How much goodness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+			PossibleTextLTM(user=request.user,stm_id=tmp2.id,text='How much badness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+			PossibleTextLTM(user=request.user,stm_id=tmp3.id,text='How much dullness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
+
+			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user")
+
+
+		############ SET UP THE FORMS
+		#UGPR
+		if PossibleTextSTM.objects.filter(user=request.user).count()==1:
+			UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=1)
+			formset = UGPFormset(queryset = working_user_gen)
+		else:
+			UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=0)
+			formset = UGPFormset()
+
 		helper = ExampleFormSetHelper()
+		form_free = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
+		form_sleep = TimingForm(request.POST or None, instance=working_settings)
+		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
+		
+		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
+		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
+		graph_data_histogram_timing = get_graph_data_histogram_timing(request,simulated_val=1)
+		prompts_per_week = working_settings.prompts_per_week
 
-
+		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
-			formset = UGPFormset(request.POST, queryset = working_user_gen )
-			if 'submit_formset' in request.POST:
-				if formset.is_valid:
-					print("FORMSET VALID")
-					messages.add_message(request, messages.INFO, 'User prompt settings changed!')			
-					for form in formset:
-						print("FORMSET LOOP")
-						if form.has_changed():
-							print("FORMSET CHANGED")
-							tmp = form.save(commit=False)
-							tmp.user = request.user
-							tmp.date_create = datetime.now(pytz.utc)
-							tmp.save()
-					working_settings.save()
-				return HttpResponseRedirect('/ent/edit_prompt_settings/#usergen')	
+			if PossibleTextSTM.objects.filter(user=request.user).count()==1:
+				formset = UGPFormset(request.POST)
+			else:
+				formset = UGPFormset(request.POST, queryset = working_user_gen )
 
-			elif 'submit_paid' in request.POST:
-				print("SUBMIT PAID")
-				if form_paid.is_valid():
-					print("SUBMIT PAID VALID")
-					tmp_settings = form_paid.save(commit=False)
+			if 'submit_formset' in request.POST:
+				if formset.is_valid: 
+					for form in formset:
+						if form.is_valid() and form.has_changed():	
+							tmp = form.save()
+							if tmp.date_created is None:
+								tmp.date_created = datetime.now(pytz.utc)
+								tmp.save()
+							
+							#Save any changes in long term storage
+							ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+							ptltm.save()
+				return HttpResponseRedirect('/ent/edit_prompt_settings/#create_your_own_texts')
+
+			elif 'submit_timing' in request.POST:
+				if form_sleep.is_valid():
+					form_sleep.save()
+					tmp_settings = form_sleep.save(commit=False)
+					working_experience.prompts_per_week = tmp_settings.prompts_per_week
 					min_awake = (24 - tmp_settings.sleep_duration)*60
-					tmp_settings.prompt_interval_minute_avg = min_awake / tmp_settings.prompts_per_day #used in the random draw for the number of minutes to next prompt
+					working_experience.prompt_interval_minute_avg = ((24 - tmp_settings.sleep_duration)*60) / (working_experience.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+					working_experience.prompt_interval_minute_min =  working_experience.prompt_interval_minute_avg*.5
+					working_experience.prompt_interval_minute_max =  working_experience.prompt_interval_minute_avg*4
+					working_experience.save()
 					tmp_settings.save()
-					messages.add_message(request, messages.INFO, 'Paid Settings Changed')
+					
 					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
 
 			elif 'submit_unpaid' in request.POST:
-				print("SUBMIT UNPAID")
 				if form_free.is_valid():
-					print("SUBMIT UNPAID VALID")
 					tmp_settings = form_free.save(commit=False)
 					tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
 					tmp_settings.sms_address =  tmp_settings.phone + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
 					tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
 					tmp_settings.save()
-					messages.add_message(request, messages.INFO, 'Unpaid Settings Changed')		
-					return HttpResponseRedirect('/ent/edit_prompt_settings/#free')		
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
 
 			elif 'submit_prompt_percent' in request.POST:
-				print("PROMPT PERCENT PAID")
 				if form_prompt_percent.is_valid():
-					print("SUBMIT PAID VALID")
 					tmp_settings = form_prompt_percent.save(commit=False)
-					min_awake = (24 - tmp_settings.sleep_duration)*60
-					tmp_settings.prompt_interval_minute_avg = min_awake / tmp_settings.prompts_per_day #used in the random draw for the number of minutes to next prompt
+					working_research.prompts_per_week = tmp_settings.prompts_per_week
+
+					min_awake = (24 - working_experience.sleep_duration)*60
+					working_research.prompt_interval_minute_avg = ((24 - working_experience.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+					working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+					working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+					
 					tmp_settings.save()
-					messages.add_message(request, messages.INFO, 'Paid usergen Changed')
 					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
 				
 		else:
-			print("ELSE")
 			form_free = UserSettingForm_Prompt(request.POST or None, instance=UserSetting.objects.all().get(user=request.user))
-			form_paid = UserSettingForm_Prompt_Paid(request.POST or None, instance=UserSetting.objects.all().get(user=request.user))
-			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_settings)
-			UGPFormset = modelformset_factory(UserGenPrompt, form = UserGenPromptForm, extra=1)
-			formset = UGPFormset(queryset = working_user_gen)
+			form_sleep = TimingForm(request.POST or None, instance=working_settings)
+			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
+
+			if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()==1 and PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").first().prompt == '':
+				print("EQUAL TO ONE")
+				UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=0)
+				formset = UGPFormset()
+			else:
+				print("NOT ONE")
+				UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=1)
+				formset = UGPFormset(queryset = working_user_gen)
+				
+			helper = ExampleFormSetHelper()
+
 			context = {
+				"prompts_per_week": prompts_per_week,
+
 				"helper": helper,
-				"form_prompt_percent": form_prompt_percent, 
-				"intro_text": intro_text,
+				"form_sleep": form_sleep,
 				"form_free": form_free,
-				"form_paid": form_paid,
 				"form_prompt_percent": form_prompt_percent,
 				"formset": formset,
+
+				"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
+				"graph_data_histogram_timing": graph_data_histogram_timing,
 			}
 			return render(request, "settings_prompts.html", context)
-
 	else:
 		return render(request, "index_not_logged_in.html")
 

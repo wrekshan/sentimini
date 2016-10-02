@@ -1,0 +1,193 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+	$(document).ready(function() {
+		$('#blog_archive').DataTable({
+			"columns": [
+			{ "width": "50%" },
+			{ "width": "25%" },
+			{ "width": "25%" },
+			]
+
+		});
+	} );
+</script>
+
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#overview">Why</a></li>
+				<li><a href="#uses">How</a></li>
+				<li><a href="#uses">Request Data</a></li>
+			</ul>
+		</div>
+	</div>
+
+	
+
+
+
+	<div class="container">
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Aims</h1>
+				By default, you are signed up to participate in the Open Data Project, which has three goals
+
+			</div>
+			<div class="col-md-10">
+				<h3>Improving user experience</h3>
+				These are questions related to what you, as a person who uses this tool, really want.  
+				<li>What is the optimal frequency of text messages?</li>
+				<li>What do people use the text messages for?</li>
+				<li>When are the texts answered and when are they not?</li>
+
+				</br>
+				<h3>Validity of method</h3>
+				These are questions related to determining if it is even sensible to measure states of being in this way (mainly statistical in nature)
+				<li>Do these measurements actually relate to something in real life?</li>
+				<li>What are the minimum number of observations needed to draw a conclusion from quantitative comparisons?</li>
+				<li>Do instructions alter responses?</li>
+				<li>Does learning or behavior change occur in relationship to behavior with Sentimini?</li>
+
+				</br>
+				<h3>Understanding human experience</h3>
+				This is the big question.  There are 9 billion people on this planet, each one with a very rich, but very different experience than my own. Through the internet and mobile technology, we are literally more connected than ever.
+				What are they experiencing?  How do I fit in?  How am I the same or different than others?
+				</br></br>
+				The number of questions here seem endless:
+				<li>What are the different emotions people experience throughout the day?</li>
+				<li>What are the circadian variation in human experience?</li>
+				<li>How does experience change with age? with geographic location?</li>
+				<li>What encourages human flourishing?</li>
+
+
+			</div>     
+		</div>
+
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Why Open Data?</h1>
+			</div>
+			<div class="col-md-10">
+			Here are a collection of facts to set the stage:
+			<li>XXXX texts are sent per day from XXX text enabled cell phone</li>
+			<li>XX billion people have the ability to text (vs XX billion with a smart phone)</li>
+			<li>Latern start up for XX million, Pacifica start up</li>
+			<li>Nature infographic</li>
+			<li>XX million people already seeking help from mobile device apps</li>
+			</br>
+			The basic premise of Sentimini, texting people questions or content and collecting their responses, is decpetively simple.  In reality, this or similiar methodology, is already being used by doctors, psychologists, and researchers are already this or similiar methodology to diagnosis people 
+			<li>Nature infographic</li>
+			</br>
+			Intervne
+			<li>Nature infographic</li>
+			</br>
+			Learn
+			<li>Nature infographic</li>
+			</br>
+			It would be great for an open data framework to exist so that we can learn.
+			
+
+
+
+				
+
+
+			</div>     
+		</div>
+
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>How</h1>
+				
+
+			</div>
+			<div class="col-md-10">
+				By default, you are signed up to participate in the Open Data Project.  If you do not want to participate, you can uncheck the box in the Settings page.  
+				</br></br>
+				Sentimini will send you questions in blocks of three, one right after the other.  You will be sent no more than 2 blocks of texts per week.  
+				</br></br>
+				Just think about the question for a moment and answer.  If you do not want to answer, you do not have to answer.  If you do not like a question in the block of texts, you can just text, "next", to receive the next question.  
+				</br></br>
+				An example block could be:
+				<li>What is your age?</li>
+				<li>How sleepy are you (0-10)?</li>
+				<li>How much goodness is in your experience (0-10)?</li>
+				</br>
+				or:
+				<li>How happy are you in life (0-10)?</li>
+				<li>How satisified are you in life (0-10)?</li>
+				<li>What is happiness (please write a definition in a few sentances)?</li>
+				</br>
+				Questions will be asked semi-randomly focusing on specific research questions.  Research questions, plans, data, and results are shared on the blog.  If you have a research question you would like to ask, please contact me here.  
+
+				
+
+			</div>     
+		</div>
+		
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Request Data</h1>
+
+			</div>
+			<div class="col-md-10">
+				As this is a beta, infrastructure for data sharing is still being built.  Anonymonity is very important.
+
+			</div>     
+		</div>
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Your Data</h1>
+
+			</div>
+			<div class="col-md-10">
+				Access you data at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+
+			</div>     
+		</div>
+
+
+
+
+
+	</div>
+		
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}

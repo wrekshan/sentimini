@@ -1,0 +1,146 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+	$(document).ready(function() {
+		$('#blog_archive').DataTable({
+			"columns": [
+			{ "width": "50%" },
+			{ "width": "25%" },
+			{ "width": "25%" },
+			]
+
+		});
+	} );
+</script>
+
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#overview">Why</a></li>
+				<li><a href="#uses">How</a></li>
+				<li><a href="#uses">Request Data</a></li>
+			</ul>
+		</div>
+	</div>
+
+	
+
+
+
+	<div class="container">
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Overview</h1>
+
+			</div>
+			<div class="col-md-10">
+			This page just serves as a testing ground for the automated processes involved in texting people and collect their responses.
+			
+				
+
+
+			</div>     
+		</div>
+
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Input / Output</h1>
+
+			</div>
+			<div class="col-md-10">
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="Create Unsent" name="create_unsent_text">
+				</form>
+
+				</br></br>
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="Check for unsent" name="check_for_unsent">
+				</form>
+				
+				</br></br>
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="check_email_for_new" name="check_email_for_new">
+				</form>
+
+				</br></br>
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="process_new_mail" name="process_new_mail">
+				</form>
+
+				</br></br>
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="actual_text_consolidate" name="actual_text_consolidate">
+				</form>
+
+				</br></br>
+				<form action="#" method="get">
+				 <input type="submit" class="btn-primary btn-sm" value="check_for_nonresponse" name="check_for_nonresponse">
+				</form>
+				
+
+			</div>     
+		</div>
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Request Data</h1>
+
+			</div>
+			<div class="col-md-10">
+				As this is a beta, infrastructure for data sharing is still being built.  Anonymonity is very important.
+
+			</div>     
+		</div>
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Your Data</h1>
+
+			</div>
+			<div class="col-md-10">
+				Right now, this is just the table of answered questions, which link to the text detail page.
+
+			</div>     
+		</div>
+
+
+
+
+
+	</div>
+		
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}

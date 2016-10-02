@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+	$(document).ready(function() {
+		$('#blog_archive').DataTable({
+			"columns": [
+			{ "width": "50%" },
+			{ "width": "25%" },
+			{ "width": "25%" },
+			]
+
+		});
+	} );
+</script>
+
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#overview">Why</a></li>
+				<li><a href="#uses">How</a></li>
+				<li><a href="#uses">Request Data</a></li>
+			</ul>
+		</div>
+	</div>
+
+	
+
+
+
+	<div class="container">
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Formset</h1>
+				By default, you are signed up to participate in the Open Data Project, which has three goals
+
+			</div>
+			<div class="col-md-10">
+				 {% for wh in working_help %}
+				 <h1>{{wh.minor_cat|safe}}</h1>
+				 <b>{{wh.help_heading|safe}}</b> - {{wh.help_content|safe}}
+
+
+				  {% endfor %}
+
+
+			</div>     
+		</div>
+
+		
+
+
+
+
+
+	</div>
+		
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}

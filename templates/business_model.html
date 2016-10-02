@@ -1,0 +1,266 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+	$(document).ready(function() {
+		$('#blog_archive').DataTable({
+			"columns": [
+			{ "width": "50%" },
+			{ "width": "25%" },
+			{ "width": "25%" },
+			]
+
+		});
+	} );
+</script>
+
+
+<body>
+
+
+
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#overview">Overview</a></li>
+				<li><a href="#uses">Technical Feasibility</a></li>
+				<li><a href="#beta">Social Feasibility</a></li>
+				<li><a href="#research">Financial Feasibility</a></li>
+				<li><a href="#research">Assumptions</a></li>
+				
+
+			</ul>
+		</div>
+	</div>
+
+	
+
+
+
+	<div class="container">
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Overview</h1>
+
+			</div>
+			<div class="col-md-10">
+				Sentiminis is designed to:
+				<li>Contact people at semi-random times</li>
+				<li>Collects and analyzes the responses</li>
+				</br>
+				Ideally, this will be done in:
+				<li>A self-supporting manner through either donations, a paid consumer feature, facilitating communication on wellness settings, or providing tools for people to communicate with large groups of people.</li>
+				<li>A open data / open source / open science framework.</li>
+				</br>
+				Is this feasible?  As far as I can tell, there are three forms of feasibility.
+				<li>Technical/Methodological - can this be done with current technology?</li>
+				<li>Social - will people hear about this site?  Will they use it?</li>
+				<li>Financial - how much will such a system cost?</li>
+
+			</div>     
+		</div>
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Technical Feasibility</h1>
+
+			</div>
+			<div class="col-md-10">
+			There is a precedent:
+			<li>A large number of companies are using automatically generated text messages to communicate with their clients (TinyPulse, Uber, Lyft, etc).</li>
+			<li>In addition, text messaging has been used in numerous research projects (mappiness, havard guy, kaheleme, UCB, etc).</li>
+			<li>Other apps use text messaging (good habit maker, food thing christine talks about)</li>
+			</br>
+			The trickiest part of this is actually sending the text messages.  This can be done in three ways.
+			</br></br>
+			<h4>SMS Gateways</h4>
+			<li>Free</li>
+			<li>May not be reliable</li>
+			<li>Takes effort to set up</li>
+			</br>
+			<h4>Using Carrier Emails</h4>
+			<li>Free</li>
+			<li>Reliability isn't great</li>
+			<li>Very easy to set up.  This is the default experience for Sentimini</li>
+			</br>
+			<h4>Paid Services (Twilio or Plivio)</h4>
+			<li>Cost money</li>
+			<li>Very easy to set up</li>
+			<li>Very reliable</li>
+			</div>     
+		</div>
+
+		<hr>
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h1>Social Feasibility</h1>
+
+			</div>
+			<div class="col-md-10">
+			The best way to determine if people would use Sentimini is to estimate the range of people using similiar services.  Google's play store offers rough number of downloads per apps.  
+			</br></br>
+			
+			<h3>Mindfulness apps:</h3>
+			<li>Headspace:  1 - 5 million</li>
+			<li>The Mindfulness App: 50k-100k</li>
+			<li>Mindfulness: Art Of Being: 50k-100k</li>
+			
+			</br>
+			<h3>Emotion tracking apps:</h3>
+			<li>Mood panda: 50k-100k</li>
+			<li>t2 mood tracker: 100k-500k</li>
+			<li>In Flow - Mood Diary: 10k-50k</li>
+			<li>Emotion Sense (Cambridge): 10k-50k</li>
+			<li>Moodlytics: 50k-100k</li>
+			<li>Diary - Mood Tracker: 100k-500k</li>
+			
+			</br>
+			<h3>Psychology/Wellness apps:</h3>
+			<li>Pacifica: 100k-500k</li>
+			<li>Happify:  100k-500k</li>
+			<li>Depression CBT Self-Help Guide: 100k - 500k</li>
+
+			</br>
+			Therefore, a conservative estimate of the expected numbers of users would 10k-50k.  The actual number of users could be higher because Sentimini:
+			<li>Uses technology that is ubiquitious (My grandmother had a text enabled cell phone 10 years ago!)</li>
+			<li>Is the simpliest form of the technology and would be useful in many different areas</li>
+
+			</br>
+			A word of mouth marketing strategy is also feasible.
+			<li>Sentimini and the open data project are interesting and will produce content that increases SEO</li>
+			<li>There is a lot of interest in using technology for wellness</li>
+			<li>Many blogs cover products like Sentimini</li>
+			
+			</div>     
+		</div>
+
+
+		<hr>
+
+		
+
+
+		<!-- Example row of columns -->
+		<div class="row" id="graphics">
+			<div class="col-md-2">
+				<h1>Financial Feasibility</h1>
+
+			</div>
+
+			<!-- Example row of columns -->
+
+
+			<div class="col-sm-8 ">
+
+				<div style="width:100%;height:800">
+					{{ graph_data_line_chart_business_model|safe }}
+				</div>
+
+
+			</div>
+			<div class="col-sm-2 ">
+			<h3>{{sustainability_numbers.number_of_users}}</h3>total users needed to achieve a sustainablity assuming
+			<h3>{{sustainability_numbers.con_conversation_rate_to_paid}}</h3>of users or
+			<h3>{{sustainability_numbers.number_of_paid}}</h3>people paying
+			<h3>{{sustainability_numbers.return_per_user}}</h3>a month
+			
+
+			</div>
+		</div>
+
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				<h3>Assumptions:</h3>
+
+			</div>
+			<div class="col-md-10">
+			<hr>
+				This assumes a freeium business model, with two tiers:
+				<li>Free - Sends texts of varying content at semi-random times and collects responses</li>
+				<li>Paid - Additionally, sends texts of specific content at specific times and collects responses</li>
+				<br>
+				This is a useful price point because:
+				<li>This is an advanced feature - If you are looking for a system to text you specific content at specific times, you would be willing to pay for it</li>
+				<li>It is probable that the free methods of sending texts will be too unreliable to truly provide the ability to send specific texts at specific times.</li>
+				<li>Therefore, it would cost money to provide this service (via Twilio or Plivo)</li>
+				<br>
+				This model is optimistic in that is assumes a free version can be provided (which is likely).  However, if this is not the case, possible products could be:
+				<li>Facilitating communication in wellness settings</li>
+				<li>Offering specific experiences (quit smoking now, record your dreams, pain evaluation, etc.)</li>
+				<br>
+				Assuming the freemium model, to achieve sustainability, Sentimini would have to achieve {{sustainability_numbers.number_of_users}} people using the product, with {{sustainability_numbers.number_of_paid}} of them ({{sustainability_numbers.con_conversation_rate_to_paid}}) paying {{sustainability_numbers.return_per_user}} a month.
+
+
+
+			<hr>
+			</div>
+		</div>
+		
+		<div class="row" id="overview">
+			<div class="col-md-2">
+				
+
+			</div>
+			<div class="col-md-5">
+				<h3>Texting Costs</h3>
+				<form method='POST' action='' class="form-horizontal">
+					{% csrf_token %} {% crispy price_form %}
+				</form>
+			</div>
+			<div class="col-md-5">
+				<h3>Static Costs</h3>
+				<form method='POST' action='' class="form-horizontal">
+					{% csrf_token %} {% crispy static_costs_form %}
+				</form>
+			</div>
+		</div>
+
+		<div class="row" id="overview">
+		
+			<div class="col-md-2">
+
+
+			</div>
+			<div class="col-md-5">
+				<h3>Number of Texts</h3>
+				<form method='POST' action='' class="form-horizontal">
+					{% csrf_token %} {% crispy number_texts_form %}
+				</form>
+			</div>
+			<div class="col-md-5">
+				<h3>User Behavior</h3>
+				<form method='POST' action='' class="form-horizontal">
+					{% csrf_token %} {% crispy user_stuff_form %}
+				</form>
+			</div>
+		</div>
+
+	</div>     
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
+{% endblock %}

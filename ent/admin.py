@@ -1,62 +1,140 @@
 from django.contrib import admin
 
-from .models import Carrier, Respite, Entry, UserSetting, Emotion, NewUserPrompt, UserGenPrompt, Incoming, Outgoing
+from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting
 
 # Register your models here.
+#NEW
 
-
-
-
-class EntryModelAdmin(admin.ModelAdmin):
+class PossibleTextSTMModelAdmin(admin.ModelAdmin):
 	list_display = [
-		"id",
 		"user",
-		"prompt",
-		"time_to_send",
-		"time_sent",
-		"send_next_immediately",
+		"text",
+		"text_type",
+		"text_importance",
+		"response_type",
+		"show_user",
+		"date_created",
+		"date_altered",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
+		model = PossibleTextSTM
+
+admin.site.register(PossibleTextSTM,PossibleTextSTMModelAdmin)
+
+
+class PossibleTextLTMModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"stm_id",
+		"text",
+		"text_type",
+		"text_importance",
+		"response_type",
+		"show_user",
+		"date_created",
+		"date_altered",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
+		model = PossibleTextLTM
+
+admin.site.register(PossibleTextLTM,PossibleTextLTMModelAdmin)
+
+class ActualTextSTMModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"text_id",
+		"textstore_id",
+		"time_to_add",
+		"system_text",
+		"text",
+		"consolidated",
 		"ready_for_next",
-		"prompt_reply",
-		"prompt_type",
 		"series",
 		"failed_series",
-		"response_time_seconds",
-		"time_created",
-		"time_response",
+		"response",
+		"response_type",
+		"text_type",
+		"time_to_send",
+		"time_sent",
+		"simulated",
 	]
-	list_display_links = ["prompt"]
-	list_filter = [
-		"user",
-		"prompt",
-	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
 	class Meta:
-		model = Entry
+		model = ActualTextSTM
 
-admin.site.register(Entry,EntryModelAdmin)
+admin.site.register(ActualTextSTM,ActualTextSTMModelAdmin)
+
+
+class ActualTextLTMModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"text_id",
+		"stm_id",
+		"textstore_id",
+		"text",
+		"time_to_send_circa",
+		"time_to_send_day",
+		"series",
+		"failed_series",
+		"text_type",
+		"response",
+		"response_cat",
+		"response_cat_bin",
+		"response_dim",
+		"time_response",
+		"time_to_send",
+		"time_sent",
+		"simulated",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
+		model = ActualTextLTM
+
+admin.site.register(ActualTextLTM,ActualTextLTMModelAdmin)
+
+
+#OLD
+class ExperienceSettingModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"experience",
+		"prompts_per_week",
+		"active",
+		"prompt_interval_minute_avg",
+		"prompt_interval_minute_min",
+		"prompt_interval_minute_max",
+		"time_to_declare_lost",
+		"research_instr_dim_rate",
+		"research_prompt_multiple_rate",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
+		model = ExperienceSetting
+
+admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
+
 
 class UserSettingModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
+		"begin_date",
 		"send_text",
-		"teaching_period_on",
 		"text_request_stop",
 		"respite_until_datetime",
-		"prompts_per_day",
-		"prompt_interval_minute_avg",
-		"prompt_interval_minute_min",
-		"prompt_interval_minute_max",
+		"prompts_per_week",
 		"phone",
 		"carrier",
 		"sms_address",
 		"timezone",
 		"sleep_time",
 		"sleep_duration",
-		"emotion_core_rate",
-		"emotion_top100_rate",
-		"emotion_other_rate",
-		"user_generated_prompt_rate",
-		"prompt_multiple_rate",
-		"instruction_rate",
 	]
 	list_display_links = ["user"]
 	list_filter = ["user"]
@@ -106,34 +184,43 @@ class OutgoingModelAdmin(admin.ModelAdmin):
 
 admin.site.register(Outgoing,OutgoingModelAdmin)
 
-class NewUserPromptModelAdmin(admin.ModelAdmin):
-	list_display = ["prompt","prompt_type","NUP_seq","send_next_immediately"]
-	list_display_links = ["prompt"]
-	list_filter = ["prompt"]
-	search_fields = ["prompt"]
-	list_editable = ["prompt_type","NUP_seq","send_next_immediately"]
+
+
+class OntologyModelAdmin(admin.ModelAdmin):
+	list_display = ["ontological_name","ontological_type","prompt_set","prompt_set_percent"]
+	list_display_links = ["ontological_name"]
+	list_filter = ["ontological_name"]
+	search_fields = ["ontological_name"]
 	class Meta:
-		model = NewUserPrompt
+		model = Ontology
 
-admin.site.register(NewUserPrompt,NewUserPromptModelAdmin)
+admin.site.register(Ontology,OntologyModelAdmin)
 
-class UserGenPromptModelAdmin(admin.ModelAdmin):
-	list_display = ["user","prompt","date_created","active","show_user"]
+
+class PrompttextModelAdmin(admin.ModelAdmin):
+	list_display = ["text","text_type","text_percent"]
+	list_display_links = ["text"]
+	list_filter = ["text"]
+	search_fields = ["text"]
+	class Meta:
+		model = Prompttext
+
+admin.site.register(Prompttext,PrompttextModelAdmin)
+
+class UserGenPromptFixedModelAdmin(admin.ModelAdmin):
+	list_display = ["id","user","prompt","date_created","begin_datetime","end_datetime", "repeat_denomination", "repeat_number"]
 	list_display_links = ["user","prompt"]
 	list_filter = ["user","prompt"]
 	search_fields = ["user","prompt"]
 	
 	class Meta:
-		model = UserGenPrompt
+		model = UserGenPromptFixed
 
-admin.site.register(UserGenPrompt,UserGenPromptModelAdmin)
+admin.site.register(UserGenPromptFixed,UserGenPromptFixedModelAdmin)
 
-class EmotionModelAdmin(admin.ModelAdmin):
-	list_display = ["emotion","emotion_type"]
-	list_display_links = ["emotion"]
-	list_filter = ["emotion"]
-	search_fields = ["emotion"]
-	class Meta:
-		model = Emotion
 
-admin.site.register(Emotion,EmotionModelAdmin)
+
+
+
+
+

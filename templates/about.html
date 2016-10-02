@@ -1,47 +1,156 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
 
 
-{% block content %}
+<!--DOCTYPE html -->
 
-</br>
-<div class="span12 pagination-centered">
-	<div class="col-md-8">
-	Emojinsei is a smart emotion tracking app.  
+<html>
+<title>Sentimini! - About</title>
+<body>
+	{% block content %}
 
-	
+	<div class="container">
+		<div id="navbar" class="nav nav-justified">
+			<ul class="nav navbar-nav">
+				<li><a href="#overview">Overview</a></li>
+				<li><a href="#beta">Beta</a></li>
+				<li><a href="#open_data">Open Data</a></li>
+				<li><a href="#blog">Blog</a></li>
+				<li><a href="#team">Team</a></li>
+				<li><a href="#donate">Donate</a></li>
 
-
-
-
-
-
-
-
-
-
-
-
-
-	</br></br>
-	Emotions are the fabric of life.  They color how we see the world and interact with others.
-	</br></br>
-	You'll sign up on the webpage, but immediately you'll start to recieve text messages that asks you about your experience with specific emotions.  
-	</br></br>
-	All you have to do is respond to the text messages with number between 0 and 10.  Think of it like a percentage.
-	</br></br>
-	We hope that this will provide you with:
-	<li>a periodic reminder to just pay attention to this wonderful world and </li>
-	<li>data about how you experience emotions</li>
-	</br>
-	Emojinsei is based upon statistical principles.  We hope to provide with you valid inferences about your emotional life.  But, more than this, we hope to be able to understand this world more fully and use this data for social change.  
-	</br></br>
-	If you ever need a break, just text 'stop'.
-	</br></br>
-	SIGN UP HERE OR LOG IN!
+			</ul>
+		</div>
 	</div>
+
+	{% if messages %} {% for message in messages %}
+	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
 </div>
-</br>
+{% endfor %} {% endif %}
 
 
+
+
+
+
+
+
+
+<div class="container">
+
+
+	<hr>
+	<div class="row" id="overview">
+		<div class="col-md-2">
+			<h1>Overview</h1>
+		</div>
+		<div class="col-md-10">
+		Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+		</br></br>
+		It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+		</br></br>
+		You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
+</div>     
+</div>
+
+
+
+<hr>
+<div class="row" id="beta">
+	<div class="col-md-2">
+		<h1>Beta</h1>
+	</div>
+	<div class="col-md-10">
+	Sentimini is in beta status.  There is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
+	</br></br>
+	Next major steps:
+	<li>Curated experiences - Sets of words centered around a specific experience (i.e. mindfulness, depression, quitting smoking, dream journal, etc)</li>
+	<li>Greater control of text timing</li>
+	<li>Sharing of data for use with healthcare providers/professional helpers</li>
+	<li>Sharing of data in open source / open science / open data frameworks</li>
+	</br>
+	Using the following use cases at examples:
+	<li>Slow learning / Courses / Guided Experiences</li>
+	<li>Behavior Change Assist</li>
+	<li>Wellness assist - evaluation</li>
+	<li>Welness assist - diagnsosis/communication</li>
+	<li>Learning about this world.</li>
+	</br>
+	Learn more at this blog post.
+	
+	
+	</div>     
+</div>
+<hr>
+<div class="row" id="open_data">
+	<div class="col-md-2">
+		<h1>Open Data</h1>
+	</div>
+	<div class="col-md-10">
+	By default, you are signed up to participate in the Open Data Project, which has three goals:	
+	<li>Improving user experience</li>
+	<li>Ensuring validity of method (can one actually measure happiness or pain in this way?)</li>
+	<li>Understanding human experience</li>
+	</br>
+	Research questions, plans, data and results are shared here.
+	</br></br>
+	Submit questions and learn more here.
+	
+	</div>     
+</div>
+<hr>
+<div class="row" id="blog">
+	<div class="col-md-2">
+		<h1>Blog</h1>
+	</div>
+	<div class="col-md-10">
+	Any help files, research plans and results, development plans and advancements are posted on the blog.  
+	</br></br>
+	Please contact us if you have a question, need help, want to see a new feature, want to see a new analysis.
+	</br></br>
+	Read more here.
+	</div>     
+</div>
+<hr>
+<div class="row" id="donate">
+	<div class="col-md-2">
+		<h1>Team</h1>
+	</div>
+	<div class="col-md-10">
+	Just me right now.  Read more here.  
+
+	If you are interested getting involved, please contact us here.  
+	
+	</div>     
+</div>
+
+<hr>
+<div class="row" id="donate">
+	<div class="col-md-2">
+		<h1>Donate</h1>
+	</div>
+	<div class="col-md-10">
+	A main aim of Sentimini is to be self-supported to establish a structure that 1) encourages development to make the best experience possible and 2) allow for an uncompromised ability to pursue open source / data /science.
+	</br></br>
+	The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
+	</br></br>
+	Until that time, please consider donating!
+	
+	</div>     
+</div>
+
+
+</div>
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
 {% endblock %}
