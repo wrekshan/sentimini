@@ -141,33 +141,10 @@ def about(request):
 	if request.user.is_authenticated():	
 		#FAQ STUFF
 		#don't forget to add form for user generated question
-		faq_usage = FAQ.objects.all().filter(category="Usage")
-		faq_concept = FAQ.objects.all().filter(category="Concept")
-
-		if request.method == "POST":
-			form = FAQuserquestionsForm(request.POST)
-			BETAform = BETAsurveyForm(request.POST)
-			if 'submit_FAQ' in request.POST:
-				if form.is_valid():
-					messages.add_message(request, messages.INFO, 'Question added!')	
-					working_faq = form.save(commit=False)
-					FAQuserquestions(user=request.user,question=working_faq.question).save()
-					return HttpResponseRedirect(reverse('scaffold:about'))
-			elif 'submit_BETA' in request.POST:
-				if BETAform.is_valid():
-					messages.add_message(request, messages.INFO, 'BETA added!')	
-					working_faq = BETAform.save()
-					# BETAsurvey(user=request.user,question=working_faq.question).save()
-					return HttpResponseRedirect(reverse('scaffold:about'))
-		else:
-			form = FAQuserquestionsForm()
-			BETAform = BETAsurveyForm()
+		
 
 		context = {
-			"faq_usage": faq_usage,
-			"faq_concept": faq_concept,
-			"form": form,
-			"BETAform": BETAform,
+			
 		}			
 
 		return render(request,"about.html",context)
