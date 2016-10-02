@@ -23,10 +23,10 @@ from .views import landing_page
 urlpatterns = [
 	url(r'^$', landing_page, name='index'),
     url(r'^admin/', admin.site.urls),
-    # url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
-    # url(r'accounts/signup', 'sentimini.views.signup_view'),
-    # url(r'^accounts/', include('allauth.urls')),
-    # url(r'^ent/', include('ent.urls',namespace="ent")),
-    # url(r'^vis/', include('vis.urls',namespace="vis")),
-    # url(r'^scaffold/', include('scaffold.urls',namespace="scaffold")),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
+    url(r'accounts/signup', 'sentimini.views.signup_view'),
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^ent/', include('ent.urls',namespace="ent")),
+    url(r'^vis/', include('vis.urls',namespace="vis")),
+    url(r'^scaffold/', include('scaffold.urls',namespace="scaffold")),
 ]
