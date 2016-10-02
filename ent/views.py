@@ -90,11 +90,13 @@ def edit_prompt_settings(request):
 			working_settings = UserSetting.objects.all().get(user=request.user)
 		else: 
 			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc)).save()
+			working_settings = UserSetting.objects.all().get(user=request.user)
 
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
 			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 		else: 
 			working_experience = ExperienceSetting(user=request.user,experience='user').save()
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
 			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)

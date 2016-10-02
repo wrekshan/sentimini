@@ -1,225 +1,132 @@
-
+{% extends "base.html" %}
 {% load i18n %}
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 
+{% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
 
-<!DOCTYPE html>
-<html lang="en" >
-<head>
-  <meta charset="utf-8" />
-  <meta name="author" content="Script Tutorials" />
-  <title>sentimini</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <!-- attach CSS styles -->
 
-  <link href={% static "css/bootstrap.min.css" %} rel="stylesheet">
-  <link href={% static "css/style.css" %} rel="stylesheet" />
-</head>
+{% block content %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#blog_archive').DataTable({
+      "columns": [
+      { "width": "50%" },
+      { "width": "25%" },
+      { "width": "25%" },
+      ]
+
+    });
+  } );
+</script>
+
+
 <body>
 
-  <!-- navigation panel -->
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="{% url 'index' %}">Sentimini!<sub>beta</sub></a>
-        </div>
-        {% if user.is_authenticated %}
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-          <li><a href="{% url 'vis:user_vis' %}">Visualize</a></li>
-          <li><a href="{% url 'scaffold:faq' %}">FAQ</a></li>
-          </ul>
-
-          
-          <ul class="nav navbar-nav navbar-right">
-          
-             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Edit Settings <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></li>
-                <li><a href="{% url 'ent:edit_user_gen_prompt_settings' %}">My Prompts</a></li>
-                
-
-              </ul>
-            </li>
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pause or Start Prompts <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'ent:respite_one_day' %}">Pause 1 Day</a></li>
-                <li><a href="{% url 'ent:respite_three_day' %}">Pause 3 Days</a></li>
-                <li><a href="{% url 'ent:respite_seven_day' %}">Pause 7 Days</a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="{% url 'ent:respite_start_again' %}">Start Again</a></li>
-
-              </ul>
-              
-            </li>
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log Out Stuff  <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-              <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
-              <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-              <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-                
-              </ul>
-            </li>
-
-            {% else %}
-            <!-- log in -->
-            <div id="navbar" class="collapse navbar-collapse">
-             <ul class="nav navbar-nav navbar-right">
-
-              <li><a href="{% url 'account_login' %}">Sign In</a></li>
-              <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-            </ul>
-            </div>
-            {% endif %}
-          </ul>
-        </div><!--/.nav-collapse -->  
-
-      </div>
-    </nav>
 
 
-  <!-- first section - Home -->
-  <div id="home" class="home">
-    <div class="text-vcenter">
-      <h1>Sentimini!</h1>
-      <h3>The <b>easiest, smartest, and kindest</b> emotion tracker</h3>
-      <a href="#information" class="btn btn-primary btn-lg">Sign Up</a>
+  <div class="container">
+    <div id="navbar" class="nav nav-justified">
+      <ul class="nav navbar-nav">
+        <li><a href="#sign_up">Sign Up</a></li>
+        <li><a href="#beta">Beta</a></li>
+        
+      </ul>
     </div>
   </div>
-  <!-- /first section -->
 
   
 
-  <!-- third section - Services -->
-  <div id="services" class="pad-section">
-    <div class="container">
-      <h2 class="text-center">The Process</h2> <hr />
-      <div class="row text-center">
-        <div class="col-sm-3 col-xs-6">
-          <i class="glyphicon glyphicon-phone-alt"> </i>
-          <h4>Receive a text</h4>
-          <p>For example: </br>How much happiness is in your present moment (0-10)?</p>
-        </div>
-        <div class="col-sm-3 col-xs-6">
-          <i class="glyphicon glyphicon-leaf"> </i>
-          <h4>Breathe</h4>
-          <p>Take a second.  You are alive in this wonderful world, feeling a multitude of different emotions.</p>
-        </div>
-        <div class="col-sm-3 col-xs-6">
-          <i class="glyphicon glyphicon-search"> </i>
-          <h4>Look for the emotion</h4>
-          <p>You could be angry.  You could be happy.  You could be both.  But look for the emotion in the experience.  Is it there?  What does it feel like?</p>
-        </div>
-        <div class="col-sm-3 col-xs-6">
-          <i class="glyphicon glyphicon-pencil"> </i>
-          <h4>Rate from 0-10</h4>
-          <p>Don't worry.  A number will never capture your experience, so you can't do this wrong.  </p>
-        </div>
+
+
+  <div class="container">
+  <hr>
+    <div class="row" id="sign_up">
+      <div class="col-md-2">
+        <h1>Sign Up</h1>
       </div>
-    </div>
-  </div>
-
-  <!-- /third section -->
-  <!-- second section - About -->
-  <div id="why" class="pad-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-4 text-center">
-          <h2>Easy</h2>
-          <p class="lead">
-            All you have to do is sign up and respond to a <b>few texts a day</b> asking about a wide range of emotions.</br>
-            You can <b>take breaks</b> whenever you need by texting, "pause".</br>
-
-
-          </p>
-        </div>
-        <div class="col-sm-4 text-center">
-          <h2>Smart</h2>
-          <p class="lead">
-            Since the time and the emotion of the <b>texts are randomized</b>, quantitative patterns can be examined.  What emotions exist?  Do I experience emotions like my fellow humans?
-          </p>
-        </div>
-        <div class="col-sm-4 text-center">
-          <h2>Kind</h2>
-          <p class="lead">
-          Your time is respected by requiring <b>little effort</b> and providing a sensible structure to evaluate quantitative patterns of your emotional life and <b>experience emotions</b> in your present moment.
-
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- /second section -->
-
-  <!-- fourth section - Information -->
-  <div id="information" class="pad-section">
-    <div class="container">
-      <div class="row">
-        <div class="col-sm-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2 class="panel-title">Alpha Status</h2>
-            </div>
-            <div class="panel-body lead">
-              Currently, Sentimini is in Alpha status.  It is early stage software.  There may be bugs.  There may be changes.  
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h2 class="panel-title">Sign Up!</h2>
-            </div>
-            <div id="signup" class="panel-body lead">
+      <div class="col-md-5">
+       
              <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-        		  {% csrf_token %}
-        		  {{ form|crispy }}
-        		  {% if redirect_field_value %}
-        		  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-        		  {% endif %}
-        		  <input type="submit" value="Sign Up!" class="btn btn-primary btn-lg btn-block">
-        		  <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
-        		</form>
+              {% csrf_token %}
+              {{ form|crispy }}
+              {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+              {% endif %}
+              <input type="submit" value="Sign Up!" class="btn btn-primary btn-lg">
+              <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+            </form>
             </div>
-          </div>
-        </div>
-      </div>
+      
+      <div class="col-md-5">
+    Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+    </br></br>
+    It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+    </br></br>
+    You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
+</div>        
     </div>
+ 
+
+
+
+<hr>
+<div class="row" id="beta">
+  <div class="col-md-2">
+    <h1>Beta</h1>
   </div>
-  <!-- /fourth section -->
+  <div class="col-md-10">
+  Sentimini is in beta status.  There is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
+  </br></br>
+  Next major steps:
+  <li>Curated experiences - Sets of words centered around a specific experience (i.e. mindfulness, depression, quitting smoking, dream journal, etc)</li>
+  <li>Greater control of text timing</li>
+  <li>Sharing of data for use with healthcare providers/professional helpers</li>
+  <li>Sharing of data in open source / open science / open data frameworks</li>
+  </br>
+  Using the following use cases at examples:
+  <li>Slow learning / Courses / Guided Experiences</li>
+  <li>Behavior Change Assist</li>
+  <li>Wellness assist - evaluation</li>
+  <li>Welness assist - diagnsosis/communication</li>
+  <li>Learning about this world.</li>
+  </br>
+  Learn more at this blog post.
+  
+  
+  </div>     
+</div>
 
- 
- 
+    
 
-  <!-- footer -->
-  <footer>
-    <hr />
-    <div class="container">
-      <p class="text-right">Copyright &copy; Sentimini 2016</p>
-    </div>
-  </footer>
-  <!-- /footer -->
 
-  <!-- attach JavaScripts -->
 
-  <script src={% static "js/jquery.min.js" %}></script>
-  <script src={% static "js/bootstrap.min.js" %}></script>
-  <script src={% static "js/main.js" %}></script>
+  </div>
+    
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
 
 </body>
-</html>
 
+</html>
+{% endblock %}
 

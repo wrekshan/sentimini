@@ -1,36 +1,137 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
 
 
 {% block content %}
 
-</br>
-<div class="span12 pagination-centered">
-	<div class="col-md-8">
-	<h2>sentimini is a smart emotion tracking app</h2>
-	After you'll sign up, you'll recieve text messages asking about how you are experiencing emotions during that present moment.
-	</br></br>
-	Just breath and pay attention to yourself and the world.  Respond with a number between 0 and 10.  It is that simple.
-	
-	
-	<h3>sentimini might be good for you</h3>
-	You'll be reminded to <b>breath</b> and <b>pay attention</b> to your <b>present moment</b>, living in this <b>wonderful world</b>.  
-	</br></br>
-	This is a easy structure, designed to require <b>very little work</b>, for you to <b>learn about emotions</b>.
-	</br></br>
-	It is designed to <b>provides meaningful data</b> about how you experience emotions.
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
 
-	<h3>sentimini might be good for society</h3>
-	sentimini is designed to provide meaningful data about how large groups of people are experiencing emotions.  At minimum, this could look like a map of emotions across the cities, states, and countries.  
-	</br></br>
-	Psychology research:  What emotions do people experience?  Are angier people happy?  Is money related to happiness?  
-	</br></br>
-	Providing data to make better civic decisions:  Are people in cities happier than rural?  What would the effect of installing public libraries be?  
-	</br></br>
-	</div>
-	
+<script>
+  $(document).ready(function() {
+    $('#blog_archive').DataTable({
+      "columns": [
+      { "width": "50%" },
+      { "width": "25%" },
+      { "width": "25%" },
+      ]
+
+    });
+  } );
+</script>
+
+
+<body>
+
+
+
+  <div class="container">
+    <div id="navbar" class="nav nav-justified">
+      <ul class="nav navbar-nav">
+        <li><a href="#overview">Sign Up</a></li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+
+
+
+  <div class="container">
+  <hr>
+  <div class="row" id="overview">
+    <div class="col-md-2">
+      <h1>Overview</h1>
+    </div>
+    <div class="col-md-10">
+    Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+    </br></br>
+    It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+    </br></br>
+    You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
+</div>     
 </div>
-</br>
 
 
+
+<hr>
+<div class="row" id="beta">
+  <div class="col-md-2">
+    <h1>Beta</h1>
+  </div>
+  <div class="col-md-10">
+  Sentimini is in beta status.  There is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
+  </br></br>
+  Next major steps:
+  <li>Curated experiences - Sets of words centered around a specific experience (i.e. mindfulness, depression, quitting smoking, dream journal, etc)</li>
+  <li>Greater control of text timing</li>
+  <li>Sharing of data for use with healthcare providers/professional helpers</li>
+  <li>Sharing of data in open source / open science / open data frameworks</li>
+  </br>
+  Using the following use cases at examples:
+  <li>Slow learning / Courses / Guided Experiences</li>
+  <li>Behavior Change Assist</li>
+  <li>Wellness assist - evaluation</li>
+  <li>Welness assist - diagnsosis/communication</li>
+  <li>Learning about this world.</li>
+  </br>
+  Learn more at this blog post.
+  
+  
+  </div>     
+</div>
+
+    <hr>
+    <div class="row" id="overview">
+      <div class="col-md-2">
+        <h1>Sign Up</h1>
+      </div>
+      <div class="col-md-10">
+       <div id="signup" class="panel-body lead">
+             <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+              {% csrf_token %}
+              {{ form|crispy }}
+              {% if redirect_field_value %}
+              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+              {% endif %}
+              <input type="submit" value="Sign Up!" class="btn btn-primary btn-lg btn-block">
+              <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+            </form>
+            </div>
+
+
+      </div>     
+    </div>
+
+
+
+  </div>
+    
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+<!-- /container -->
+
+
+
+
+</body>
+
+</html>
 {% endblock %}
+

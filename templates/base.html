@@ -48,7 +48,7 @@
     </div>
 
 
-    {% if user.is_authenticated %}
+    
     <div id="navbar" class="nav nav-justified">
       <ul class="nav navbar-nav">
         <li class="dropdown">
@@ -64,7 +64,7 @@
 
 
       </ul>
-
+    {% if user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
 
         <li class="dropdown">
