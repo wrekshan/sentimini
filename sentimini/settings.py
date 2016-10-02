@@ -204,8 +204,8 @@ DATABASES = {
 if LIVEHOST:
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'emojinsei@gmail.com'
-    EMAIL_HOST_PASSWORD = 'wr48279652'
+    EMAIL_HOST_USER = 'sentimini@gmail.com'
+    EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
     EMAIL_PORT = 587
 
 
