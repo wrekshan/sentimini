@@ -5,6 +5,19 @@ from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology,
 # Register your models here.
 #NEW
 
+class ResponseTypeStoreModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"response_type",
+		"ordering_num",
+	]
+	list_display_links = ["response_type"]
+	list_filter = ["response_type"]
+	class Meta:
+		model = ResponseTypeStore
+
+admin.site.register(ResponseTypeStore,ResponseTypeStoreModelAdmin)
+
+
 class PossibleTextSTMModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
