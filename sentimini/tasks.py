@@ -154,7 +154,7 @@ def set_next_prompt(user, text_type):
 			for i in range(0,txt.text_importance):
 				tmp_texts.append(txt.text)
 
-		working_emotion = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False).get(text=tmp_texts[randint(0,len(tmp_texts)-1)])
+		working_emotion = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False).filter(text=tmp_texts[randint(0,len(tmp_texts)-1)]).first()
 	
 	else:
 		#Determine if Emotion, instruction, or series
@@ -170,7 +170,7 @@ def set_next_prompt(user, text_type):
 
 def determine_prompt_texts(user,prompt,typer):
 	if typer == 'user':
-		working_UPGR = PossibleTextSTM.objects.all().filter(user=user).get(text=prompt)
+		working_UPGR = PossibleTextSTM.objects.all().filter(user=user).filter(text=prompt).first()
 		prompt_full = prompt
 		prompt_reply_type = working_UPGR.response_type
 		

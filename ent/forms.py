@@ -196,7 +196,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
         }
 
 		help_texts = {
-        	'prompts_per_week': (''),
+        	'prompts_per_week': ('If you do not wish to participate in the Open Data Project, set this value to 0 and hit submit.'),
         	
         }
 
@@ -205,8 +205,8 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.render_required_fields = True
-		self.helper.label_class = 'col-lg-6'
-		self.helper.field_class = 'col-lg-6'
+		self.helper.label_class = 'col-lg-4'
+		self.helper.field_class = 'col-lg-8'
 		self.helper.form_class = 'form-horizontal'
 		
 		self.helper.add_input(Submit('submit_prompt_percent', 'Submit'))
@@ -258,7 +258,7 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		model = UserSetting
 
 		fields = [
-			"phone",
+			"phone_input",
 			"carrier",
 			"timezone",
 		]
@@ -280,6 +280,86 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
 		self.helper.add_input(Submit('submit_contact', 'Submit'))
+
+
+class NewUserForm(forms.ModelForm):
+	#These are declared here to get the choice field
+	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone",help_text="This is we know when to text you")
+	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier",help_text="This has to be correct for you to receive texts")
+	
+
+	class Meta:
+		model = UserSetting
+
+		fields = [
+			"phone_input",
+			"carrier",
+			"timezone",
+			"sleep_time",
+			"sleep_duration",
+			"prompts_per_week",
+		]
+
+		labels = {
+			'phone_input': ('Phone Number'),
+			'sleep_time': ('Bed Time'),
+			'sleep_duration': ('Hours of sleep'),
+			'prompts_per_week': ('Weekly number of prompts'),
+        }
+
+		help_texts = {
+			'phone_input': ('Has to be 10 digit US Number'),
+			'sleep_time': ('You will not be texted at when you are asleep'),
+			'sleep_duration': ('Just needs to be a guess'),
+			'prompts_per_week': ('This will be an average.  Some weeks you might receive more, some less'),
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(NewUserForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-form'
+		self.helper.form_class = 'form-horizontal'
+		self.helper.label_class = 'col-lg-4'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_method = 'post'
+		self.helper.form_action = 'login'
+		self.helper.add_input(Submit('submit_new_user', 'Submit'))
+
+class NewUser_PossibleTextSTMForm(forms.ModelForm):
+	helper = FormHelper()
+	
+	response_type = forms.ChoiceField(choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
+	class Meta:
+		model = PossibleTextSTM
+		fields = [
+			"text",
+			"response_type",
+			"text_importance",
+		]
+
+		labels = {
+            'text': ('Text'),
+            'response_type': ('Response Type'),
+            'text_importance': ('Importance'),
+        }
+
+		
+        
+	
+
+	def __init__(self, *args, **kwargs):
+		super(NewUser_PossibleTextSTMForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-form'
+		self.helper.form_method = 'post'
+		self.helper.label_class = 'col-lg-2'
+		self.helper.field_class = 'col-lg-10'
+		self.helper.form_action = 'login'		
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new prompt here (i.e."The world is beautiful and good")'
+		self.helper.add_input(Submit('submit_new_text', 'Add one more text'))
+		self.helper.add_input(Submit('submit_finished_adding', 'Finished adding texts'))
+
+
 
 
 

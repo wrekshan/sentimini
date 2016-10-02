@@ -11,7 +11,7 @@ class PossibleTextSTM(models.Model):
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	system_text = models.IntegerField(default=0)
 	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
-	text_importance = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
+	text_importance = models.IntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
 	response_type = models.CharField(max_length=100,default='Open') 
 	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
 	date_created = models.DateTimeField(blank=True,null=True)
@@ -103,6 +103,7 @@ class UserSetting(models.Model):
 	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
+	phone_input = models.CharField(max_length=16,default='(XXX) XXX - XXXX') #This is the user phone number
 	phone = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	carrier = models.CharField(blank=True,max_length=100,default='CHANGE ME') #THis is the carrier
 	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup
@@ -111,6 +112,7 @@ class UserSetting(models.Model):
 	sleep_duration = models.IntegerField(default=8)
 	respite_until_datetime = models.DateTimeField(blank=True,null=True) #The respite buttons change this field.  Email will only send if now greater than this value
 	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+	new_user_pages = models.IntegerField(default=0) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	
 
 	#these are for modeling the responses

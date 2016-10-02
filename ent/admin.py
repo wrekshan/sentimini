@@ -137,6 +137,7 @@ admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
 class UserSettingModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
+		"new_user_pages",
 		"begin_date",
 		"send_text",
 		"text_request_stop",

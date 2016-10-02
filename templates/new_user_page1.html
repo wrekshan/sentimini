@@ -1,0 +1,104 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+
+    <div class="container">
+      <div id="navbar" class="nav nav-justified">
+        <ul class="nav navbar-nav">
+          <li><a href="#almost_there">New User Page 1:</a></li>
+          <li><a href="#welcome">Welcome!</a></li>
+          <li><a href="#required_information">Required Information</a></li>
+        </ul>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+    <hr>
+   <div class="row" id="welcome">
+    <div class="col-md-2">
+     <h1>Welcome!</h1>
+     There are a total of 7 questions to answer before you are a full-fledged user of Sentimini.
+    </div>
+    <div class="col-md-1">
+    
+    </div>
+  
+    <div class="col-md-3">
+      <h3>1.  Contact</h3>
+      <b>(6 questions)</b>
+      <li>Phone Number</li>
+      <li>Times not to text</li>
+      <li>Number of texts per week</li>
+    </div>
+    <div class="col-md-3">
+     <h3>2.  Texts</h3>
+     <b>(1 to 3 questions)</b>
+     <li>Specify the text you want to receive</li>
+
+   </div>
+   <div class="col-md-3">
+     <h3>Next Steps</h3>
+     <li>Visualizations</li>
+     <li>Open Data</li>
+     <li>Customize Experience</li>
+   </div>
+   </div>   
+   
+  <hr>
+  <div class="row" id="required_information">
+    <div class="col-md-2">
+      <h1>Required Information</h1>
+    </div>
+    <div class="col-md-10">
+    
+     <form method='POST' action='' class="form-horizontal">
+      {% csrf_token %} {% crispy form_new_user %}
+      <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
+    </form>
+
+  </div>
+  </div>
+ 
+
+
+
+
+
+
+
+</div>
+</div>
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}

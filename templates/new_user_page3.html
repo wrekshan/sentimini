@@ -1,0 +1,159 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+
+    <div class="container">
+      <div id="navbar" class="nav nav-justified">
+        <ul class="nav navbar-nav">
+          <li><a href="#congrats">New User Page 3:</a></li>
+          <li><a href="#congrats">Congrats</a></li>
+          <li><a href="#expect">What to expect</a></li>
+          <li><a href="#open_data">Open Data Permission</a></li>
+
+        </ul>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+      <hr>
+    <div class="row" id="congrats">
+    <div class="col-md-2">
+     <h1>Congrats!</h1>
+    </div>
+    
+    <div class="col-md-3">
+      <h3>You are set up!</h3>  
+      <h3>Enjoy texting.</h3>
+      
+      
+    </div>
+    <div class="col-md-3">
+     <h1><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></h1>
+     <li>Specify the text you want to receive</li>
+     <li>Change the timing</li>
+
+   </div>
+   <div class="col-md-3">
+   <h1><a href="{% url 'vis:user_vis' %}">Data</a></h1>
+     <li>Download speadsheets</li>
+     <li>View graphs</li>
+     
+   </div>
+   <div class="col-md-1">
+    
+    
+    
+    </div>
+  </div>
+  <hr>
+
+   
+    <!-- Simulated view -->
+
+    <!-- Simulated view -->
+    <div class="row" id="expect">
+      <div class="col-md-2">
+        <h1>What to expect</h1>
+        This is a simulated week based upon your settings.  Each row is one day.  Each dot is one text.
+      </br></br>
+      You'll notice that you don't recieve texts during the time you sleep.
+      </br></br>
+      Refresh the page to get a different simulation.
+      </br></br>
+      Edit your settings if you want a different pattern of texts.
+    </div>
+
+    <div class="col-sm-10 ">
+      <div class="row">
+        <div style="width:100%;height:800">
+          {{ graph_data_simulated_heatmap|safe }}
+        </div>
+      </div>
+
+      <div class="row">
+      <div class="col-sm-6 text-center">
+      
+    
+      
+      </div>
+      <div class="col-sm-6 text-center">
+      
+      
+      </div>
+       
+      </div>
+
+
+
+
+
+    </div>
+  </div>
+  <hr>
+ <div class="row" id="open_data">
+  <div class="col-md-2">
+    <h1>Open Data Permission</h1>
+  </div>
+  <div class="col-md-5">
+ <form method='POST' action='' class="form-horizontal">
+  {% csrf_token %} {% crispy form_prompt_percent %}
+</form>
+
+</div>
+<div class="col-md-5">
+   The Open Data project has three goals: 
+  <li>Improving user experience</li>
+  <li>Ensuring validity of method</li>
+  <li>Understanding human experience</li>
+</br>
+Research questions, plans, data and results are shared here.
+
+</div>
+
+
+</div>
+
+
+
+
+   
+
+
+
+
+</div>
+</div>
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}

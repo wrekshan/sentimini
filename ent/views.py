@@ -12,7 +12,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from time import strptime
 # Create your views here.
-from .forms import  UserSettingForm_Prompt, PossibleTextSTMForm, UserSettingForm_PromptRate, ExampleFormSetHelper, EmotionOntologyForm, EmotionOntologyFormSetHelper, UserGenPromptFixedForm, UserGenPromptFixedFormSetHelper, TimingForm, PossibleTextSTMForm_detail
+from .forms import  UserSettingForm_Prompt, PossibleTextSTMForm, UserSettingForm_PromptRate, ExampleFormSetHelper, EmotionOntologyForm, EmotionOntologyFormSetHelper, UserGenPromptFixedForm, UserGenPromptFixedFormSetHelper, TimingForm, PossibleTextSTMForm_detail, NewUserForm, NewUser_PossibleTextSTMForm
 from .models import PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, ExperienceSetting
 
 from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap, get_graph_data_histogram_timing
@@ -20,6 +20,144 @@ from sentimini.scheduler_functions import generate_random_prompts_to_show, next_
 
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse
 
+def new_user(request):
+	if request.user.is_authenticated():	
+		if  UserSetting.objects.filter(user=request.user).exists():
+			working_settings = UserSetting.objects.all().get(user=request.user)
+		else: 
+			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc)).save()
+			working_settings = UserSetting.objects.all().get(user=request.user)
+
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+		else: 
+			working_experience = ExperienceSetting(user=request.user,experience='user').save()
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+		else:
+			tmp = ExperienceSetting(user=request.user,experience='research',prompts_per_week=1)
+			tmp.save()
+
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+			min_awake = (24 - working_settings.sleep_duration)*60
+			working_research.prompt_interval_minute_avg = ((24 - working_settings.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+			working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+			working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+			working_research.save()
+
+		form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+		form_new_user = NewUserForm(request.POST or None, instance=working_settings)
+		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
+		
+		
+		prompts_per_week = working_settings.prompts_per_week
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count
+
+
+		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
+		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
+
+		########## NOW THE FORM HANDLING STUFF
+		if request.method == "POST":
+			print("REQUEST POST")
+			print("REQUEST POST STUFF", request.POST)
+			
+			if 'submit_new_text' or 'submit_finished_adding' in request.POST:
+				if form_new_text.is_valid():	
+					tmp = form_new_text.save()
+					if tmp.date_created is None:
+						tmp.date_created = datetime.now(pytz.utc)
+						tmp.save()
+					
+					#Save any changes in long term storage
+					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+					ptltm.save()
+
+					if 'submit_new_text'in request.POST:
+						return HttpResponseRedirect('/ent/new_user/')
+
+					else:
+						if working_settings.new_user_pages== 1:
+							working_settings.new_user_pages = 2
+							working_settings.save()
+							return HttpResponseRedirect('/ent/new_user/')
+
+			if 'submit_new_user' in request.POST:
+				print("new_user")
+				if form_new_user.is_valid():
+					print("form valid")
+
+					form_new_user.save()
+					tmp_settings = form_new_user.save(commit=False)
+					working_experience.prompts_per_week = tmp_settings.prompts_per_week
+					min_awake = (24 - tmp_settings.sleep_duration)*60
+					working_experience.prompt_interval_minute_avg = ((24 - tmp_settings.sleep_duration)*60) / (working_experience.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+					working_experience.prompt_interval_minute_min =  working_experience.prompt_interval_minute_avg*.5
+					working_experience.prompt_interval_minute_max =  working_experience.prompt_interval_minute_avg*4
+					working_experience.save()
+					tmp_settings.save()
+
+					if tmp_settings.phone_input != "":
+						print("LENGTH ONLY", len(str(get_num(tmp_settings.phone_input))))
+						print("NUMBER ONLY", get_num(tmp_settings.phone_input))
+
+						if len(str(get_num(tmp_settings.phone_input))) == 10:
+							tmp_settings.phone = str(get_num(tmp_settings.phone_input))
+							tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
+							tmp_settings.sms_address =  tmp_settings.phone_input + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
+							tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
+
+							if working_settings.new_user_pages< 1:
+								working_settings.new_user_pages = 1
+								working_settings.save()
+
+							tmp_settings.save()
+						else:
+							messages.add_message(request, messages.INFO, 'Not 10 Expecting a 10 digit US number')
+					
+					return HttpResponseRedirect('/ent/new_user/')		
+
+			if 'submit_prompt_percent' in request.POST:
+				if form_prompt_percent.is_valid():
+					tmp_settings = form_prompt_percent.save(commit=False)
+					working_research.prompts_per_week = tmp_settings.prompts_per_week
+
+					min_awake = (24 - working_experience.sleep_duration)*60
+					working_research.prompt_interval_minute_avg = ((24 - working_experience.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+					working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+					working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+					
+					tmp_settings.save()
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
+			return HttpResponseRedirect('/ent/new_user/')
+				
+		else:
+			form_new_user = NewUserForm(request.POST or None, instance=working_settings)
+			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
+			form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+
+			
+
+			context = {
+				"prompts_per_week": prompts_per_week,
+				"number_of_texts": number_of_texts,
+				"form_new_text": form_new_text,
+				"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
+
+				
+				"form_new_user": form_new_user,
+				"form_prompt_percent": form_prompt_percent,
+			}
+			if working_settings.new_user_pages == 0:
+				return render(request, "new_user_page1.html", context)
+			elif working_settings.new_user_pages == 1:
+				return render(request, "new_user_page2.html", context)
+			else:
+				return render(request, "new_user_page3.html", context)
+	else:
+		return render(request, "index_not_logged_in.html")
 
 
 def texter(request):
@@ -80,8 +218,11 @@ def texter(request):
 
 
 
+def get_num(x):
+    return int(''.join(ele for ele in x if ele.isdigit()))
 
-
+def get_digits(text):
+    return filter(str.isdigit, text)
 
 #User settings
 def edit_prompt_settings(request):
@@ -187,12 +328,25 @@ def edit_prompt_settings(request):
 			elif 'submit_contact' in request.POST:
 				if form_free.is_valid():
 					tmp_settings = form_free.save(commit=False)
+					print("Contact Valid")
 
-					if tmp_settings.phone !- "":
-						tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
-						tmp_settings.sms_address =  tmp_settings.phone + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
-						tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
-						tmp_settings.save()
+					if tmp_settings.phone_input != "":
+						print("LENGTH ONLY", len(str(get_num(tmp_settings.phone_input))))
+						print("NUMBER ONLY", get_num(tmp_settings.phone_input))
+
+						if len(str(get_num(tmp_settings.phone_input))) == 10:
+							tmp_settings.phone = str(get_num(tmp_settings.phone_input))
+							tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
+							tmp_settings.sms_address =  tmp_settings.phone_input + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
+							tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
+							tmp_settings.save()
+						else:
+							messages.add_message(request, messages.INFO, 'Not 10 Expecting a 10 digit US number')
+					else:
+						messages.add_message(request, messages.INFO, ' Nothing Expecting a 10 digit US number')
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#contact')		
+				else:
+					messages.add_message(request, messages.INFO, 'Not Valid')
 					return HttpResponseRedirect('/ent/edit_prompt_settings/#contact')		
 
 			elif 'submit_prompt_percent' in request.POST:

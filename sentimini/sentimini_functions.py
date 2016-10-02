@@ -154,7 +154,7 @@ def get_graph_data_line_chart_business_model(working_busy):
 
 def get_hourly_count_of_prompts(request,simulated_val,time_anchor):
 	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val)
-	print("HOURLY COUNT:",entries.count())
+	# print("HOURLY COUNT:",entries.count())
 	working_settings = UserSetting.objects.all().get(user=request.user)
 	# print("SLEEP TIME: ",working_settings.sleep_time.hour)
 	# wake_time = working_settings.sleep_time + timedelta()
