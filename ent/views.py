@@ -182,16 +182,18 @@ def edit_prompt_settings(request):
 					working_experience.save()
 					tmp_settings.save()
 					
-					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#timing')		
 
-			elif 'submit_unpaid' in request.POST:
+			elif 'submit_contact' in request.POST:
 				if form_free.is_valid():
 					tmp_settings = form_free.save(commit=False)
-					tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
-					tmp_settings.sms_address =  tmp_settings.phone + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
-					tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
-					tmp_settings.save()
-					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
+
+					if tmp_settings.phone !- "":
+						tmp_settings.send_text = bool(True)	#just a switch to say the person can be texted
+						tmp_settings.sms_address =  tmp_settings.phone + str(carrier_lookup(tmp_settings.carrier)) #Figures otu the address the promtps need to be sent to
+						tmp_settings.respite_until_datetime = datetime.now(pytz.utc) #initializes the respite until date (this actually just needs to be set because it does a greater than check)
+						tmp_settings.save()
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#contact')		
 
 			elif 'submit_prompt_percent' in request.POST:
 				if form_prompt_percent.is_valid():

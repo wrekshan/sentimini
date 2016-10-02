@@ -279,7 +279,7 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
-		self.helper.add_input(Submit('submit_unpaid', 'Submit'))
+		self.helper.add_input(Submit('submit_contact', 'Submit'))
 
 
 
