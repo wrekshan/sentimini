@@ -9,6 +9,7 @@ django-allauth==0.25.2
 django-bower==5.1.0
 django-crispy-forms==1.6.0
 django-nvd3==0.9.7
+django-datetime-widget==0.9.3
 future==0.15.2
 fuzzywuzzy==0.10.0
 gunicorn==19.4.5
