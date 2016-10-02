@@ -55,9 +55,11 @@ def new_user(request):
 		prompts_per_week = working_settings.prompts_per_week
 		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count
 
-
-		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
-		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
+		if working_settings.new_user_pages < 2:
+			graph_data_simulated_heatmap = 0
+		else:
+			generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
+			graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
 
 		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
@@ -67,6 +69,7 @@ def new_user(request):
 			if 'submit_new_text' or 'submit_finished_adding' in request.POST:
 				if form_new_text.is_valid():	
 					tmp = form_new_text.save()
+					tmp.user=request.user
 					if tmp.date_created is None:
 						tmp.date_created = datetime.now(pytz.utc)
 						tmp.save()
@@ -256,18 +259,7 @@ def edit_prompt_settings(request):
 		if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()>0:
 			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user")
 		else:
-			PossibleTextSTM(user=request.user,text='How much goodness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-			PossibleTextSTM(user=request.user,text='How much badness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-			PossibleTextSTM(user=request.user,text='How much dullness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-
-			tmp1=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much goodness is in your present moment (0-10)?').first()
-			tmp2=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much badness is in your present moment (0-10)?').first()
-			tmp3=PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text='How much dullness is in your present moment (0-10)?').first()
-
-			PossibleTextLTM(user=request.user,stm_id=tmp1.id,text='How much goodness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-			PossibleTextLTM(user=request.user,stm_id=tmp2.id,text='How much badness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-			PossibleTextLTM(user=request.user,stm_id=tmp3.id,text='How much dullness is in your present moment (0-10)?',text_importance=33, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
-
+			PossibleTextSTM(user=request.user,text='How are you doing?',text_importance=1, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
 			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user")
 
 

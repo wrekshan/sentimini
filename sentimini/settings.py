@@ -157,7 +157,7 @@ STATICFILES_DIRS = (
 
 # ACTIVATION STUFF
 # auth and allauth settings
-LOGIN_REDIRECT_URL = '/ent/edit_prompt_settings/'
+LOGIN_REDIRECT_URL = '/ent/new_user/'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (

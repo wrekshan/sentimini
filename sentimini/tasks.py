@@ -154,7 +154,7 @@ def set_next_prompt(user, text_type):
 			for i in range(0,txt.text_importance):
 				tmp_texts.append(txt.text)
 
-		working_emotion = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False).filter(text=tmp_texts[randint(0,len(tmp_texts)-1)]).first()
+		working_emotion = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False).get(text=tmp_texts[randint(0,len(tmp_texts)-1)])
 	
 	else:
 		#Determine if Emotion, instruction, or series
@@ -398,9 +398,9 @@ def send_texts():
 def schedule_greeting_text(exp,text_type):
 	if text_type == "user":
 		working_settings = UserSetting.objects.all().get(user=exp.user)
-		working_settings.user_generated_prompt_rate
+		working_settings.prompts_per_week
 
-		text1 = str('Hello! You just signed up to receive around '+ str(working_settings.user_generated_prompt_rate) + ' texts per week.  If you did not, just reply with ‘stop’ or visit sentimini.com to stop receiving these messages.')
+		text1 = str('Hello! You just signed up to receive around '+ str(working_settings.prompts_per_week) + ' texts per week.  If you did not, just reply with ‘stop’ or visit sentimini.com to stop receiving these messages.')
 		ActualTextSTM(user=exp.user,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
 
 
