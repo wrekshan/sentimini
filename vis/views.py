@@ -30,7 +30,7 @@ import csv
 
 def user_vis(request):
 	if request.user.is_authenticated():	
-		magic_simulated_value = 1
+		magic_simulated_value = 0
 		generate_random_prompts_to_show(request,exp_resp_rate=.8,week=0,number_of_prompts=100) #set up 20 random prompts based upon the settings
 		
 		if ActualTextLTM.objects.filter(user=request.user).count() > 1:
