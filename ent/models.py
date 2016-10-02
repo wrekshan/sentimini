@@ -90,97 +90,11 @@ class ActualTextLTM(models.Model):
 		return self.text		
 
 
-
-
-# # Create your models here.
-# #This is the main workhorse.  Currently I'm not sure if it is better to have a queue of messages to be sent out or to use this as the queue.  
-# class Entry(models.Model):
-# 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-# 	scheduler_type = models.CharField(max_length=160,default="System",null=False)
-
-
-# 	prompt = models.CharField(max_length=160,default='',null=False) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-# 	prompt_full = models.CharField(max_length=500,default='',null=False) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-# 	prompt_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
-# 	prompt_reply_type = models.CharField(max_length=160,default='',null=True) #This is the prompt type
-# 	prompt_reply = models.IntegerField(null=True, blank=True) #This is the reply from the user
-# 	prompt_reply_bin = models.IntegerField(null=True, blank=True) #This is the reply from the user
-# 	prompt_reply_dim = models.IntegerField(null=True, blank=True) #This is the reply from the user
-# 	prompt_reply_open = models.IntegerField(null=True, blank=True) #This is the reply from the user
-# 	prompt_id = models.IntegerField(default=0)
-	
-# 	#These are datetime objects.  Should be clear
-# 	time_to_add = models.IntegerField(default=0)
-# 	time_created = models.DateTimeField(blank=True,null=True)
-# 	time_to_send = models.DateTimeField(blank=True,null=True)
-# 	time_to_send_localtz = models.DateTimeField(blank=True,null=True)
-# 	time_sent = models.DateTimeField(blank=True,null=True)
-	
-# 	time_to_send_circa = models.CharField(max_length=160,default='AM',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-# 	time_to_send_day = models.CharField(max_length=160,default='',null=True) #This is just the "ANGER" part.  I'm thinking about adding a field for the message sent
-# 	time_to_send_time = models.TimeField(blank=True,null=True)
-# 	time_to_send_hour = models.IntegerField(default=0)
-	
-# 	time_response = models.DateTimeField(blank=True,null=True)
-
-# 	response_time_seconds = models.IntegerField(default=0)
-# 	response_time = models.IntegerField(default=0)
-
-# 	ready_for_next = models.BooleanField(default=True) #This is a yes/no to determine if the next one shoudl be sent.  This is used primarily to wait for responses (in instruction and in series)
-# 	send_next_immediately = models.BooleanField(default=False) #This is used to determine if the next one should be sent immediately.  Used primarily in instructions and series
-
-# 	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
-# 	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
-
-# 	simulated = models.IntegerField(default=0) #this is so that I can develop on the model, but not wait forever for texts.
-
-# 	#you should have a log of the settings used for each prompt.  This meanings that you'll just reference the usersettings and save that information here everytime you send out a prompt.  in this way you'll be able to log, what settings generated what prompts to do analysis
-	
-# 	def __str__(self):
-# 		return self.prompt
-
-
-
-
-#This is just needed to display the respo;nse types
-class ResponseTypeStore(models.Model):
-	response_type = models.CharField(blank=True,max_length=100,default='0-10')
-	ordering_num = models.IntegerField(default=10) #probability that this should be choosen	
-	def __str__(self):
-		return self.response_type
-
-
 #This is just a log of when the user asked for a respite (break from texting)
 class Respite(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	date_request = models.DateTimeField(blank=True,null=True)
 	respite_type = models.CharField(max_length=120,default='',null=True) #1 day, 3 day, 7 day, start again
-
-#This just stores the email addresss, the @blah.com, to email texts to person
-class Carrier(models.Model):
-	carrier = models.CharField(blank=True,max_length=100,default='Verizon')
-	sms_address = models.CharField(max_length=100,default='',null=True)
-	
-	def __str__(self):
-		return self.carrier
-
-#This is just a log of the incoming emails
-class Incoming(models.Model):
-	email_user = models.CharField(max_length=120,default='',null=True)
-	email_date = models.DateTimeField(blank=True,null=True)
-	email_message = models.TextField(null=True)
-	email_content = models.TextField(null=True)
-	processed = models.IntegerField(default=0) 
-
-#This is just a log of the outgoing emails
-class Outgoing(models.Model):
-	addressee = models.CharField(max_length=120,default='',null=True)
-	date_sent = models.DateTimeField(blank=True,null=True)
-	message = models.TextField(null=True)
-	entry_id = models.IntegerField(blank=True,null=True)
-
-
-
 
 
 #This is the other main workhorse that keeps user preferences.  
@@ -240,16 +154,6 @@ class Ontology(models.Model):
 		return self.prompt_set
 
 
-class Prompttext(models.Model):
-	text = models.CharField(max_length=500,default='How much XXX is in your present moment (0-10)?',null=True) #this is the type of emotion.
-	text_type = models.CharField(max_length=500,default='DIM',null=True) #this is the type.  it coudl be different.
-	text_percent = models.IntegerField(default=10) #probability that this should be choosen
-
-
-	def __str__(self):
-		return self.text
-
-
 class UserGenPromptFixed(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	prompt = models.CharField(max_length=160,default='',null=True) 
@@ -269,4 +173,52 @@ class UserGenPromptFixed(models.Model):
 
 	
 	def __str__(self):
-		return self.prompt
+		return self.prompt		
+
+
+
+#This is just needed to display the respo;nse types
+class ResponseTypeStore(models.Model):
+	response_type = models.CharField(blank=True,max_length=100,default='0-10')
+	ordering_num = models.IntegerField(default=10) #probability that this should be choosen	
+	def __str__(self):
+		return self.response_type
+
+
+
+
+#This just stores the email addresss, the @blah.com, to email texts to person
+class Carrier(models.Model):
+	carrier = models.CharField(blank=True,max_length=100,default='Verizon')
+	sms_address = models.CharField(max_length=100,default='',null=True)
+	
+	def __str__(self):
+		return self.carrier
+
+#This is just a log of the incoming emails
+class Incoming(models.Model):
+	email_user = models.CharField(max_length=120,default='',null=True)
+	email_date = models.DateTimeField(blank=True,null=True)
+	email_message = models.TextField(null=True)
+	email_content = models.TextField(null=True)
+	processed = models.IntegerField(default=0) 
+
+#This is just a log of the outgoing emails
+class Outgoing(models.Model):
+	addressee = models.CharField(max_length=120,default='',null=True)
+	date_sent = models.DateTimeField(blank=True,null=True)
+	message = models.TextField(null=True)
+	entry_id = models.IntegerField(blank=True,null=True)
+
+
+
+class Prompttext(models.Model):
+	text = models.CharField(max_length=500,default='How much XXX is in your present moment (0-10)?',null=True) #this is the type of emotion.
+	text_type = models.CharField(max_length=500,default='DIM',null=True) #this is the type.  it coudl be different.
+	text_percent = models.IntegerField(default=10) #probability that this should be choosen
+
+
+	def __str__(self):
+		return self.text
+
+

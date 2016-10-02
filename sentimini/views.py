@@ -6,8 +6,6 @@ from ent.models import UserSetting
 
 from .forms import SignupFormWithoutAutofocus
 
-from scaffold.forms import  FAQuserquestionsForm, emotion_quotationForm, emotion_instructionForm
-from scaffold.models import FAQuserquestions, emotion_quotation, emotion_instruction
 
 # from sentimini.sentimini_functions import get_response_time, get_response_rate
 from ent.models import ActualTextSTM
