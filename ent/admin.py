@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting
+from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting, ResponseTypeStore
 
 # Register your models here.
 #NEW
