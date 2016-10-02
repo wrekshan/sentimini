@@ -12,6 +12,8 @@ class Sentimini_help(models.Model):
 	minor_cat = models.CharField(max_length=300,default="Texts")
 	level = models.CharField(max_length=300,default="",blank=True,null=True)
 	
+	def __str__(self):
+		return self.help_heading
 
 
 

@@ -4,7 +4,7 @@ from .models import Blog, Business, Measure, Sentimini_help
 # Register your models here.
 class Sentimini_helpAdmin(admin.ModelAdmin):
 	list_display = ["user","help_heading","help_content","help_type","major_cat","minor_cat","level"]
-	list_display_links = ["help_heading"]
+	list_display_links = ["user"]
 	list_filter = ["user"]
 	search_fields = ["user"]
 
