@@ -25,7 +25,7 @@ def new_user(request):
 		if  UserSetting.objects.filter(user=request.user).exists():
 			working_settings = UserSetting.objects.all().get(user=request.user)
 		else: 
-			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc)).save()
+			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc),respite_until_datetime = datetime.now(pytz.utc)).save()
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
