@@ -103,7 +103,7 @@ class UserSetting(models.Model):
 	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
-	phone_input = models.CharField(max_length=16,default='(XXX) XXX - XXXX') #This is the user phone number
+	phone_input = models.CharField(max_length=16,default='') #This is the user phone number
 	phone = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	carrier = models.CharField(blank=True,max_length=100,default='CHANGE ME') #THis is the carrier
 	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup

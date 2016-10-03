@@ -166,7 +166,7 @@ def set_next_prompt(user, text_type):
 		for txt in working_texts:
 			for i in range(0,txt.text_importance):
 				tmp_texts.append(txt.text)
-				tmp_id.append(txt.tmp_id)
+				tmp_id.append(txt.id)
 
 		print("TEMP TEXT: ", tmp_id[randint(0,len(tmp_id)-1)])
 		working_emotion = PossibleTextSTM.objects.filter(text_type="research").get(id=tmp_id[randint(0,len(tmp_id)-1)])

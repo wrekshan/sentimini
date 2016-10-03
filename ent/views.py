@@ -91,7 +91,7 @@ def new_user(request):
 						if working_settings.new_user_pages== 1:
 							working_settings.new_user_pages = 2
 							working_settings.save()
-							return HttpResponseRedirect('/ent/new_user/')
+							return HttpResponseRedirect('/ent/prompt_settings/')
 
 
 			if 'submit_new_user' in request.POST:
@@ -141,7 +141,7 @@ def new_user(request):
 					
 					tmp_settings.save()
 					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
-			return HttpResponseRedirect('/ent/new_user/')
+			return HttpResponseRedirect('/ent/prompt_settings/')
 				
 		else:
 			form_new_user = NewUserForm(request.POST or None, instance=working_settings)
@@ -181,10 +181,8 @@ def new_user(request):
 			}
 			if working_settings.new_user_pages == 0:
 				return render(request, "new_user_page1.html", context)
-			elif working_settings.new_user_pages == 1:
-				return render(request, "new_user_page2.html", context)
 			else:
-				return render(request, "new_user_page3.html", context)
+				return render(request, "new_user_page2.html", context)
 	else:
 		return render(request, "index_not_logged_in.html")
 
@@ -320,6 +318,7 @@ def edit_prompt_settings(request):
 					for form in formset:
 						if form.is_valid() and form.has_changed():	
 							tmp = form.save()
+							tmp.user=request.user
 							if tmp.date_created is None:
 								tmp.date_created = datetime.now(pytz.utc)
 								tmp.save()
@@ -385,7 +384,7 @@ def edit_prompt_settings(request):
 			form_sleep = TimingForm(request.POST or None, instance=working_settings)
 			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
 
-			if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()==1 and PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").first().prompt == '':
+			if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()==1 and PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").first().text == '':
 				print("EQUAL TO ONE")
 				UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=0)
 				formset = UGPFormset()

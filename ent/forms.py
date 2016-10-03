@@ -49,7 +49,7 @@ class PossibleTextSTMForm_detail(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'		
 		self.helper.add_input(Submit('submit_possible_text', 'Submit'))
-		self.fields['text'].widget.attrs['placeholder'] = 'Add new prompt here (i.e."The world is beautiful and good")'
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 
 
 class PossibleTextSTMForm(forms.ModelForm):
@@ -82,7 +82,7 @@ class PossibleTextSTMForm(forms.ModelForm):
 		self.helper.form_id = 'id-form'
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'		
-		self.fields['text'].widget.attrs['placeholder'] = 'Add new prompt here (i.e."The world is beautiful and good")'
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 
 
 
@@ -143,7 +143,7 @@ class UserGenPromptFixedForm(forms.ModelForm):
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'	
 		self.helper.add_input(Submit('submit_UGPF_formset', 'Submit'))	
-		self.fields['prompt'].widget.attrs['placeholder'] = 'Add new prompt here (i.e."The world is beautiful and good")'
+		self.fields['prompt'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 		
 
 
@@ -216,7 +216,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 class TimingForm(forms.ModelForm):
 	#These are declared here to get the choice field
 	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
-	
+
 	class Meta:
 		model = UserSetting
 
@@ -326,6 +326,7 @@ class NewUserForm(forms.ModelForm):
 		self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
+		self.fields['phone_input'].widget.attrs['placeholder'] = '(123) 456-7890'
 		self.helper.add_input(Submit('submit_new_user', 'Submit'))
 
 class NewUser_PossibleTextSTMForm(forms.ModelForm):
@@ -358,7 +359,7 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 		self.helper.label_class = 'col-lg-2'
 		self.helper.field_class = 'col-lg-10'
 		self.helper.form_action = 'login'		
-		self.fields['text'].widget.attrs['placeholder'] = 'Add new prompt here (i.e."The world is beautiful and good")'
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 		self.helper.add_input(Submit('submit_new_text', 'Add one more text'))
 		self.helper.add_input(Submit('submit_finished_adding', 'Finished adding texts'))
 
