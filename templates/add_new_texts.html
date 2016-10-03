@@ -1,0 +1,96 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+
+    <div class="container">
+      <div id="navbar" class="nav nav-justified">
+        <ul class="nav navbar-nav">
+          <li><a href="#almost_there">New User Page 2:</a></li>
+          <li><a href="#almost_there">Almost There</a></li>
+          <li><a href="#texts">Texts</a></li>
+          
+          
+
+        </ul>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+    
+  
+  <hr>
+  <div class="row" id="texts">
+    <div class="col-md-2">
+      <h1>Texts</h1>
+      <b>{{number_of_texts}}</b> total texts.
+    </div>
+    <div class="col-md-6">
+
+    
+     <form method='POST' action='' class="form-horizontal">
+      {% csrf_token %} {% crispy form_new_text %}
+      <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
+    </form>
+
+  </div>
+
+  <div class="col-md-4">
+        <b>You can always add more, edit, or delete texts on your settings page</b>
+        </br></br>
+        <b>Response Type</b>
+        <li>Sentimini records your responses for any text</li>
+        <li>This helps in analyzing the responses</li>
+
+        </br>
+        <b>Importantance</b>
+        <li>This is relative importance or a ratio</li>
+
+
+      </div>
+  </div>
+
+ 
+
+
+
+
+
+
+
+
+</div>
+</div>
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}

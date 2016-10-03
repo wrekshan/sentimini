@@ -19,6 +19,54 @@ from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_d
 from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes
 
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse
+def add_texts(request):
+	if request.user.is_authenticated():	
+		form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count()
+
+
+		if request.method == "POST":
+			
+			if 'submit_new_text' or 'submit_finished_adding' in request.POST:
+				if form_new_text.is_valid():	
+					tmp = form_new_text.save()
+					tmp.user=request.user
+					if tmp.date_created is None:
+						tmp.date_created = datetime.now(pytz.utc)
+						tmp.save()
+					
+					#Save any changes in long term storage
+					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+					ptltm.save()
+
+					if 'submit_new_text'in request.POST:
+						return HttpResponseRedirect('/ent/edit_prompt_settings/add_texts')
+
+					else:
+						return HttpResponseRedirect('/ent/edit_prompt_settings/')
+				else:
+					if 'submit_finished_adding' in request.POST and number_of_texts > 0:
+						return HttpResponseRedirect('/ent/edit_prompt_settings/')
+
+		else:
+			form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+
+		context = {
+				"number_of_texts": number_of_texts,
+				"form_new_text": form_new_text,
+			}
+		
+		return render(request, "add_new_texts.html", context)
+	else:
+		return render(request, "index_not_logged_in.html")
+
+
+
+
+
+
+
+
 
 def new_user(request):
 	if request.user.is_authenticated():	

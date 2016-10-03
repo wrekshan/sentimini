@@ -66,6 +66,7 @@
       </ul>
     {% if user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
+      <li><a href="{% url 'ent:add_texts' %}">Add Texts</a></li>
       <li><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></li>
 
         <li class="dropdown">
