@@ -58,7 +58,7 @@ def new_user(request):
 		if working_settings.new_user_pages < 2:
 			graph_data_simulated_heatmap = 0
 		else:
-			generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
+			generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
 			graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
 
 		########## NOW THE FORM HANDLING STUFF
