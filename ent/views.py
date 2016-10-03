@@ -32,7 +32,6 @@ def new_user(request):
 			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 		else: 
 			working_experience = ExperienceSetting(user=request.user,experience='user').save()
-			working_experience.save()
 			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
@@ -153,7 +152,6 @@ def new_user(request):
 				working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 			else: 
 				working_experience = ExperienceSetting(user=request.user,experience='user').save()
-				working_experience.save()
 				working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 
 			if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
