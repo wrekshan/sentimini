@@ -301,7 +301,7 @@ def edit_prompt_settings(request):
 		form_sleep = TimingForm(request.POST or None, instance=working_settings)
 		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
 		
-		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=0,number_of_prompts=20) #set up 20 random prompts based upon the settings
+		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
 		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
 		graph_data_histogram_timing = get_graph_data_histogram_timing(request,simulated_val=1)
 		prompts_per_week = working_settings.prompts_per_week
