@@ -490,8 +490,11 @@ def process_new_mail():
 	for tp in Toprocess:
 	
 		#need conditional
-		if UserSetting.objects.all().exclude(user="admin").filter(phone=tp.email_user).exists():
-			working_user = UserSetting.objects.all().get(phone=tp.email_user)	
+		if UserSetting.objects.all().filter(phone=tp.email_user).exists():
+			if UserSetting.objects.all().filter(phone=tp.email_user).count() == 1:
+				working_user = UserSetting.objects.all().get(phone=tp.email_user)	
+			else:
+				working_user = UserSetting.objects.all().get(user='wrekshan')
 			
 			#check to see if the user wants to stop
 			print("CHECKING FOR STOP")
