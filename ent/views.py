@@ -32,6 +32,7 @@ def new_user(request):
 			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 		else: 
 			working_experience = ExperienceSetting(user=request.user,experience='user').save()
+			working_experience.save()
 			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
 
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
@@ -53,7 +54,7 @@ def new_user(request):
 		
 		
 		prompts_per_week = working_settings.prompts_per_week
-		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count()
 
 		if working_settings.new_user_pages < 2:
 			graph_data_simulated_heatmap = 0
@@ -86,6 +87,13 @@ def new_user(request):
 							working_settings.new_user_pages = 2
 							working_settings.save()
 							return HttpResponseRedirect('/ent/new_user/')
+				else:
+					if 'submit_finished_adding' in request.POST and number_of_texts > 0:
+						if working_settings.new_user_pages== 1:
+							working_settings.new_user_pages = 2
+							working_settings.save()
+							return HttpResponseRedirect('/ent/new_user/')
+
 
 			if 'submit_new_user' in request.POST:
 				print("new_user")
@@ -140,6 +148,26 @@ def new_user(request):
 			form_new_user = NewUserForm(request.POST or None, instance=working_settings)
 			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
 			form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+
+			if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
+				working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+			else: 
+				working_experience = ExperienceSetting(user=request.user,experience='user').save()
+				working_experience.save()
+				working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+
+			if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
+				working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+			else:
+				tmp = ExperienceSetting(user=request.user,experience='research',prompts_per_week=1)
+				tmp.save()
+
+				working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+				min_awake = (24 - working_settings.sleep_duration)*60
+				working_research.prompt_interval_minute_avg = ((24 - working_settings.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+				working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+				working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+				working_research.save()
 
 			
 

@@ -215,6 +215,8 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 #Main form used to set the user settings
 class TimingForm(forms.ModelForm):
 	#These are declared here to get the choice field
+	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	
 	class Meta:
 		model = UserSetting
 
@@ -286,6 +288,7 @@ class NewUserForm(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone",help_text="This is we know when to text you")
 	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier",help_text="This has to be correct for you to receive texts")
+	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
 	
 
 	class Meta:
