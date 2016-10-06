@@ -349,9 +349,7 @@ def edit_prompt_settings(request):
 		form_sleep = TimingForm(request.POST or None, instance=working_settings)
 		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
 		
-		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
-		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
-		graph_data_histogram_timing = get_graph_data_histogram_timing(request,simulated_val=1)
+		
 		prompts_per_week = working_settings.prompts_per_week
 
 		########## NOW THE FORM HANDLING STUFF
@@ -452,12 +450,59 @@ def edit_prompt_settings(request):
 				"form_prompt_percent": form_prompt_percent,
 				"formset": formset,
 
-				"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
-				"graph_data_histogram_timing": graph_data_histogram_timing,
+
 			}
 			return render(request, "settings_prompts.html", context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+#User settings
+def simulate_week(request):
+	if request.user.is_authenticated():	
+		if  UserSetting.objects.filter(user=request.user).exists():
+			working_settings = UserSetting.objects.all().get(user=request.user)
+		else: 
+			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc)).save()
+			working_settings = UserSetting.objects.all().get(user=request.user)
+
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').exists():
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+		else: 
+			working_experience = ExperienceSetting(user=request.user,experience='user').save()
+			working_experience = ExperienceSetting.objects.all().filter(experience='user').get(user=request.user)
+
+		if ExperienceSetting.objects.filter(user=request.user).filter(experience='research').exists():
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+		else:
+			tmp = ExperienceSetting(user=request.user,experience='research',prompts_per_week=1)
+			tmp.save()
+
+			working_research = ExperienceSetting.objects.all().filter(experience='research').get(user=request.user)
+			min_awake = (24 - working_settings.sleep_duration)*60
+			working_research.prompt_interval_minute_avg = ((24 - working_settings.sleep_duration)*60) / (working_research.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
+			working_research.prompt_interval_minute_min =  working_research.prompt_interval_minute_avg*.5
+			working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
+			working_research.save()
+
+		
+		
+		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
+		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
+		graph_data_histogram_timing = get_graph_data_histogram_timing(request,simulated_val=1)
+		prompts_per_week = working_settings.prompts_per_week
+
+
+		context = {
+			"prompts_per_week": prompts_per_week,
+
+			"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
+			"graph_data_histogram_timing": graph_data_histogram_timing,
+		}
+		return render(request, "simulated_week.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')		
 
 
 ##########################################################

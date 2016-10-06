@@ -1,0 +1,74 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+<div class="nav_bar_second">
+    <div class="container ">
+      <div id="navbar" class="nav nav-justified">
+        <ul class="nav navbar-nav">
+        <li><a href="{% url 'ent:edit_prompt_settings' %}"><- Back to Settings</a></li>
+
+        </ul>
+      </div>
+    </div>
+    </div>
+
+
+
+
+
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="container">
+    <!-- Simulated view -->
+
+    <!-- Simulated view -->
+    <div class="row" id="simulated_week">
+      <div class="col-md-2">
+        <h1>Simulated Week</h1>
+        This is a simulated week based upon your settings.  Each row is one day.  Each dot is one text.
+      </br></br>
+      You'll notice that you don't recieve texts during the time you sleep.
+    </div>
+
+    <div class="col-sm-10 ">
+      <div class="row">
+        <div style="width:100%;height:800">
+          {{ graph_data_simulated_heatmap|safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+
+</div>
+</div>
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}
