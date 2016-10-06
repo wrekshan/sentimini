@@ -32,9 +32,9 @@ $(document).ready(function() {
 			{{featured_blog.author}}
 		</div>
 		<div class="col-md-10">
-		<h3>Description</h3>
+		<div class = "text-center"><h3>Description</h3></div>
 		{{featured_blog.description|safe}}
-		<h3>Content</h3>
+		<div class = "text-center"><h3>Content</h3></div>
 			
 			{{featured_blog.content|safe}}
 		</div>     
@@ -49,8 +49,8 @@ $(document).ready(function() {
 				<thead>
 		        <tr>
 		            <th>Title</th>
-		            <th>Author</th>
 					<th>Content</th>
+					<th>Author</th>
 					
 		        </tr>
 		    </thead>
@@ -58,8 +58,8 @@ $(document).ready(function() {
 		       {% for blog in blogs %}
 				<tr>
 					<td><a href="/scaffold/blog/{{ blog.id }}/">{{ blog.title }}</a></td> 
-					<td>{{blog.author}}</td>
 					<td>{{blog.description|safe}}</td>
+					<td>{{blog.author}}</td>
 				</tr>
 				{% endfor %}
 		    </tbody>
