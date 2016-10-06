@@ -192,7 +192,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 		]
 
 		labels = {
-            'prompts_per_week': ('Number of texts per week'),   
+            'prompts_per_week': ('Number of Open Data Texts Per Week'),   
         }
 
 		help_texts = {
@@ -205,8 +205,8 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.render_required_fields = True
-		self.helper.label_class = 'col-lg-4'
-		self.helper.field_class = 'col-lg-8'
+		self.helper.label_class = 'col-lg-5'
+		self.helper.field_class = 'col-lg-7'
 		self.helper.form_class = 'form-horizontal'
 		
 		self.helper.add_input(Submit('submit_prompt_percent', 'Submit'))

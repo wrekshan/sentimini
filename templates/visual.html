@@ -90,13 +90,15 @@ $(document).ready(function() {
 	    <tbody>
 	       {% for ent in table_latest_entry %}
 			<tr>
+				<td>
 				{% if ent.text_type == "user" %}
-				<td><a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a></td> 
+				<a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a>
 				{% else %}
-				<td>{{ ent.text }}</td>
+				{{ ent.text }}
 				{% endif %}
-				<td>{{ ent.response }}</td>
-				
+				</td> 
+			
+				<td>{{ ent.response_type }}</td>
 				<td>{{ ent.response_dim }}</td>
 				<td>{{ ent.response_cat }}</td>
 				<td>{{ ent.time_sent }}</td>

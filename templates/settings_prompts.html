@@ -47,19 +47,12 @@
 
   </div>
   <div class="col-md-5">
-   Because the timing and content of the texts are randomized, you will not receive the exact number of texts you specify.  Rather this is the ball park number of texts per week.  
+   <mark>The timing and content of the texts are randomized</mark>.
+   </br></br>
+   You will not receive the exact number of texts you specify.  Rather this is the ball park number of texts per week.  
 
  </div>
-
-
-
-
 </div>
-
-
-
-
-
 
 
 <hr>
@@ -82,7 +75,7 @@
   </div>
 
   <div class="col-md-5">
-    Don't forget that you can stop the texts for a couple days.  Just click the links at the top of the page or text 'pause'.  You can even text, 'pause for 1 day' or 'pause for two weeks'.
+    Don't forget that <mark>you can stop the texts</mark> for a couple days.  Just click the links at the top of the page or text 'pause'.  You can even text, 'pause for 1 day' or 'pause for two weeks'.
 
   </div>
 </div>
@@ -91,25 +84,25 @@
 <!-- Research permissions-->
 <div class="row" id="research">
   <div class="col-md-2">
-    <h1>Open Data Permission</h1>
+    <h1>Open Data</h1>
   </div>
 
   <div class="col-md-5">
-   By having value greater than 0, you are agreeing to receive texts about your daily experience and having your replies included in research.  
- </br></br>
  <form method='POST' action='' class="form-horizontal">
   {% csrf_token %} {% crispy form_prompt_percent %}
 </form>
 
 </div>
 <div class="col-md-5">
-  By default, you are signed up to participate in the Open Data Project, which has three goals: 
+  By default, you are signed up to participate in the Open Data Project.
+  </br></br>
+  There are three aims: 
   <li>Improving user experience</li>
-  <li>Ensuring validity of method (can one actually measure happiness or pain in this way?)</li>
+  <li>Ensuring validity of method</li>
   <li>Understanding human experience</li>
 </br>
-Research questions, plans, data and results are shared here.
-
+Research questions, plans, data and results are shared <a href="{% url 'scaffold:open_data' %}">here</a>.
+</br></br>
 </div>
 </div>
 

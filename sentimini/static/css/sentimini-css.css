@@ -7,6 +7,17 @@
 	background-color: #e8e8e8;
 	padding-left:0px;
 	margin-left:0px;
+	padding-bottom:0px;
+	margin-bottom:20px;
+
+}
+
+.nav_bar_first {
+	background-color: #e8e8e8;
+	padding-left:0px;
+	margin-left:0px;
+	padding-bottom:0px;
+	margin-bottom:20px;
 
 }
 
@@ -49,3 +60,13 @@ body {
   margin-top:0px;
   margin-bottom:0px;
 }
+
+mark {
+  font-size:130%;
+  font-weight: bold;
+  background-color: yellow;
+}
+
+
+
+
