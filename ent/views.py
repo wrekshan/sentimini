@@ -139,7 +139,7 @@ def new_user(request):
 						if working_settings.new_user_pages== 1:
 							working_settings.new_user_pages = 2
 							working_settings.save()
-							return HttpResponseRedirect('/ent/prompt_settings/')
+							return HttpResponseRedirect('/ent/new_user/')
 
 
 			if 'submit_new_user' in request.POST:
@@ -188,8 +188,8 @@ def new_user(request):
 					working_research.prompt_interval_minute_max =  working_research.prompt_interval_minute_avg*4
 					
 					tmp_settings.save()
-					return HttpResponseRedirect('/ent/edit_prompt_settings/#paid')		
-			return HttpResponseRedirect('/ent/prompt_settings/')
+					return HttpResponseRedirect('/ent/edit_prompt_settings/')		
+			return HttpResponseRedirect('/ent/edit_prompt_settings/')
 				
 		else:
 			form_new_user = NewUserForm(request.POST or None, instance=working_settings)
@@ -229,8 +229,10 @@ def new_user(request):
 			}
 			if working_settings.new_user_pages == 0:
 				return render(request, "new_user_page1.html", context)
-			else:
+			elif working_settings.new_user_pages == 1:
 				return render(request, "new_user_page2.html", context)
+			else:
+				return render(request, "new_user_page3.html", context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
