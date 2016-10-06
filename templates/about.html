@@ -8,45 +8,15 @@
 <body>
 	{% block content %}
 
-<div class="nav_bar_second">
-	<div class="container">
-		<div id="navbar" class="nav_bar_second">
-			<ul class="nav navbar-nav">
-				<li><a href="#overview">About:</a></li>
-				<li><a href="#overview">Overview</a></li>
-				<li><a href="#beta">Beta</a></li>
-				<li><a href="#open_data">Open Data</a></li>
-				<li><a href="#blog">Blog</a></li>
-				<li><a href="#donate">Donate</a></li>
-
-			</ul>
-		</div>
-	</div>
-</div>
-	{% if messages %} {% for message in messages %}
-	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
-	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
-</div>
-{% endfor %} {% endif %}
-
-
-
-
-
-
 
 
 
 <div class="container">
-
-
-
 	<div class="row" id="overview">
 		<div class="col-md-2">
 			<h1>Overview</h1>
 		</div>
 		<div class="col-md-10">
-		</br>
 		Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
 		</br></br>
 		It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>

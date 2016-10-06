@@ -41,34 +41,17 @@ $(document).ready(function() {
 } );
 </script>
 
-<div class="nav_bar_second">
-<div class="container">
-	<div id="navbar" class="nav nav-justified">
-		<ul class="nav navbar-nav">
-			<li><a href="#overview">Data:</a></li>
-			<li><a href="#overview">Overview</a></li>
-			<li><a href="#texts">Texts</a></li>
-			<li><a href="#summary">Summary</a></li>
-		</ul>
-	</div>
-</div>
-</div>
-
 <!-- Main jumbotron for a primary marketing message or call to action -->
-
-
-
 
 <div class="container">
 
 	<!-- Example row of columns -->
-	<div class="row vert_margins" id="overview">
+	<div class="row" id="overview">
 		<div class="col-md-2">
 			<h1>Overview</h1>
 		</div>
 
 	<!-- Example row of columns -->
-	
 
 		<div class="col-sm-5 ">
 		 Sentimini sends periodic text messages with varying content of your choosing at semi-random times.
@@ -107,8 +90,13 @@ $(document).ready(function() {
 	    <tbody>
 	       {% for ent in table_latest_entry %}
 			<tr>
+				{% if ent.text_type == "user" %}
 				<td><a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a></td> 
+				{% else %}
+				<td>{{ ent.text }}</td>
+				{% endif %}
 				<td>{{ ent.response }}</td>
+				
 				<td>{{ ent.response_dim }}</td>
 				<td>{{ ent.response_cat }}</td>
 				<td>{{ ent.time_sent }}</td>

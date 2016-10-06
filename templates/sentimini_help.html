@@ -23,65 +23,23 @@
 
 
 <body>
+<div class="container">
+	<div class="row" id="overview">
+		<div class="col-md-2">
+			<h1>Help</h1>
 
-
-
-	<div class="container">
-		<div id="navbar" class="nav nav-justified">
-			<ul class="nav navbar-nav">
-				<li><a href="#overview">Why</a></li>
-				<li><a href="#uses">How</a></li>
-				<li><a href="#uses">Request Data</a></li>
-			</ul>
+		</div>
+		<div class="col-md-10">
+			 {% for wh in working_help %}
+			 <h1>{{wh.minor_cat|safe}}</h1>
+			 <b>{{wh.help_heading|safe}}</b> - {{wh.help_content|safe}}
+			  {% endfor %}
+			  </br>
+			  </br>
+		</div>     
 		</div>
 	</div>
-
-	
-
-
-
-	<div class="container">
-		<hr>
-		<div class="row" id="overview">
-			<div class="col-md-2">
-				<h1>Formset</h1>
-				By default, you are signed up to participate in the Open Data Project, which has three goals
-
-			</div>
-			<div class="col-md-10">
-				 {% for wh in working_help %}
-				 <h1>{{wh.minor_cat|safe}}</h1>
-				 <b>{{wh.help_heading|safe}}</b> - {{wh.help_content|safe}}
-
-
-				  {% endfor %}
-
-
-			</div>     
-		</div>
-
-		
-
-
-
-
-
-	</div>
-		
 </div>
-
-
-
-</div>
-
-
-
-
-
-
-<!-- /container -->
-
-
 
 
 </body>

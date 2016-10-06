@@ -11,10 +11,14 @@
 }
 
 .vert_margins {
-  padding-top:25px;
-  padding-bottom:10px;
+  padding-top:0px;
+  padding-bottom:0px;
 }
 
+.row {
+  padding-top:0px;
+  padding-bottom:0px;
+}
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:100);
 @import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
@@ -40,8 +44,8 @@ body {
 .navbar {
   background: none;
   color: #ffffff
-  padding-top:5px;
-  padding-bottom:5px;
-  margin-top:5px;
-  margin-bottom:5px;
+  padding-top:0px;
+  padding-bottom:0px;
+  margin-top:0px;
+  margin-bottom:0px;
 }

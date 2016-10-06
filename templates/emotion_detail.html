@@ -28,24 +28,7 @@
 	} );
 	</script>
 
-	<div class="container">
-		<div id="navbar" class="nav nav-justified">
-			<ul class="nav navbar-nav">
-				<li><a href="#text">Text</a></li>
-				<li><a href="#summary">Summary</a></li>
-				<li><a href="#time">Timeline</a></li>
-				<li><a href="#rhythmic">Rhythmic</a></li>
-				<li><a href="#texts">Texts</a></li>
 
-			</ul>
-		</div>
-	</div>
-
-	{% if messages %} {% for message in messages %}
-	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
-	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
-</div>
-{% endfor %} {% endif %}
 
 
 
@@ -54,7 +37,7 @@
 
 <div class="container">
 
-<hr>
+
 	<div class="row" id = "text">
 		<div class="col-md-2">
 				<h1>Text:</h1>
