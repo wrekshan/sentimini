@@ -58,7 +58,7 @@ def add_texts(request):
 		
 		return render(request, "add_new_texts.html", context)
 	else:
-		return render(request, "index_not_logged_in.html")
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 
@@ -232,7 +232,7 @@ def new_user(request):
 			else:
 				return render(request, "new_user_page2.html", context)
 	else:
-		return render(request, "index_not_logged_in.html")
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 def texter(request):
@@ -457,7 +457,7 @@ def edit_prompt_settings(request):
 			}
 			return render(request, "settings_prompts.html", context)
 	else:
-		return render(request, "index_not_logged_in.html")
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 ##########################################################

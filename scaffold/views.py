@@ -305,7 +305,6 @@ def emotion_detail(request,prompt_id=None):
 			'emotion_name': emotion_name,
 			'user_summary_info': user_summary_info,
 
-
 			"graph_data_histogram": graph_data_histogram,
 			"graph_data_time_of_day": graph_data_time_of_day,
 			"graph_data_day_in_week": graph_data_day_in_week,

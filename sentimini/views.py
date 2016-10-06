@@ -9,17 +9,15 @@ from .forms import SignupFormWithoutAutofocus
 
 # from sentimini.sentimini_functions import get_response_time, get_response_rate
 from ent.models import ActualTextSTM
+from ent.forms import PreUser_PossibleTextSTMForm
 
 
 
 def landing_page(request):
 	if request.user.is_authenticated():	
-		#test is has working settings
-				
-
-		return render(request,"about.html")
+		return HttpResponseRedirect(reverse('scaffold:about'))
 	else:
-		return render(request,"about.html")		
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 from allauth.account.views import SignupView

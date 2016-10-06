@@ -348,8 +348,7 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
         }
 
 		
-        
-	
+       
 
 	def __init__(self, *args, **kwargs):
 		super(NewUser_PossibleTextSTMForm, self).__init__(*args, **kwargs)
@@ -362,6 +361,29 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 		self.helper.add_input(Submit('submit_new_text', 'Add one more text'))
 		self.helper.add_input(Submit('submit_finished_adding', 'Finished adding texts'))
+
+
+
+class PreUser_PossibleTextSTMForm(forms.Form):
+	text = forms.CharField(label = "",max_length = 160,	required = True)
+
+	def __init__(self, *args, **kwargs):
+		super(PreUser_PossibleTextSTMForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-exampleForm'
+		self.helper.form_class = 'blueForms'
+		self.helper.form_method = 'post'
+		self.helper.form_action = 'submit_survey'
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
+		self.helper.add_input(Submit('submit', 'Submit and Sign Up'))	
+	
+
+
+    
+		
+
+
+
 
 
 

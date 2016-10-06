@@ -102,7 +102,7 @@ def user_vis(request):
 			return render_to_response('visual.html',context)
 
 	else:
-		return render(request, "index_not_logged_in.html")
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 

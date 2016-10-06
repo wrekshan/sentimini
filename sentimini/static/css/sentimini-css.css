@@ -1,0 +1,47 @@
+.new_user_loc {
+	background-color: #a2b7de;
+}
+
+
+.nav_bar_second {
+	background-color: #e8e8e8;
+	padding-left:0px;
+	margin-left:0px;
+
+}
+
+.vert_margins {
+  padding-top:25px;
+  padding-bottom:10px;
+}
+
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:100);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
+
+
+body {
+  font-family: 'Open Sans Condensed', sans-serif;
+   font-weight: 100;
+}
+
+.navbar-brand {
+	 font-size: 42px;
+	 padding-left:0px;
+	 margin-left:0px;
+}
+
+.navbar-brand-footer {
+	 font-size: 35px;
+	 padding-left:0px;
+	 margin-left:0px;
+}
+
+.navbar {
+  background: none;
+  color: #ffffff
+  padding-top:5px;
+  padding-bottom:5px;
+  margin-top:5px;
+  margin-bottom:5px;
+}

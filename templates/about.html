@@ -8,8 +8,9 @@
 <body>
 	{% block content %}
 
+<div class="nav_bar_second">
 	<div class="container">
-		<div id="navbar" class="nav nav-justified">
+		<div id="navbar" class="nav_bar_second">
 			<ul class="nav navbar-nav">
 				<li><a href="#overview">About:</a></li>
 				<li><a href="#overview">Overview</a></li>
@@ -21,7 +22,7 @@
 			</ul>
 		</div>
 	</div>
-
+</div>
 	{% if messages %} {% for message in messages %}
 	<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
 	<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
@@ -39,12 +40,13 @@
 <div class="container">
 
 
-	<hr>
+
 	<div class="row" id="overview">
 		<div class="col-md-2">
 			<h1>Overview</h1>
 		</div>
 		<div class="col-md-10">
+		</br>
 		Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
 		</br></br>
 		It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
@@ -56,31 +58,46 @@
 
 
 <hr>
+
 <div class="row" id="beta">
-	<div class="col-md-2">
-		<h1>Beta</h1>
-	</div>
-	<div class="col-md-10">
-	Sentimini is in beta status.  There is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
-	</br></br>
-	Next major steps:
-	<li>Curated experiences - Sets of words centered around a specific experience (i.e. mindfulness, depression, quitting smoking, dream journal, etc)</li>
-	<li>Greater control of text timing</li>
-	<li>Sharing of data for use with healthcare providers/professional helpers</li>
-	<li>Sharing of data in open source / open science / open data frameworks</li>
-	</br>
-	Using the following use cases at examples:
-	<li>Slow learning / Courses / Guided Experiences</li>
-	<li>Behavior Change Assist</li>
-	<li>Wellness assist - evaluation</li>
-	<li>Welness assist - diagnsosis/communication</li>
-	<li>Learning about this world.</li>
-	</br>
-	Learn more at this blog post.
-	
-	
-	</div>     
+  <div class="col-md-2">
+    <h1>Beta</h1>
+  </div>
+  <div class="col-md-10">
+  <div class="row" id="beta">
+  <div class="col-md-12">
+  Sentimini is in beta status.</br></br>
+  This is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
+  </div>
+  </div>
+  </br>
+
+  <div class="row" id="beta">
+  <div class="col-md-6">
+  Next major steps:
+  <li>Sets of text centered around a specific experience</li>
+  <li>Greater control of text timing</li>
+  <li>Sharing of data for use with professional helpers</li>
+  <li>Sharing of data in open science / open data frameworks</li>
+  </br>
+  </div>
+  <div class="col-md-6">
+  Using the following use cases at examples:
+  <li>Slow learning / Courses / Guided Experiences</li>
+  <li>Behavior Change Assist</li>
+  <li>Wellness assist - evaluation</li>
+  <li>Wellness assist - diagnsosis/communication</li>
+
+  </br>
+  </div>
+
+  </div>
+  Learn more at this blog post.
+  
+  
+  </div>     
 </div>
+
 <hr>
 <div class="row" id="open_data">
 	<div class="col-md-2">
@@ -98,20 +115,6 @@
 	
 	</div>     
 </div>
-<hr>
-<div class="row" id="blog">
-	<div class="col-md-2">
-		<h1>Blog</h1>
-	</div>
-	<div class="col-md-10">
-	Any help files, research plans and results, development plans and advancements are posted on the blog.  
-	</br></br>
-	Please contact us if you have a question, need help, want to see a new feature, want to see a new analysis.
-	</br></br>
-	Read more here.
-	</div>     
-</div>
-
 
 <hr>
 <div class="row" id="donate">
@@ -124,7 +127,8 @@
 	The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
 	</br></br>
 	Until that time, please consider donating!
-	
+	</br>
+	</br>
 	</div>     
 </div>
 

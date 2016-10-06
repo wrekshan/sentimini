@@ -11,7 +11,7 @@
 
   <body>
     {% block content %}
-
+<div class="nav_bar_second">
     <div class="container">
       <div id="navbar" class="nav nav-justified">
         <ul class="nav navbar-nav">
@@ -24,29 +24,20 @@
         </ul>
       </div>
     </div>
-
-
-
-
+    </div>
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="container">
-    
-  
-  <hr>
-  <div class="row" id="texts">
-    <div class="col-md-2">
+    <div class="container ">
+  <div class="row vert_margins" id="texts">
+    <div class="col-md-2 ">
       <h1>Texts</h1>
       <b>{{number_of_texts}}</b> total texts.
     </div>
-    <div class="col-md-6">
-
-    
+    <div class="col-md-6 ">
      <form method='POST' action='' class="form-horizontal">
       {% csrf_token %} {% crispy form_new_text %}
       <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
     </form>
-
   </div>
 
   <div class="col-md-4">
@@ -59,8 +50,6 @@
         </br>
         <b>Importantance</b>
         <li>This is relative importance or a ratio</li>
-
-
       </div>
   </div>
 

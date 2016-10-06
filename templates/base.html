@@ -20,6 +20,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
   <link href={% static "css/WR_datatable.css" %} rel="stylesheet" />
+  <link href={% static "css/sentimini-css.css" %} rel="stylesheet" />
+
+
+  
   
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -42,15 +46,17 @@
 
 <body>
 
-  <div class="container">
+  <div class="container navbar">
     <div class="navbar-header">
-      <a class="navbar-brand" href="{% url 'vis:user_vis' %}">Sentimini!</a>
+      <a class="navbar-brand" href="{% url 'landing_page' %}">Sentimini!</a>
     </div>
 
 
     
     <div id="navbar" class="nav nav-justified">
       <ul class="nav navbar-nav">
+      
+      <li><a href="{% url 'ent:add_texts' %}">Add Texts</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About and Help<span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -66,7 +72,7 @@
       </ul>
     {% if user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
-      <li><a href="{% url 'ent:add_texts' %}">Add Texts</a></li>
+      <li><a href="{% url 'vis:user_vis' %}">Data</a></li>
       <li><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></li>
 
         <li class="dropdown">
@@ -108,37 +114,40 @@
 
 
 <footer>
-  <div id="services" class="pad-section">
+  <div id="services" class="pad-section nav_bar_second">
     <div class="container">
-      <hr>
       <div class="row" id="overview">
        <div class="col-md-2">
-        <h1>Footer</h1>
+       </br>
+        <a class="navbar-brand-footer" href="{% url 'landing_page' %}">Sentimini!</a>
 
       </div>
       
-      <div class="col-md-2">
-        <h4><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></h4>
-        <h4><a href="{% url 'vis:user_vis' %}">Data</a></h4>
-        <h4><a href="{% url 'account_change_password' %}">Change Password</a></h4>
-        <h4><a href="{% url 'account_email' %}">Change E-mail</a></h4>
-      </div>
-
       <div class="col-md-3">
+      </br>
         <h4><a href="{% url 'scaffold:about' %}">About</a></h4>
         <h4><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></h4>
         <h4><a href="{% url 'scaffold:blog' %}">Blog</a></h4>
         <h4><a href="{% url 'scaffold:open_data' %}">Open Data Project</a></h4>
       </div>
 
+      <div class="col-md-2">
+      </br>
+      {% if user.is_authenticated %}
+        <h4><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></h4>
+        <h4><a href="{% url 'vis:user_vis' %}">Data</a></h4>
+        <h4><a href="{% url 'account_change_password' %}">Change Password</a></h4>
+        <h4><a href="{% url 'account_email' %}">Change E-mail</a></h4>
+        {% endif %}
+      </div>
+
       <div class="col-md-5">
+      </br>
         Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
         </br></br>
         It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
       </div>
     </div>
-    <hr>
-
     <p>&copy; 2016 Sentimini!</p>
   </div>
 

@@ -48,27 +48,43 @@
   <hr>
   <div class="row" id="overview">
     <div class="col-md-2">
-      <h1>Overview</h1>
+      <h1>Add a text!</h1>
     </div>
     <div class="col-md-10">
-    Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
-    </br></br>
-    It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
-    </br></br>
-    You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
+     <h3>Sentimini will send you this texts (and others you add) at semi-random times.</h3>
+    
+    <h3>Any responses will be stored in downloadable tables and graphs.</h3>
+    </br>
+    </div>
+    <div class="row" id="overview">
+    <div class="col-md-3">
+    </div>
+    <div class="col-md-8">
+    <form method='POST' action='' class="form-horizontal">
+      {% csrf_token %} {% crispy new_text_form %}
+    </form>
+    </div>
+    <div class="col-md-1">
+    </div>
+
+
+     
+
+   
 </div>     
 </div>
 
-
-
 <hr>
+
+ 
 <div class="row" id="beta">
   <div class="col-md-2">
     <h1>Beta</h1>
   </div>
   <div class="col-md-10">
   <div class="row" id="beta">
-  Sentimini is in beta status.  There is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
+  Sentimini is in beta status.</br></br>
+  This is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
   </div>
   </br></br>
 
@@ -98,27 +114,7 @@
   </div>     
 </div>
 
-    <hr>
-    <div class="row" id="overview">
-      <div class="col-md-2">
-        <h1>Sign Up</h1>
-      </div>
-      <div class="col-md-10">
-       <div id="signup" class="panel-body lead">
-             <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
-              {% csrf_token %}
-              {{ form|crispy }}
-              {% if redirect_field_value %}
-              <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-              {% endif %}
-              <input type="submit" value="Sign Up!" class="btn btn-primary btn-lg btn-block">
-              <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
-            </form>
-            </div>
-
-
-      </div>     
-    </div>
+  
 
 
 
