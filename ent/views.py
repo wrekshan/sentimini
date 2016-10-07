@@ -109,6 +109,10 @@ def new_user(request):
 			generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
 			graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request,simulated_val=1)
 
+		if working_settings.new_user_pages == 2:
+			working_settings.new_user_pages = 3
+
+
 		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
 			print("REQUEST POST")
@@ -231,8 +235,10 @@ def new_user(request):
 				return render(request, "new_user_page1.html", context)
 			elif working_settings.new_user_pages == 1:
 				return render(request, "new_user_page2.html", context)
-			else:
+			elif working_settings.new_user_pages == 2:
 				return render(request, "new_user_page3.html", context)
+			else:
+				return HttpResponseRedirect('/ent/edit_prompt_settings/')
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
