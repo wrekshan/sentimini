@@ -69,9 +69,23 @@
             <li><a href="{% url 'scaffold:open_data' %}">Open Data Project</a></li>
           </ul>
         </li>
+      
 
-
+      {% if user.is_superuser %}
+      <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dev<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'scaffold:business_model' %}">Business</a></li>
+            <li><a href="{% url 'scaffold:power' %}">Power Analysis</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'ent:texter' %}">Texter</a></li>
+          </ul>
+        </li>
+      {% endif %}
       </ul>
+
+
+
     {% if user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
       <li><a href="{% url 'vis:user_vis' %}">Data</a></li>
@@ -143,6 +157,7 @@
         <h4><a href="{% url 'account_email' %}">Change E-mail</a></h4>
         {% endif %}
       </div>
+
 
       <div class="col-md-5">
       </br>
