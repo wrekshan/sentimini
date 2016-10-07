@@ -27,7 +27,12 @@ def sentimini_help(request):
 
 		return render(request,"sentimini_help.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		working_help = Sentimini_help.objects.all().filter(help_type="Glossary")
+
+		context = {
+			"working_help": working_help,
+		}	
+		return render(request,"sentimini_help.html",context)
 
 
 
@@ -133,7 +138,7 @@ def open_data(request):
 
 		return render(request,"open_data.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		return render(request,"open_data.html")
 
 
 
@@ -149,7 +154,7 @@ def about(request):
 
 		return render(request,"about.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		return render(request,"about.html")
 
 
 
@@ -166,7 +171,14 @@ def blog(request):
 
 		return render(request,"blog.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		blogs = Blog.objects.all()
+		featured_blog = Blog.objects.all().get(id=1)
+		
+		context = {
+			"featured_blog": featured_blog,
+			"blogs": blogs,
+		}	
+		return render(request,"blog.html",context)
 
 def blog_detail(request,id=None):
 	if request.user.is_authenticated():	
@@ -180,7 +192,14 @@ def blog_detail(request,id=None):
 
 		return render(request,"blog.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		blogs = Blog.objects.all()
+		featured_blog = Blog.objects.all().get(id=id)
+		
+		context = {
+			"featured_blog": featured_blog,
+			"blogs": blogs,
+		}	
+		return render(request,"blog.html",context)
 
 
 
