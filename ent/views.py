@@ -310,6 +310,7 @@ def get_digits(text):
 #User settings
 def edit_prompt_settings(request):
 	if request.user.is_authenticated():	
+
 		if  UserSetting.objects.filter(user=request.user).exists():
 			working_settings = UserSetting.objects.all().get(user=request.user)
 		else: 
@@ -341,7 +342,6 @@ def edit_prompt_settings(request):
 		else:
 			PossibleTextSTM(user=request.user,text='How are you doing?',text_importance=1, date_created = datetime.now(pytz.utc),response_type = '0 to 10').save()
 			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user")
-
 
 		############ SET UP THE FORMS
 		#UGPR

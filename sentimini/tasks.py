@@ -136,8 +136,11 @@ def send_text(text):
 		if now > tmp_user.respite_until_datetime and tmp_user.text_request_stop == False or text.system_text==1: 
 
 			Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
-			#switch out and see if you can send a monky pic
-			send_mail('',message_to_send,'emojinseidev@gmail.com', [addressee], fail_silently=False)
+			
+			if tmp_user.send_email_check == True:
+				send_mail('',message_to_send,'emojinseidev@gmail.com', [text.user.email], fail_silently=False)
+			if tmp_user.send_text_check == True:
+				send_mail('',message_to_send,'emojinseidev@gmail.com', [addressee], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -250,7 +253,7 @@ def set_prompt_time(text,send_now,fake_time_now):
 			additional_minutes = (wake_tmp - next_tmp) + (next_tmp - sleep_tmp)
 
 			minutes_to_add = minutes_to_add + (additional_minutes.seconds/60) + 60 
-			print("minutes_to_add:    ", minutes_to_add)
+			# print("minutes_to_add:    ", minutes_to_add)
 	
 	time_to_send = now + timedelta(hours=0,minutes=minutes_to_add,seconds=0)
 
