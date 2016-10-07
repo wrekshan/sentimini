@@ -2,16 +2,6 @@
 
 
 <!--DOCTYPE html -->
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-85360122-1', 'auto');
-  ga('send', 'pageview');
-
-</script>
 
 <html>
 <title>Sentimini! - About</title>
@@ -31,9 +21,9 @@
 		</br></br>
 		You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
 		</br></br>
-		It displays the responses in <mark>downloadable tables and figures</mark>.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+		It displays the responses in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
 		</br></br>
-		You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
+		You can view and access your data at the <a href="{% url 'vis:user_vis' %}">home page.</a>  You can learn more at this <a href="/scaffold/blog/1/">blog post.</a>
 </div>     
 </div>
 
@@ -105,12 +95,9 @@
 		<h1>Donate</h1>
 	</div>
 	<div class="col-md-10">
-	A main aim of Sentimini is to be self-supported to establish a structure that:
-	<li>Encourages development to make the best experience possible</li>
-	<li>Allows for an uncompromised ability to pursue open source / data / science</li>
-	</br>
-	The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
+	This is a big idea.	<mark>I've found Sentimini helpful in my life</mark> and I would like to <mark>learn about others</mark>.  This will take resources.
 	</br></br>
+	The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
 	<mark>Until that time, please consider donating!</mark>
 	</br></br>
 	You can do through my personal paypal for the time being <mark><a href="https://www.paypal.me/williamrekshan"> here</a></mark>.
@@ -133,4 +120,14 @@
 </body>
 
 </html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 {% endblock %}

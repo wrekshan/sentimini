@@ -20,23 +20,24 @@
     
  <div class="row" id="texts">
   <div class="col-md-2">
-    <h1>Texts</h1>
-    <b>{{number_of_texts}}</b> total texts.
+   <h1>Add a new text:</h1>
+    
+    
   </div>
-  <div class="col-md-6">
-
+  <div class="col-md-8">
+  <h1>{{number_of_texts}} total texts</h1>
+  </br>
+ 
 
    <form method='POST' action='' class="form-horizontal">
     {% csrf_token %} {% crispy form_new_text %}
     <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
   </form>
-
+ Questions about response type, click <a href="#response_type">here</a>.  Questions about importance, click <a href="#importance">here</a>.
 </div>
 
 <div class="col-md-4">
-  Questions about response type, click <a href="#response_type">here</a>
-  </br></br>
-  Questions about importance, click <a href="#importance">here</a>
+ 
 
 
 
@@ -50,14 +51,7 @@
 
   </div>
   <div class="col-md-10">
-    It is helpful to know how you would want to respond to a text.  
-    </br></br>This is used to:
-    <li>Allow you to think about how you want to response</li>
-    <li>Determining which data to include in graphs</li>
-  </br>
-  Don't worry, you can respond however you want to the text and Sentimini will record this data.
-</br></br>
-<mark>All of the responses will be included in tables regardless of the response type</mark>.
+    It is helpful to know how you would want to respond to a text.  Don't worry, you can respond however you want to the text and Sentimini will record this data.  <mark>All of your responses will be included in tables regardless of the response type</mark>.
 <div class="row" >
 
   <div class="col-md-4">
