@@ -234,10 +234,12 @@ def set_prompt_time(text,send_now,fake_time_now):
 
 		local_tz = pytz.timezone(working_settings.timezone)
 		local_sleep_time = local_tz.localize(datetime.combine(now.date(),working_settings.sleep_time))
-		local_wake_time = local_sleep_time + timedelta(0,60*60*int(working_settings.sleep_duration))
+		local_wake_time = local_tz.localize(datetime.combine(now.date(),working_settings.wake_time))
+		# local_wake_time = local_sleep_time + timedelta(0,60*60*int(working_settings.sleep_duration))
 
 		utc_sleep_time = local_sleep_time.astimezone(pytz.UTC)
 		utc_wake_time = local_wake_time.astimezone(pytz.UTC)
+		
 
 		if utc_sleep_time.time() <= proposed_next_prompt_time.time() <= utc_wake_time.time():
 
@@ -247,7 +249,8 @@ def set_prompt_time(text,send_now,fake_time_now):
 
 			additional_minutes = (wake_tmp - next_tmp) + (next_tmp - sleep_tmp)
 
-			minutes_to_add = minutes_to_add + (additional_minutes.seconds/60)
+			minutes_to_add = minutes_to_add + (additional_minutes.seconds/60) + 60 
+			print("minutes_to_add:    ", minutes_to_add)
 	
 	time_to_send = now + timedelta(hours=0,minutes=minutes_to_add,seconds=0)
 

@@ -49,7 +49,9 @@
   <div class="col-md-5">
    <mark>The timing and content of the texts are randomized</mark>.
    </br></br>
-   You will not receive the exact number of texts you specify.  Rather this is the ball park number of texts per week.  
+   You will not receive the exact number of texts you specify.  Rather this is the ball park number of texts per week. 
+   </br></br> 
+   <mark>BETA status</mark> - total time asleep cannot be more than 16 hours.
 
  </div>
 </div>
@@ -62,16 +64,9 @@
   </div>
 
   <div class="col-md-5">
-   
     <form method='POST' action='' class="form-horizontal">
       {% csrf_token %} {% crispy form_free %}
-
     </form>
-     {% if messages %} {% for message in messages %}
-      <div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
-      <a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
-    </div>
-    {% endfor %} {% endif %}
   </div>
 
   <div class="col-md-5">

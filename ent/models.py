@@ -109,10 +109,14 @@ class UserSetting(models.Model):
 	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup
 	timezone = models.CharField(max_length=30,default='UTC') #THis is the timezone.  User encouraged to update when travelling.  Not sure if I want a stable timezone too.
 	sleep_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
+	wake_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
+
 	sleep_duration = models.IntegerField(default=8)
 	respite_until_datetime = models.DateTimeField(blank=True,null=True) #The respite buttons change this field.  Email will only send if now greater than this value
 	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	new_user_pages = models.IntegerField(default=0) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+	send_email_check = models.BooleanField(default=False)
+	send_text_check = models.BooleanField(default=True)
 	
 
 	#these are for modeling the responses

@@ -193,26 +193,54 @@ def get_hourly_count_of_prompts(request,simulated_val,time_anchor):
 			max_date = datetime(time_anchor.year,time_anchor.month,time_anchor.day,hr,(mins+14),59, tzinfo=pytz.timezone(working_settings.timezone))
 			entries_sm = entries.all().filter(time_to_send__gte=min_date).filter(time_to_send__lte=max_date)
 
+			# print("SLEEP:    ", utc_sleep_time)
+			# print("WAKE:     ",  utc_wake_time)
+			# print("PROPOSED: ", proposed_next_prompt_time)
 
-			if sleep_datetime.time() <= dtnow.time() or dtnow.time() <= wake_datetime.time() :
-				if entries_sm.count()<1:
-					number_of_prompts.append(.2)
-					promptout.append('Sleep')
-				else:
-					promptout.append(entries_sm.first().text)
+			if working_settings.sleep_time > datetime(2016,1,12,12,00).time() and working_settings.wake_time < datetime(2016,1,12,12,00).time():
+				if sleep_datetime.time() <= dtnow.time() or dtnow.time() <= wake_datetime.time() :
+					if entries_sm.count()<1:
+						number_of_prompts.append(.2)
+						promptout.append('Sleep')
+					else:
+						promptout.append(entries_sm.first().text)
+						if entries_sm.first().text_type=='user':
+							number_of_prompts.append(2)
+						else:
+							number_of_prompts.append(1)
+				elif entries_sm.count()>0:
+					promptout.append(entries_sm.first().text)				
 					if entries_sm.first().text_type=='user':
 						number_of_prompts.append(2)
 					else:
 						number_of_prompts.append(1)
-			elif entries_sm.count()>0:
-				promptout.append(entries_sm.first().text)				
-				if entries_sm.first().text_type=='user':
-					number_of_prompts.append(2)
 				else:
-					number_of_prompts.append(1)
+					promptout.append('')
+					number_of_prompts.append(0)
 			else:
-				promptout.append('')
-				number_of_prompts.append(0)
+				if sleep_datetime.time() <= dtnow.time() and dtnow.time() <= wake_datetime.time() :
+					if entries_sm.count()<1:
+						number_of_prompts.append(.2)
+						promptout.append('Sleep')
+					else:
+						promptout.append(entries_sm.first().text)
+						if entries_sm.first().text_type=='user':
+							number_of_prompts.append(2)
+						else:
+							number_of_prompts.append(1)
+				elif entries_sm.count()>0:
+					promptout.append(entries_sm.first().text)				
+					if entries_sm.first().text_type=='user':
+						number_of_prompts.append(2)
+					else:
+						number_of_prompts.append(1)
+				else:
+					promptout.append('')
+					number_of_prompts.append(0)
+			
+
+
+			
 
 				
 	return number_of_prompts, promptout

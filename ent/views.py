@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta, time, date
 from django.forms import modelformset_factory
 import pytz
 from random import random, triangular, randint
@@ -353,6 +353,8 @@ def edit_prompt_settings(request):
 			formset = UGPFormset()
 
 		helper = ExampleFormSetHelper()
+		
+		
 		form_free = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
 		form_sleep = TimingForm(request.POST or None, instance=working_settings)
 		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
@@ -387,14 +389,29 @@ def edit_prompt_settings(request):
 					form_sleep.save()
 					tmp_settings = form_sleep.save(commit=False)
 					working_experience.prompts_per_week = tmp_settings.prompts_per_week
+					#figure out sleep duration
+					# print("SLEEP", tmp_settings.sleep_time)
+					# print("WAKE", tmp_settings.wake_time)
+					
+					local_tz = pytz.timezone(tmp_settings.timezone)
+					sleep = local_tz.localize(datetime.combine(datetime.now().date(),tmp_settings.sleep_time))
+					wake = local_tz.localize(datetime.combine(datetime.now().date(),tmp_settings.wake_time))
+
+					td = wake - sleep
+					tmp_settings.sleep_duration = int(td.seconds/60/60)
+
 					min_awake = (24 - tmp_settings.sleep_duration)*60
 					working_experience.prompt_interval_minute_avg = ((24 - tmp_settings.sleep_duration)*60) / (working_experience.prompts_per_week/7) #used in the random draw for the number of minutes to next prompt
 					working_experience.prompt_interval_minute_min =  working_experience.prompt_interval_minute_avg*.5
 					working_experience.prompt_interval_minute_max =  working_experience.prompt_interval_minute_avg*4
 					working_experience.save()
 					tmp_settings.save()
-					
+					print("VALID")
 					return HttpResponseRedirect('/ent/edit_prompt_settings/#timing')		
+				else:
+					print("NOT VALID")
+					return HttpResponseRedirect('/ent/edit_prompt_settings/#timing')		
+
 
 			elif 'submit_contact' in request.POST:
 				if form_free.is_valid():
@@ -437,6 +454,7 @@ def edit_prompt_settings(request):
 			form_free = UserSettingForm_Prompt(request.POST or None, instance=UserSetting.objects.all().get(user=request.user))
 			form_sleep = TimingForm(request.POST or None, instance=working_settings)
 			form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance=working_research)
+			
 
 			if PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").count()==1 and PossibleTextSTM.objects.filter(user=request.user).filter(text_type="user").first().text == '':
 				print("EQUAL TO ONE")
@@ -451,8 +469,8 @@ def edit_prompt_settings(request):
 
 			context = {
 				"prompts_per_week": prompts_per_week,
-
 				"helper": helper,
+
 				"form_sleep": form_sleep,
 				"form_free": form_free,
 				"form_prompt_percent": form_prompt_percent,

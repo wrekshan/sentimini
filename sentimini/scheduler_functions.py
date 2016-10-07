@@ -246,13 +246,17 @@ def next_prompt_minutes(user,simulation_val,send_now):
 	############ YOU HAVE TO DO THIS BASED UPON TIME AND NOT THE DATE.  THIS IS BECAUSE THERE COULD BE PROMPTS FOR LIKE FOUR DAYS FROM NOW.
 	local_tz = pytz.timezone(working_settings.timezone)
 	local_sleep_time = local_tz.localize(datetime.combine(time_anchor.date(),working_settings.sleep_time))
-	local_wake_time = local_sleep_time + timedelta(0,60*60*int(working_settings.sleep_duration))
+	local_wake_time = local_tz.localize(datetime.combine(time_anchor.date(),working_settings.wake_time))
+	# local_wake_time = local_sleep_time + timedelta(0,60*60*int(working_settings.sleep_duration))
 
 	utc_sleep_time = local_sleep_time.astimezone(pytz.UTC)
 	utc_wake_time = local_wake_time.astimezone(pytz.UTC)
 	
 	proposed_next_prompt_time = time_anchor + timedelta(hours=0,minutes=time_away_minutes,seconds=0)
 
+	print("SLEEP:    ", utc_sleep_time)
+	print("WAKE:     ",  utc_wake_time)
+	print("PROPOSED: ", proposed_next_prompt_time)
 
 	if utc_sleep_time.time() <= proposed_next_prompt_time.time() <= utc_wake_time.time():
 

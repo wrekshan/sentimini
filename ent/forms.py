@@ -215,20 +215,21 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 #Main form used to set the user settings
 class TimingForm(forms.ModelForm):
 	#These are declared here to get the choice field
-	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	wake_time = forms.DateTimeField(label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
 
 	class Meta:
 		model = UserSetting
 
 		fields = [
 			"sleep_time",
-			"sleep_duration",
+			"wake_time",
 			"prompts_per_week",
 		]
 
 		labels = {
             'sleep_time': ('Bed Time'),
-            'sleep_duration': ('Time Asleep (Hours)'),
+            'wake_time': ('Wake Time'),
             'prompts_per_week': ('Average number of texts per week'),
         }
 
@@ -263,9 +264,15 @@ class UserSettingForm_Prompt(forms.ModelForm):
 			"phone_input",
 			"carrier",
 			"timezone",
+			"send_text_check",
+			"send_email_check",
+			
+			
 		]
 
 		labels = {
+			'send_email_check': ('Send through email'),
+            'send_text_check': ('Send through text'),
         }
 
 		help_texts = {
