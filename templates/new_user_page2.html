@@ -11,135 +11,153 @@
 
   <body>
     {% block content %}
+    <script>
+      $(document).ready(function() {
+        $('#library_experiences_table').DataTable({
+          "columns": [
+          { "width": "40%" },
+          { "width": "40%" },
+          { "width": "10%" },
+          { "width": "10%" },
+          ]
 
+        });
+      } );
+    </script>
 
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
-
-     <div class="row" id="almost_there">
-       <div class="col-md-2">
-         <h1>Steps</h1>
-
-
-       </div>
-       <div class="col-md-3 text-center">
-        <h3>Contact</h3>
-        <b>(6 questions)</b>
-        <li>Phone Number</li>
-        <li>Times not to text</li>
-        <li>Number of texts per week</li>
-
+     <div class="row" id="required_information">
+      <div class = "col-md-2">
+      <h1>Steps</h1>
       </div>
-      <div class="col-md-3 new_user_loc text-center">
-       <h3>Texts</h3>
-       <b>(1 to 3 questions)</b>
-       <li>Specify the text you want to receive</li>
-     </br>
-     (you are here)
+      <div class = "col-md-2">
+      Email and password
+      <li>Completed!</li>
+      </div>
+      <div class = "col-md-2">
+      Contact
+      <li>Completed!</li>
+      </div>
+      <div class = "col-md-2">
+      Add content
+      <li>Texts or Feeds</li>
+      </div>
+      <div class = "col-md-2">
+      Finish
+      
+      </div>
+    </div>
+<hr>
 
-   </div>
-   <div class="col-md-4 text-center">
-     <h3>Next Steps</h3>
-     <li>Visualizations</li>
-     <li>Open Data</li>
-     <li>Customize Experience</li>
-   </div>
+     
 
+ 
+ <div class="row" id="texts">
+  <div class="col-md-2">
+  <h1>Add a text</h1>
+    <b>{{number_of_texts}}</b> total texts
+    </br>
+    Click <a href="{% url 'ent:new_user_help' %}">here</a> for help.
+  </div>
 
- </div>   
+  <div class="col-md-5">
+<form method='POST' action='' class="">
+  {% csrf_token %} {% crispy form_new_text %}
+  <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
+</form>
+
+</div>
+
+ <div class="col-md-5">
+<h3>Response</h3>
+Do you plan to respond with a 0-10 scale?  A yes or a no?  Anything?</br>All responses to text messages are collected, stored, and provided as <mark>downloadable graphs and tables for every text</mark>.  
+</br>
+<h3>Relative Importance</h3>
+For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1, then you would receive TEXT A 10 times for every 1 TEXT B.
+<mark>You can control how many text per week you receive on your feeds page</mark>.
+
+</div>
+
+</div>
+
+<hr>
+
+     
+
+ 
+ <div class="row" id="texts">
+  <div class="col-md-12 text-center">
+
+<h1>AND / OR</h1>
+</div>
+  </div>
+
 
 
  <hr>
- <div class="row" id="texts">
+<div class="row" id="contact">
   <div class="col-md-2">
-    <h1>Texts</h1>
-    <b>{{number_of_texts}}</b> total texts.
+<h2>Add a feed</h2>
+    <b>{{number_of_experiences}}</b> active feeds
+    
   </div>
-  <div class="col-md-6">
+
+  <div class="col-md-5">
 
 
-   <form method='POST' action='' class="form-horizontal">
-    {% csrf_token %} {% crispy form_new_text %}
-    <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
-  </form>
+     <table id="library_experiences_table" class="display" cellspacing="0" width="100%">
+      <thead>
+          <tr>
+              <th>Text Set</th>
+              <th>Description</th>
+              <th>Texts Per Week</th>
+              <th>Number of Texts</th>
+        
+          </tr>
+      </thead>
+      <tbody>
+         {% for exp in library_experiences %}
+      <tr>
 
-</div>
+        <td><b>{{ exp.text_set }}</b> (<a href="/ent/text_set_alter/{{ exp.ideal_id }}/">{{exp.user_state}}</a>, <a href="/ent/text_set_detail/{{ exp.ideal_id }}/">edit</a>)</td>
+        <td>{{ exp.description }}</td>
+        <td>{{ exp.prompts_per_week }}</td>
+        <td>{{ exp.number_of_texts_in_set }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+  </table>
 
-<div class="col-md-4">
-  <mark>You can always add more, edit, or delete texts on your settings page</mark>.
-  </br></br>
-  Questions about response type, click <a href="#response_type">here</a>
-  </br></br>
-  Questions about importance, click <a href="#importance">here</a>
-
-
-
-</div>
-</div>
-
-<hr>
-<div class="row" id="response_type">
-  <div class="col-md-2">
-    <h1>Response Type</h1>
+</br>
+  <form action="#" method="get">
+     <input type="submit" class="btn-primary btn-lg" value="Finished Adding Experiences" name="finished_experience">
+    </form>
 
   </div>
-  <div class="col-md-10">
-    It is helpful to know how you would want to respond to a text.  
-    </br></br>This is used to:
-    <li>Allow you to think about how you want to response</li>
-    <li>Determining which data to include in graphs</li>
-  </br>
-  Don't worry, you can respond however you want to the text and Sentimini will record this data.
+
+  <div class="col-md-5">
+<h3>Feeds</h3>
+Your texts are organized into feeds.  You can control how many texts you receive from each feed.  
 </br></br>
-<mark>All of the responses will be included in tables regardless of the response type</mark>.
-<div class="row" >
-
-  <div class="col-md-4">
-   <div class="text-center"> <h3>Open</h3></div>
-    <li>Respond anyway you want</li>
-    <li>These <mark>will not</mark> be included in graphs.</li>
-  </div>
-  <div class="col-md-4">
-    <div class="text-center"><h3>Yes/No</h3></div>
-
-    <li>Respond with a yes or no</li>
-    <li>These <mark>will</mark> be included in graphs.</li>
-  </div>      
-  <div class="col-md-4">
-    <div class="text-center"><h3>0 to 10</h3></div>
-
-    <li>Respond with number between 0 and 10</li>
-    <li>These <mark>will</mark> be included in graphs.</li>
-  </div>
-</div>
-</div>
-</div>
-
-<hr>
-<div class="row" id="importance">
-  <div class="col-md-2">
-    <h1>Importance</h1>
-
-  </div>
-  <div class="col-md-10">
-    This used to determine how often to send you a specific text.  This is just relative importance.
-    </br></br>
-    In order to determine the text content, Sentimini:
-    <li>Creates a list of possible texts to send</li>
-    <li>Each text is entered the number of times that the importance is set</li>
-    <li>Randomly selects a texts from the list</li>
-    </br>
-    In other words, determining the text content is kind of like a raffle and the importance is how many tickets the text has.  
-    </br></br>
-    <mark>The higher the number, the more likely you will be sent that text</mark>.
-    </br></br>
-    </div>
+Search through the feeds.  You can edit the feeds however you wish.
+</br></br>
+By default, all of your texts are saved in the 'user-generated' feed.  
 
 </div>
 
+  
 </div>
-</div>
+
+</br></br>
+
+
+
+
+
+
+
 
 <!-- Contact Settings -->
 
@@ -160,8 +178,8 @@
 </html>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-85360122-1', 'auto');

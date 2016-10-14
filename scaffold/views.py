@@ -10,13 +10,55 @@ from django.core.serializers.json import DjangoJSONEncoder
 from .forms import  BusinessForm, BusinessForm_price, BusinessForm_number_texts, BusinessForm_user_stuff, BusinessForm_static_costs, MeasureForm, Sentimini_helpForm, Sentimini_helpFormSetHelper
 
 from .models import Blog, Business, Measure, Sentimini_help
-from ent.models import PossibleTextSTM, ActualTextSTM, ActualTextLTM
+from ent.models import PossibleTextSTM, ActualTextSTM, ActualTextLTM, ActualTextSTM_SIM, ExperienceSetting
 from vis.models import EntryDEV
 
 from sentimini.sentimini_functions import get_user_summary_info, get_graph_data_histogram, get_graph_data_time_of_day, get_graph_data_day_in_week, get_graph_data_line_chart_plotly, get_graph_data_line_chart_plotly_smooth, get_graph_data_line_chart_business_model
-
+from sentimini.scheduler_functions import figure_out_timing
 
 # Create your views here.
+def upload_feed_data(request):
+	if request.user.is_authenticated():	
+		library_experiences = ExperienceSetting.objects.all().filter(experience='library')
+	
+		
+		if request.GET.get('update_experience_settings'):
+			working_experience = ExperienceSetting.objects.all().filter(experience='library')
+
+			for exp in working_experience:
+				exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(text_type='library').filter(text_set=exp.text_set).count()
+				#figure out timing
+				exp.prompt_interval_minute_avg, exp.prompt_interval_minute_min, exp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.prompts_per_week)
+	
+				if exp.ideal_id == 0:
+					exp.ideal_id = exp.id
+
+				exp.save()
+					
+			return HttpResponseRedirect('/scaffold/upload_feed_data/')
+
+
+		if request.GET.get('update_new_possible_texts'):
+			working_texts = PossibleTextSTM.objects.all().filter(text_type='library')
+
+			for text in working_texts:
+				if text.experience_id == 0:
+					tmp_exp = ExperienceSetting.objects.all().filter(experience='library').get(unique_text_set=text.unique_text_set)
+					text.experience_id = tmp_exp.id
+					text.save()
+
+			return HttpResponseRedirect('/scaffold/upload_feed_data/')	
+
+		context = {
+			"library_experiences": library_experiences,
+			
+		}			
+
+		return render(request,"upload_feed_data.html",context)
+	else:
+		return render(request,"upload_feed_data.html")
+
+
 def sentimini_help(request):
 	if request.user.is_authenticated():	
 		working_help = Sentimini_help.objects.all().filter(help_type="Glossary")
@@ -246,37 +288,6 @@ def emotion(request):
 
 
 
-def get_text_summary(user,prompt_id):
-	magic_simulated_value = 1
-
-	texts = ActualTextLTM.objects.all().filter(user=user).filter(simulated=magic_simulated_value).filter(text_id=prompt_id)
-
-	dim = []
-	cat = []
-
-	for text in texts:
-		if text.response_dim != "" and text.response_dim is not None:
-			print("DIM", text.response_dim)
-			dim.append(text.response_dim)
-		if text.response_cat_bin != "" and text.response_cat_bin is not None:
-			print("CAT", text.response_cat_bin)
-			cat.append(text.response_cat_bin)
-
-
-	if len(dim) > 0:
-		print("sum_dim: ", sum(dim))
-		dim_avg = sum(dim) / len(dim)
-		print("dim_avg: ", dim_avg)
-	else:
-		print("dim_avg: NA")
-	
-	if len(cat) > 0:
-		print("sum_cat: ", sum(cat))
-		cat_avg = sum(cat) / len(cat)
-		print("cat_avg: ", cat_avg)
-	else:
-		print("cat_avg: NA")
-
 	
 	
 
@@ -286,74 +297,3 @@ def get_text_summary(user,prompt_id):
 	# print("TEST COUNT:",  ActualTextLTM.objects.all().filter(user=user).filter(simulated=magic_simulated_value).filter(text_id=prompt_id).count())
 
 
-def emotion_detail(request,prompt_id=None):
-	if request.user.is_authenticated():	
-		magic_simulated_value = 1
-		if ActualTextLTM.objects.filter(user=request.user).count() > 1:
-
-			### Here are all the stuff that won't be user specific, but emotion specific
-			user_summary_info = get_user_summary_info(request, simulated_val=magic_simulated_value)
-			emotion_name = PossibleTextSTM.objects.all().get(id=prompt_id)
-
-			
-
-
-			### Here are all the stuff that WILL be user specific, but emotion specific
-			graph_data_histogram = get_graph_data_histogram(request=request,simulated_val=magic_simulated_value,prompt_id=prompt_id)
-
-			## AM / PM
-			graph_data_time_of_day = get_graph_data_time_of_day(request=request,simulated_val=magic_simulated_value,prompt_id=prompt_id)
-
-			## WEEKDAY
-			graph_data_day_in_week = get_graph_data_day_in_week(request=request,simulated_val=magic_simulated_value,prompt_id=prompt_id)
-
-			## TIME LINE
-			graph_data_line_chart_plotly = get_graph_data_line_chart_plotly_smooth(request=request,simulated_val=magic_simulated_value,prompt_id=prompt_id,number_of_days=1)
-
-			get_text_summary(user=request.user,prompt_id=prompt_id)
-
-
-			#Table
-			table_latest_entry = ActualTextLTM.objects.all().filter(user=request.user).filter(text_type="user")
-			table_latest_entry = table_latest_entry.order_by('time_sent')
-
-
-
-
-			context = {
-			'emotion_name': emotion_name,
-			'user_summary_info': user_summary_info,
-
-			"graph_data_histogram": graph_data_histogram,
-			"graph_data_time_of_day": graph_data_time_of_day,
-			"graph_data_day_in_week": graph_data_day_in_week,
-			"graph_data_line_chart_plotly": graph_data_line_chart_plotly,
-
-			"table_latest_entry": table_latest_entry,
-
-			 #    'latest_entry': latest_entry,
-			 #    'entries_by_date': entries_by_date,
-			 #    'entries_circa': entries_circa,
-			 #    'entries_day': entries_day,
-			 #    'histogramz': histogramz,
-			 #    'number_of_entries': number_of_entries,
-			 #    'number_of_responses': number_of_responses,
-			 #    'response_rate': response_rate,
-			 #    'emotion_percent': emotion_percent,
-			 #    "core_list": core_list,
-				# "top_list": top_list,
-				# "other_list": other_list,
-				# "emo_instruct": emo_instruct,
-				# "emo_quot": emo_quot,
-				
-		    }
-
-		else:
-			context = {
-			
-		    }
-	    
-		
-		return render(request,"emotion_detail.html", context)
-	else:
-		return HttpResponseRedirect('/accounts/signup/')

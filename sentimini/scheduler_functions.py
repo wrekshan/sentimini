@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from random import random, triangular, randint
+from random import random, triangular, randint, gauss
 from django.db.models import Avg, Count, F, Case, When
 from random import shuffle
 import pytz
@@ -8,7 +8,9 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
-from ent.models import UserSetting, PossibleTextSTM, ActualTextSTM, ActualTextLTM, Ontology, Prompttext, UserGenPromptFixed, ExperienceSetting
+from ent.models import UserSetting, PossibleTextSTM, ActualTextSTM, ActualTextLTM, Ontology, Prompttext, UserGenPromptFixed, ExperienceSetting, ActualTextSTM_SIM
+# from ent.views import update_experiences
+
 import plotly.offline as opy
 import plotly.graph_objs as go
 from numpy import * 
@@ -16,176 +18,162 @@ from numpy import *
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time
 
 
+
+
+def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
+	text_new = ActualTextSTM_SIM(user=user,response=None,text_set=exp.text_set,simulated=1,experience_id=exp.ideal_id)
+
+	# print(text_new.text)	
+	text_new.text, text_new.text_id = set_next_prompt(text=text_new)
+	text_new.text, text_new.response_type = determine_prompt_texts(text=text_new)
+
+
+	if ActualTextSTM.objects.all().filter(user=user).filter(simulated=1).count()>1:
+		working_entry_last = ActualTextSTM.objects.all().filter(user=user).last()
+		if text_new.text_type == "research":
+			text_new.series = determine_next_prompt_series(user=text_new.user)
+		else:
+			text_new.series = 0
+
+		if text_new.series > 1:
+			text_new.time_to_add = 0
+
+		if text_new.series > 1 and not working_entry_last.response == None:
+			text_new.response = randint(1,10)
+			text_new.response_time = 0
+			
+	text_new.time_to_add, text_new.time_to_send = set_prompt_time(text=text_new,send_now=0,fake_time_now=tmp_date)
+	text_new.time_sent = text_new.time_to_send
+
+	#Figure out the response
+	if text_new.series < 2:
+		tmp = randint(1,100)
+
+		if tmp <= (exp_resp_rate*100):
+			text_new.response_time = next_response_minutes(user=text_new.user)
+			if text_new.response_type == '0 to 10':
+				text_new.response = randint(1,10)
+			else:
+				text_new.response = randint(1,2)-1
+
+		else:
+			text_new.response_time = 0
+
+	# text_new.response_time = randint(1,100)
+
+	tmp_date = text_new.time_to_send + timedelta(hours=0,minutes=text_new.response_time,seconds=0)
+
+	wen=text_new
+	ltm = ActualTextLTM(user=wen.user,response=wen.response,text_set=wen.text_set,text_id=wen.text_id,text=wen.text,time_to_add=wen.time_to_add,text_type=wen.text_type,response_type=wen.response_type,time_response=wen.time_response,time_to_send=wen.time_to_send,time_sent=wen.time_sent,simulated=wen.simulated)
+	if ltm.response_type == '0 to 10':
+		if ltm.response != "":
+			ltm.response_dim = ltm.response
+
+			ltm.response_cat = randint(1,2)-1
+			ltm.response_cat_bin = ltm.response_cat
+
+			
+	else:
+		if ltm.response != "":
+			ltm.response_cat = str(ltm.response)
+			ltm.response_cat_bin = ltm.response
+
+			
+
+	if wen.time_to_send.hour > 12:
+		ltm.time_to_send_circa = 'PM'
+	ltm.time_to_send_day = wen.time_to_send.strftime('%A')
+
+	# ltm.response_cat=0
+	# ltm.response=wen.response
+	# ltm.response_dim=wen.response
+	ltm.response_time=wen.response_time
+	ltm.save()
+	text_new.save()
+
+	return text_new
+
+
 def generate_random_prompts_to_show(request,exp_resp_rate,week,number_of_prompts):
 	working_settings = UserSetting.objects.all().get(user=request.user)
-	experience_settings = ExperienceSetting.objects.all().filter(experience="user").get(user=request.user)
-	research_settings = ExperienceSetting.objects.all().filter(experience="research").get(user=request.user)
+	experience_settings = ExperienceSetting.objects.all().filter(experience="user").filter(text_set="user generated").filter(active=1).get(user=request.user)
 	
 	#Generate 100 prompts
-	if ActualTextSTM.objects.all().filter(user=request.user).filter(simulated=1).count()>0:
-		ActualTextSTM.objects.all().filter(user=request.user).filter(simulated=1).delete()
+	if ActualTextSTM_SIM.objects.all().filter(user=request.user).count()>0:
+		ActualTextSTM_SIM.objects.all().filter(user=request.user).delete()
 
-	if ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=1).count()>0:
-		ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=1).delete()
-	
 	#Just set up the starting date
 	tmp_date = datetime.now()
 	local_tz = pytz.timezone('UTC')
 	local_tz = local_tz.localize(tmp_date)
 	tmp_date = local_tz.astimezone(pytz.UTC)
 
-	#go trhough and generate 100 or whatevs
-	start_date = tmp_date
-	latest_date = tmp_date
-	time_passed = latest_date - start_date
 
-	if week == 1:
-		while (time_passed.days) < 8:	
-			# print ("STARTING NEW ENTRY")	
-			#Set up the basic for the prompt
-			text_new = ActualTextSTM(user=request.user, response=None,simulated=1)
-			text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,text_type="user")
-			text_new.text, text_new.response_type = determine_prompt_texts(user=request.user,prompt=text_new.text,typer=text_new.text_type)
+	working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience="user").filter(prompts_per_week__gt = 0).filter(number_of_texts_in_set__gt = 0)
 
-			# print("working_entry_new.text",working_entry_new.text)
+	print("NUMBER OF EXPERIENCES:", working_experience.count())
+	for exp_name in working_experience:
+		tmp_date = datetime.now(pytz.UTC)
+		exp = ExperienceSetting.objects.all().exclude(experience="library").filter(ideal_id=exp_name.ideal_id).get(user=request.user)
+		#go trhough and generate 100 or whatevs
+		start_date = tmp_date
+		latest_date = tmp_date
+		time_passed = latest_date - start_date
+		
+		if week > 0:
+			# print("WEEK STARTED")
+			while (time_passed.days) < 8:
+				text_new = add_new_simulated_text(user=request.user,exp=exp,tmp_date=tmp_date,exp_resp_rate=exp_resp_rate)
+				#figure out conditions to stop
+				tmp_date = text_new.time_to_send
+
+				latest_date = text_new.time_to_send
+				time_passed = latest_date - start_date
+				# print("time_passed.days", time_passed.days)
+		else:
+			for i in range(0,number_of_prompts):
+				text_new = add_new_simulated_text(user=request.user,exp=exp,tmp_date=tmp_date,exp_resp_rate=exp_resp_rate)
+				#figure out conditions to stop
+				tmp_date = text_new.time_to_send
+				
+				latest_date = text_new.time_to_send
+				time_passed = latest_date - start_date
+				# print("time_passed.days", time_passed.days)
 			
-			#See if it is part of a series
-	
-			if ActualTextSTM.objects.all().filter(user=request.user).filter(simulated=1).count()>1:
-				working_entry_last = ActualTextSTM.objects.all().filter(user=request.user).last()
-				if text_new.text_type == "research":
-					text_new.series = determine_next_prompt_series(user=text_new.user)
-				else:
-					text_new.series = 0
-
-				if text_new.series > 1:
-					text_new.time_to_add = 0
-
-				if text_new.series > 1 and not working_entry_last.response == None:
-					text_new.response = randint(1,10)
-					text_new.response_time = 0
-					
-			text_new.time_to_add, text_new.time_to_send = set_prompt_time(text=text_new,send_now=0,fake_time_now=tmp_date)
-			text_new.time_sent = text_new.time_to_send
-
-			#Figure out the response
-			if text_new.series < 2:
-				tmp = randint(1,100)
-
-				if tmp <= (exp_resp_rate*100):
-					text_new.response_time = next_response_minutes(user=text_new.user)
-					if text_new.response_type == '0 to 10':
-						text_new.response = randint(1,10)
-					else:
-						text_new.response = randint(1,2)-1
-
-				else:
-					text_new.response_time = 0
-
-			tmp_date = text_new.time_to_send + timedelta(hours=0,minutes=text_new.response_time,seconds=0)
-			text_new.save()
-			wen=text_new
-
-			ltm = ActualTextLTM(user=wen.user,response=wen.response,text_id=wen.text_id,text=wen.text,time_to_add=wen.time_to_add,text_type=wen.text_type,response_type=wen.response_type,time_response=wen.time_response,time_to_send=wen.time_to_send,time_sent=wen.time_sent,simulated=wen.simulated)
-			if ltm.response_type == '0 to 10':
-				if ltm.response != "":
-					ltm.response_dim = ltm.response
-			else:
-				if ltm.response != "":
-					ltm.response_cat = str(ltm.response)
-					ltm.response_cat_bin = ltm.response
-
-					
-
-			if wen.time_to_send.hour > 12:
-				ltm.time_to_send_circa = 'PM'
-			ltm.time_to_send_day = wen.time_to_send.strftime('%A')
-
-			ltm.response_cat=0
-			ltm.response=wen.response
-			ltm.response_dim=wen.response
-			ltm.response_cat=wen.response_time
-			ltm.save()
+			
 
 
-			#figure out conditions to stop
-			latest_date = text_new.time_to_send
-			time_passed = latest_date - start_date
+def figure_out_timing(user,text_per_week):
+	tmp_settings = UserSetting.objects.all().get(user=user)
+
+	local_tz = pytz.timezone(tmp_settings.timezone)
+	sleep = local_tz.localize(datetime.combine(datetime.now().date(),tmp_settings.sleep_time))
+	wake = local_tz.localize(datetime.combine(datetime.now().date(),tmp_settings.wake_time))
+
+	td = wake - sleep
+	tmp_settings.sleep_duration = int(td.seconds/60/60)
+	tmp_settings.save()
+	print("SLEEP DURATION:",tmp_settings.sleep_duration)
+
+	if text_per_week > 0:
+		min_awake = (24 - tmp_settings.sleep_duration)*60
+		average = ((24 - tmp_settings.sleep_duration)*60) / (text_per_week/7) #used in the random draw for the number of minutes to next prompt
+		if text_per_week <= 30:
+			minumum =  average*.01
+			maximium =  average*10
+		elif text_per_week > 30 and text_per_week <= 60:
+			minumum =  average*.01
+			maximium =  average*10
+		elif text_per_week > 60:
+			minumum =  average*.01
+			maximium =  average*10		
+
 	else:
-		for i in range(0,number_of_prompts):	
-			
-			#Set up the basic for the prompt
-			text_new = ActualTextSTM(user=request.user,ready_for_next = False, response=None,simulated=1)
-			text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,text_type="user")
-			text_new.text, text_new.response_type = determine_prompt_texts(user=request.user,prompt=text_new.text,typer=text_new.text_type)
-			# print("LOOK HERE")
-			# print(working_entry_new.prompt.id)
+		average = 0
+		minumum =  0
+		maximium =  0
 
-			#See if it is part of a series
-			text_new.time_to_add = next_prompt_minutes(user=text_new.user,simulation_val=1,send_now=0)
-
-			if ActualTextSTM.objects.all().filter(user=request.user).filter(simulated=1).count()>1:
-				working_entry_last = ActualTextSTM.objects.all().filter(user=request.user).last()
-				if text_new.text_type == "research":
-					text_new.series = determine_next_prompt_series(user=text_new.user)
-				else: 
-					text_new.series =0
-
-				if text_new.series > 1:
-					text_new.time_to_add = 0
-
-				if text_new.series > 1 and not working_entry_last.response == None:
-					text_new.response = randint(1,10)
-					text_new.response_time = 0
-					
-					
-			#compute the actual times
-			
-			text_new.time_to_add, text_new.time_to_send = set_prompt_time(text=text_new,send_now=0,fake_time_now=tmp_date)
-
-
-			
-			text_new.time_sent = text_new.time_to_send
-			
-
-			#Figure out the response
-			if text_new.series < 2:
-				tmp = randint(1,100)
-
-				if tmp <= (exp_resp_rate*100):
-					text_new.response_time = next_response_minutes(user=text_new.user)
-					if text_new.response_type == '0 to 10':
-						text_new.response = randint(1,10)
-					else:
-						text_new.response = randint(1,2)-1
-				else:
-					text_new.reponse_time = 0
-
-
-			tmp_date = text_new.time_to_send + timedelta(hours=0,minutes=text_new.response_time,seconds=0)
-			text_new.save()
-
-			wen=text_new
-
-
-			ltm = ActualTextLTM(user=wen.user,response=wen.response,text_id=wen.text_id,text=wen.text,text_type=wen.text_type,response_type=wen.response_type,time_response=wen.time_response,time_to_send=wen.time_to_send,time_sent=wen.time_sent,simulated=wen.simulated)
-			if ltm.response_type == '0 to 10':
-				if ltm.response != "":
-					ltm.response_dim = ltm.response
-			else:
-				if ltm.response != "":
-					ltm.response_cat = str(ltm.response)
-					ltm.response_cat_bin = ltm.response
-
-			# print("wen.time_to_send.day",wen.time_to_send.day)
-			if wen.time_to_send.hour > 12:
-				ltm.time_to_send_circa = 'PM'
-			ltm.time_to_send_day = wen.time_to_send.strftime('%A')
-			ltm.response=wen.response
-			ltm.save()
-
-
-
+	return average, minumum, maximium
 
 
 
@@ -241,7 +229,10 @@ def next_prompt_minutes(user,simulation_val,send_now):
 	if send_now == 1:
 		time_away_minutes = 0
 	else:
-		time_away_minutes = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		# time_away_minutes = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		time_away_minutes = generate_random_minutes(experience_settings)
+
+		
 	
 	############ YOU HAVE TO DO THIS BASED UPON TIME AND NOT THE DATE.  THIS IS BECAUSE THERE COULD BE PROMPTS FOR LIKE FOUR DAYS FROM NOW.
 	local_tz = pytz.timezone(working_settings.timezone)
@@ -274,6 +265,17 @@ def next_prompt_minutes(user,simulation_val,send_now):
 
 
 def next_response_minutes(user):
+	#this is just to simulate the responses so, DON"T CARE ABOUT IT
 	working_settings = UserSetting.objects.all().get(user=user)
 	time_away_minutes = int(triangular(working_settings.exp_response_time_min, working_settings.exp_response_time_max, working_settings.exp_response_time_avg)) #please note, that you'll want to change this.  it'll probs be some other distro, but this is just easy peasy for now.#low, high, mode
+	
 	return time_away_minutes	
+
+
+
+
+
+
+
+
+

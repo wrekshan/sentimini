@@ -19,7 +19,19 @@ class ExampleFormSetHelper(FormHelper):
         self.field_class = 'col-lg-12'
         self.add_input(Submit('submit_formset', 'Submit'))
         self.form_class = 'form-horizontal'
-        
+
+
+class TextSetFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(TextSetFormSetHelper, self).__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+        self.template = 'WR_table_inline_formset_help.html'
+        self.label_class = 'col-lg-0'
+        self.field_class = 'col-lg-12'
+        self.add_input(Submit('submit_formset', 'Submit Text Set Edits'))
+        self.form_class = 'form-horizontal'
+
 
 class PossibleTextSTMForm_detail(forms.ModelForm):
 	helper = FormHelper()
@@ -37,7 +49,7 @@ class PossibleTextSTMForm_detail(forms.ModelForm):
 		labels = {
             'text': ('Text'),
             'response_type': ('Response Type'),
-            'text_importance': ('Importance'),
+            'text_importance': ('How important is this text to you?  Do you want this text very frequently?'),
             'show_user': ('Delete'),            
         }
 
@@ -181,8 +193,36 @@ class EmotionOntologyFormSetHelper(FormHelper):
         self.add_input(Submit('submit_onotoloy', 'Submit'))
 
 
-
 class UserSettingForm_PromptRate(forms.ModelForm):
+	#These are declared here to get the choice field
+	class Meta:
+		model = ExperienceSetting
+
+		fields = [
+			"prompts_per_week",	
+		]
+
+		labels = {
+            'prompts_per_week': ('Number of Texts Per Week'),   
+        }
+
+		help_texts = {
+        	'prompts_per_week': (''),
+        	
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(UserSettingForm_PromptRate, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.render_required_fields = True
+		self.helper.label_class = 'col-lg-5'
+		self.helper.field_class = 'col-lg-7'
+		self.helper.form_class = 'form-horizontal'
+		
+		self.helper.add_input(Submit('submit_prompt_percent', 'Submit'))
+
+class UserSettingForm_ResearchPercent(forms.ModelForm):
 	#These are declared here to get the choice field
 	class Meta:
 		model = ExperienceSetting
@@ -201,7 +241,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
         }
 
 	def __init__(self, *args, **kwargs):
-		super(UserSettingForm_PromptRate, self).__init__(*args, **kwargs)
+		super(UserSettingForm_ResearchPercent, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
 		self.helper.render_required_fields = True
@@ -209,7 +249,7 @@ class UserSettingForm_PromptRate(forms.ModelForm):
 		self.helper.field_class = 'col-lg-7'
 		self.helper.form_class = 'form-horizontal'
 		
-		self.helper.add_input(Submit('submit_prompt_percent', 'Submit'))
+		self.helper.add_input(Submit('submit_percent_reserach', 'Submit'))
 		
 
 #Main form used to set the user settings
@@ -222,15 +262,14 @@ class TimingForm(forms.ModelForm):
 		model = UserSetting
 
 		fields = [
-			"sleep_time",
 			"wake_time",
-			"prompts_per_week",
+			"sleep_time",
 		]
 
 		labels = {
             'sleep_time': ('Bed Time'),
             'wake_time': ('Wake Time'),
-            'prompts_per_week': ('Average number of texts per week'),
+            
         }
 
 		help_texts = {
@@ -255,7 +294,8 @@ class UserSettingForm_Prompt(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone")
 	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier")
-	
+	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	wake_time = forms.DateTimeField(label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
 
 	class Meta:
 		model = UserSetting
@@ -264,6 +304,8 @@ class UserSettingForm_Prompt(forms.ModelForm):
 			"phone_input",
 			"carrier",
 			"timezone",
+			"sleep_time",
+			"wake_time",
 			"send_text_check",
 			"send_email_check",
 			
@@ -273,6 +315,8 @@ class UserSettingForm_Prompt(forms.ModelForm):
 		labels = {
 			'send_email_check': ('Send through email'),
             'send_text_check': ('Send through text'),
+            'sleep_time': ('Bed Time'),
+            'wake_time': ('Wake Time'),
         }
 
 		help_texts = {
@@ -293,9 +337,10 @@ class UserSettingForm_Prompt(forms.ModelForm):
 
 class NewUserForm(forms.ModelForm):
 	#These are declared here to get the choice field
-	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone",help_text="This is we know when to text you")
-	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier",help_text="This has to be correct for you to receive texts")
-	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone")
+	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier")
+	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	wake_time = forms.DateTimeField(label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
 	
 
 	class Meta:
@@ -305,41 +350,38 @@ class NewUserForm(forms.ModelForm):
 			"phone_input",
 			"carrier",
 			"timezone",
+			"wake_time",
 			"sleep_time",
-			"sleep_duration",
-			"prompts_per_week",
+			
 		]
 
 		labels = {
 			'phone_input': ('Phone Number'),
 			'sleep_time': ('Bed Time'),
 			'sleep_duration': ('Hours of sleep'),
-			'prompts_per_week': ('Weekly number of prompts'),
+		
         }
 
 		help_texts = {
-			'phone_input': ('Has to be 10 digit US Number'),
-			'sleep_time': ('You will not be texted at when you are asleep'),
-			'sleep_duration': ('Just needs to be a guess'),
-			'prompts_per_week': ('This will be an average.  Some weeks you might receive more, some less'),
+				
         }
 
 	def __init__(self, *args, **kwargs):
 		super(NewUserForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
-		self.helper.form_class = 'form-horizontal'
-		self.helper.label_class = 'col-lg-4'
-		self.helper.field_class = 'col-lg-8'
+		# self.helper.form_class = 'form-horizontal'
+		# self.helper.label_class = 'col-lg-4'
+		# self.helper.field_class = 'col-lg-8'
 		self.helper.form_method = 'post'
 		self.helper.form_action = 'login'
 		self.fields['phone_input'].widget.attrs['placeholder'] = '(123) 456-7890'
-		self.helper.add_input(Submit('submit_new_user', 'Submit'))
+		self.helper.add_input(Submit('submit_contact', 'Submit'))
 
 class NewUser_PossibleTextSTMForm(forms.ModelForm):
 	helper = FormHelper()
 	
-	response_type = forms.ChoiceField(choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
+	response_type = forms.ChoiceField(label="How will you respond to this?",choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
 	class Meta:
 		model = PossibleTextSTM
 		fields = [
@@ -350,20 +392,21 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 
 		labels = {
             'text': ('Text'),
-            'response_type': ('Response Type'),
-            'text_importance': ('Importance'),
+            'response_type': ('How will you respond to this?'),
+            'text_importance': ('How important is this?'),
         }
 
-		
-       
+		help_texts = {
+			'text_importance': ('0 (not important/infrequent) to 10 (very important/frequenty)'),
+		}
 
 	def __init__(self, *args, **kwargs):
 		super(NewUser_PossibleTextSTMForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
 		self.helper.form_method = 'post'
-		self.helper.label_class = 'col-lg-2'
-		self.helper.field_class = 'col-lg-10'
+		# self.helper.label_class = 'col-lg-4'
+		# self.helper.field_class = 'col-lg-8'
 		self.helper.form_action = 'login'		
 		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 		self.helper.add_input(Submit('submit_new_text', 'Add one more text'))
@@ -385,14 +428,92 @@ class PreUser_PossibleTextSTMForm(forms.Form):
 		self.helper.add_input(Submit('submit', 'Submit and Sign Up'))	
 	
 
+class AddNewTextSetForm(forms.Form):
+	text_set = forms.CharField(label = "",max_length = 160,	required = True)
 
-    
+	def __init__(self, *args, **kwargs):
+		super(AddNewTextSetForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-exampleForm'
+		self.helper.form_class = 'blueForms'
+		self.helper.form_method = 'post'
+		self.helper.form_action = 'submit_survey'
+		self.fields['text_set'].widget.attrs['placeholder'] = 'Add a new set name here'
+		self.helper.add_input(Submit('submit', 'Submit and Sign Up'))	
+	  
+
+
+class AddNewTextSetForm_full(forms.ModelForm):
+	helper = FormHelper()
+	
+	class Meta:
+		model = ExperienceSetting
+		fields = [
+			"text_set",
+			"prompts_per_week",
+
+
+		]
+
+		labels = {
+            'text_set': ('Text Set Name'),
+            'description': ('Description'),
+            'prompts_per_week': ('Texts per Week'),
+
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(AddNewTextSetForm_full, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
 		
+		# self.helper.label_class = 'col-lg-4'
+		# self.helper.field_class = 'col-lg-8'
+		# self.helper.form_class = 'form-horizontal'
+		self.fields['text_set'].widget.attrs['placeholder'] = 'Mindfulness or Dream or Something'
+		# self.fields['description'].widget.attrs['placeholder'] = 'Want to describe this in any way?'
+		# self.fields['number_of_texts_in_set'].widget.attrs['readonly'] = True
+		self.helper.add_input(Submit('submit_feed_description', 'Submit Feed Descriptions'))	
 
 
+class AddNewTextSetForm_fullFormSetHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super(AddNewTextSetForm_fullFormSetHelper, self).__init__(*args, **kwargs)
+        self.form_method = 'post'
+        self.render_required_fields = True
+        self.template = 'text_set_table_inline_formset.html'
+        self.label_class = 'col-lg-0'
+        self.field_class = 'col-lg-12'
+        self.add_input(Submit('submit_new_text_set', 'Add new text set'))
+        self.form_class = 'form-horizontal'
 
 
+class ExperienceTimingForm(forms.ModelForm):
+	#These are declared here to get the choice field
+	class Meta:
+		model = ExperienceSetting
 
+		fields = [
+			"prompts_per_week",	
+		]
 
+		labels = {
+            'prompts_per_week': ('Number of Texts Per Week'),   
+        }
+
+		help_texts = {
+        	'prompts_per_week': (''),
+        	
+        }
+
+	def __init__(self, *args, **kwargs):
+		super(ExperienceTimingForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_method = 'post'
+		self.helper.render_required_fields = True
+		self.helper.label_class = 'col-lg-5'
+		self.helper.field_class = 'col-lg-7'
+		self.helper.form_class = 'form-horizontal'
+		self.helper.add_input(Submit('submit_prompt_percent', 'Submit'))
+		
 
 

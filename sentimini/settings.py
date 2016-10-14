@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sites', #i think you need this for all auth
     'crispy_forms', #for forms
     'datetimewidget',
+    'import_export',
 
     #my apps
     'ent',
@@ -215,7 +216,7 @@ if LIVEHOST:
     ### COMMET AND UNCOMMENT THESE
 
     #These were different than static
-    ALLOWED_HOSTS = ['emojinsei.com','www.emojinsei.com'] 
+    ALLOWED_HOSTS = ['sentimini.com','www.sentimini.com'] 
     DEBUG = True
 else:
     ### LOCAL

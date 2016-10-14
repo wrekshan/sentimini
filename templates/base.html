@@ -48,7 +48,7 @@
 <div class = "nav_bar_first">
   <div class="container navbar">
     <div class="navbar-header">
-      <a class="navbar-brand" href="{% url 'landing_page' %}">Sentimini!</a>
+      <a class="navbar-brand" href="{% url 'ent:simulate_week' %}">Sentimini!</a>
     </div>
 
 
@@ -56,19 +56,11 @@
     <div id="navbar" class="nav nav-justified">
       <ul class="nav navbar-nav">
       {% if user.is_authenticated %}
+      <li><a href="{% url 'ent:feeds_edit' %}">Feeds</a></li>
+      <li><a href="{% url 'vis:text_data' %}">Data</a></li>
       
-      <li><a href="{% url 'ent:add_texts' %}">Add Texts</a></li>
       {% endif %}
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About and Help<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'scaffold:about' %}">About</a></li>
-            <li><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'scaffold:blog' %}">Blog</a></li>
-            <li><a href="{% url 'scaffold:open_data' %}">Open Data Project</a></li>
-          </ul>
-        </li>
+        
       
 
       {% if user.is_superuser %}
@@ -78,7 +70,11 @@
             <li><a href="{% url 'scaffold:business_model' %}">Business</a></li>
             <li><a href="{% url 'scaffold:power' %}">Power Analysis</a></li>
             <li role="separator" class="divider"></li>
+            <li><a href="{% url 'vis:text_data_demo' %}">Data Demo</a></li>
+            <li role="separator" class="divider"></li>
             <li><a href="{% url 'ent:texter' %}">Texter</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'scaffold:upload_feed_data' %}">Upload Feed Data</a></li>
           </ul>
         </li>
       {% endif %}
@@ -88,8 +84,14 @@
 
     {% if user.is_authenticated %}
       <ul class="nav navbar-nav navbar-right">
-      <li><a href="{% url 'vis:user_vis' %}">Data</a></li>
-      <li><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></li>
+      <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About and Help<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'scaffold:about' %}">About</a></li>
+            <li><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></li>
+          </ul>
+        </li>
+      
 
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pause Prompts <span class="caret"></span></a>
@@ -105,7 +107,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-user"></i> {{request.user.username}} <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            
+            <li><a href="{% url 'ent:contact_settings' %}">Contact Settings</a></li>
             <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
             <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
             <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
@@ -136,34 +138,38 @@
       <div class="row" id="overview">
        <div class="col-md-2">
        </br>
-        <a class="navbar-brand-footer" href="{% url 'landing_page' %}">Sentimini!</a>
+        <a class="navbar-brand-footer" href="{% url 'ent:simulate_week' %}">Sentimini!</a>
 
       </div>
       
       <div class="col-md-3">
       </br>
+
+
+
+
         <h4><a href="{% url 'scaffold:about' %}">About</a></h4>
         <h4><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></h4>
         <h4><a href="{% url 'scaffold:blog' %}">Blog</a></h4>
-        <h4><a href="{% url 'scaffold:open_data' %}">Open Data Project</a></h4>
       </div>
 
       <div class="col-md-2">
       </br>
       {% if user.is_authenticated %}
-        <h4><a href="{% url 'ent:edit_prompt_settings' %}">Settings</a></h4>
-        <h4><a href="{% url 'vis:user_vis' %}">Data</a></h4>
-        <h4><a href="{% url 'account_change_password' %}">Change Password</a></h4>
-        <h4><a href="{% url 'account_email' %}">Change E-mail</a></h4>
+        <h4><a href="{% url 'ent:feeds_edit' %}">Feeds</a></h4>
+        <h4><a href="{% url 'vis:text_data' %}">Data</a></h4>
+        <h4><a href="{% url 'ent:simulate_week' %}">Simulation</a></h4>
+        <h4><a href="{% url 'ent:contact_settings' %}">Contact Settings</a></h4>
+        
         {% endif %}
       </div>
 
 
       <div class="col-md-5">
       </br>
-        Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+        Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:feeds_edit' %}">settings.</a>
         </br></br>
-        It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:user_vis' %}">home page.</a>
+        It displays the responses in downloadable tables and figures.  You can view and access these at the <a href="{% url 'vis:text_data' %}">home page.</a>
       </div>
     </div>
     <p>&copy; 2016 Sentimini!</p>

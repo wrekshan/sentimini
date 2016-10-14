@@ -15,55 +15,57 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
-    <hr>
-   <div class="row " id="welcome">
-    <div class="col-md-2">
-     <h1>Welcome!</h1>
-     There are a total of 7 questions to answer before you are a full-fledged user of Sentimini.
+    <div class="row" id="required_information">
+      <div class = "col-md-2">
+      <h1>Steps</h1>
+      </div>
+      <div class = "col-md-2">
+      Email and password
+      <li>Completed!</li>
+      </div>
+      <div class = "col-md-2">
+      Contact
+      <li>5 questions</li>
+      </div>
+      <div class = "col-md-2">
+      Add content
+      <li>Texts or Feeds</li>
+      </div>
+      <div class = "col-md-2">
+      Finish
+      
+      </div>
     </div>
-    <div class="col-md-1">
-    
-    </div>
-  
-    <div class="col-md-3 new_user_loc">
-      <h3>Contact</h3>
-      <b>(6 questions)</b>
-      <li>Phone Number</li>
-      <li>Times not to text</li>
-      <li>Number of texts per week</li>
-      </br>
-      (you are here)
-    </div>
-    <div class="col-md-3">
-     <h3>Texts</h3>
-     <b>(1 to 3 questions)</b>
-     <li>Specify the text you want to receive</li>
+<hr>
 
-   </div>
-   <div class="col-md-3">
-     <h3>Next Steps</h3>
-     <li>Visualizations</li>
-     <li>Open Data</li>
-     <li>Customize Experience</li>
-   </div>
-   </div>   
-   
-  <hr>
   <div class="row" id="required_information">
     <div class="col-md-2">
-      <h1>Required Information</h1>
+      <h1>Contact</h1>
     </div>
-    <div class="col-md-10">
-    
-     <form method='POST' action='' class="form-horizontal">
+    <div class="col-md-5">   
+     <form method='POST' action='' class="">
       {% csrf_token %} {% crispy form_new_user %}
       <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
     </form>
-
   </div>
+
+  <div class="col-md-5">   
+     <h3>Timing</h3> 
+     Timezone, wake time, and bed time are needed to send texts at good times for you.
+
+     <h3>Control</h3>
+     Text content and timing can always be edited.  
+
+     <h3>Pause</h3>
+     You can use the links at the top right to pause the text.  
+     You can text 'pause' or 'pause 1 day' or 'pause 1 week'.
+   </div>
+  </div>
+
+
+
   </div>
  
-
 
 
 
@@ -90,4 +92,14 @@
 </body>
 
 </html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 {% endblock %}

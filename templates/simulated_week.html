@@ -11,20 +11,6 @@
 
   <body>
     {% block content %}
-<div class="">
-    <div class="container ">
-      <div id="navbar" class="nav nav-justified">
-        <ul class="nav navbar-nav">
-        <li><a href="{% url 'ent:edit_prompt_settings' %}"><- Back to Settings</a></li>
-
-        </ul>
-      </div>
-    </div>
-    </div>
-
-
-
-
 
   <!-- Main jumbotron for a primary marketing message or call to action -->
   <div class="container">
@@ -33,21 +19,54 @@
     <!-- Simulated view -->
     <div class="row" id="simulated_week">
       <div class="col-md-2">
-        <h1>Simulated Week</h1>
-        This is a simulated week based upon your settings.  Each row is one day.  Each dot is one text.
-      </br></br>
-      You'll notice that you don't recieve texts during the time you sleep.
+        <h1>Week Simulation</h1>
+         {{actual_number_texts}} texts observed</br>{{total_expected_number}} texts expected
+        </br></br>
+        
+        
+         {% for lister in list_out %}
+         <b>{{lister.name}}</b> 
+         </br>
+        {{lister.observed}} observed 
+          </br>
+          {{lister.expected}} expected
+          </br></br>
+          {% endfor %}
+          </br>
+
+
+        
     </div>
 
     <div class="col-sm-10 ">
+    <div class="row">
+
+<div class="col-sm-5 text-center ">
+      <h1>Edit your <a href="{% url 'ent:feeds_edit' %}"><mark>feeds</mark></a></h1>
+      </div>
+      <div class="col-sm-5 text-center">
+      <h1>View your <a href="{% url 'vis:text_data' %}"><mark>data</mark></a></h1>
+         </div>
+        
+      
+
+    </div>
+
       <div class="row">
         <div style="width:100%;height:800">
           {{ graph_data_simulated_heatmap|safe }}
         </div>
-         <mark>Edit your settings <a href="{% url 'ent:edit_prompt_settings' %}">here</a>, if you want a different pattern of texts.</mark>
-         </br></br>
-      </div>
+
+        <div class="row">
+        This is a simulated week based upon your settings.  Each verticle dash is a texts.  Each row is one day.  Hours go across horizontally.  Days are verticle.  You won't receive exactly this, but this will give you <mark>a good idea of what to expect</mark>.  This graph will update with every refresh.
+      </br></br>
+      Visit your feeds page to change the content and timing of the texts.  
+      </br></br>
+      
+
+       
     </div>
+
   </div>
   
 
@@ -73,4 +92,14 @@
 </body>
 
 </html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 {% endblock %}

@@ -16,8 +16,9 @@
 $(document).ready(function() {
     $('#last_responses_table').DataTable({
     	"columns": [
-    { "width": "35%" },
-    { "width": "15%" },
+    { "width": "20%" },
+    { "width": "30%" },
+    { "width": "10%" },
     { "width": "10%" },
     { "width": "10%" },
     { "width": "20%" },
@@ -30,7 +31,8 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('#example_table2').DataTable({
     	"columns": [
-    { "width": "60%" },
+    { "width": "50%" },
+    { "width": "10%" },
     { "width": "10%" },
     { "width": "10%" },
     { "width": "10%" },
@@ -56,7 +58,7 @@ $(document).ready(function() {
 		<div class="col-sm-5 ">
 		 Sentimini sends periodic text messages with varying content of your choosing at semi-random times.
 		 </br></br>
-		 You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+		 You can change the content and the timing at <a href="{% url 'ent:feeds_edit' %}">settings.</a>
 		</div>
 
 		<div class="col-sm-5 ">
@@ -80,35 +82,44 @@ $(document).ready(function() {
 	<table id="last_responses_table" class="display" cellspacing="0" width="100%">
 			<thead>
 	        <tr>
+		        <th>Time and Date</th>
 	            <th>Text</th>
+	            <th>Feed</th>
 	            <th>Response</th>
 	            <th>0-10</th>
 	            <th>Yes/ No</th>
-				<th>Time and Date</th>
+				
 	        </tr>
 	    </thead>
 	    <tbody>
 	       {% for ent in table_latest_entry %}
 			<tr>
+				<td>{{ ent.time_sent }}</td>
 				<td>
-				{% if ent.text_type == "user" %}
-				<a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a>
+				{% if demo == 1 %}
+					{% if ent.text_type == "user" %}
+						<a href="/vis/text_data_detail_demo/{{ ent.text_id }}/">{{ ent.text }}</a>
+					{% else %}
+						{{ ent.text }}
+					{% endif %}
 				{% else %}
-				{{ ent.text }}
+					{% if ent.text_type == "user" %}
+						<a href="/vis/text_data_detail/{{ ent.text_id }}/">{{ ent.text }}</a>
+					{% else %}
+						{{ ent.text }}
+					{% endif %}
 				{% endif %}
+
 				</td> 
-			
+				<td>{{ ent.text_set }}</td>
 				<td>{{ ent.response_type }}</td>
 				<td>{{ ent.response_dim }}</td>
 				<td>{{ ent.response_cat }}</td>
-				<td>{{ ent.time_sent }}</td>
+				
 			</tr>
 			{% endfor %}
 	    </tbody>
 	</table>
-
-
-		
 		<form action="#" method="get">
 		 <input type="submit" class="btn-primary btn-sm" value="Download .csv" name="export_csv_responses">
 		</form>
@@ -130,6 +141,7 @@ $(document).ready(function() {
 			<thead>
 	        <tr>
 	            <th>Text</th>
+	            <th>Feed</th>
 				<th>Average 0-10</th>
 				<th>Number of Texts</th>
 				<th>% Yes</th>
@@ -139,7 +151,18 @@ $(document).ready(function() {
 	    <tbody>
 	       {% for entry in table_emotion_centered %}
 			<tr>
-				<td><a href="/scaffold/emotion/{{ entry.text_id }}/">{{ entry.text }}</a></td> 
+			<td>
+				{% if demo == 1 %}
+					
+						<a href="/vis/text_data_detail_demo/{{ entry.text_id }}/">{{ entry.text }}</a>
+					
+				{% else %}
+					
+						<a href="/vis/text_data_detail/{{ entry.text_id }}/">{{ entry.text }}</a>
+				{% endif %}
+
+				</td> 
+				<td>{{ entry.text_set }}</td>
 				<td>{{ entry.response_dim__avg|floatformat:1 }}</td>
 				<td>{{ entry.response_dim__count }} </td>
 				<td>{{ entry.response_cat_bin__avg|floatformat:1 }}</td>

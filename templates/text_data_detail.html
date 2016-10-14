@@ -13,20 +13,21 @@
 	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
 
-	<script>
-	$(document).ready(function() {
-	    $('#table_latest_entry_table').DataTable({
-	    	"columns": [
-	    { "width": "50%" },
-	    { "width": "10%" },
-	    { "width": "10%" },
-	    { "width": "10%" },
-	    { "width": "20%" },
-	  ]
+<script>
+$(document).ready(function() {
+    $('#last_responses_table').DataTable({
+    	"columns": [
+    { "width": "20%" },
+    { "width": "30%" },
+    { "width": "10%" },
+    { "width": "10%" },
+    { "width": "10%" },
+    { "width": "20%" },
+  ]
 
-	    });
-	} );
-	</script>
+    });
+} );
+</script>
 
 
 
@@ -48,9 +49,9 @@
 			<div class="col-md-10">
 			<h1>{{emotion_name}}</h1>
 			</br>
-			 Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:edit_prompt_settings' %}">settings.</a>
+			 Sentimini sends periodic text messages with varying content at semi-random times.  You can change the content and the timing at <a href="{% url 'ent:feeds_edit' %}">settings.</a>
 	        </br></br>
-	        You can view detailed graphs and download data specifically realted to this specific text.  You can view and access the data for all texts at the <a href="{% url 'vis:user_vis' %}">home page.</a> 
+	        You can view detailed graphs and download data specifically realted to this specific text.  You can access data for all texts at <a href="{% url 'vis:text_data' %}">data.</a> 
 	        
 				
 			</div>
@@ -137,24 +138,34 @@
 		<h1>Texts</h1>
 	</div>
 	<div class="col-md-10">
-	<table id="table_latest_entry_table" class="display" cellspacing="0" width="100%">
+	<table id="last_responses_table" class="display" cellspacing="0" width="100%">
 			<thead>
 	        <tr>
+		        <th>Time and Date</th>
 	            <th>Text</th>
-				<th>Open</th>
-				<th>0-10</th>
-				<th>Yes/No</th>
-				<th>Time and Date</th>
+	            <th>Feed</th>
+	            <th>Response</th>
+	            <th>0-10</th>
+	            <th>Yes/ No</th>
+				
 	        </tr>
 	    </thead>
 	    <tbody>
 	       {% for ent in table_latest_entry %}
 			<tr>
-				<td><a href="/scaffold/emotion/{{ ent.text_id }}/">{{ ent.text }}</a></td> 
-				<td>{{ ent.response }}</td>
-				<td>{{ ent.response_dim }}</td>
-				<td>{{ ent.response_cat_bin }}</td>
 				<td>{{ ent.time_sent }}</td>
+				<td>
+				{% if ent.text_type == "user" %}
+				<a href="/vis/text_data_detail/{{ ent.text_id }}/">{{ ent.text }}</a>
+				{% else %}
+				{{ ent.text }}
+				{% endif %}
+				</td> 
+				<td>{{ ent.text_set }}</td>
+				<td>{{ ent.response_type }}</td>
+				<td>{{ ent.response_dim }}</td>
+				<td>{{ ent.response_cat }}</td>
+				
 			</tr>
 			{% endfor %}
 	    </tbody>
@@ -165,12 +176,23 @@
 		<form action="#" method="get">
 		 <input type="submit" class="btn-primary btn-sm" value="Download .csv" name="export_csv_responses">
 		</form>
-
+</br>
 	</div>     
+</div>
 </div>
 
 
 </body>
 
 </html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
 {% endblock %}

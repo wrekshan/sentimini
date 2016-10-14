@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 from celery.task import periodic_task
 from datetime import datetime, timedelta
-from random import random, triangular, randint
+from random import random, triangular, randint, gauss
 from django.core.mail import send_mail
 from email.utils import parsedate_tz, parsedate_to_datetime
 import pytz
@@ -24,6 +24,7 @@ import string
 # from django.db import models
 # from django.conf import settings
 from ent.models import PossibleTextSTM, ActualTextSTM, UserSetting, Incoming, Outgoing, ExperienceSetting, Ontology, Prompttext, ActualTextLTM
+# from sentimini.scheduler_functions import generate_random_minutes
 
 # from sentimini import settings
 def get_first_text_part(msg):
@@ -38,7 +39,15 @@ def get_first_text_part(msg):
 def hasNumbers(inputString):
 	return bool(re.search(r'\d', inputString))
 
+def generate_random_minutes(exp):
+	#V1
+	number_here = -100
+	while number_here < exp.prompt_interval_minute_min or number_here > exp.prompt_interval_minute_max:
+		number_here = int(gauss(exp.prompt_interval_minute_avg,exp.prompt_interval_minute_avg*.8)) 
 
+	#V2
+	# number_here = int(triangular(exp.prompt_interval_minute_min, exp.prompt_interval_minute_max, exp.prompt_interval_minute_avg))
+	return number_here
 ########### THINGS TO DO
 # Check to see if there is only one prompt.  if there are more scheduled to be sent, then remove one
 # Add in a check to not send more than X per day
@@ -114,8 +123,6 @@ def sleep_check(text):
 def send_text(text):
 	now = datetime.now(pytz.utc)
 	user_settings = UserSetting.objects.all().get(user=text.user)
-	exp_settings = ExperienceSetting.objects.all().filter(user=text.user).get(experience="user")
-
 	# YOU CAN DO THE CHECKS HERE
 
 	#check is this during sleep?
@@ -144,45 +151,35 @@ def send_text(text):
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
-def set_next_prompt(user, text_type):
-	working_settings = UserSetting.objects.all().get(user=user)
+def set_next_prompt(text):	
+	working_settings = UserSetting.objects.all().get(user=text.user)
 
-	#DETERMINE IF RESEARCH OR USER GEN
-	if text_type=="user":
-		
-		#I think this is a kludge
-		working_texts = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False)
-		tmp_texts = []
-		tmp_id = []
-		for txt in working_texts:
-			for i in range(0,txt.text_importance):
-				tmp_texts.append(txt.text)
-				tmp_id.append(txt.id)
-		
-		working_emotion = PossibleTextSTM.objects.filter(user=user).filter(text_type="user").filter(show_user=False).get(id=tmp_id[randint(0,len(tmp_id)-1)])
+	#I think this is a kludge
+	working_texts = PossibleTextSTM.objects.filter(user=text.user).filter(text_type=text.text_type).filter(show_user=False).filter(experience_id=text.experience_id)
+	# print("text.text_type", text.text_type)
+	# print("text.text_set", text.text_set)
+	tmp_texts = []
+	tmp_id = []
+	for txt in working_texts:
+		# print("TEXT TEXT TEXT", txt.text)
+		for i in range(0,txt.text_importance):
+			tmp_texts.append(txt.text)
+			tmp_id.append(txt.id)
 	
-	else:
-		#Determine if Emotion, instruction, or series
-		working_texts = PossibleTextSTM.objects.filter(text_type="research").filter(show_user=False)
-		tmp_texts = []
-		tmp_id = []
-		for txt in working_texts:
-			for i in range(0,txt.text_importance):
-				tmp_texts.append(txt.text)
-				tmp_id.append(txt.id)
-
-		print("TEMP TEXT: ", tmp_id[randint(0,len(tmp_id)-1)])
-		working_emotion = PossibleTextSTM.objects.filter(text_type="research").get(id=tmp_id[randint(0,len(tmp_id)-1)])
-
+	# print("tmp_texts", tmp_texts)
+	working_emotion = PossibleTextSTM.objects.filter(user=text.user).filter(text_type=text.text_type).filter(show_user=False).filter(experience_id=text.experience_id).get(id=tmp_id[randint(0,len(tmp_id)-1)])
+	
 	return working_emotion, working_emotion.id	
 
-def determine_prompt_texts(user,prompt,typer):
-	if typer == 'user':
-		working_UPGR = PossibleTextSTM.objects.all().filter(user=user).filter(text=prompt).first()
-		prompt_full = prompt
+def determine_prompt_texts(text):
+	if text.text_type == 'user':
+		# print("TYPE", text.text_type)
+		working_UPGR = PossibleTextSTM.objects.all().filter(user=text.user).filter(text=text.text).first()
+		prompt_full = text.text
 		prompt_reply_type = working_UPGR.response_type
 		
 	else:
+		# print("TYPE", text.text_type)
 		ontology_settings = Ontology.objects.all().filter(ontological_type='instruction')
 
 		# Figure out the type of response
@@ -213,13 +210,13 @@ def determine_prompt_texts(user,prompt,typer):
 
 		#set up the full text 
 		prompt_full = str(default_prompt)
-		prompt_full = prompt_full.replace("XXX", str(prompt))
+		prompt_full = prompt_full.replace("XXX", str(text.text))
 		
 	return prompt_full, prompt_reply_type		
 
 def set_prompt_time(text,send_now,fake_time_now):
 	working_settings = UserSetting.objects.all().get(user=text.user)
-	experience_settings = ExperienceSetting.objects.all().filter(user=text.user).get(experience=text.text_type)
+	experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience=text.text_type)
 	
 	#figure out the sleep time (ignoring tz)
 	if fake_time_now == 0:
@@ -232,7 +229,8 @@ def set_prompt_time(text,send_now,fake_time_now):
 		minutes_to_add = 0
 
 	else:
-		minutes_to_add = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		# minutes_to_add = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		minutes_to_add = generate_random_minutes(experience_settings)
 		proposed_next_prompt_time = now + timedelta(hours=0,minutes=minutes_to_add,seconds=0)
 
 		local_tz = pytz.timezone(working_settings.timezone)
@@ -259,10 +257,10 @@ def set_prompt_time(text,send_now,fake_time_now):
 
 	return minutes_to_add, time_to_send			
 
-def schedule_new_text(user,text_type):
-	text_new = ActualTextSTM(user=user, response=None,simulated=0,text_type=text_type)
-	text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,text_type=text_type)
-	text_new.text, text_new.response_type = determine_prompt_texts(user=text_new.user,prompt=text_new.text,typer=text_new.text_type)
+def schedule_new_text(user,text_type,ideal_id,text_set):
+	text_new = ActualTextSTM(user=user,text_set=text_set, response=None,simulated=0,text_type=text_type,experience_id=ideal_id)
+	text_new.text, text_new.text_id = set_next_prompt(text=text_new)
+	text_new.text, text_new.response_type = determine_prompt_texts(text=text_new)
 	text_new.time_to_add, text_new.time_to_send = set_prompt_time(text=text_new,send_now=0,fake_time_now=0)
 	text_new.save()
 
@@ -384,7 +382,7 @@ def send_texts():
 	today_date = datetime.now(pytz.utc)
 	#filter out the ones that haven't been sent out yet AND the ones that are suppose to be sent out now
 	user_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(text_type="user").filter(simulated=0)
-	research_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(text_type="research").filter(simulated=0)
+	
 	system_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(system_text=1).filter(simulated=0)
 
 	for text in system_texts:
@@ -397,9 +395,6 @@ def send_texts():
 		if inhibition_global() == True and inhibition_individual(text=text) == True:
 			send_text(text)
 
-	for text in research_texts:
-		if inhibition_global() == True and inhibition_individual(text=text) == True:
-			send_text(text)
 
 
 #While most of the scheduling is supposed to be done as a result of an event.  There are two events that will result in scheduling.  1) 60 minutes without a response and 2) a response (whichever is first)
@@ -417,33 +412,24 @@ def schedule_greeting_text(exp,text_type):
 
 @periodic_task(run_every=timedelta(seconds=2))
 def schedule_texts():
-	exp_settings = ExperienceSetting.objects.all().filter(experience="user").filter(prompt_interval_minute_avg__gte=0)
-	research_settings = ExperienceSetting.objects.all().filter(experience="research").filter(prompt_interval_minute_avg__gte=0)
+	exp_settings = ExperienceSetting.objects.all().filter(experience="user").filter(prompt_interval_minute_avg__gte=0).filter(number_of_texts_in_set__gte=0)
+	
 
 	for exp in exp_settings:
 		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").count() < 1:
-
 			schedule_greeting_text(exp=exp,text_type="user")
+		
+		#initialize new text for the experience
+		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").filter(text_set=exp.text_set).count()<1:
+			schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
 		else:
-			texts = ActualTextSTM.objects.all().filter(user=exp.user).filter(text_type="user")
+			texts = ActualTextSTM.objects.all().filter(user=exp.user).filter(text_type="user").filter(experience_id=exp.ideal_id)
 			text_last = texts.latest('time_to_send')
 
-			if text_last.ready_for_next == 1:
-				schedule_new_text(user=exp.user,text_type="user")
+			if texts.count() > 0 and text_last.ready_for_next == 1:
+				schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
 
-	for exp in research_settings:
-		if exp.prompts_per_week > 0:
-
-			if ActualTextSTM.objects.all().filter(user=exp.user).filter(text_type="research").count() < 1:
-				schedule_new_text(user=exp.user,text_type="research")
-			else:
-				texts = ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="research")
-				text_last = texts.latest('time_to_send')
-
-				if text_last.ready_for_next == 1:
-					schedule_new_text(user=exp.user,text_type="research")
-
-
+	
 
 
 @periodic_task(run_every=timedelta(seconds=2))

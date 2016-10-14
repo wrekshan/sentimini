@@ -9,8 +9,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class PossibleTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	experience_id = models.IntegerField(default=0)
+	text_set = models.CharField(max_length=30,default='user generated',null=True) #This is the user phone number
+	unique_text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	system_text = models.IntegerField(default=0)
-	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
 	text_importance = models.IntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
 	response_type = models.CharField(max_length=100,default='Open') 
 	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
@@ -25,7 +28,9 @@ class PossibleTextSTM(models.Model):
 class PossibleTextLTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
-	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	experience_id = models.IntegerField(default=0)
+	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
 	system_text = models.IntegerField(default=0)
 	text_importance = models.IntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
 	response_type = models.CharField(max_length=100,default='Open') 
@@ -34,17 +39,43 @@ class PossibleTextLTM(models.Model):
 	date_altered = models.DateTimeField(blank=True,null=True)
 	stm_id = models.IntegerField(default=0)
 
-	
-
 	def __str__(self):
 		return self.text
 
 #
+class ActualTextSTM_SIM(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	system_text = models.IntegerField(default=0)
+	text_id = models.IntegerField(default=0)
+	textstore_id = models.IntegerField(default=0)
+	experience_id = models.IntegerField(default=0)
+	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	response = models.CharField(max_length=160,default='',null=True,blank=True) #This is the prompt type
+	response_type = models.CharField(max_length=100,default='Open') 
+	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
+	time_to_send = models.DateTimeField(blank=True,null=True)
+	time_sent = models.DateTimeField(blank=True,null=True)
+	simulated = models.IntegerField(default=0) #this is so that I can develop on the model, but not wait forever for texts.
+	time_response = models.DateTimeField(blank=True,null=True)
+	response_time = models.IntegerField(default=0)
+	series = models.IntegerField(default=0) #This is a count with range 0-3.  0 =not series, 1-3 = series number.
+	time_to_add = models.IntegerField(default=0)
+	failed_series = models.IntegerField(default=0) #This is a yes/no tracking if the series failed (ie the user didn't respond).  I think this used to schedule a new prompt instead of waiting forever.
+	ready_for_next = models.IntegerField(default=0) #This is a yes/no to determine if the next one shoudl be sent.  This is used primarily to wait for responses (in instruction and in series)
+	consolidated = models.IntegerField(default=0)
+
+	def __str__(self):
+		return self.text
+
+
 class ActualTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	system_text = models.IntegerField(default=0)
 	text_id = models.IntegerField(default=0)
 	textstore_id = models.IntegerField(default=0)
+	experience_id = models.IntegerField(default=0)
+	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	response = models.CharField(max_length=160,default='',null=True,blank=True) #This is the prompt type
 	response_type = models.CharField(max_length=100,default='Open') 
@@ -68,6 +99,8 @@ class ActualTextLTM(models.Model):
 	text_id = models.IntegerField(default=0)
 	stm_id = models.IntegerField(default=0)
 	textstore_id = models.IntegerField(default=0)
+	experience_id = models.IntegerField(default=0)
+	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	text_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	response_type = models.CharField(max_length=100,default='Open') 
@@ -117,6 +150,8 @@ class UserSetting(models.Model):
 	new_user_pages = models.IntegerField(default=0) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	send_email_check = models.BooleanField(default=False)
 	send_text_check = models.BooleanField(default=True)
+
+	active_experiences = models.CharField(max_length=5000,default='',null=True) #This is the user phone number
 	
 
 	#these are for modeling the responses
@@ -131,8 +166,14 @@ class UserSetting(models.Model):
 
 class ExperienceSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
+	ideal_id =  models.IntegerField(default=0) # This is calculate by the number of desired prompts / time awake.  
+	user_state =  models.CharField(max_length=100,default='activate') # This is calculate by the number of desired prompts / time awake.  
+	number_of_texts_in_set =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
+	description =  models.CharField(max_length=1000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
+	delete_this =  models.BooleanField(default=False) # This is calculate by the number of desired prompts / time awake.  
 	experience = models.CharField(max_length=30,default='user') #This is the user phone number
+	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	unique_text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	active =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
 	prompts_per_week = models.IntegerField(default=3,validators=[MinValueValidator(0), MaxValueValidator(100)]) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
 	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
@@ -143,7 +184,7 @@ class ExperienceSetting(models.Model):
 	research_prompt_multiple_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #These are the proportion of time a series is given
 	
 	def __str__(self):
-		return self.experience
+		return self.text_set
 
 
 

@@ -1,5 +1,5 @@
 from datetime import date, datetime, timedelta
-from random import random, triangular, randint
+from random import random, triangular, randint, gauss
 from django.db.models import Avg, Count, F, Case, When
 from random import shuffle
 import pytz
@@ -8,7 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
-from ent.models import UserSetting, ActualTextSTM, PossibleTextSTM, Ontology, Prompttext, UserGenPromptFixed, ActualTextLTM, ExperienceSetting
+from ent.models import UserSetting, ActualTextSTM, PossibleTextSTM, Ontology, Prompttext, UserGenPromptFixed, ActualTextLTM, ExperienceSetting, ActualTextSTM_SIM
 import plotly.offline as opy
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
@@ -16,14 +16,20 @@ import plotly.plotly as py
 import numpy as np
 from numpy import * 
 
-
+from sentimini.tasks import generate_random_minutes
 ########### SCHEDULING AND DATA FUNCTIONS
-def get_graph_data_histogram_timing(request,simulated_val):
-	working_experience = ExperienceSetting.objects.all().filter(user=request.user).get(experience="user")
+
+
+
+
+def get_graph_data_histogram_timing(request):
+	working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(text_set="user generated").get(experience="user")
 	
 	x = []
 	for i in range(0,1000):
-		x.append(int(triangular(working_experience.prompt_interval_minute_min, working_experience.prompt_interval_minute_max, working_experience.prompt_interval_minute_avg)) /60)
+		# x.append(int(triangular(working_experience.prompt_interval_minute_min, working_experience.prompt_interval_minute_max, working_experience.prompt_interval_minute_avg)) /60)
+		x.append(generate_random_minutes(working_experience) / 60)
+		
 		
 
 
@@ -152,18 +158,27 @@ def get_graph_data_line_chart_business_model(working_busy):
 ############# HEAT MAP
 ##############################
 
-def get_hourly_count_of_prompts(request,simulated_val,time_anchor):
-	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val)
+def get_hourly_count_of_prompts(request,time_anchor):
+	entries = ActualTextSTM_SIM.objects.all().filter(user=request.user)
+	
+
+
+	# for set in text_set:
+
+
+	# print(entries.values('text_set'))
+
+
 	# print("HOURLY COUNT:",entries.count())
 	working_settings = UserSetting.objects.all().get(user=request.user)
 	# print("SLEEP TIME: ",working_settings.sleep_time.hour)
 	# wake_time = working_settings.sleep_time + timedelta()
 	hourout = []
-	promptout = []
+	text_set_type = []
 	tmp_hours = list(range(0,24))
 
 	tmp_mins = (0,15,30,45)
-	number_of_prompts = []
+	promptout = []
 
 	user_tz = pytz.timezone(working_settings.timezone)
 	# print("user_tz: ", user_tz)
@@ -184,7 +199,8 @@ def get_hourly_count_of_prompts(request,simulated_val,time_anchor):
 			sleep_datetime = user_tz.localize(sleep_datetime)
 			# sleep_datetime = sleep_datetime.astimezone(pytz.UTC)
 
-			wake_datetime = sleep_datetime + timedelta(hours=working_settings.sleep_duration)
+			wake_datetime = datetime(time_anchor.year,time_anchor.month,time_anchor.day,working_settings.wake_time.hour,working_settings.wake_time.minute,working_settings.wake_time.second)
+			wake_datetime = user_tz.localize(wake_datetime)
 
 			dtnow = datetime(time_anchor.year,time_anchor.month,time_anchor.day,hr,mins, tzinfo=pytz.timezone(working_settings.timezone))
 			# dtnow = user_tz.localize(dtnow)
@@ -200,56 +216,41 @@ def get_hourly_count_of_prompts(request,simulated_val,time_anchor):
 			if working_settings.sleep_time > datetime(2016,1,12,12,00).time() and working_settings.wake_time < datetime(2016,1,12,12,00).time():
 				if sleep_datetime.time() <= dtnow.time() or dtnow.time() <= wake_datetime.time() :
 					if entries_sm.count()<1:
-						number_of_prompts.append(.2)
-						promptout.append('Sleep')
+						text_set_type.append(.2)
+						promptout.append(str('Sleep'))
 					else:
-						promptout.append(entries_sm.first().text)
-						if entries_sm.first().text_type=='user':
-							number_of_prompts.append(2)
-						else:
-							number_of_prompts.append(1)
+						promptout.append(str(entries_sm.first().text))
+						text_set_type.append(str(entries_sm.first().text_set))
+							
 				elif entries_sm.count()>0:
-					promptout.append(entries_sm.first().text)				
-					if entries_sm.first().text_type=='user':
-						number_of_prompts.append(2)
-					else:
-						number_of_prompts.append(1)
+					promptout.append(str(entries_sm.first().text))
+					text_set_type.append(str(entries_sm.first().text_set))
 				else:
-					promptout.append('')
-					number_of_prompts.append(0)
-			else:
-				if sleep_datetime.time() <= dtnow.time() and dtnow.time() <= wake_datetime.time() :
-					if entries_sm.count()<1:
-						number_of_prompts.append(.2)
-						promptout.append('Sleep')
-					else:
-						promptout.append(entries_sm.first().text)
-						if entries_sm.first().text_type=='user':
-							number_of_prompts.append(2)
-						else:
-							number_of_prompts.append(1)
-				elif entries_sm.count()>0:
-					promptout.append(entries_sm.first().text)				
-					if entries_sm.first().text_type=='user':
-						number_of_prompts.append(2)
-					else:
-						number_of_prompts.append(1)
-				else:
-					promptout.append('')
-					number_of_prompts.append(0)
-			
+					promptout.append(str(''))
+					text_set_type.append(0)
 
+	
+	#This is to get the colors
+	text_sets = ActualTextSTM_SIM.objects.all().filter(user=request.user).values('text_set').distinct()
+	text_set_type_revised = []
+	for tmp in text_set_type:
+		tset_counter = 1
+		if (isinstance(tmp,str)):
+			for w in text_sets:
+				if w['text_set'] == tmp:
+					text_set_type_revised.append(tset_counter)
+				tset_counter = tset_counter + 1
+		else:
+			text_set_type_revised.append(tmp)
 
-			
-
-				
-	return number_of_prompts, promptout
+		
+	return text_set_type_revised, promptout
 
 
 
 	
 
-def get_graph_data_simulated_heatmap(request,simulated_val):	
+def get_graph_data_simulated_heatmap(request):	
 	prompts_by_date = []
 	prompt_text_by_date = []
 	dateout = []
@@ -263,7 +264,7 @@ def get_graph_data_simulated_heatmap(request,simulated_val):
 
 	tmp_date = datetime.now(pytz.utc)
 	for tmp_counter in list(range(0,7)):
-		number_of_prompts, promptout = get_hourly_count_of_prompts(request=request,simulated_val=simulated_val,time_anchor=tmp_date)
+		number_of_prompts, promptout = get_hourly_count_of_prompts(request=request,time_anchor=tmp_date)
 		# print("PROMPT: ", len(number_of_prompts))
 		# print("PROMPT DAY: ", len(promptout))
 
@@ -273,9 +274,6 @@ def get_graph_data_simulated_heatmap(request,simulated_val):
 		dateout.append(str(str(tmp_date.month) + '/' + str(tmp_date.day)))
 		tmp_date = tmp_date+timedelta(days=1)
 
-	# print("PROMPT: ", len(prompts_by_date))
-	# print("PROMPT DAY: ", len(prompt_text_by_date))
-
 
 	z = prompts_by_date
 	x = time_counter
@@ -283,11 +281,7 @@ def get_graph_data_simulated_heatmap(request,simulated_val):
 
 	y[0] = 'Today'
 
-	# print("Z: ",z)
-	# print("x: ",x)
-	# print("y: ",y)
-
-	colorscale = [[0, '#fff'], [1, '#387db8']]
+	colorscale = [[0, '#fff'], [ActualTextSTM_SIM.objects.all().filter(user=request.user).values('text_set').distinct().count(), '#387db8']]
 
 	trace1 = go.Heatmap(z=z, x=x, y=y, colorscale=colorscale, colorbar = {'tick0': 0,'dtick': 1 }, text = prompt_text_by_date, hoverinfo="text", showscale=False)
 	data=go.Data([trace1])
@@ -303,8 +297,8 @@ def get_graph_data_simulated_heatmap(request,simulated_val):
 
 
 ### THIS GENERATES DATA FOR THE SUMMARY BAR CHART GRAPH
-def get_graph_data_histogram(request,simulated_val,prompt_id):
-	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_id=prompt_id)
+def get_graph_data_histogram(request,prompt_id,simulated_val):
+	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(text_id=prompt_id).filter(simulated=simulated_val)
 	
 	x = []
 	for ent in entries:
@@ -643,6 +637,7 @@ def get_table_emotion_centered(request,simulated_val):
 	countz_bin = []
 	promptz = []
 	prompt_idz = []
+	text_setz = []
 
 	tmp_prompts = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").order_by().values('text').distinct()
 
@@ -663,9 +658,11 @@ def get_table_emotion_centered(request,simulated_val):
 		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text = tmp['text']).aggregate(Count('response_cat_bin'))
 		countz_bin.append(ha['response_cat_bin__count'])
 
+		text_setz.append(example_tmp.text_set)
+
 	working_entry = []
 	for i in range(0,len(promptz)):
-		working_entry.append({'text': promptz[i],'text_id': prompt_idz[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
+		working_entry.append({'text': promptz[i],'text_id': prompt_idz[i], 'text_set': text_setz[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
 		# working_entry.append({'text': promptz[i],'text_id': prompt_idz[i]})
 
 	print("WORKING ENTRY", working_entry)

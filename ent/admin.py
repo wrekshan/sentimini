@@ -1,27 +1,74 @@
 from django.contrib import admin
 
-from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting, ResponseTypeStore
+from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting, ResponseTypeStore, ActualTextSTM_SIM
 
 # Register your models here.
 #NEW
 
-class ResponseTypeStoreModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"response_type",
-		"ordering_num",
-	]
-	list_display_links = ["response_type"]
-	list_filter = ["response_type"]
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+
+
+class ExperienceSettingResource(resources.ModelResource):
 	class Meta:
-		model = ResponseTypeStore
+		model = ExperienceSetting
+		import_id_fields = ('unique_text_set',)
+		fields = ('text_set','unique_text_set', 'description', 'experience', 'prompts_per_week','time_to_declare_lost',)
 
-admin.site.register(ResponseTypeStore,ResponseTypeStoreModelAdmin)
 
 
-class PossibleTextSTMModelAdmin(admin.ModelAdmin):
+class ExperienceSettingModelAdmin(ImportExportModelAdmin):
+    resource_class = ExperienceSettingResource   
+
+    list_display = [
+		"user",
+		"experience",
+		"id",
+		"ideal_id",
+		"user_state",
+		"description",
+		"unique_text_set",
+		"text_set",
+		"prompts_per_week",
+		"active",
+		"prompt_interval_minute_avg",
+		"prompt_interval_minute_min",
+		"prompt_interval_minute_max",
+		"time_to_declare_lost",
+		"research_instr_dim_rate",
+		"research_prompt_multiple_rate",
+	]
+	
+
+#OLD
+# class ExperienceSettingModelAdmin(admin.ModelAdmin):
+	
+# 	class Meta:
+# 		model = ExperienceSetting
+
+admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
+
+
+
+
+class PossibleTextSTMResource(resources.ModelResource):
+	class Meta:
+		model = PossibleTextSTM
+		import_id_fields = ('text',)
+		fields = ('text','text_set', 'unique_text_set', 'text_importance', 'response_type',)
+
+
+
+class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
+	resource_class = PossibleTextSTMResource  
+	
 	list_display = [
 		"user",
 		"text",
+		"system_text",
+		"experience_id",
+		"text_set",
+		"unique_text_set",
 		"text_type",
 		"text_importance",
 		"response_type",
@@ -29,37 +76,16 @@ class PossibleTextSTMModelAdmin(admin.ModelAdmin):
 		"date_created",
 		"date_altered",
 	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = PossibleTextSTM
 
 admin.site.register(PossibleTextSTM,PossibleTextSTMModelAdmin)
 
-
-class PossibleTextLTMModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"stm_id",
-		"text",
-		"text_type",
-		"text_importance",
-		"response_type",
-		"show_user",
-		"date_created",
-		"date_altered",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = PossibleTextLTM
-
-admin.site.register(PossibleTextLTM,PossibleTextLTMModelAdmin)
-
-class ActualTextSTMModelAdmin(admin.ModelAdmin):
+class ATSMSIM_ModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
 		"text_id",
+		"experience_id",
+		"response_time",
+		"text_set",
 		"textstore_id",
 		"time_to_add",
 		"system_text",
@@ -78,6 +104,72 @@ class ActualTextSTMModelAdmin(admin.ModelAdmin):
 	list_display_links = ["user"]
 	list_filter = ["user"]
 	class Meta:
+		model = ActualTextSTM_SIM
+
+admin.site.register(ActualTextSTM_SIM,ATSMSIM_ModelAdmin)
+
+
+class ResponseTypeStoreModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"response_type",
+		"ordering_num",
+	]
+	list_display_links = ["response_type"]
+	list_filter = ["response_type"]
+	class Meta:
+		model = ResponseTypeStore
+
+admin.site.register(ResponseTypeStore,ResponseTypeStoreModelAdmin)
+
+
+
+
+
+class PossibleTextLTMModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"stm_id",
+		"text",
+		"experience_id",
+		"text_set",
+		"text_type",
+		"text_importance",
+		"response_type",
+		"show_user",
+		"date_created",
+		"date_altered",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
+		model = PossibleTextLTM
+
+admin.site.register(PossibleTextLTM,PossibleTextLTMModelAdmin)
+
+class ActualTextSTMModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"response_type",
+		"text_id",
+		"experience_id",
+		"text_set",
+		"textstore_id",
+		"time_to_add",
+		"system_text",
+		"text",
+		"consolidated",
+		"ready_for_next",
+		"series",
+		"failed_series",
+		"response",
+		"text_type",
+		"time_to_send",
+		"time_sent",
+		"simulated",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
+	class Meta:
 		model = ActualTextSTM
 
 admin.site.register(ActualTextSTM,ActualTextSTMModelAdmin)
@@ -88,6 +180,8 @@ class ActualTextLTMModelAdmin(admin.ModelAdmin):
 		"user",
 		"text_id",
 		"stm_id",
+		"experience_id",
+		"text_set",
 		"textstore_id",
 		"text",
 		"time_to_send_circa",
@@ -95,6 +189,7 @@ class ActualTextLTMModelAdmin(admin.ModelAdmin):
 		"series",
 		"failed_series",
 		"text_type",
+		"response_type",
 		"response",
 		"response_cat",
 		"response_cat_bin",
@@ -112,31 +207,13 @@ class ActualTextLTMModelAdmin(admin.ModelAdmin):
 admin.site.register(ActualTextLTM,ActualTextLTMModelAdmin)
 
 
-#OLD
-class ExperienceSettingModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"experience",
-		"prompts_per_week",
-		"active",
-		"prompt_interval_minute_avg",
-		"prompt_interval_minute_min",
-		"prompt_interval_minute_max",
-		"time_to_declare_lost",
-		"research_instr_dim_rate",
-		"research_prompt_multiple_rate",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = ExperienceSetting
 
-admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
 
 
 class UserSettingModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
+		"active_experiences",
 		"new_user_pages",
 		"begin_date",
 		"send_text",

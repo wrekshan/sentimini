@@ -36,12 +36,6 @@ else:
              include=['sentimini.tasks'])
 
 
-
-
-
-
-
-
 # Optional configuration, see the application user guide.
 app.conf.update(
     CELERY_TASK_RESULT_EXPIRES=3600,
@@ -53,8 +47,6 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-
-
 
 
 # CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
