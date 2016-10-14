@@ -58,7 +58,8 @@ def feeds_edit(request):
 	if request.user.is_authenticated():	
 		#Create new user generated list if none
 		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()<1:
-			create_new_user_experience(user=request.user,ideal_id=188) #FIX THIS
+			ideal_exp = ExperienceSetting.objects.filter(experience='library').filter(text_set="user generated")
+			create_new_user_experience(user=request.user,ideal_id=ideal_exp.id) #FIX THIS
 
 		#Update the tables with the right numbers of texts
 		if ExperienceSetting.objects.all().filter(user=request.user).count()>0:
