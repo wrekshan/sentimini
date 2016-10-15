@@ -17,7 +17,7 @@ def landing_page(request):
 	if request.user.is_authenticated():	
 		return HttpResponseRedirect(reverse('scaffold:about'))
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		return HttpResponseRedirect(reverse('scaffold:about'))
 
 
 from allauth.account.views import SignupView
