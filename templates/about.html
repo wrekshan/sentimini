@@ -23,6 +23,7 @@
 			<h1>Overview</h1>
 		</div>
 		<div class="col-md-10">
+    {% if user.is_authenticated %}
 		Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
 		</br></br>
 		Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
@@ -30,6 +31,17 @@
 		Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
 		</br></br>
 		View and access your data at the <a href="{% url 'vis:text_data' %}">data page.</a>  
+
+    {% else %}
+
+    Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
+    </br></br>
+    Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
+  </br></br>
+  Signing up takes <mark>less than 3 minutes</mark>.
+  </br></br><a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg" role="button">Sign Up</a>
+    </br><a href="{% url 'account_login' %}">Sign In</a> if you are already a user.
+    {% endif %}
 </div>     
 </div>
 
