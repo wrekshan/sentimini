@@ -546,10 +546,10 @@ def process_new_mail():
 						td =  working_entry.time_response - working_entry.time_sent
 						working_entry.response_time_seconds = int(td.seconds)
 						working_entry.response = tp.email_content
-						working_entry.ready_for_next = True
+						working_entry.ready_for_next = 1
 						working_entry.save()
 
-						if working_entry.ready_for_next == True and working_entry.system_text == 0:
+						if working_entry.ready_for_next == 1 and working_entry.system_text == 0:
 							if ActualTextLTM.objects.all().filter(user=ent.user).filter(stm_id=ent.id).count()<1:
 								consolidate(working_entry)
 							else:
@@ -572,9 +572,9 @@ def process_new_mail():
 
 
 def actual_text_consolidate():
-	working_entry = ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(consolidated=0).filter(ready_for_next=True)
+	working_entry = ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(consolidated=0).filter(ready_for_next=1)
 	print("++++++++ ACTUAL TEXT CONSOLIDATE ++++++++")
-	print("ENTRY COUNT:", ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(consolidated=0).filter(ready_for_next=True).count())
+	print("ENTRY COUNT:", ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(consolidated=0).filter(ready_for_next=1).count())
 	# you are going to have to fix this....unanswered text consolidated
 	for ent in working_entry:
 		consolidate(ent)
@@ -584,16 +584,16 @@ def actual_text_consolidate():
 
 @periodic_task(run_every=timedelta(seconds=2))
 def check_for_nonresponse():
-	working_entry = ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(ready_for_next=False)
+	working_entry = ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(ready_for_next=0)
 	
 	for ent in working_entry:
-		exp_settings = ExperienceSetting.objects.all().filter(experience=ent.text_type).get(user=ent.user)
+		exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
 
 		td = datetime.now(pytz.utc) - ent.time_sent
 		td_mins = td / timedelta(minutes=1)
 
 		if td_mins > exp_settings.time_to_declare_lost:
-			ent.ready_for_next = True
+			ent.ready_for_next = 1
 			ent.save()
 
 		#OR if a new one was sent
