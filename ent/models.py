@@ -8,15 +8,15 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 #This is the major spot to keep the texts.  
 class PossibleTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	csv_id = models.IntegerField(default=0)
-	experience_id = models.IntegerField(default=0)
+	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	text_set = models.CharField(max_length=30,default='user generated',null=True) #This is the user phone number
 	unique_text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
-	system_text = models.IntegerField(default=0)
-	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
 	text_importance = models.IntegerField(default=1,validators=[MinValueValidator(0), MaxValueValidator(100)]) #This should add up to 100% for each emotion
 	response_type = models.CharField(max_length=100,default='Open') 
+	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
+	experience_id = models.IntegerField(default=0)
+	system_text = models.IntegerField(default=0)
 	show_user = models.BooleanField(default=False) #Does the user want this deleted?  This doesn't actually delete, but removes the entry from being displayed or referenced
 	date_created = models.DateTimeField(blank=True,null=True)
 	date_altered = models.DateTimeField(blank=True,null=True)
@@ -25,10 +25,36 @@ class PossibleTextSTM(models.Model):
 	def __str__(self):
 		return self.text
 
+class ExperienceSetting(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
+	unique_text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
+	description =  models.CharField(max_length=1000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
+	tags = models.CharField(max_length=3000,default='',null=True) #This is the emotion, of course
+	prompts_per_week = models.IntegerField(default=3,validators=[MinValueValidator(0), MaxValueValidator(100)]) 
+	time_to_declare_lost =  models.IntegerField(default=15)
+	experience = models.CharField(max_length=30,default='user') #This is the user phone number
+	ideal_id =  models.IntegerField(default=0) # This is calculate by the number of desired prompts / time awake.  
+	user_state =  models.CharField(max_length=100,default='activate') # This is calculate by the number of desired prompts / time awake.  
+	number_of_texts_in_set =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
+	delete_this =  models.BooleanField(default=False) # This is calculate by the number of desired prompts / time awake.  
+	active =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
+	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
+	prompt_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
+	prompt_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion
+	research_instr_dim_rate = models.IntegerField(default=90,validators=[MinValueValidator(0), MaxValueValidator(100)])   #Are these from the user generated prompts?
+	research_prompt_multiple_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #These are the proportion of time a series is given
+	
+	def __str__(self):
+		return self.text_set
+
+
+
 #This is the long term storage of the texts.  this is intended to keep a log of all of the texts a person may want.
 class PossibleTextLTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+
 	experience_id = models.IntegerField(default=0)
 	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
@@ -165,27 +191,7 @@ class UserSetting(models.Model):
 		return self.user.username
 	
 
-class ExperienceSetting(models.Model):
-	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	ideal_id =  models.IntegerField(default=0) # This is calculate by the number of desired prompts / time awake.  
-	user_state =  models.CharField(max_length=100,default='activate') # This is calculate by the number of desired prompts / time awake.  
-	number_of_texts_in_set =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
-	description =  models.CharField(max_length=1000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
-	delete_this =  models.BooleanField(default=False) # This is calculate by the number of desired prompts / time awake.  
-	experience = models.CharField(max_length=30,default='user') #This is the user phone number
-	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
-	unique_text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
-	active =  models.IntegerField(default=1) # This is calculate by the number of desired prompts / time awake.  
-	prompts_per_week = models.IntegerField(default=3,validators=[MinValueValidator(0), MaxValueValidator(100)]) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
-	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
-	prompt_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
-	prompt_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion
-	time_to_declare_lost =  models.IntegerField(default=61)
-	research_instr_dim_rate = models.IntegerField(default=90,validators=[MinValueValidator(0), MaxValueValidator(100)])   #Are these from the user generated prompts?
-	research_prompt_multiple_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.2')) #These are the proportion of time a series is given
-	
-	def __str__(self):
-		return self.text_set
+
 
 
 

@@ -13,7 +13,7 @@ class ExperienceSettingResource(resources.ModelResource):
 	class Meta:
 		model = ExperienceSetting
 		import_id_fields = ('unique_text_set',)
-		fields = ('text_set','unique_text_set', 'description', 'experience', 'prompts_per_week','time_to_declare_lost',)
+		fields = ('text_set','unique_text_set', 'description', 'tags', 'prompts_per_week','time_to_declare_lost','experience',)
 
 
 
@@ -22,14 +22,15 @@ class ExperienceSettingModelAdmin(ImportExportModelAdmin):
 
     list_display = [
 		"user",
+		"text_set",
+		"unique_text_set",
+		"tags",
+		"description",
+		"prompts_per_week",
 		"experience",
 		"id",
 		"ideal_id",
 		"user_state",
-		"description",
-		"unique_text_set",
-		"text_set",
-		"prompts_per_week",
 		"active",
 		"prompt_interval_minute_avg",
 		"prompt_interval_minute_min",
@@ -55,7 +56,7 @@ class PossibleTextSTMResource(resources.ModelResource):
 	class Meta:
 		model = PossibleTextSTM
 		import_id_fields = ('csv_id',)
-		fields = ('text','csv_id','text_set', 'unique_text_set', 'text_importance', 'response_type', 'text_type',)
+		fields = ('csv_id','text','text_set', 'unique_text_set', 'text_importance', 'response_type', 'text_type',)
 
 
 
