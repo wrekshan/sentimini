@@ -563,7 +563,7 @@ def process_new_mail():
 						working_entry.save()
 
 						if working_entry.ready_for_next == 1 and working_entry.system_text == 0:
-							if ActualTextLTM.objects.all().filter(user=ent.user).filter(stm_id=ent.id).count()<1:
+							if ActualTextLTM.objects.all().filter(user=working_entry.user).filter(stm_id=working_entry.id).count()<1:
 								consolidate(working_entry)
 							else:
 								consolidate_update(working_entry)
