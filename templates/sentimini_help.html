@@ -26,21 +26,42 @@
 
 <body>
 <div class="container">
+<div class="row" id="overview">
+		<div class="col-md-2">
+			<h1>FAQ</h1>
+
+		</div>
+		<div class="col-md-10">
+			 {% for wh in working_faq %}
+			 {% if wh.starting_item == 1 %}
+			 <h3>{{wh.major_cat|safe}}</h3>
+			 {% endif %}
+			 <b>{{wh.help_name|safe}}</b> - {{wh.help_content|safe}}
+			 </br></br>
+			  {% endfor %}
+			  
+		</div>     
+	</div>
+	<hr>
 	<div class="row" id="overview">
 		<div class="col-md-2">
-			<h1>Help</h1>
+			<h1>Glossary</h1>
 
 		</div>
 		<div class="col-md-10">
 			 {% for wh in working_help %}
-			 <h1>{{wh.minor_cat|safe}}</h1>
-			 <b>{{wh.help_heading|safe}}</b> - {{wh.help_content|safe}}
+			 {% if wh.starting_item == 1 %}
+			 <h3>{{wh.major_cat|safe}}</h3>
+			 {% endif %}
+			 <b>{{wh.help_name|safe}}</b> - {{wh.help_content|safe}}
+			 </br></br>
 			  {% endfor %}
-			  </br>
-			  </br>
+			  
 		</div>     
 		</div>
 	</div>
+
+	
 </div>
 
 

@@ -5,15 +5,15 @@ from django.conf import settings
 # Create your models here.
 class Sentimini_help(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	help_heading = models.CharField(max_length=300,default="Text")
+	display_order = models.IntegerField(default=0)
+	help_name = models.CharField(max_length=300,default="Text")
 	help_content = models.TextField(max_length=10000,default="Default content")
 	help_type = models.CharField(max_length=300,default="Glossary")
 	major_cat = models.CharField(max_length=300,default="Settings")
-	minor_cat = models.CharField(max_length=300,default="Texts")
-	level = models.CharField(max_length=300,default="",blank=True,null=True)
+	starting_item = models.IntegerField(default=0)
 	
 	def __str__(self):
-		return self.help_heading
+		return self.help_name
 
 
 

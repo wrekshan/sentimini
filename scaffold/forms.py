@@ -7,58 +7,7 @@ import pytz
 from .models import Business, Measure, Sentimini_help
 
 #This allows the user to input their own prompts.  Because this is a model set, I don't know how to use the help_texts/labels.  
-class Sentimini_helpFormSetHelper(FormHelper):
-    def __init__(self, *args, **kwargs):
-        super(Sentimini_helpFormSetHelper, self).__init__(*args, **kwargs)
-        self.form_method = 'post'
-        self.render_required_fields = True
-        # self.template = 'WR_table_inline_formset_UGP.html'
-        self.label_class = 'col-lg-0'
-        self.field_class = 'col-lg-12'
-        self.add_input(Submit('submit_help_formset', 'Submit'))
-        self.form_class = 'form-horizontal'
 
-
-#Main form used to set the user settings
-class Sentimini_helpForm(forms.ModelForm):
-
-	class Meta:
-		model = Sentimini_help
-		fields = [
-			"help_heading",
-			"help_content",
-			"help_type",
-			"major_cat",
-			"minor_cat",
-			"level",
-			
-
-		]
-
-		labels = {
-			"help_heading": ('Heading'),
-			"help_content": ('Content'),
-			"help_type": ('Help Type'),
-			"major_cat": ('Major Category'),
-			"minor_cat": ('Minor Category'),
-			"level": ('Level (if applicable)'),
-			
-        }
-
-		help_texts = {
-		
-        }
-
-	def __init__(self, *args, **kwargs):
-		super(Sentimini_helpForm, self).__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.helper.form_id = 'id-form'
-		self.helper.form_class = 'form-horizontal'
-		self.helper.label_class = 'col-lg-6'
-		self.helper.field_class = 'col-lg-6'
-		self.helper.form_method = 'post'
-		self.helper.form_action = 'login'
-		self.helper.add_input(Submit('submit_helpform', 'Submit'))
 
 #Main form used to set the user settings
 class MeasureForm(forms.ModelForm):

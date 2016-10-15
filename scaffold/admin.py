@@ -1,17 +1,45 @@
 from django.contrib import admin
-
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
 from .models import Blog, Business, Measure, Sentimini_help
-# Register your models here.
-class Sentimini_helpAdmin(admin.ModelAdmin):
-	list_display = ["user","help_heading","help_content","help_type","major_cat","minor_cat","level"]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	search_fields = ["user"]
 
+
+
+
+# Register your models here.
+class Sentimini_helpResource(resources.ModelResource):
 	class Meta:
 		model = Sentimini_help
+		import_id_fields = ('display_order',)
+		fields = ('display_order','help_name', 'help_content', 'help_type','major_cat','starting_item',)
 
-admin.site.register(Sentimini_help,Sentimini_helpAdmin)
+class ExperienceSettingModelAdmin(ImportExportModelAdmin):
+    resource_class = Sentimini_helpResource   
+
+    list_display = [
+		"display_order",
+		"user",
+		"help_name",
+		"help_content",
+		"help_type",
+		"major_cat",
+		"starting_item",
+	]
+
+admin.site.register(Sentimini_help,ExperienceSettingModelAdmin)
+
+
+# #####################OLD
+# class Sentimini_helpAdmin(admin.ModelAdmin):
+# 	list_display = ["display_order", "user","help_name","help_content","help_type","major_cat"]
+# 	list_display_links = ["user"]
+# 	list_filter = ["user"]
+# 	search_fields = ["user"]
+
+# 	class Meta:
+# 		model = Sentimini_help
+
+# admin.site.register(Sentimini_help,Sentimini_helpAdmin)
 
 
 class MeasureAdmin(admin.ModelAdmin):

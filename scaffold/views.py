@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
-from .forms import  BusinessForm, BusinessForm_price, BusinessForm_number_texts, BusinessForm_user_stuff, BusinessForm_static_costs, MeasureForm, Sentimini_helpForm, Sentimini_helpFormSetHelper
+from .forms import  BusinessForm, BusinessForm_price, BusinessForm_number_texts, BusinessForm_user_stuff, BusinessForm_static_costs, MeasureForm
 
 from .models import Blog, Business, Measure, Sentimini_help
 from ent.models import PossibleTextSTM, ActualTextSTM, ActualTextLTM, ActualTextSTM_SIM, ExperienceSetting
@@ -73,17 +73,21 @@ def upload_feed_data(request):
 def sentimini_help(request):
 	if request.user.is_authenticated():	
 		working_help = Sentimini_help.objects.all().filter(help_type="Glossary")
+		working_faq = Sentimini_help.objects.all().filter(help_type="FAQ")
 
 		context = {
 			"working_help": working_help,
+			"working_faq": working_faq,
 		}			
 
 		return render(request,"sentimini_help.html",context)
 	else:
 		working_help = Sentimini_help.objects.all().filter(help_type="Glossary")
+		working_faq = Sentimini_help.objects.all().filter(help_type="FAQ")
 
 		context = {
 			"working_help": working_help,
+			"working_faq": working_faq,
 		}	
 		return render(request,"sentimini_help.html",context)
 
