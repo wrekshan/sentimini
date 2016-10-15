@@ -2,15 +2,15 @@
 
 
   <!--DOCTYPE html -->
-
+{% block content %}
 
   <html>
   <head>
-
-  </head>
+<title>Edit Feeds - Sentimini!</title>
+</head>
 
   <body>
-    {% block content %}
+    
 
     <script>
       $(document).ready(function() {
@@ -52,7 +52,7 @@
     </div>
 
     <div class="col-md-10">
-  You have signed up for <mark>{{number_of_experiences}} feeds</mark> with a total of <mark>{{number_of_texts_per_week}} texts per week</mark> from <mark>{{number_of_texts}} possible texts</mark>.  
+  You have signed up for <mark>{{number_of_experiences}} feeds</mark> with a total of <mark>{{number_of_texts_per_week}} texts per week</mark>
   </br></br>
   Click here for a <a href="{% url 'ent:simulate_week' %}">simulated week</a>
   </br></br>
