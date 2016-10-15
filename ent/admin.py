@@ -54,8 +54,8 @@ admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
 class PossibleTextSTMResource(resources.ModelResource):
 	class Meta:
 		model = PossibleTextSTM
-		import_id_fields = ('text',)
-		fields = ('text','text_set', 'unique_text_set', 'text_importance', 'response_type',)
+		import_id_fields = ('csv_id',)
+		fields = ('text','csv_id','text_set', 'unique_text_set', 'text_importance', 'response_type', 'text_type',)
 
 
 
@@ -65,6 +65,7 @@ class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 	list_display = [
 		"user",
 		"text",
+		"csv_id",
 		"system_text",
 		"experience_id",
 		"text_set",

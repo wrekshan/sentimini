@@ -9,6 +9,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class PossibleTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
+	csv_id = models.IntegerField(default=0)
 	experience_id = models.IntegerField(default=0)
 	text_set = models.CharField(max_length=30,default='user generated',null=True) #This is the user phone number
 	unique_text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number

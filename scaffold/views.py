@@ -20,10 +20,17 @@ from sentimini.scheduler_functions import figure_out_timing
 def upload_feed_data(request):
 	if request.user.is_authenticated():	
 		library_experiences = ExperienceSetting.objects.all().filter(experience='library')
-	
+
+		for exp in library_experiences:
+			exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(text_type='library').filter(text_set=exp.text_set).count()
+			#figure out timing
+			exp.prompt_interval_minute_avg, exp.prompt_interval_minute_min, exp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.prompts_per_week)
+			exp.save()
+
+		print("UPLOAD")
 		
 		if request.GET.get('update_experience_settings'):
-			working_experience = ExperienceSetting.objects.all().filter(experience='library')
+			working_experience = ExperienceSetting.objects.all().exclude(experience='user')
 
 			for exp in working_experience:
 				exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(text_type='library').filter(text_set=exp.text_set).count()
@@ -39,12 +46,15 @@ def upload_feed_data(request):
 
 
 		if request.GET.get('update_new_possible_texts'):
-			working_texts = PossibleTextSTM.objects.all().filter(text_type='library')
+			working_texts = PossibleTextSTM.objects.all().exclude(text_type='user')
 
 			for text in working_texts:
 				if text.experience_id == 0:
-					tmp_exp = ExperienceSetting.objects.all().filter(experience='library').get(unique_text_set=text.unique_text_set)
-					text.experience_id = tmp_exp.id
+					print("TEXT ID ZERO")
+					print(text.unique_text_set)
+
+					tmp_exp = ExperienceSetting.objects.all().exclude(experience='user').get(unique_text_set=text.unique_text_set)
+					text.experience_id = tmp_exp.ideal_id
 					text.save()
 
 			return HttpResponseRedirect('/scaffold/upload_feed_data/')	
@@ -56,6 +66,7 @@ def upload_feed_data(request):
 
 		return render(request,"upload_feed_data.html",context)
 	else:
+		print("UPLOAD NOT AUTH")
 		return render(request,"upload_feed_data.html")
 
 
