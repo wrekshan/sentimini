@@ -35,6 +35,8 @@ def create_new_user_experience(user,ideal_id):
 		ExperienceSetting(user=user,experience='user',text_set="New Set",user_state="disable").save()
 		working_experience = ExperienceSetting.objects.all().filter(user=user).filter(experience="user").get(text_set="New Set")
 		working_experience.ideal_id = working_experience.id
+		working_experience.description = working_experience.description
+		working_experience.unique_text_set = working_experience.unique_text_set
 		ideal_id = working_experience.id
 		working_experience.save()
 
