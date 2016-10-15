@@ -216,7 +216,16 @@ def determine_prompt_texts(text):
 
 def set_prompt_time(text,send_now,fake_time_now):
 	working_settings = UserSetting.objects.all().get(user=text.user)
-	experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience=text.text_type)
+	print("---------------------------------")
+	print("text.text", text.text)
+	print("text.text_set", text.text_set)
+	print("text.text_type", text.text_type)
+	print("text.experience_id", text.experience_id)
+	print("---------------------------------")
+	if text.text_set =="system":
+		experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience='system')
+	else:
+		experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience=text.text_type)
 	
 	#figure out the sleep time (ignoring tz)
 	if fake_time_now == 0:
@@ -420,8 +429,10 @@ def schedule_texts():
 			schedule_greeting_text(exp=exp,text_type="user")
 		
 		#initialize new text for the experience
+		# print("exp.text_set", exp.text_set)
 		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").filter(text_set=exp.text_set).count()<1:
-			schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
+			if PossibleTextSTM.objects.all().filter(user=exp.user).filter(experience_id=exp.ideal_id).count() > 0:
+				schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
 		else:
 			texts = ActualTextSTM.objects.all().filter(user=exp.user).filter(text_type="user").filter(experience_id=exp.ideal_id)
 			text_last = texts.latest('time_to_send')
@@ -501,8 +512,10 @@ def process_new_mail():
 					working_user.save()
 					
 					possible_text = PossibleTextSTM.objects.all().get(text_type='system stop')
-					text_out = ActualTextSTM(user=working_user.user, response=None,simulated=0,text=possible_text.text, system_text=1)
-					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=text_out,send_now=1,fake_time_now=0)
+					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system stop', system_text=1,experience_id=possible_text.experience_id)
+					
+					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
+					text_out.text = possible_text.text
 					text_out.save()
 
 
@@ -512,12 +525,11 @@ def process_new_mail():
 					possible_text = PossibleTextSTM.objects.all().get(text_type='system pause')
 
 					text_out = possible_text.text
-					text_out = text_out.replace("XXX", str(pause_until_date))
+					possible_text.text = text_out.replace("XXX", str(pause_until_date))
 
-					print(text_out)
-
-					text_out = ActualTextSTM(user=working_user.user, response=None,simulated=0,text=text_out, system_text=1)
-					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=text_out,send_now=1,fake_time_now=0)
+					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system pause', system_text=1,experience_id=possible_text.experience_id)
+					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
+					text_out.text = possible_text.text
 					text_out.save()
 										
 
@@ -528,8 +540,9 @@ def process_new_mail():
 					working_user.save()
 
 					possible_text = PossibleTextSTM.objects.all().get(text_type='system start')
-					text_out = ActualTextSTM(user=working_user.user, response=None,simulated=0,text=possible_text.text, system_text=1)
-					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=text_out,send_now=1,fake_time_now=0)
+					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system start', system_text=1,experience_id=possible_text.experience_id)
+					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
+					text_out.text = possible_text.text
 					text_out.save()
 
 
@@ -584,17 +597,18 @@ def actual_text_consolidate():
 
 @periodic_task(run_every=timedelta(seconds=2))
 def check_for_nonresponse():
-	working_entry = ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(ready_for_next=0)
-	
-	for ent in working_entry:
-		exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
+	if ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(ready_for_next=0).count() > 0:
+		working_entry = ActualTextSTM.objects.all().exclude(text_set='system').exclude(time_sent__isnull=True).filter(ready_for_next=0)
+		
+		for ent in working_entry:
+			exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
 
-		td = datetime.now(pytz.utc) - ent.time_sent
-		td_mins = td / timedelta(minutes=1)
+			td = datetime.now(pytz.utc) - ent.time_sent
+			td_mins = td / timedelta(minutes=1)
 
-		if td_mins > exp_settings.time_to_declare_lost:
-			ent.ready_for_next = 1
-			ent.save()
+			if td_mins > exp_settings.time_to_declare_lost:
+				ent.ready_for_next = 1
+				ent.save()
 
 		#OR if a new one was sent
 
