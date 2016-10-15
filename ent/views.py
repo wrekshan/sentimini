@@ -545,6 +545,10 @@ def new_user(request):
 			print("NOTHING")
 			return HttpResponseRedirect('/ent/simulate_week/')		
 
+		if number_of_texts > 0:
+			ready_to_move_on = 1
+		else:
+			ready_to_move_on = 0
 		
 		context = {
 			"prompts_per_week": prompts_per_week,
@@ -553,6 +557,7 @@ def new_user(request):
 			"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
 			"library_experiences": library_experiences,
 			"number_of_experiences": number_of_experiences,
+			"ready_to_move_on":ready_to_move_on,
 
 			
 			"form_new_user": form_new_user,

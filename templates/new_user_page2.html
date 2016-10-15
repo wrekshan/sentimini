@@ -2,15 +2,15 @@
 
 
   <!--DOCTYPE html -->
-
+{% block content %}
 
   <html>
   <head>
-
+<title>New User Page 2 - Sentimini!</title>
   </head>
 
   <body>
-    {% block content %}
+    
     <script>
       $(document).ready(function() {
         $('#library_experiences_table').DataTable({
@@ -40,7 +40,7 @@
       Contact
       <li>Completed!</li>
       </div>
-      <div class = "col-md-2">
+      <div class = "col-md-2 new_user_loc">
       Add content
       <li>Texts or Feeds</li>
       </div>
@@ -52,6 +52,30 @@
 <hr>
 
      
+ <div class="row" id="texts">
+  <div class="col-md-12 text-center">
+
+
+
+{% if ready_to_move_on == 1 %}
+<h1>You have added enough content to continue</h1>
+</br>
+  <form action="#" method="get">
+     <input type="submit" class="btn-primary btn-lg" value="Continue" name="finished_experience">
+    </form>
+    
+    
+    {% else %}
+    <h1>Add at least one text or sign up for at least one feed to continue</h1>
+
+    
+    {% endif %}
+</div>
+  </div>
+
+
+
+ <hr>
 
  
  <div class="row" id="texts">
@@ -72,12 +96,10 @@
 
  <div class="col-md-5">
 <h3>Response</h3>
-Do you plan to respond with a 0-10 scale?  A yes or a no?  Anything?</br>All responses to text messages are collected, stored, and provided as <mark>downloadable graphs and tables for every text</mark>.  
+All responses to text messages are stored downloadable graphs and tables for every text.  
 </br>
 <h3>Relative Importance</h3>
 For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1, then you would receive TEXT A 10 times for every 1 TEXT B.
-<mark>You can control how many text per week you receive on your feeds page</mark>.
-
 </div>
 
 </div>
@@ -86,27 +108,20 @@ For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1
 
      
 
- 
- <div class="row" id="texts">
-  <div class="col-md-12 text-center">
-
-<h1>AND / OR</h1>
-</div>
-  </div>
-
-
-
- <hr>
 <div class="row" id="contact">
   <div class="col-md-2">
 <h2>Add a feed</h2>
     <b>{{number_of_experiences}}</b> active feeds
+    </br></br>
+    Your texts are organized into feeds.  You can control how many texts you receive from each feed.  
+    </br></br>
+    Search through the feeds.  You can edit the feeds however you wish.
+    </br></br>
+    By default, all of your texts are saved in the 'user-generated' feed.  
     
   </div>
 
-  <div class="col-md-5">
-
-
+  <div class="col-md-10">
      <table id="library_experiences_table" class="display" cellspacing="0" width="100%">
       <thead>
           <tr>
@@ -131,22 +146,9 @@ For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1
   </table>
 
 </br>
-  <form action="#" method="get">
-     <input type="submit" class="btn-primary btn-lg" value="Finished Adding Experiences" name="finished_experience">
-    </form>
+
 
   </div>
-
-  <div class="col-md-5">
-<h3>Feeds</h3>
-Your texts are organized into feeds.  You can control how many texts you receive from each feed.  
-</br></br>
-Search through the feeds.  You can edit the feeds however you wish.
-</br></br>
-By default, all of your texts are saved in the 'user-generated' feed.  
-
-</div>
-
   
 </div>
 

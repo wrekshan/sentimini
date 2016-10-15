@@ -409,8 +409,8 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 		# self.helper.field_class = 'col-lg-8'
 		self.helper.form_action = 'login'		
 		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
-		self.helper.add_input(Submit('submit_new_text', 'Add one more text'))
-		self.helper.add_input(Submit('submit_finished_adding', 'Finished adding texts'))
+		self.helper.add_input(Submit('submit_new_text', 'Submit text'))
+		
 
 
 
