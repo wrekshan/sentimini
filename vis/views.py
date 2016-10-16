@@ -169,6 +169,8 @@ def text_data_get_context(request,magic_simulated_value,demo):
 
 def text_data(request):
 	if request.user.is_authenticated():	
+		if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+			return HttpResponseRedirect('/ent/new_user/')
 
 		context = text_data_get_context(request=request, magic_simulated_value=0,demo=0)
 

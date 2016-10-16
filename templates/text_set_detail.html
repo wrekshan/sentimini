@@ -27,7 +27,12 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
-      <a href="{% url 'ent:feeds_edit' %}"><- Back to Feeds</a>
+    {% if new_user_pages == "new_user" %}
+    <a href="{% url 'ent:new_user' %}"><- Back to Set Up</a>
+      
+    {% else %}
+    <a href="{% url 'ent:feeds_edit' %}"><- Back to Feeds</a>
+    {% endif %}
 
 
       <div class="row" id="texts">

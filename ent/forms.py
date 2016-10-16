@@ -29,7 +29,7 @@ class TextSetFormSetHelper(FormHelper):
         self.template = 'WR_table_inline_formset_help.html'
         self.label_class = 'col-lg-0'
         self.field_class = 'col-lg-12'
-        self.add_input(Submit('submit_formset', 'Submit Text Set Edits'))
+        self.add_input(Submit('submit_formset', 'Submit Text Edits'))
         self.form_class = 'form-horizontal'
 
 

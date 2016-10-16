@@ -15,7 +15,7 @@ from time import strptime
 from .forms import  UserSettingForm_Prompt, PossibleTextSTMForm, UserSettingForm_ResearchPercent, ExampleFormSetHelper, EmotionOntologyForm, EmotionOntologyFormSetHelper, UserGenPromptFixedForm, UserGenPromptFixedFormSetHelper, TimingForm, PossibleTextSTMForm_detail, NewUserForm, NewUser_PossibleTextSTMForm, AddNewTextSetForm, AddNewTextSetForm_full, AddNewTextSetForm_fullFormSetHelper, TextSetFormSetHelper, ExperienceTimingForm, UserSettingForm_PromptRate
 from .models import PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, ExperienceSetting, ActualTextSTM_SIM
 
-from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap, get_graph_data_histogram_timing
+from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap
 from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes, figure_out_timing
 
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse, generate_random_minutes
@@ -59,18 +59,23 @@ def create_new_user_experience(user,ideal_id):
 def feeds_edit(request):
 	if request.user.is_authenticated():	
 		#Create new user generated list if none
-		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()<1:
-			ideal_exp = ExperienceSetting.objects.filter(experience='library').get(text_set="user generated")
-			create_new_user_experience(user=request.user,ideal_id=ideal_exp.id) #FIX THIS
+		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()<1:
+		# 	ideal_exp = ExperienceSetting.objects.filter(experience='library').get(text_set="user generated")
+		# 	create_new_user_experience(user=request.user,ideal_id=ideal_exp.id) #FIX THIS
 
 		#Update the tables with the right numbers of texts
+
+		if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+			return HttpResponseRedirect('/ent/new_user/')
+
+				
 		if ExperienceSetting.objects.all().filter(user=request.user).count()>0:
 			update_experiences(user=request.user)
 		
 
 		number_of_experiences = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).count()
 		working_experience_sets = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user)
-		library_experiences = ExperienceSetting.objects.all().filter(experience='library')
+		library_experiences = ExperienceSetting.objects.all().filter(experience='library').exclude(text_set="user generated")
 		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).count()
 
 		#Remove the experiences that have been signed up for
@@ -107,6 +112,13 @@ def text_set_detail(request,id=None):
 			return HttpResponseRedirect('/ent/feeds_edit/')
 		else:
 			ideal_experience = ExperienceSetting.objects.all().get(id=id)
+
+			if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+				new_user_pages = "new_user"
+			else:
+				new_user_pages = "old_user"
+
+
 
 			if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()<1:
 				working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(text_type="library").filter(experience_id=id)
@@ -240,6 +252,7 @@ def text_set_detail(request,id=None):
 				"number_of_texts": number_of_texts,
 				"text_per_week": text_per_week,
 				"working_user_gen": working_user_gen,
+				"new_user_pages": new_user_pages,
 
 				"helper": helper,
 				"formset": formset,
@@ -429,11 +442,11 @@ def new_user(request):
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
 		lib_usr_tmp = ExperienceSetting.objects.all().filter(experience='library').get(text_set="user generated")
-		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(ideal_id=lib_usr_tmp.id).exists():
-			working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
-		else: 
-			working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated",ideal_id=lib_usr_tmp.id,user_state="disable").save()
-			working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
+		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(ideal_id=lib_usr_tmp.id).exists():
+		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
+		# else: 
+		# 	working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated",ideal_id=lib_usr_tmp.id,user_state="disable").save()
+		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
 
 		if ExperienceSetting.objects.all().filter(user=request.user).count()>0:
 			update_experiences(user=request.user)
@@ -460,11 +473,11 @@ def new_user(request):
 				library_experiences = library_experiences.exclude(id=tmp_remove.id)
 
 
-		if working_settings.new_user_pages < 2:
-			graph_data_simulated_heatmap = 0
-		else:
-			generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=20) #set up 20 random prompts based upon the settings
-			graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request)
+		if request.GET.get('create_new_feed'):
+			create_new_user_experience(user=request.user,ideal_id="Create New")
+			ideal_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience="user").get(text_set="New Set")
+			
+			return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))					
 
 		# if working_settings.new_user_pages == 2:
 			# working_settings.new_user_pages = 3
@@ -481,44 +494,45 @@ def new_user(request):
 
 		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
-			print("REQUEST POST")
-			print("REQUEST POST STUFF", request.POST)
+			# print("REQUEST POST")
+			# print("REQUEST POST STUFF", request.POST)
 			
-			if 'submit_new_text' in request.POST or 'submit_finished_adding' in request.POST:
-				print("NEW")
-				if form_new_text.is_valid():	
-					tmp = form_new_text.save()
-					tmp.user=request.user
-					tmp.experience_id=working_experience.ideal_id
-					if tmp.date_created is None:
-						tmp.date_created = datetime.now(pytz.utc)
-					tmp.text_type = 'user'
-					tmp.save()
+			# if 'submit_new_text' in request.POST or 'submit_finished_adding' in request.POST:
+			# 	print("NEW")
+			# 	if form_new_text.is_valid():	
+			# 		tmp = form_new_text.save()
+			# 		tmp.user=request.user
+			# 		tmp.experience_id=working_experience.ideal_id
+			# 		if tmp.date_created is None:
+			# 			tmp.date_created = datetime.now(pytz.utc)
+			# 		tmp.text_type = 'user'
+			# 		tmp.save()
 
-					if not 'user generated' in working_settings.active_experiences:
-						working_settings.active_experiences="user generated,"+working_settings.active_experiences
+			# 		if not 'user generated' in working_settings.active_experiences:
+			# 			working_settings.active_experiences="user generated,"+working_settings.active_experiences
 					
-					#Save any changes in long term storage
-					ptltm = PossibleTextLTM(user=request.user,experience_id=working_experience.ideal_id,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
-					ptltm.save()
+			# 		#Save any changes in long term storage
+			# 		ptltm = PossibleTextLTM(user=request.user,experience_id=working_experience.ideal_id,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+			# 		ptltm.save()
 
-					if 'submit_new_text'in request.POST:
-						return HttpResponseRedirect('/ent/new_user/')
+			# 		if 'submit_new_text'in request.POST:
+			# 			return HttpResponseRedirect('/ent/new_user/')
 
-					else:
-						if working_settings.new_user_pages== 1 and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
-							working_settings.new_user_pages = 2
-							working_settings.save()
-						return HttpResponseRedirect('/ent/simulate_week/')
-				else:
-					if 'submit_finished_adding' in request.POST and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
-						if working_settings.new_user_pages== 1:
-							working_settings.new_user_pages = 2
-							working_settings.save()
-					return HttpResponseRedirect('/ent/simulate_week/')		
+			# 		else:
+			# 			if working_settings.new_user_pages== 1 and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
+			# 				working_settings.new_user_pages = 2
+			# 				working_settings.save()
+			# 			return HttpResponseRedirect('/ent/simulate_week/')
+			# 	else:
+			# 		if 'submit_finished_adding' in request.POST and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
+			# 			if working_settings.new_user_pages== 1:
+			# 				working_settings.new_user_pages = 2
+			# 				working_settings.save()
+			# 		return HttpResponseRedirect('/ent/simulate_week/')		
+			# elif 'submit_contact' in request.POST:
 
 
-			elif 'submit_contact' in request.POST:
+			if 'submit_contact' in request.POST:
 				print("new_user")
 				if form_new_user.is_valid():
 					tmp_settings = form_new_user.save(commit=False)
@@ -554,10 +568,10 @@ def new_user(request):
 			"prompts_per_week": prompts_per_week,
 			"number_of_texts": number_of_texts,
 			"form_new_text": form_new_text,
-			"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
 			"library_experiences": library_experiences,
 			"number_of_experiences": number_of_experiences,
 			"ready_to_move_on":ready_to_move_on,
+			"user_gen_exp_id": lib_usr_tmp.id,
 
 			
 			"form_new_user": form_new_user,
@@ -736,11 +750,11 @@ def simulate_week(request):
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
 
-		if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()>0:
-			working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
-		else: 
-			working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated").save()
-			working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
+		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()>0:
+		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
+		# else: 
+		# 	working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated").save()
+		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
 
 		update_experiences(user=request.user)
 
@@ -750,7 +764,6 @@ def simulate_week(request):
 		
 		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=0) #set up 20 random prompts based upon the settings
 		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request)
-		graph_data_histogram_timing = get_graph_data_histogram_timing(request)
 		prompts_per_week = working_settings.prompts_per_week
 
 		actual_number_texts = ActualTextSTM_SIM.objects.all().filter(user=request.user).count()
@@ -790,7 +803,6 @@ def simulate_week(request):
 			"list_out": list_out,
 
 			"graph_data_simulated_heatmap": graph_data_simulated_heatmap,
-			"graph_data_histogram_timing": graph_data_histogram_timing,
 		}
 		return render(request, "simulated_week.html", context)
 	else:

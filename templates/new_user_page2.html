@@ -67,7 +67,14 @@ Feel free to add more
     
     
     {% else %}
-    <h1>Add at least one text or sign up for at least one feed to continue</h1>
+    <h1>Sign up for at least one feed or 
+    </br></br>
+    <form action="#" method="get">
+       <input type="submit" class="btn-primary btn-lg" value="Create New Feed" name="create_new_feed">
+     </form> 
+     </br>
+     to continue </h1>
+
 
     
     {% endif %}
@@ -78,35 +85,6 @@ Feel free to add more
 
  <hr>
 
- 
- <div class="row" id="texts">
-  <div class="col-md-2">
-  <h1>Add a text</h1>
-    <b>{{number_of_texts}}</b> total texts
-    </br>
-    Click <a href="{% url 'ent:new_user_help' %}">here</a> for help.
-  </div>
-
-  <div class="col-md-5">
-<form method='POST' action='' class="">
-  {% csrf_token %} {% crispy form_new_text %}
-  <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
-</form>
-
-</div>
-
- <div class="col-md-5">
-<h3>Response</h3>
-All responses to text messages are stored downloadable graphs and tables for every text.  
-</br>
-<h3>Relative Importance</h3>
-For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1, then you would receive TEXT A 10 times for every 1 TEXT B.
-</div>
-
-</div>
-
-<hr>
-
      
 
 <div class="row" id="contact">
@@ -114,11 +92,13 @@ For example, if TEXT A has an importance of 10 and TEXT B has an importance of 1
 <h2>Add a feed</h2>
     <b>{{number_of_experiences}}</b> active feeds
     </br></br>
-    Your texts are organized into feeds.  You can control how many texts you receive from each feed.  
+    Your texts are organized into feeds.  
     </br></br>
-    Search through the feeds.  You can edit the feeds however you wish.
+    You can control how many texts you receive from each feed.  
     </br></br>
-    By default, all of your texts are saved in the 'user-generated' feed.  
+    You can edit the feeds however you wish.
+    
+    
     
   </div>
 

@@ -96,7 +96,7 @@ def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
 
 def generate_random_prompts_to_show(request,exp_resp_rate,week,number_of_prompts):
 	working_settings = UserSetting.objects.all().get(user=request.user)
-	experience_settings = ExperienceSetting.objects.all().filter(experience="user").filter(text_set="user generated").filter(active=1).get(user=request.user)
+	# experience_settings = ExperienceSetting.objects.all().filter(experience="user").filter(text_set="user generated").filter(active=1).get(user=request.user)
 	
 	#Generate 100 prompts
 	if ActualTextSTM_SIM.objects.all().filter(user=request.user).count()>0:

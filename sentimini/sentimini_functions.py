@@ -22,45 +22,6 @@ from sentimini.tasks import generate_random_minutes
 
 
 
-def get_graph_data_histogram_timing(request):
-	working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(text_set="user generated").get(experience="user")
-	
-	x = []
-	for i in range(0,1000):
-		# x.append(int(triangular(working_experience.prompt_interval_minute_min, working_experience.prompt_interval_minute_max, working_experience.prompt_interval_minute_avg)) /60)
-		x.append(generate_random_minutes(working_experience) / 60)
-		
-		
-
-
-	# #Density
-	# hist_data = [x]
-	# group_labels = ['distplot']
-
-	# fig = FF.create_distplot(hist_data, group_labels)
-	# div = opy.plot(fig, auto_open=False, output_type='div',show_link=False)
-
-	#hist
-	data = [
-		go.Histogram(x=x,
-			autobinx=True,
-		)
-	]	
-
-	
-	layout = go.Layout(margin={'t': 30,'l': 50},showlegend=False, xaxis={'title':'Hours between texts'}, yaxis={'title':'Number (Out of 1000)'})
-	
-	figure=go.Figure(data=data,layout=layout)
-	div = opy.plot(figure, auto_open=False, output_type='div',show_link=False)
-
-
-	#work around to remove modebar stuff
-	div = div.replace('displaylogo:!0', 'displaylogo:!1')
-	div = div.replace('modeBarButtonsToRemove:[]', 'modeBarButtonsToRemove:["sendDataToCloud","hoverCompareCartesian"]')
-	return div
-
-
-
 def get_graph_data_line_chart_business_model(working_busy):
 	# peepz = (1,100,1000,5000,10000,15000,20000,25000,3000)
 	
