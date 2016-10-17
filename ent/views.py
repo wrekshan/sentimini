@@ -441,7 +441,7 @@ def new_user(request):
 			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc),respite_until_datetime = datetime.now(pytz.utc)).save()
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
-		lib_usr_tmp = ExperienceSetting.objects.all().filter(experience='library').get(text_set="user generated")
+		# lib_usr_tmp = ExperienceSetting.objects.all().filter(experience='library').get(text_set="user generated")
 		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(ideal_id=lib_usr_tmp.id).exists():
 		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
 		# else: 
