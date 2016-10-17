@@ -1,92 +1,67 @@
-{% extends "base.html" %}
-{% load i18n %}
-{% load crispy_forms_tags %}
-{% load staticfiles %}
-
-{% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
 
 
-
+<!--DOCTYPE html -->
 {% block content %}
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"></script>
 
-<script>
-  $(document).ready(function() {
-    $('#blog_archive').DataTable({
-      "columns": [
-      { "width": "50%" },
-      { "width": "25%" },
-      { "width": "25%" },
-      ]
-
-    });
-  } );
-</script>
+<html>
+<head>
+<title>About - Sentimini!</title>
+</head>
 
 
 <body>
-
-
-
-  <div class="container">
-    <div id="navbar" class="nav nav-justified">
-      <ul class="nav navbar-nav">
-        
-        
-      </ul>
-    </div>
-  </div>
-
   
 
 
 
-  <div class="container">
-  <hr>
+
+<div class="container">
   <div class="row" id="overview">
     <div class="col-md-2">
-      <h1>Add a text!</h1>
+      <h1>Overview</h1>
     </div>
     <div class="col-md-10">
-     <h3>Sentimini will send you this texts (and others you add) at semi-random times.</h3>
-    
-    <h3>Any responses will be stored in downloadable tables and graphs.</h3>
-    </br>
-    </div>
-    <div class="row" id="overview">
-    <div class="col-md-3">
-    </div>
-    <div class="col-md-8">
-    <form method='POST' action='' class="form-horizontal">
-      {% csrf_token %} {% crispy new_text_form %}
-    </form>
-    </div>
-    <div class="col-md-1">
-    </div>
+    {% if user.is_authenticated %}
+    Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
+    </br></br>
+    Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
+    </br></br>
+    Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
+    </br></br>
+    View and access your data at the <a href="{% url 'vis:text_data' %}">data page.</a>  
 
+    {% else %}
 
-     
-
-   
+    Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
+    </br></br>
+    Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
+  </br></br>
+  Signing up takes <mark>less than 3 minutes</mark>.
+  </br></br><a href="{% url 'account_signup' %}" class="btn-default btn-lg" role="button">Sign Up</a>
+    </br></br><a href="{% url 'account_login' %}">Sign In</a> if you are already a user.
+    {% endif %}
 </div>     
 </div>
 
+
+
 <hr>
 
- 
 <div class="row" id="beta">
   <div class="col-md-2">
     <h1>Beta</h1>
   </div>
   <div class="col-md-10">
   <div class="row" id="beta">
-  Sentimini is in beta status.</br></br>
+  <div class="col-md-12">
+  <mark>Sentimini is in beta status</mark>.
+  </br></br>
   This is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
   </div>
-  </br></br>
+  </div>
+  </br>
 
   <div class="row" id="beta">
   <div class="col-md-6">
@@ -94,7 +69,7 @@
   <li>Sets of text centered around a specific experience</li>
   <li>Greater control of text timing</li>
   <li>Sharing of data for use with professional helpers</li>
-  <li>Sharing of data in open source / open science / open data frameworks</li>
+  <li>Sharing of data in open science / open data frameworks</li>
   </br>
   </div>
   <div class="col-md-6">
@@ -102,38 +77,72 @@
   <li>Slow learning / Courses / Guided Experiences</li>
   <li>Behavior Change Assist</li>
   <li>Wellness assist - evaluation</li>
-  <li>Welness assist - diagnsosis/communication</li>
-  <li>Learning about this world.</li>
+  <li>Wellness assist - diagnsosis/communication</li>
+
   </br>
   </div>
 
   </div>
-  Learn more at this blog post.
+  
   
   
   </div>     
 </div>
 
-  
 
-
-
+{% if user.is_authenticated %}
+<hr>
+<div class="row" id="donate">
+  <div class="col-md-2">
+    <h1>Donate</h1>
   </div>
-    
+  <div class="col-md-10">
+  This is a big idea. I've found Sentimini helpful in my life and I would like to learn about others.  This will take resources.
+  </br></br>
+  The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
+  <mark>Until that time, please consider donating!</mark>
+  </br></br>
+  You can do through my personal paypal for the time being <mark><a href="https://www.paypal.me/williamrekshan"> here</a></mark>.
+  </br></br>
+
+  </div>     
+</div>
+{% endif %}
+
+<hr>
+
+<div class="row" id="donate">
+  <div class="col-md-2">
+    <h1>Personal note</h1>
+  </div>
+  <div class="col-md-10">
+  I know that <mark>data can transform our lives</mark> and ways of being.  I've worked in psychology and neuroscience research for nearly 10 years, 4 of these as a senior biostatician (check out my <a href='Public Profilehttps://www.linkedin.com/in/williamrekshan'>LinkedIn</a> or <a href='https://www.ncbi.nlm.nih.gov/pubmed/?term=rekshan'>scientific papers</a>). 
+  </br></br>
+  I know that just asking questions and <mark>being curious the world can improve my life</mark>.  I've learned this though meditating in a structured way for 5 years (and reading about mindfulness in the scientific literature).
+  </br></br>
+  As simple as this is, Sentimini is the result this experience.  Sentimini just seeks to provide <mark>reminders to pay attention to this world</mark> and your life, in a way that is most meaningful to you.  You can add any content that you wish or choose from lists of texts.  The whole goal is to make Sentimini as easy a possible and in a way that <mark>respects your rich experience of life</mark>.
+  </br></br>
+  As a statistician, I wanted this experience to provide a structure to sensibily <mark>answer quantitative questions</mark> about this world.  Randomization is crucial for this (in addition to removing the burden of having to remember to record something).  Graphs and tables are provided for all texts and responses.
+  </br></br>
+  I hope that Sentimini is helpful to you.  If you have any thoughts, comments, or suggestions, please email me at XXXXX@blah.com
+  </br></br>
+  Enjoy!
+  </br></br>
+  William Rekshan
+</br></br>
+
+  </div>     
+
 </div>
 
 
 
+
+
 </div>
-
-
-
-
 
 
 <!-- /container -->
-
-
 
 
 </body>
@@ -150,4 +159,3 @@
 
 </script>
 {% endblock %}
-
