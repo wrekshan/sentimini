@@ -159,6 +159,9 @@
         <h4><a href="{% url 'vis:text_data' %}">Data</a></h4>
         <h4><a href="{% url 'ent:simulate_week' %}">Simulation</a></h4>
         <h4><a href="{% url 'ent:contact_settings' %}">Contact Settings</a></h4>
+        {% else %}
+        <h4><a href="{% url 'account_login' %}">Sign In</a></h4>
+          <h4><a href="{% url 'account_signup' %}">Sign Up</a></h4>
         
         {% endif %}
       </div>
@@ -166,9 +169,22 @@
 
       <div class="col-md-5">
       </br>
-        Sentimini sends <b>periodic text messages</b> with varying content at <b>semi-random times</b>.  Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
+            {% if user.is_authenticated %}
+          Sentimini sends <b>periodic text messages</b> with varying content at <b>semi-random times</b>.  Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
     </br></br>
     Responses are stored in <b>downloadable tables and figures</b>, making it <b>easy to obtain data</b> about your experience.  View and access your data at the <a href="{% url 'vis:text_data' %}">data page.</a>  
+      
+      {% else %}
+
+          Sentimini sends <b>periodic text messages</b> with varying content at <b>semi-random times</b>.  
+    </br></br>
+    Responses are stored in <b>downloadable tables and figures</b>, making it <b>easy to obtain data</b> about your experience.  
+
+
+
+      {% endif %}
+      </br>
+    
       </div>
     </div>
     <p>&copy; 2016 Sentimini!</p>

@@ -571,7 +571,7 @@ def new_user(request):
 			"library_experiences": library_experiences,
 			"number_of_experiences": number_of_experiences,
 			"ready_to_move_on":ready_to_move_on,
-			"user_gen_exp_id": lib_usr_tmp.id,
+			# "user_gen_exp_id": lib_usr_tmp.id,
 
 			
 			"form_new_user": form_new_user,
