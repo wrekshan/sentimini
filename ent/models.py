@@ -233,7 +233,7 @@ class UserGenPromptFixed(models.Model):
 
 #This is just needed to display the respo;nse types
 class ResponseTypeStore(models.Model):
-	response_type = models.CharField(blank=True,max_length=100,default='0-10')
+	response_type = models.CharField(blank=True,max_length=100,default='0 to 10')
 	ordering_num = models.IntegerField(default=10) #probability that this should be choosen	
 	def __str__(self):
 		return self.response_type
