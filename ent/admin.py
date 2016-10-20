@@ -79,6 +79,8 @@ class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 		"date_altered",
 	]
 
+	list_filter = ["user","text_set","text_type"]
+
 admin.site.register(PossibleTextSTM,PossibleTextSTMModelAdmin)
 
 class ATSMSIM_ModelAdmin(admin.ModelAdmin):
