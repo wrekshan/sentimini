@@ -204,7 +204,6 @@ def about(request):
 		#FAQ STUFF
 		#don't forget to add form for user generated question
 		
-
 		context = {
 			
 		}			

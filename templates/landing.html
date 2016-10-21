@@ -3,7 +3,17 @@
 
 <!--DOCTYPE html -->
 {% block content %}
+<script>
+      $(document).ready(function() {
+        $('#library_experiences_table').DataTable({
+          "columns": [
+          { "width": "30%" },
+          { "width": "70%" },
+          ]
 
+        });
+      } );
+    </script>
 
 <html>
 <head>
@@ -23,16 +33,7 @@
       <h1>Overview</h1>
     </div>
     <div class="col-md-10">
-    {% if user.is_authenticated %}
-    Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
-    </br></br>
-    Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
-    </br></br>
-    Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
-    </br></br>
-    View and access your data at the <a href="{% url 'vis:text_data' %}">data page.</a>  
 
-    {% else %}
 
     Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
     </br></br>
@@ -41,7 +42,62 @@
   Signing up takes <mark>less than 3 minutes</mark>.
   </br></br><a href="{% url 'account_signup' %}" class="btn-default btn-lg" role="button">Sign Up</a>
     </br></br><a href="{% url 'account_login' %}">Sign In</a> if you are already a user.
-    {% endif %}
+  
+</div>     
+</div>
+<hr>
+<div class="row" id="contact">
+  <div class="col-md-2">
+    <h1>Feeds</h1>
+    Prepopulated, but fully customizable lists of texts
+    
+  </div>
+
+  <div class="col-md-10">
+  There are any number of applications for this system.  I've used it in my own life to help me learn about emotions, remind me that I am trying to be mindful, help quit smoking, be more loving, record my experiences with dreams.
+    </br></br>
+    You can <mark>sign up for any number of prepopulated, but fully customizable lists of texts</mark> (called feeds). 
+    </br></br>
+
+
+     <table id="library_experiences_table" class="display" cellspacing="0" width="100%">
+      <thead>
+          <tr>
+              <th>Feed</th>
+              <th>Description</th>        
+          </tr>
+      </thead>
+      <tbody>
+         {% for exp in library_experiences %}
+      <tr>
+
+        <td><a href="/feed_view/{{ exp.ideal_id }}/">{{exp.text_set}}</a></td>
+        <td>{{ exp.description }}</td>
+        
+      </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+
+</br>
+  </div>
+
+  
+</div>
+<hr>
+<div class="row" id="overview">
+    <div class="col-md-2">
+      <h1>Why</h1>
+    </div>
+    <div class="col-md-10">
+    One of the major frustrations about being human is that <mark>we forget</mark> about things <mark>all of the time</mark>.  I want to be more mindful, I forget.  I want to be more loving, I forget.  I want to quit smoking, I forget.
+    </br></br>
+    Sentimini sends texts at semi-random times to just help you <mark>remember what you want to remember</mark>.  The hope is that this will help you <mark>to improve your own life</mark> without being burdensome.  There is merit in just reading the text.  
+    </br></br>
+    Not only do <mark>randomized texts</mark> help you remember what you want to remember, they also allow for a relatively bias free method of data collection to help <mark>quantitatively answer questions about your experience</mark>.  Are you happier than other people?  Does this pain medication actually change your subjective experience of pain?  
+    </br></br>
+     
+   
 </div>     
 </div>
 

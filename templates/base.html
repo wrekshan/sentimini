@@ -48,7 +48,12 @@
 <div class = "nav_bar_first">
   <div class="container navbar">
     <div class="navbar-header">
+      {% if user.is_authenticated %}
       <a class="navbar-brand" href="{% url 'ent:simulate_week' %}">Sentimini!</a>
+      {% else %}
+      <a class="navbar-brand"  href="/">Sentimini!</a>
+      {% endif %}
+     
     </div>
 
 
