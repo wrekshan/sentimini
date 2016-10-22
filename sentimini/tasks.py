@@ -610,7 +610,7 @@ def check_for_nonresponse():
 			td = datetime.now(pytz.utc) - ent.time_sent
 			td_mins = td / timedelta(minutes=1)
 
-			if td_mins > time_lost = 300:
+			if td_mins > time_lost:
 				ent.ready_for_next = 1
 				ent.save()
 
