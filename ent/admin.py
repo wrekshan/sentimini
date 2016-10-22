@@ -168,7 +168,7 @@ class ActualTextSTMModelAdmin(admin.ModelAdmin):
 		"simulated",
 	]
 	list_display_links = ["user"]
-	list_filter = ["user"]
+	list_filter = ["user","text_set","text_type"]
 	class Meta:
 		model = ActualTextSTM
 
