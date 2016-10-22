@@ -13,19 +13,21 @@ class ExperienceSettingResource(resources.ModelResource):
 	class Meta:
 		model = ExperienceSetting
 		import_id_fields = ('unique_text_set',)
-		fields = ('text_set','unique_text_set', 'description', 'tags', 'prompts_per_week','time_to_declare_lost','experience',)
-
+		fields = ('text_set', 'ordering_num', 'unique_text_set', 'description', "description_long", 'tags', 'prompts_per_week','time_to_declare_lost','experience',)
 
 
 class ExperienceSettingModelAdmin(ImportExportModelAdmin):
     resource_class = ExperienceSettingResource   
+    list_filter = ["user", "experience"]
 
     list_display = [
 		"user",
 		"text_set",
+		"ordering_num",
 		"unique_text_set",
 		"tags",
 		"description",
+		"description_long",
 		"prompts_per_week",
 		"experience",
 		"id",
@@ -39,13 +41,7 @@ class ExperienceSettingModelAdmin(ImportExportModelAdmin):
 		"research_instr_dim_rate",
 		"research_prompt_multiple_rate",
 	]
-	
 
-#OLD
-# class ExperienceSettingModelAdmin(admin.ModelAdmin):
-	
-# 	class Meta:
-# 		model = ExperienceSetting
 
 admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
 

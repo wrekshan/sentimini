@@ -174,16 +174,6 @@ AUTHENTICATION_BACKENDS = (
 
 
 
-
-
-
-
-
-
-
-
-
-
 #Email Stuff
 # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend' # this is to print to console
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -209,6 +199,7 @@ if LIVEHOST:
     EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
     EMAIL_PORT = 587
 
+    use_gmail = 1
 
     ### THESE ARE THE NON-LOCAL STUFF
     DATABASES['default'] = dj_database_url.config()
@@ -221,10 +212,12 @@ if LIVEHOST:
 else:
     ### LOCAL
     EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'emojinseidev@gmail.com'
+    EMAIL_HOST = 'smtp.zoho.com'
+    EMAIL_HOST_USER = 'system@sentimini.com'
     EMAIL_HOST_PASSWORD = 'wr579351'
     EMAIL_PORT = 587
+
+    use_gmail = 0
 
     DATABASES = {
         'default': {

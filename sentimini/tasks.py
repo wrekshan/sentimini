@@ -12,7 +12,7 @@ import email
 from celery.task.control import discard_all
 
 import parsedatetime as pdt # for parsing of datetime shit for NLP
-from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
+from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, use_gmail
 
 import string
 
@@ -123,6 +123,10 @@ def sleep_check(text):
 def send_text(text):
 	now = datetime.now(pytz.utc)
 	user_settings = UserSetting.objects.all().get(user=text.user)
+	if text.text_set == "system":
+		exp_settings = ExperienceSetting.objects.all().filter(experience="system").get(ideal_id=text.experience_id)
+	else:
+		exp_settings = ExperienceSetting.objects.all().filter(experience="user").get(ideal_id=text.experience_id)
 	# YOU CAN DO THE CHECKS HERE
 
 	#check is this during sleep?
@@ -145,9 +149,16 @@ def send_text(text):
 			Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
 			
 			if tmp_user.send_email_check == True:
-				send_mail('',message_to_send,'emojinseidev@gmail.com', [text.user.email], fail_silently=False)
+
+				send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
 			if tmp_user.send_text_check == True:
-				send_mail('',message_to_send,'emojinseidev@gmail.com', [addressee], fail_silently=False)
+				send_mail('',message_to_send,str('sad+system@sentimini.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.text_set +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.text_set +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.text_set +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.text_set +'@gmail.com'), [addressee], fail_silently=False)
+
+			print("ALIAS NAME EMAIL", str(exp_settings.text_set +'<emojinseidev@gmail.com>'))
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -413,10 +424,11 @@ def send_texts():
 def schedule_greeting_text(exp,text_type):
 	if text_type == "user":
 		working_settings = UserSetting.objects.all().get(user=exp.user)
+		exp = ExperienceSetting.objects.all().filter(text_set="system").get(experience="system")
 		working_settings.prompts_per_week
 
 		text1 = str('Hello! You just signed up to receive around '+ str(working_settings.prompts_per_week) + ' texts per week.  If you did not, just reply with ‘stop’ or visit sentimini.com to stop receiving these messages.')
-		ActualTextSTM(user=exp.user,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
+		ActualTextSTM(user=exp.user,text_set="system",system_text=1,experience_id=exp.id,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
 
 
 @periodic_task(run_every=timedelta(seconds=2))
@@ -447,7 +459,17 @@ def schedule_texts():
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
-	mail = imaplib.IMAP4_SSL('imap.gmail.com')
+	if use_gmail == 1:
+		mail = imaplib.IMAP4_SSL('imap.gmail.com')
+	else:
+		mail = imaplib.IMAP4_SSL('imappro.zoho.com')
+	#### GMAIL
+	# mail = imaplib.IMAP4_SSL('imap.gmail.com')
+	# mail.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
+	# mail.list()
+
+	#### ZOHO
+	
 	mail.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
 	mail.list()
 

@@ -28,6 +28,7 @@ class PossibleTextSTM(models.Model):
 class ExperienceSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
+	ordering_num =  models.IntegerField(default=0) # This is calculate by the number of desired prompts / time awake.  
 	unique_text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	description =  models.CharField(max_length=1000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
 	description_long =  models.CharField(max_length=10000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
