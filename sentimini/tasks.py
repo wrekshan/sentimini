@@ -601,12 +601,16 @@ def check_for_nonresponse():
 		working_entry = ActualTextSTM.objects.all().exclude(text_set='system').exclude(time_sent__isnull=True).filter(ready_for_next=0)
 		
 		for ent in working_entry:
-			exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
+			if ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).filter(user=ent.user).count() == 1:
+				exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
+				time_lost =	exp_settings.time_to_declare_lost
+			else:
+				time_lost = 300
 
 			td = datetime.now(pytz.utc) - ent.time_sent
 			td_mins = td / timedelta(minutes=1)
 
-			if td_mins > exp_settings.time_to_declare_lost:
+			if td_mins > time_lost = 300:
 				ent.ready_for_next = 1
 				ent.save()
 

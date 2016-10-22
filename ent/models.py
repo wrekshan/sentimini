@@ -30,6 +30,7 @@ class ExperienceSetting(models.Model):
 	text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	unique_text_set = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	description =  models.CharField(max_length=1000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
+	description_long =  models.CharField(max_length=10000,default='',null=True) # This is calculate by the number of desired prompts / time awake.  
 	tags = models.CharField(max_length=3000,default='',null=True) #This is the emotion, of course
 	prompts_per_week = models.IntegerField(default=3,validators=[MinValueValidator(0), MaxValueValidator(100)]) 
 	time_to_declare_lost =  models.IntegerField(default=15)
