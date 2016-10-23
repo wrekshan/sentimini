@@ -18,7 +18,7 @@ from .models import PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respit
 from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap
 from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes, figure_out_timing
 
-from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse, generate_random_minutes
+from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse, generate_random_minutes, schedule_greeting_text
 
 
 def update_experiences(user):
@@ -550,6 +550,8 @@ def new_user(request):
 								working_settings.save()
 
 							tmp_settings.save()
+
+							schedule_greeting_text(user=request.user)
 						else:
 							messages.add_message(request, messages.INFO, 'Not 10 Expecting a 10 digit US number')
 					

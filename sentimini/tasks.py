@@ -152,7 +152,7 @@ def send_text(text):
 
 				send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
 			if tmp_user.send_text_check == True:
-				send_mail('',message_to_send,str('sad+system@sentimini.com'), [addressee], fail_silently=False)
+				send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.text_set +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.text_set +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.text_set +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
@@ -421,14 +421,16 @@ def send_texts():
 
 
 
-def schedule_greeting_text(exp,text_type):
-	if text_type == "user":
-		working_settings = UserSetting.objects.all().get(user=exp.user)
-		exp = ExperienceSetting.objects.all().filter(text_set="system").get(experience="system")
-		working_settings.prompts_per_week
+def schedule_greeting_text(user):
+	working_settings = UserSetting.objects.all().get(user=user)
+	exp = ExperienceSetting.objects.all().filter(text_set="system").get(experience="system")
+	working_settings.prompts_per_week
 
-		text1 = str('Hello! You just signed up to receive around '+ str(working_settings.prompts_per_week) + ' texts per week.  If you did not, just reply with ‘stop’ or visit sentimini.com to stop receiving these messages.')
-		ActualTextSTM(user=exp.user,text_set="system",system_text=1,experience_id=exp.id,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
+	text1 = str('Hello! You just signed up to receive texts from sentimini.com.  If you did not, just reply with stop or visit sentimini.com to stop receiving these messages.')
+	ActualTextSTM(user=exp.user,text_set="system",system_text=1,experience_id=exp.id,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
+
+
+
 
 
 @periodic_task(run_every=timedelta(seconds=2))
@@ -437,9 +439,6 @@ def schedule_texts():
 	
 
 	for exp in exp_settings:
-		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").count() < 1:
-			schedule_greeting_text(exp=exp,text_type="user")
-		
 		#initialize new text for the experience
 		# print("exp.text_set", exp.text_set)
 		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").filter(text_set=exp.text_set).count()<1:
