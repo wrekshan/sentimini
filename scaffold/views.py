@@ -10,7 +10,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from .forms import  BusinessForm, BusinessForm_price, BusinessForm_number_texts, BusinessForm_user_stuff, BusinessForm_static_costs, MeasureForm
 
 from .models import Blog, Business, Measure, Sentimini_help
-from ent.models import PossibleTextSTM, ActualTextSTM, ActualTextLTM, ActualTextSTM_SIM, ExperienceSetting
+from ent.models import PossibleTextSTM, ActualTextSTM, ActualTextLTM, ActualTextSTM_SIM, FeedSetting, UserSetting
 from vis.models import EntryDEV
 
 from sentimini.sentimini_functions import get_user_summary_info, get_graph_data_histogram, get_graph_data_time_of_day, get_graph_data_day_in_week, get_graph_data_line_chart_plotly, get_graph_data_line_chart_plotly_smooth, get_graph_data_line_chart_business_model
@@ -19,26 +19,27 @@ from sentimini.scheduler_functions import figure_out_timing
 # Create your views here.
 def upload_feed_data(request):
 	if request.user.is_authenticated():	
-		library_experiences = ExperienceSetting.objects.all().filter(experience='library')
+		library_experiences = FeedSetting.objects.all().filter(feed_type='library')
 
 		for exp in library_experiences:
-			exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(text_type='library').filter(text_set=exp.text_set).count()
+			exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(feed_type='library').filter(feed_name=exp.feed_name).count()
 			#figure out timing
-			exp.prompt_interval_minute_avg, exp.prompt_interval_minute_min, exp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.prompts_per_week)
+			exp.text_interval_minute_avg, exp.text_interval_minute_min, exp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.texts_per_week)
 			exp.save()
 
 		print("UPLOAD")
 		
 		if request.GET.get('update_experience_settings'):
-			working_experience = ExperienceSetting.objects.all().exclude(experience='user')
+			working_experience = FeedSetting.objects.all().exclude(feed_type='user')
 
 			for exp in working_experience:
-				exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(text_type='library').filter(text_set=exp.text_set).count()
+				exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(feed_type='library').filter(unique_feed_name=exp.unique_feed_name).count()
+				print("COUNT:", exp.number_of_texts_in_set )
 				#figure out timing
-				exp.prompt_interval_minute_avg, exp.prompt_interval_minute_min, exp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.prompts_per_week)
+				exp.text_interval_minute_avg, exp.text_interval_minute_min, exp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=exp.texts_per_week)
 	
-				if exp.ideal_id == 0:
-					exp.ideal_id = exp.id
+				if exp.feed_id == 0:
+					exp.feed_id = exp.id
 
 				exp.save()
 					
@@ -46,15 +47,17 @@ def upload_feed_data(request):
 
 
 		if request.GET.get('update_new_possible_texts'):
-			working_texts = PossibleTextSTM.objects.all().exclude(text_type='user')
+			working_texts = PossibleTextSTM.objects.all().exclude(feed_type='user')
+
+			print("TEXT COUNT", working_texts.count() )
 
 			for text in working_texts:
-				if text.experience_id == 0:
+				if text.feed_id == 0:
 					print("TEXT ID ZERO")
-					print(text.unique_text_set)
+					print(text.unique_feed_name)
 
-					tmp_exp = ExperienceSetting.objects.all().exclude(experience='user').get(unique_text_set=text.unique_text_set)
-					text.experience_id = tmp_exp.ideal_id
+					tmp_exp = FeedSetting.objects.all().exclude(feed_type='user').get(unique_feed_name=text.unique_feed_name)
+					text.feed_id = tmp_exp.feed_id
 					text.save()
 
 			return HttpResponseRedirect('/scaffold/upload_feed_data/')	
@@ -122,66 +125,65 @@ def power(request):
 
 
 def business_model(request):
-	if request.user.is_authenticated():	
-		if Business.objects.all().count()<1:
-			working_busy = Business(user=request.user).save()
+	
+	if Business.objects.all().count()<1:
+		working_busy = Business(user=request.user).save()
+	
+	working_busy = Business.objects.all().first()
+
+
+
+	price_form = BusinessForm_price(request.POST or None, instance=working_busy)
+	number_texts_form = BusinessForm_number_texts(request.POST or None, instance=working_busy)
+	user_stuff_form = BusinessForm_user_stuff(request.POST or None, instance=working_busy)
+	static_costs_form = BusinessForm_static_costs(request.POST or None, instance=working_busy)
+
+	graph_data_line_chart_business_model, sustainability_numbers = get_graph_data_line_chart_business_model(working_busy=working_busy)
+
+
+	if request.method == "POST":
+		if 'submit_price_business' in request.POST:
+			if price_form.is_valid():
+				working_busy = price_form.save()
+				return HttpResponseRedirect(reverse('scaffold:business_model'))
+
+		if 'submit_number_texts_business' in request.POST:
+			if number_texts_form.is_valid():
+				working_busy = number_texts_form.save()
+				return HttpResponseRedirect(reverse('scaffold:business_model'))
+
+		if 'submit_user_stuff_business' in request.POST:
+			if user_stuff_form.is_valid():
+				working_busy = user_stuff_form.save()
+				return HttpResponseRedirect(reverse('scaffold:business_model'))
+
+		if 'submit_static_costs_business' in request.POST:
+			if static_costs_form.is_valid():
+				working_busy = static_costs_form.save()
+				return HttpResponseRedirect(reverse('scaffold:business_model'))
 		
-		working_busy = Business.objects.all().first()
-
-
-
+	else:
 		price_form = BusinessForm_price(request.POST or None, instance=working_busy)
 		number_texts_form = BusinessForm_number_texts(request.POST or None, instance=working_busy)
 		user_stuff_form = BusinessForm_user_stuff(request.POST or None, instance=working_busy)
 		static_costs_form = BusinessForm_static_costs(request.POST or None, instance=working_busy)
+		
 
-		graph_data_line_chart_business_model, sustainability_numbers = get_graph_data_line_chart_business_model(working_busy=working_busy)
+	context = {
+		"sustainability_numbers": sustainability_numbers,
 
+		"price_form": price_form,
+		"number_texts_form": number_texts_form,
+		"user_stuff_form": user_stuff_form,
+		"static_costs_form": static_costs_form,
 
-		if request.method == "POST":
-			if 'submit_price_business' in request.POST:
-				if price_form.is_valid():
-					working_busy = price_form.save()
-					return HttpResponseRedirect(reverse('scaffold:business_model'))
+		"working_busy": working_busy,
+		"graph_data_line_chart_business_model": graph_data_line_chart_business_model,
+		
+	}			
 
-			if 'submit_number_texts_business' in request.POST:
-				if number_texts_form.is_valid():
-					working_busy = number_texts_form.save()
-					return HttpResponseRedirect(reverse('scaffold:business_model'))
-
-			if 'submit_user_stuff_business' in request.POST:
-				if user_stuff_form.is_valid():
-					working_busy = user_stuff_form.save()
-					return HttpResponseRedirect(reverse('scaffold:business_model'))
-
-			if 'submit_static_costs_business' in request.POST:
-				if static_costs_form.is_valid():
-					working_busy = static_costs_form.save()
-					return HttpResponseRedirect(reverse('scaffold:business_model'))
-			
-		else:
-			price_form = BusinessForm_price(request.POST or None, instance=working_busy)
-			number_texts_form = BusinessForm_number_texts(request.POST or None, instance=working_busy)
-			user_stuff_form = BusinessForm_user_stuff(request.POST or None, instance=working_busy)
-			static_costs_form = BusinessForm_static_costs(request.POST or None, instance=working_busy)
-			
-
-		context = {
-			"sustainability_numbers": sustainability_numbers,
-
-			"price_form": price_form,
-			"number_texts_form": number_texts_form,
-			"user_stuff_form": user_stuff_form,
-			"static_costs_form": static_costs_form,
-
-			"working_busy": working_busy,
-			"graph_data_line_chart_business_model": graph_data_line_chart_business_model,
-			
-		}			
-
-		return render(request,"business_model.html",context)
-	else:
-		return HttpResponseRedirect('/accounts/signup/')		
+	return render(request,"business_model.html",context)
+		
 
 
 
@@ -203,8 +205,12 @@ def about(request):
 	if request.user.is_authenticated():	
 		#FAQ STUFF
 		#don't forget to add form for user generated question
+		number_of_users = UserSetting.objects.all().count()
+
+
 		
 		context = {
+		"number_of_users": number_of_users,
 			
 		}			
 

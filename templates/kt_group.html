@@ -1,0 +1,189 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+{% block content %}
+
+  <html>
+  <head>
+<title>KT - Sentimini!</title>
+</head>
+
+  <body>
+    
+
+ <script>
+      $(document).ready(function() {
+        $('#possible_texts_table').DataTable({
+          "columns": [
+          { "width": "40%" },
+          { "width": "30%" },
+          { "width": "30%" },
+
+          ]
+
+        });
+      } );
+    </script>
+
+    <script>
+      $(document).ready(function() {
+        $('#user_texts_table').DataTable({
+          "columns": [
+          { "width": "40%" },
+          { "width": "30%" },
+          { "width": "30%" },
+
+          ]
+
+        });
+      } );
+    </script>
+  <!-- Main jumbotron for a primary marketing message or call to action -->
+  <div class="container">
+  
+   
+
+  <!-- Text content -->
+  <div class="row" id="texts">
+    <div class="col-md-2">
+    <h1>Overview</h1>
+     
+    </div>
+
+    <div class="col-md-10">
+  This will be the group thing.  need to have PW to activate it.  for the personal user, just have edit or delete, otherwise just list it.
+    
+  
+  </div>
+  </div>
+
+
+  <hr>
+  <div class="row" id="texts">
+    <div class="col-md-2">
+      <h1>Active Feeds</h1>
+     
+    </div>
+
+    <div class="col-md-10">
+    form here
+    <form method='POST' action='' class="form-horizontal">
+    {% csrf_token %} {% crispy form_new_text %}
+    <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
+  </form>
+
+  
+
+
+  
+
+  </div>
+  </div>
+<hr>
+  <div class="row" id="texts">
+    <div class="col-md-2">
+      <h1>Active</h1>
+     
+    </div>
+
+    <div class="col-md-10">
+  <table id="user_texts_table" class="display" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Response Type</th>
+          <th>User</th>
+
+        </tr>
+      </thead>
+      <tbody>
+       {% for exp in working_user_texts %}
+       <tr>
+       <td>
+       {% if exp.user == user %}
+       {{ exp.text }} (<a href="/ent/text_delete/{{ exp.id }}/">delete</a>, <a href="/ent/text_activate/{{ exp.id }}/">activate</a>)
+       {% else %}
+
+        {{ exp.text }}
+        {% endif %}
+        </td>
+        <td>{{ exp.response_type }}</td>
+        <td>{{ exp.user }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  </div>
+
+  <hr>
+  <div class="row" id="texts">
+    <div class="col-md-2">
+      <h1>Texts From Everyone</h1>
+     
+    </div>
+
+    <div class="col-md-10">
+    CHECKBOX - Always activate new texts in this feed.
+  <table id="possible_texts_table" class="display" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Response Type</th>
+          <th>User</th>
+
+        </tr>
+      </thead>
+      <tbody>
+       {% for exp in working_kt_library %}
+       <tr>
+       <td>
+       {% if exp.user == user %}
+       {{ exp.text }} (<a href="/ent/text_delete/{{ exp.id }}/">delete</a>, <a href="/ent/text_activate/{{ exp.id }}/">activate</a>)
+       {% else %}
+
+        {{ exp.text }}
+        {% endif %}
+        </td>
+        <td>{{ exp.response_type }}</td>
+        <td>{{ exp.user }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  </div>
+
+  
+</div>
+ 
+
+<!-- Contact Settings -->
+
+
+    
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+{% endblock %}

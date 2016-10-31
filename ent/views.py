@@ -12,56 +12,497 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from time import strptime
 # Create your views here.
-from .forms import  UserSettingForm_Prompt, PossibleTextSTMForm, UserSettingForm_ResearchPercent, ExampleFormSetHelper, EmotionOntologyForm, EmotionOntologyFormSetHelper, UserGenPromptFixedForm, UserGenPromptFixedFormSetHelper, TimingForm, PossibleTextSTMForm_detail, NewUserForm, NewUser_PossibleTextSTMForm, AddNewTextSetForm, AddNewTextSetForm_full, AddNewTextSetForm_fullFormSetHelper, TextSetFormSetHelper, ExperienceTimingForm, UserSettingForm_PromptRate
-from .models import PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, ExperienceSetting, ActualTextSTM_SIM
+from .forms import  AddNewGroup_Creator_Form, KT_PossibleTextSTMForm, ContactSettingsForm, PossibleTextSTMForm, NewUserForm, NewUser_PossibleTextSTMForm, AddNewTextSetForm_full, AddNewTextSetForm_fullFormSetHelper, TextSetFormSetHelper, ExperienceTimingForm
+from .models import GroupSetting, PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, FeedSetting, ActualTextSTM_SIM
 
 from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap
 from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes, figure_out_timing
 
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse, generate_random_minutes, schedule_greeting_text
 
+def group_detail(request,id=None):
+	if request.user.is_authenticated():	
+		if FeedSetting.objects.all().filter(user=request.user).count()>0:
+			update_experiences(user=request.user)
+		
+		working_group = GroupSetting.objects.all().get(id=id)
+		working_user_feeds = FeedSetting.objects.all().filter(feed_type="user").filter(group_id = id)
+		working_library_feeds = FeedSetting.objects.all().filter(feed_type="library").filter(group_id = id)
 
-def update_experiences(user):
-	working_experience = ExperienceSetting.objects.all().filter(user=user)
+		working_user_texts = PossibleTextSTM.objects.all().filter(group_id=id)
 
-	for exp in working_experience:
-		exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(user=user).filter(text_type=exp.experience).filter(text_set=exp.text_set).count()
-		#figure out timing
-		exp.prompt_interval_minute_avg, exp.prompt_interval_minute_min, exp.prompt_interval_minute_max = figure_out_timing(user=user,text_per_week=exp.prompts_per_week)
-		exp.save()
+		form_group_settings = AddNewGroup_Creator_Form(request.POST or None, instance = working_group)
 
-def create_new_user_experience(user,ideal_id):
-	if ideal_id == "Create New":
-		ExperienceSetting(user=user,experience='user',text_set="New Set",user_state="disable").save()
-		working_experience = ExperienceSetting.objects.all().filter(user=user).filter(experience="user").get(text_set="New Set")
-		working_experience.ideal_id = working_experience.id
+		form_new_text = KT_PossibleTextSTMForm(request.POST or None)
+
+		if request.GET.get('create_new_feed'):
+			print("CREATING NEW FEED PRESSED")
+			FeedSetting(user=request.user,feed_type='user',feed_name="New Set",group_name=working_group.group_name,group_id=working_group.id,user_state="disable").save()
+
+			working_experience = FeedSetting.objects.all().filter(user=request.user).filter(group_id=working_group.id).filter(feed_type="user").get(feed_name="New Set")
+			working_experience.feed_id = working_experience.id
+			working_experience.save()
+
+			return HttpResponseRedirect('/ent/text_set_detail/'+str(working_experience.id))
+
+
+		if request.method == "POST":
+			if 'submit_new_group' in request.POST:
+				if form_group_settings.is_valid():	
+					tmp = form_group_settings.save()
+					tmp.save()
+				
+				HttpResponseRedirect('/ent/group_detail/'+str(id))	
+
+			if 'submit_new_text' in request.POST:
+				if form_new_text.is_valid():	
+					tmp = form_new_text.save()
+					tmp.user=request.user
+					tmp.feed_id = kt_group_exp.id
+					tmp.unique_feed_name = kt_group_exp.unique_feed_name
+					tmp.feed_name = kt_group_exp.feed_name
+					tmp.feed_type = kt_group_exp.feed_type
+
+					tmp.group_id=working_group.id
+					tmp.group_name=str(working_group.group_name)
+
+				
+					
+					if tmp.date_created is None:
+						tmp.date_created = datetime.now(pytz.utc)
+					tmp.save()
+				
+				HttpResponseRedirect('/ent/kt_group')
+
+			# elif 'submit_prompt_percent' in request.POST:
+			# 	if form_exp_timing.is_valid():
+			# 		form_exp_timing.save()
+			# 		HttpResponseRedirect('/ent/kt_group')
+
+
+	
+		context = {
+			"form_group_settings": form_group_settings,
+			"form_new_text": form_new_text,
+			"working_user_feeds": working_user_feeds,
+			"working_library_feeds": working_library_feeds,
+		}
+
+		return render(request, "groups_detail.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+def create_new_user_experience(user,feed_id,default_experience):
+	if feed_id == "Create New":
+		FeedSetting(user=user,feed_type='user',feed_name="New Set",user_state="disable").save()
+		working_experience = FeedSetting.objects.all().filter(user=user).filter(feed_type="user").get(feed_name="New Set")
+		working_experience.feed_id = working_experience.id
 		working_experience.description = working_experience.description
-		working_experience.unique_text_set = working_experience.unique_text_set
-		ideal_id = working_experience.id
+		working_experience.unique_feed_name = working_experience.unique_feed_name
+		feed_id = working_experience.id
 		working_experience.save()
 
-	if ExperienceSetting.objects.filter(user=user).filter(experience='user').filter(ideal_id=ideal_id).count()<1:
-		library_tmp = ExperienceSetting.objects.all().filter(experience='library').get(ideal_id=ideal_id)
-		ExperienceSetting(user=user,experience='user',ideal_id=ideal_id,description=library_tmp.description,text_set=library_tmp.text_set,user_state="disable").save()
-		working_experience = ExperienceSetting.objects.all().filter(user=user).filter(experience="user").get(ideal_id=ideal_id)
+	if FeedSetting.objects.filter(user=user).filter(feed_type='user').filter(feed_id=feed_id).count()<1:
+		print("default_experience",default_experience)
+		print("feed_id",feed_id)
+		library_tmp = FeedSetting.objects.all().filter(feed_type=default_experience).get(feed_id=feed_id)
+		FeedSetting(user=user,feed_type='user',feed_id=feed_id,description=library_tmp.description,feed_name=library_tmp.feed_name,user_state="disable").save()
+		working_experience = FeedSetting.objects.all().filter(user=user).filter(feed_type="user").get(feed_id=feed_id)
 
 		#INITIALIZE TEXTS
-		if PossibleTextSTM.objects.all().filter(text_type="library").filter(experience_id=ideal_id).count() > 0 :
-			tmp_texts = PossibleTextSTM.objects.all().filter(text_type="library").filter(experience_id=ideal_id,text_set=working_experience.text_set)
+		if PossibleTextSTM.objects.all().filter(feed_type=default_experience).filter(feed_id=feed_id).count() > 0 :
+			tmp_texts = PossibleTextSTM.objects.all().filter(feed_type=default_experience).filter(feed_id=feed_id,feed_name=working_experience.feed_name)
 
 			for text in tmp_texts:
-				tmp_new = PossibleTextSTM(user=user,text=text.text,response_type=text.response_type,experience_id=text.experience_id,text_set=text.text_set,text_type="user",text_importance=text.text_importance,date_created=text.date_created)
+				tmp_new = PossibleTextSTM(user=user,text=text.text,group_name=text.group_name,group_id=text.group_id,response_type=text.response_type,feed_id=text.feed_id,feed_name=text.feed_name,feed_type="user",text_importance=text.text_importance,date_created=text.date_created)
 				tmp_new.save()
 
 		# You have to add in the texts
+
+# def groups_create(request):
+# 	if request.user.is_authenticated():	
+# 		new_group_form = AddNewGroup_Creator_Form()
+
+# 		if request.method == "POST":
+# 			if 'submit_new_group' in request.POST:
+# 				if new_group_form.is_valid():	
+# 					tmp = new_group_form.save()
+# 					tmp.user = request.user
+# 					tmp.save()
+
+# 				HttpResponseRedirect('/ent/groups_edit/')
+
+# 		context = {
+# 			# "form_exp_timing": form_exp_timing,
+# 			"new_group_form": new_group_form,
+			
+# 		}
+
+# 		return render(request, "groups_create.html", context)
+# 	else:
+# 		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+
+def groups_edit(request):
+	if request.user.is_authenticated():	
+		#Update the tables with the right numbers of texts
+
+		if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+			return HttpResponseRedirect('/ent/new_user/')
+
+		# if GroupSetting.objects.all().filter(user=request.user).count()>0:
+			# update_experiences(user=request.user)
+		
+
+		number_of_experiences = GroupSetting.objects.all().filter(group_type='user').filter(user=request.user).count()
+		working_groups = GroupSetting.objects.all().filter(group_type='user').filter(user=request.user)
+		library_experiences = GroupSetting.objects.all().filter(group_type='library')
+
+		if request.GET.get('create_new_group'):		
+			new_group = GroupSetting(user=request.user,group_type="user")
+			new_group.save()
+			
+			return HttpResponseRedirect('/ent/group_detail/'+str(new_group.id))		
+
+			
+			
+		
+	
+		context = {
+			"number_of_experiences": number_of_experiences,
+			"working_groups": working_groups,
+			"library_experiences": library_experiences,
+		}
+
+		return render(request, "groups_edit.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+# def group_alter(request,id=None):
+# 	print("TEXT SET ALTER")
+# 	ideal_experience = GroupSetting.objects.all().get(id=id)
+# 	working_settings = UserSetting.objects.all().get(user=request.user)
+
+# 	if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+# 		working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+# 		text_for_user = "This experience is NOT enabled"
+# 		working_experience = FeedSetting.objects.all().get(id=id)
+# 		number_of_experiences = 0
+
+# 		print("ideal_experience.texts_per_week:", ideal_experience.texts_per_week)
+# 		tmp_exp = FeedSetting(user=request.user,user_state="disable",feed_id=ideal_experience.id,feed_type='user',description=working_experience.description,feed_name=working_experience.feed_name,texts_per_week=ideal_experience.texts_per_week)
+# 		#gotta do the other stuff too
+# 		tmp_exp.text_interval_minute_avg,tmp_exp.text_interval_minute_min,tmp_exp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp_exp.texts_per_week)
+# 		tmp_exp.save()
+
+# 		#INITIALIZE TEXTS
+# 		tmp_texts = PossibleTextSTM.objects.all().filter(feed_type="library").filter(feed_id=working_experience.id)
+
+# 		for text in tmp_texts:
+# 			tmp_new = PossibleTextSTM(user=request.user,text=text.text,response_type=text.response_type,feed_id=text.feed_id,feed_name=text.feed_name,feed_type="user",text_importance=text.text_importance,date_created=text.date_created)
+# 			tmp_new.save()
+
+# 		print("enable")
+
+		
+
+# 	else:
+# 		working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+# 		text_for_user = "This experience is enabled"
+# 		working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+# 		number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+
+# 		default_texts = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+
+# 		user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_name=ideal_experience.feed_name)
+# 		user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+# 		user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=id).filter(time_sent__isnull=True)
+# 		print("OUTCOING COUNT", user_outgoing.count())
+
+# 		for exp in user_experience:
+# 			exp.delete()
+
+# 		for text in user_texts:
+# 			text.delete()
+
+# 		for text in user_outgoing:
+# 			text.delete()			
+		
+# 		working_settings.save()
+		
+# 		print("REMOVE")
+	
+# 	if working_settings.new_user_pages < 2:
+# 		return HttpResponseRedirect('/ent/new_user/')
+# 	else:
+# 		return HttpResponseRedirect('/ent/feeds_edit/')
+
+
+
+
+
+def update_experiences(user):
+	working_experience = FeedSetting.objects.all().filter(user=user)
+
+	for exp in working_experience:
+		exp.number_of_texts_in_set = PossibleTextSTM.objects.all().filter(user=user).filter(feed_type=exp.feed_type).filter(feed_name=exp.feed_name).count()
+		#figure out timing
+		exp.text_interval_minute_avg, exp.text_interval_minute_min, exp.text_interval_minute_max = figure_out_timing(user=user,text_per_week=exp.texts_per_week)
+		exp.save()
+
+
+
+
+def text_delete(request,id=None):
+	print("ID HERE:'", id)
+	PossibleTextSTM.objects.all().get(id=id).delete()
+	return HttpResponseRedirect('/ent/kt_group')
+
+def text_activate(request,id=None):
+	print("ACTIVATE ID HERE:'", id)
+	text = PossibleTextSTM.objects.all().get(id=id)
+	PossibleTextSTM(user=request.user,text=text.text,group_name=text.group_name,group_id=text.group_id,response_type=text.response_type,feed_id=text.feed_id,feed_name=text.feed_name,feed_type="user",text_importance=text.text_importance,date_created=text.date_created).save()
+	return HttpResponseRedirect('/ent/kt_group')
+
+
+def kt_group(request):
+	if request.user.is_authenticated():	
+		if FeedSetting.objects.all().filter(user=request.user).count()>0:
+			update_experiences(user=request.user)
+		
+		kt_group_exp = FeedSetting.objects.all().filter(feed_type='kt').get(unique_feed_name='kt_library_1')
+		if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=kt_group_exp.id).count() < 1:
+			print("LESS 1")
+			create_new_user_experience(user=request.user,feed_id=kt_group_exp.id, default_experience='kt')
+
+		working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=kt_group_exp.id)
+		# form_exp_timing= ExperienceTimingForm(request.POST or None, instance = working_experience)
+		form_new_text = KT_PossibleTextSTMForm(request.POST or None)
+
+
+		working_user_texts = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="user").filter(feed_id=kt_group_exp.id)
+		working_kt_library = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="kt").filter(feed_id=kt_group_exp.id)
+
+		
+		if request.method == "POST":
+			if 'submit_new_text' in request.POST:
+				if form_new_text.is_valid():	
+					tmp = form_new_text.save()
+					tmp.user=request.user
+					tmp.feed_id = kt_group_exp.id
+					tmp.unique_feed_name = kt_group_exp.unique_feed_name
+					tmp.feed_name = kt_group_exp.feed_name
+					tmp.feed_type = kt_group_exp.feed_type
+					
+					if tmp.date_created is None:
+						tmp.date_created = datetime.now(pytz.utc)
+					tmp.save()
+					HttpResponseRedirect('/ent/kt_group')
+
+			# elif 'submit_prompt_percent' in request.POST:
+			# 	if form_exp_timing.is_valid():
+			# 		form_exp_timing.save()
+			# 		HttpResponseRedirect('/ent/kt_group')
+
+
+	
+		context = {
+			# "form_exp_timing": form_exp_timing,
+			"form_new_text": form_new_text,
+			"working_user_texts": working_user_texts,
+			"working_kt_library": working_kt_library,
+		}
+
+		return render(request, "kt_group.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+def text_set_detail(request,id=None):
+	if request.user.is_authenticated():
+		if FeedSetting.objects.all().filter(id=id).count()<1:
+			return HttpResponseRedirect('/ent/feeds_edit/')
+		else:
+			ideal_experience = FeedSetting.objects.all().get(id=id)
+			id_group = ideal_experience.group_id
+			working_group = GroupSetting.objects.all().get(id=id_group)
+
+			if ideal_experience.group_name == 'basic':
+				last_page_go_back = "feeds"
+			else:
+				last_page_go_back = "groups"
+
+			if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+				new_user_pages = "new_user"
+			else:
+				new_user_pages = "old_user"
+
+
+			
+
+
+
+			if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+				working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+				text_for_user = "This experience is NOT enabled"
+				working_experience = FeedSetting.objects.all().get(id=id)
+				number_of_experiences = 0
+			else:
+				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+				text_for_user = "This experience is enabled"
+				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+				number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+				
+			helper = TextSetFormSetHelper()
+			UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=1)
+			formset = UGPFormset(queryset = working_user_gen)
+			form_feed_name_new= AddNewTextSetForm_full(request.POST or None, instance = working_experience)
+			
+			number_of_texts = working_user_gen.count()
+			text_per_week = working_experience.texts_per_week
+
+			if request.GET.get('remove_experience'):
+				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+				text_for_user = "This experience is enabled"
+				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+				number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+
+				user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_id=id)
+				user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+				user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=id).filter(time_sent__isnull=True)
+
+				for exp in user_experience:
+					exp.delete()
+
+				for text in user_texts:
+					text.delete()
+
+				for text in user_outgoing:
+					text.delete()
+				
+				return HttpResponseRedirect('/ent/feeds_edit/')
+
+			if request.GET.get('enable_experience'):
+				ideal_experience = FeedSetting.objects.all().get(id=id)
+				print("ENABLE PRESSED")
+
+				if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+					text_for_user = "This experience is NOT enabled"
+					working_experience = FeedSetting.objects.all().get(id=id)
+					number_of_experiences = 0
+					
+					# Create and save new one
+					create_new_user_experience(user=request.user,feed_id=working_experience.id,default_experience='library')
+					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+			
+				#Restore experience from defaul
+
+
+			########## NOW THE FORM HANDLING STUFF
+			if request.method == "POST":
+				if 'submit_feed_description' in request.POST:
+					if form_feed_name_new.is_valid():
+						# tmp_exp = FeedSetting.objects.all().filter(experience="user").get(feed_id=ideal_experience.id)
+
+						tmp = form_feed_name_new.save(commit=False)
+						tmp.texts_per_week = tmp.texts_per_week
+						tmp.text_interval_minute_avg,tmp.text_interval_minute_min,tmp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp.texts_per_week)
+						tmp.save()	
+
+					
+						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+
+
+				if 'submit_formset' in request.POST:
+					formset = UGPFormset(request.POST, queryset = working_user_gen )
+					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+						#EXPERIENCE
+						tmp_exp = FeedSetting(user=request.user,user_state="disable",feed_id=ideal_experience.id,feed_type='user',description=working_experience.description,feed_name=working_experience.feed_name,texts_per_week=ideal_experience.texts_per_week)
+						#gotta do the other stuff too
+						tmp_exp.save()
+
+						#INITIALIZE TEXTS
+						tmp_texts = PossibleTextSTM.objects.all().filter(feed_type="library").filter(feed_id=working_experience.id)
+
+						for text in tmp_texts:
+							print("NEW TEXT SAVED")
+							tmp_new = PossibleTextSTM(user=request.user,group_name=text.group_name,group_id=text.group_id,text=text.text,response_type=text.response_type,feed_id=text.feed_id,feed_name=text.feed_name,feed_type="user",text_importance=text.text_importance,date_created=text.date_created)
+							tmp_new.save()
+
+
+					if formset.is_valid(): 
+						print("FORMSET VALID")
+						if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id).count()<0:
+							tmp_exp = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id)
+						else:
+							tmp_exp = FeedSetting.objects.all().get(id=ideal_experience.id)
+
+						#Save the Experience
+						for form in formset:
+
+							if form.is_valid() and form.has_changed():
+								tmp = form.save()
+
+								tmp.user=request.user
+								tmp.feed_id=tmp_exp.id
+								tmp.feed_name=tmp_exp.feed_name
+								tmp.feed_type = 'user'
+								tmp.group_id=working_group.id
+								tmp.group_name=str(working_group.group_name)
+
+								if tmp.date_created is None:
+									tmp.date_created = datetime.now(pytz.utc)
+								tmp.save()
+								
+								#Save any changes in long term storage
+								ptltm = PossibleTextLTM(user=request.user,feed_name=tmp.feed_name,feed_id=tmp.id,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+								ptltm.save()
+
+						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+
+					else:
+						messages.add_message(request, messages.INFO, 'Not Valid')
+						return HttpResponseRedirect('/ent/text_set_detail/'+ str(ideal_experience.id))
+
+				
+
+			     
+			
+			context = {
+				"form_feed_name_new": form_feed_name_new,
+				"text_for_user": text_for_user,
+				"number_of_experiences": number_of_experiences,
+				"number_of_texts": number_of_texts,
+				"text_per_week": text_per_week,
+				"working_user_gen": working_user_gen,
+				"new_user_pages": new_user_pages,
+				"last_page_go_back": last_page_go_back,
+				"id_group": id_group,
+
+				"helper": helper,
+				"formset": formset,
+
+				"number_of_texts": number_of_texts,
+
+				"working_experience": working_experience,
+
+			}
+			return render(request, "text_set_detail.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 def feeds_edit(request):
 	if request.user.is_authenticated():	
 		#Create new user generated list if none
-		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()<1:
-		# 	ideal_exp = ExperienceSetting.objects.filter(experience='library').get(text_set="user generated")
-		# 	create_new_user_experience(user=request.user,ideal_id=ideal_exp.id) #FIX THIS
+		# if FeedSetting.objects.filter(user=request.user).filter(experience='user').filter(feed_name="user generated").count()<1:
+		# 	ideal_exp = FeedSetting.objects.filter(experience='library').get(feed_name="user generated")
+		# 	create_new_user_experience(user=request.user,feed_id=ideal_exp.id) #FIX THIS
 
 		#Update the tables with the right numbers of texts
 
@@ -69,27 +510,27 @@ def feeds_edit(request):
 			return HttpResponseRedirect('/ent/new_user/')
 
 				
-		if ExperienceSetting.objects.all().filter(user=request.user).count()>0:
+		if FeedSetting.objects.all().filter(user=request.user).count()>0:
 			update_experiences(user=request.user)
 		
 
-		number_of_experiences = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).count()
-		working_experience_sets = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user)
-		library_experiences = ExperienceSetting.objects.all().filter(experience='library').exclude(text_set="user generated")
+		number_of_experiences = FeedSetting.objects.all().filter(feed_type='user').filter(group_name='basic').filter(user=request.user).count()
+		working_experience_sets = FeedSetting.objects.all().filter(feed_type='user').filter(group_name='basic').filter(user=request.user)
+		library_experiences = FeedSetting.objects.all().filter(feed_type='library').filter(group_name='basic').exclude(feed_name="user generated")
 		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).count()
 
 		#Remove the experiences that have been signed up for
 		number_of_texts_per_week = 0
 		for exp in working_experience_sets:
-			number_of_texts_per_week = number_of_texts_per_week + exp.prompts_per_week
-			if library_experiences.filter(ideal_id=exp.ideal_id).count() > 0:
-				tmp_remove = library_experiences.filter(experience="library").get(ideal_id=exp.ideal_id)
+			number_of_texts_per_week = number_of_texts_per_week + exp.texts_per_week
+			if library_experiences.filter(feed_id=exp.feed_id).count() > 0:
+				tmp_remove = library_experiences.filter(feed_type="library").get(feed_id=exp.feed_id)
 				library_experiences = library_experiences.exclude(id=tmp_remove.id)
 
 
 		if request.GET.get('create_new_feed'):
-			create_new_user_experience(user=request.user,ideal_id="Create New")
-			ideal_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience="user").get(text_set="New Set")
+			create_new_user_experience(user=request.user,feed_id="Create New",default_experience='user')
+			ideal_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").get(feed_name="New Set")
 			
 			return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))				
 
@@ -106,191 +547,28 @@ def feeds_edit(request):
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
-def text_set_detail(request,id=None):
-	if request.user.is_authenticated():
-		if ExperienceSetting.objects.all().filter(id=id).count()<1:
-			return HttpResponseRedirect('/ent/feeds_edit/')
-		else:
-			ideal_experience = ExperienceSetting.objects.all().get(id=id)
-
-			if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
-				new_user_pages = "new_user"
-			else:
-				new_user_pages = "old_user"
-
-
-
-			if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()<1:
-				working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(text_type="library").filter(experience_id=id)
-				text_for_user = "This experience is NOT enabled"
-				working_experience = ExperienceSetting.objects.all().get(id=id)
-				number_of_experiences = 0
-			else:
-				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user").filter(experience_id=id)
-				text_for_user = "This experience is enabled"
-				working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').get(ideal_id=id)
-				number_of_experiences = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()
-				
-			helper = TextSetFormSetHelper()
-			UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=1)
-			formset = UGPFormset(queryset = working_user_gen)
-			form_text_set_new= AddNewTextSetForm_full(request.POST or None, instance = working_experience)
-			
-			number_of_texts = working_user_gen.count()
-			text_per_week = working_experience.prompts_per_week
-
-			if request.GET.get('remove_experience'):
-				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user").filter(experience_id=id)
-				text_for_user = "This experience is enabled"
-				working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').get(ideal_id=id)
-				number_of_experiences = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()
-
-				user_experience = ExperienceSetting.objects.all().filter(experience="user").filter(ideal_id=id)
-				user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user").filter(experience_id=id)
-				user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(experience_id=id).filter(time_sent__isnull=True)
-
-				for exp in user_experience:
-					exp.delete()
-
-				for text in user_texts:
-					text.delete()
-
-				for text in user_outgoing:
-					text.delete()
-				
-				return HttpResponseRedirect('/ent/feeds_edit/')
-
-			if request.GET.get('enable_experience'):
-				ideal_experience = ExperienceSetting.objects.all().get(id=id)
-				print("ENABLE PRESSED")
-
-				if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()<1:
-					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(text_type="library").filter(experience_id=id)
-					text_for_user = "This experience is NOT enabled"
-					working_experience = ExperienceSetting.objects.all().get(id=id)
-					number_of_experiences = 0
-					
-					# Create and save new one
-					create_new_user_experience(user=request.user,ideal_id=working_experience.id)
-					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
-			
-				#Restore experience from defaul
-
-
-			########## NOW THE FORM HANDLING STUFF
-			if request.method == "POST":
-				if 'submit_feed_description' in request.POST:
-					if form_text_set_new.is_valid():
-						# tmp_exp = ExperienceSetting.objects.all().filter(experience="user").get(ideal_id=ideal_experience.id)
-
-						tmp = form_text_set_new.save(commit=False)
-						tmp.prompts_per_week = tmp.prompts_per_week
-						tmp.prompt_interval_minute_avg,tmp.prompt_interval_minute_min,tmp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp.prompts_per_week)
-						tmp.save()	
-
-					
-						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
-
-
-				if 'submit_formset' in request.POST:
-					formset = UGPFormset(request.POST, queryset = working_user_gen )
-					if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()<1:
-						#EXPERIENCE
-						tmp_exp = ExperienceSetting(user=request.user,user_state="disable",ideal_id=ideal_experience.id,experience='user',description=working_experience.description,text_set=working_experience.text_set,prompts_per_week=ideal_experience.prompts_per_week)
-						#gotta do the other stuff too
-						tmp_exp.save()
-
-						#INITIALIZE TEXTS
-						tmp_texts = PossibleTextSTM.objects.all().filter(text_type="library").filter(experience_id=working_experience.id)
-
-						for text in tmp_texts:
-							print("NEW TEXT SAVED")
-							tmp_new = PossibleTextSTM(user=request.user,text=text.text,response_type=text.response_type,experience_id=text.experience_id,text_set=text.text_set,text_type="user",text_importance=text.text_importance,date_created=text.date_created)
-							tmp_new.save()
-
-
-					if formset.is_valid(): 
-						print("FORMSET VALID")
-						if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(description=working_experience.description).filter(ideal_id=id).count()<0:
-							tmp_exp = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(description=working_experience.description).filter(ideal_id=id)
-						else:
-							tmp_exp = ExperienceSetting.objects.all().get(id=ideal_experience.id)
-
-						#Save the Experience
-						for form in formset:
-
-							if form.is_valid() and form.has_changed():
-								tmp = form.save()
-
-								tmp.user=request.user
-								tmp.experience_id=tmp_exp.id
-								tmp.text_set=tmp_exp.text_set
-								tmp.text_type = 'user'
-
-								if tmp.date_created is None:
-									tmp.date_created = datetime.now(pytz.utc)
-								tmp.save()
-								
-								#Save any changes in long term storage
-								ptltm = PossibleTextLTM(user=request.user,text_set=tmp.text_set,experience_id=tmp.id,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
-								ptltm.save()
-
-						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
-
-					else:
-						messages.add_message(request, messages.INFO, 'Not Valid')
-						return HttpResponseRedirect('/ent/text_set_detail/'+ str(ideal_experience.id))
-
-				
-
-			     
-			
-			context = {
-				"form_text_set_new": form_text_set_new,
-				"text_for_user": text_for_user,
-				"number_of_experiences": number_of_experiences,
-				"number_of_texts": number_of_texts,
-				"text_per_week": text_per_week,
-				"working_user_gen": working_user_gen,
-				"new_user_pages": new_user_pages,
-
-				"helper": helper,
-				"formset": formset,
-
-				"number_of_texts": number_of_texts,
-
-				"working_experience": working_experience,
-
-			}
-			return render(request, "text_set_detail.html", context)
-	else:
-		return HttpResponseRedirect('/accounts/signup/')
-
-
-
-
 def text_set_alter(request,id=None):
 	print("TEXT SET ALTER")
-	ideal_experience = ExperienceSetting.objects.all().get(id=id)
+	ideal_experience = FeedSetting.objects.all().get(id=id)
 	working_settings = UserSetting.objects.all().get(user=request.user)
 
-	if ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()<1:
-		working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(text_type="library").filter(experience_id=id)
+	if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+		working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
 		text_for_user = "This experience is NOT enabled"
-		working_experience = ExperienceSetting.objects.all().get(id=id)
+		working_experience = FeedSetting.objects.all().get(id=id)
 		number_of_experiences = 0
 
-		print("ideal_experience.prompts_per_week:", ideal_experience.prompts_per_week)
-		tmp_exp = ExperienceSetting(user=request.user,user_state="disable",ideal_id=ideal_experience.id,experience='user',description=working_experience.description,text_set=working_experience.text_set,prompts_per_week=ideal_experience.prompts_per_week)
+		print("ideal_experience.texts_per_week:", ideal_experience.texts_per_week)
+		tmp_exp = FeedSetting(user=request.user,user_state="disable",feed_id=ideal_experience.id,feed_type='user',description=working_experience.description,feed_name=working_experience.feed_name,texts_per_week=ideal_experience.texts_per_week)
 		#gotta do the other stuff too
-		tmp_exp.prompt_interval_minute_avg,tmp_exp.prompt_interval_minute_min,tmp_exp.prompt_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp_exp.prompts_per_week)
+		tmp_exp.text_interval_minute_avg,tmp_exp.text_interval_minute_min,tmp_exp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp_exp.texts_per_week)
 		tmp_exp.save()
 
 		#INITIALIZE TEXTS
-		tmp_texts = PossibleTextSTM.objects.all().filter(text_type="library").filter(experience_id=working_experience.id)
+		tmp_texts = PossibleTextSTM.objects.all().filter(feed_type="library").filter(feed_id=working_experience.id)
 
 		for text in tmp_texts:
-			tmp_new = PossibleTextSTM(user=request.user,text=text.text,response_type=text.response_type,experience_id=text.experience_id,text_set=text.text_set,text_type="user",text_importance=text.text_importance,date_created=text.date_created)
+			tmp_new = PossibleTextSTM(user=request.user,text=text.text,group_name=text.group_name,group_id=text.group_id,response_type=text.response_type,feed_id=text.feed_id,feed_name=text.feed_name,feed_type="user",text_importance=text.text_importance,date_created=text.date_created)
 			tmp_new.save()
 
 		print("enable")
@@ -298,16 +576,16 @@ def text_set_alter(request,id=None):
 		
 
 	else:
-		working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user").filter(experience_id=id)
+		working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
 		text_for_user = "This experience is enabled"
-		working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').get(ideal_id=id)
-		number_of_experiences = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user').filter(ideal_id=id).count()
+		working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+		number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
 
-		default_texts = PossibleTextSTM.objects.all().filter(show_user=False).filter(text_type="library").filter(experience_id=id)
+		default_texts = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
 
-		user_experience = ExperienceSetting.objects.all().filter(experience="user").filter(text_set=ideal_experience.text_set)
-		user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(text_type="user").filter(experience_id=id)
-		user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(text_type="user").filter(experience_id=id).filter(time_sent__isnull=True)
+		user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_name=ideal_experience.feed_name)
+		user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+		user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=id).filter(time_sent__isnull=True)
 		print("OUTCOING COUNT", user_outgoing.count())
 
 		for exp in user_experience:
@@ -338,26 +616,27 @@ def text_set_alter(request,id=None):
 def text_set(request):
 	if request.user.is_authenticated():	
 
-		form_text_set_new= AddNewTextSetForm_full(request.POST or None)
-		working_experience_sets = ExperienceSetting.objects.all().filter(user=request.user).exclude(text_set="user generated").filter(experience='user')
+		form_feed_name_new= AddNewTextSetForm_full(request.POST or None)
+		
 
-		number_of_experiences = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).exclude(text_set="user generated").count()
-		library_experiences_tmp = ExperienceSetting.objects.all().filter(experience='library')
+		number_of_experiences = FeedSetting.objects.all().filter(feed_type='user').filter(user=request.user).exclude(feed_name="user generated").count()
+		library_experiences_tmp = FeedSetting.objects.all().filter(feed_type='library')
 
+		working_experience_sets = FeedSetting.objects.all().filter(user=request.user).exclude(feed_name="user generated").filter(feed_type='user')
 		library_experiences = library_experiences_tmp | working_experience_sets
 
 
 		for exp in library_experiences:
-			if library_experiences.filter(ideal_id=exp.ideal_id).count() > 1:
-				tmp_remove = library_experiences.filter(experience="library").get(ideal_id=exp.ideal_id)
+			if library_experiences.filter(feed_id=exp.feed_id).count() > 1:
+				tmp_remove = library_experiences.filter(feed_type="library").get(feed_id=exp.feed_id)
 				library_experiences = library_experiences.exclude(id=tmp_remove.id)
 
 
 		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
-			if 'submit_new_text_set' in request.POST:
-				if form_text_set_new.is_valid():	
-					tmp = form_text_set_new.save()
+			if 'submit_new_feed_name' in request.POST:
+				if form_feed_name_new.is_valid():	
+					tmp = form_feed_name_new.save()
 					tmp.user=request.user
 					
 					####   YOU WILL HAVE TO SET THE TIMING HERE							
@@ -366,7 +645,7 @@ def text_set(request):
 		context = {
 			"number_of_experiences": number_of_experiences,
 			"working_experience_sets": working_experience_sets,
-			"form_text_set_new": form_text_set_new,
+			"form_feed_name_new": form_feed_name_new,
 			"library_experiences": library_experiences,
 
 
@@ -382,7 +661,7 @@ def text_set(request):
 def add_texts(request):
 	if request.user.is_authenticated():	
 		form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
-		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count()
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(feed_type='user').count()
 
 
 		if request.method == "POST":
@@ -396,7 +675,7 @@ def add_texts(request):
 						tmp.save()
 					
 					#Save any changes in long term storage
-					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
 					ptltm.save()
 
 					if 'submit_new_text'in request.POST:
@@ -441,14 +720,14 @@ def new_user(request):
 			working_settings = UserSetting(user=request.user,begin_date=datetime.now(pytz.utc),respite_until_datetime = datetime.now(pytz.utc)).save()
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
-		# lib_usr_tmp = ExperienceSetting.objects.all().filter(experience='library').get(text_set="user generated")
-		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(ideal_id=lib_usr_tmp.id).exists():
-		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
+		# lib_usr_tmp = FeedSetting.objects.all().filter(experience='library').get(feed_name="user generated")
+		# if FeedSetting.objects.filter(user=request.user).filter(experience='user').filter(feed_id=lib_usr_tmp.id).exists():
+		# 	working_experience = FeedSetting.objects.all().filter(experience='user').filter(user=request.user).get(feed_id=lib_usr_tmp.id)
 		# else: 
-		# 	working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated",ideal_id=lib_usr_tmp.id,user_state="disable").save()
-		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).get(ideal_id=lib_usr_tmp.id)
+		# 	working_experience = FeedSetting(user=request.user,experience='user',feed_name="user generated",feed_id=lib_usr_tmp.id,user_state="disable").save()
+		# 	working_experience = FeedSetting.objects.all().filter(experience='user').filter(user=request.user).get(feed_id=lib_usr_tmp.id)
 
-		if ExperienceSetting.objects.all().filter(user=request.user).count()>0:
+		if FeedSetting.objects.all().filter(user=request.user).count()>0:
 			update_experiences(user=request.user)
 				
 
@@ -456,26 +735,26 @@ def new_user(request):
 		form_new_user = NewUserForm(request.POST or None, instance=working_settings)
 		
 		
-		working_experience_sets = ExperienceSetting.objects.all().filter(user=request.user).filter(experience='user')
-		library_experiences = ExperienceSetting.objects.all().filter(experience='library').filter(active=1)
+		working_experience_sets = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user')
+		library_experiences = FeedSetting.objects.all().filter(feed_type='library').filter(active=1)
 		
-		number_of_experiences = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).count()
+		number_of_experiences = FeedSetting.objects.all().filter(feed_type='user').filter(user=request.user).count()
 		
-		prompts_per_week = working_settings.prompts_per_week
-		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(text_type='user').count()
+		texts_per_week = working_settings.texts_per_week
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(feed_type='user').count()
 
-		library_experiences_tmp = ExperienceSetting.objects.all().filter(experience='library')
+		library_experiences_tmp = FeedSetting.objects.all().filter(feed_type='library')
 		library_experiences = library_experiences_tmp | working_experience_sets
 
 		for exp in library_experiences:
-			if library_experiences.filter(ideal_id=exp.ideal_id).count() > 1:
-				tmp_remove = library_experiences.filter(experience="library").get(ideal_id=exp.ideal_id)
+			if library_experiences.filter(feed_id=exp.feed_id).count() > 1:
+				tmp_remove = library_experiences.filter(feed_type="library").get(feed_id=exp.feed_id)
 				library_experiences = library_experiences.exclude(id=tmp_remove.id)
 
 
 		if request.GET.get('create_new_feed'):
-			create_new_user_experience(user=request.user,ideal_id="Create New")
-			ideal_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience="user").get(text_set="New Set")
+			create_new_user_experience(user=request.user,feed_id="Create New",default_experience='user')
+			ideal_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").get(feed_name="New Set")
 			
 			return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))					
 
@@ -494,43 +773,6 @@ def new_user(request):
 
 		########## NOW THE FORM HANDLING STUFF
 		if request.method == "POST":
-			# print("REQUEST POST")
-			# print("REQUEST POST STUFF", request.POST)
-			
-			# if 'submit_new_text' in request.POST or 'submit_finished_adding' in request.POST:
-			# 	print("NEW")
-			# 	if form_new_text.is_valid():	
-			# 		tmp = form_new_text.save()
-			# 		tmp.user=request.user
-			# 		tmp.experience_id=working_experience.ideal_id
-			# 		if tmp.date_created is None:
-			# 			tmp.date_created = datetime.now(pytz.utc)
-			# 		tmp.text_type = 'user'
-			# 		tmp.save()
-
-			# 		if not 'user generated' in working_settings.active_experiences:
-			# 			working_settings.active_experiences="user generated,"+working_settings.active_experiences
-					
-			# 		#Save any changes in long term storage
-			# 		ptltm = PossibleTextLTM(user=request.user,experience_id=working_experience.ideal_id,stm_id=tmp.id,text=tmp.text,text_type=tmp.text_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
-			# 		ptltm.save()
-
-			# 		if 'submit_new_text'in request.POST:
-			# 			return HttpResponseRedirect('/ent/new_user/')
-
-			# 		else:
-			# 			if working_settings.new_user_pages== 1 and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
-			# 				working_settings.new_user_pages = 2
-			# 				working_settings.save()
-			# 			return HttpResponseRedirect('/ent/simulate_week/')
-			# 	else:
-			# 		if 'submit_finished_adding' in request.POST and PossibleTextSTM.objects.all().filter(user=request.user).count()>0:
-			# 			if working_settings.new_user_pages== 1:
-			# 				working_settings.new_user_pages = 2
-			# 				working_settings.save()
-			# 		return HttpResponseRedirect('/ent/simulate_week/')		
-			# elif 'submit_contact' in request.POST:
-
 
 			if 'submit_contact' in request.POST:
 				print("new_user")
@@ -567,7 +809,7 @@ def new_user(request):
 			ready_to_move_on = 0
 		
 		context = {
-			"prompts_per_week": prompts_per_week,
+			"texts_per_week": texts_per_week,
 			"number_of_texts": number_of_texts,
 			"form_new_text": form_new_text,
 			"library_experiences": library_experiences,
@@ -597,9 +839,9 @@ def texter(request):
 		#Create the Text
 		if request.GET.get('create_unsent_text'):
 			print("Creating Unsent Texts")
-			text_new = ActualTextSTM(user=request.user, response=None,simulated=0,text_type="user")
-			text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,text_type="user")
-			text_new.text, text_new.response_type = determine_prompt_texts(user=request.user,prompt=text_new.text,typer=text_new.text_type)
+			text_new = ActualTextSTM(user=request.user, response=None,simulated=0,feed_type="user")
+			text_new.text, text_new.text_id = set_next_prompt(user=text_new.user,feed_type="user")
+			text_new.text, text_new.response_type = determine_prompt_texts(user=request.user,prompt=text_new.text,typer=text_new.feed_type)
 			text_new.time_to_send = set_prompt_time(text=text_new,send_now=1)
 			text_new.save()
 			
@@ -670,9 +912,8 @@ def contact_settings(request):
 
 		
 		
-		form_free = UserSettingForm_Prompt(request.POST or None, instance=working_settings)
+		form_free = ContactSettingsForm(request.POST or None, instance=working_settings)
 		
-		form_prompt_percent = UserSettingForm_PromptRate(request.POST or None, instance = working_settings)
 		
 		
 		
@@ -727,14 +968,14 @@ def contact_settings(request):
 #User settings
 
 def initialize_research_texts(user):
-	if PossibleTextSTM.objects.all().filter(user=user).filter(text_type="research").count() > 0 :
-		rtexts = PossibleTextSTM.objects.all().filter(user=user).filter(text_type="research")
+	if PossibleTextSTM.objects.all().filter(user=user).filter(feed_type="research").count() > 0 :
+		rtexts = PossibleTextSTM.objects.all().filter(user=user).filter(feed_type="research")
 		for rtext in rtexts:
 			rtext.delete()
 
-	rtexts = PossibleTextSTM.objects.all().filter(text_type="research").filter(system_text=2)
+	rtexts = PossibleTextSTM.objects.all().filter(feed_type="research").filter(system_text=2)
 	for rtext in rtexts:
-		tmp = PossibleTextSTM(user=user,text_type="research",text_set="research",text=rtext.text,text_importance=rtext.text_importance)
+		tmp = PossibleTextSTM(user=user,feed_type="research",feed_name="research",text=rtext.text,text_importance=rtext.text_importance)
 		tmp.save()
 
 
@@ -752,11 +993,11 @@ def simulate_week(request):
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
 
-		# if ExperienceSetting.objects.filter(user=request.user).filter(experience='user').filter(text_set="user generated").count()>0:
-		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
+		# if FeedSetting.objects.filter(user=request.user).filter(experience='user').filter(feed_name="user generated").count()>0:
+		# 	working_experience = FeedSetting.objects.all().filter(experience='user').filter(user=request.user).filter(feed_name="user generated").first()
 		# else: 
-		# 	working_experience = ExperienceSetting(user=request.user,experience='user',text_set="user generated").save()
-		# 	working_experience = ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).filter(text_set="user generated").first()
+		# 	working_experience = FeedSetting(user=request.user,experience='user',feed_name="user generated").save()
+		# 	working_experience = FeedSetting.objects.all().filter(experience='user').filter(user=request.user).filter(feed_name="user generated").first()
 
 		update_experiences(user=request.user)
 
@@ -766,39 +1007,39 @@ def simulate_week(request):
 		
 		generate_random_prompts_to_show(request,exp_resp_rate=.6,week=1,number_of_prompts=0) #set up 20 random prompts based upon the settings
 		graph_data_simulated_heatmap = get_graph_data_simulated_heatmap(request)
-		prompts_per_week = working_settings.prompts_per_week
+		texts_per_week = working_settings.texts_per_week
 
 		actual_number_texts = ActualTextSTM_SIM.objects.all().filter(user=request.user).count()
 
-		text_sets = ExperienceSetting.objects.all().exclude(experience='library').filter(user=request.user).values('text_set').distinct()
+		feed_names = FeedSetting.objects.all().exclude(feed_type='library').filter(user=request.user).values('feed_name').distinct()
 
 		total_expected_number = 0
-		working_experience_sets = ExperienceSetting.objects.all().filter(user=request.user).exclude(experience='library').filter(prompts_per_week__gt = 0).filter(number_of_texts_in_set__gt = 0)
+		working_experience_sets = FeedSetting.objects.all().filter(user=request.user).exclude(feed_type='library').filter(texts_per_week__gt = 0).filter(number_of_texts_in_set__gt = 0)
 
 		count_out = []
 		exp_out = []
 		list_out = []
 		for exp in working_experience_sets:
-			total_expected_number = int(exp.prompts_per_week) + total_expected_number
-			exp_out.append(int(exp.prompts_per_week))
-			count_out.append(int(ActualTextSTM_SIM.objects.all().filter(user=request.user).filter(text_set=exp.text_set).count()))
-			list_out.append({"name":exp.text_set,"expected":int(exp.prompts_per_week),"ideal_id":exp.ideal_id,"observed":int(ActualTextSTM_SIM.objects.all().filter(user=request.user).filter(text_set=exp.text_set).count())})
+			total_expected_number = int(exp.texts_per_week) + total_expected_number
+			exp_out.append(int(exp.texts_per_week))
+			count_out.append(int(ActualTextSTM_SIM.objects.all().filter(user=request.user).filter(feed_name=exp.feed_name).count()))
+			list_out.append({"name":exp.feed_name,"expected":int(exp.texts_per_week),"feed_id":exp.feed_id,"observed":int(ActualTextSTM_SIM.objects.all().filter(user=request.user).filter(feed_name=exp.feed_name).count())})
 			# print("total_expected_number",total_expected_number )
 
 		print("total_expected_number",total_expected_number)
 
 		
 
-		# print(ExperienceSetting.objects.all().filter(experience='user').filter(user=request.user).values('text_set').distinct().aggregate("Count"))
+		# print(FeedSetting.objects.all().filter(experience='user').filter(user=request.user).values('feed_name').distinct().aggregate("Count"))
 
 
 
 
 
 		context = {
-			"prompts_per_week": prompts_per_week,
+			"texts_per_week": texts_per_week,
 			"actual_number_texts": actual_number_texts,
-			"text_sets": text_sets,
+			"feed_names": feed_names,
 			"total_expected_number": total_expected_number,
 			"count_out": count_out,
 			"exp_out": exp_out,

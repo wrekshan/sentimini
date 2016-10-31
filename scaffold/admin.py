@@ -13,7 +13,7 @@ class Sentimini_helpResource(resources.ModelResource):
 		import_id_fields = ('display_order',)
 		fields = ('display_order','help_name', 'help_content', 'help_type','major_cat','starting_item',)
 
-class ExperienceSettingModelAdmin(ImportExportModelAdmin):
+class FeedSettingModelAdmin(ImportExportModelAdmin):
     resource_class = Sentimini_helpResource   
 
     list_display = [
@@ -26,7 +26,7 @@ class ExperienceSettingModelAdmin(ImportExportModelAdmin):
 		"starting_item",
 	]
 
-admin.site.register(Sentimini_help,ExperienceSettingModelAdmin)
+admin.site.register(Sentimini_help,FeedSettingModelAdmin)
 
 
 # #####################OLD

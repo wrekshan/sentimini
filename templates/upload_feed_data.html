@@ -67,7 +67,7 @@
 				     <table id="library_experiences_table" class="display" cellspacing="0" width="100%">
 				      <thead>
 				          <tr>
-				              <th>Text Set</th>
+				              <th>Feed Name</th>
 				              <th>Description</th>
 				              <th>Texts Per Week</th>
 				              <th>Number of Texts</th>
@@ -78,9 +78,9 @@
 				         {% for exp in library_experiences %}
 				      <tr>
 
-				        <td><b>{{ exp.text_set }}</b> (<a href="/ent/text_set_alter/{{ exp.ideal_id }}/">{{exp.user_state}}</a>, <a href="/ent/text_set_detail/{{ exp.ideal_id }}/">edit</a>)</td>
+				        <td><b>{{ exp.feed_name }}</b> (<a href="/ent/text_set_alter/{{ exp.feed_id }}/">{{exp.user_state}}</a>, <a href="/ent/text_set_detail/{{ exp.feed_id }}/">edit</a>)</td>
 				        <td>{{ exp.description }}</td>
-				        <td>{{ exp.prompts_per_week }}</td>
+				        <td>{{ exp.texts_per_week }}</td>
 				        <td>{{ exp.number_of_texts_in_set }}</td>
 				      </tr>
 				      {% endfor %}

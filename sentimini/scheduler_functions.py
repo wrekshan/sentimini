@@ -8,7 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
-from ent.models import UserSetting, PossibleTextSTM, ActualTextSTM, ActualTextLTM, Ontology, Prompttext, UserGenPromptFixed, ExperienceSetting, ActualTextSTM_SIM
+from ent.models import UserSetting, PossibleTextSTM, ActualTextSTM, ActualTextLTM, Ontology, Prompttext, UserGenPromptFixed, FeedSetting, ActualTextSTM_SIM
 # from ent.views import update_experiences
 
 import plotly.offline as opy
@@ -21,7 +21,7 @@ from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determi
 
 
 def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
-	text_new = ActualTextSTM_SIM(user=user,response=None,text_set=exp.text_set,simulated=1,experience_id=exp.ideal_id)
+	text_new = ActualTextSTM_SIM(user=user,response=None,feed_name=exp.feed_name,simulated=1,feed_id=exp.feed_id)
 
 	# print(text_new.text)	
 	text_new.text, text_new.text_id = set_next_prompt(text=text_new)
@@ -30,7 +30,7 @@ def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
 
 	if ActualTextSTM.objects.all().filter(user=user).filter(simulated=1).count()>1:
 		working_entry_last = ActualTextSTM.objects.all().filter(user=user).last()
-		if text_new.text_type == "research":
+		if text_new.feed_type == "research":
 			text_new.series = determine_next_prompt_series(user=text_new.user)
 		else:
 			text_new.series = 0
@@ -64,7 +64,7 @@ def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
 	tmp_date = text_new.time_to_send + timedelta(hours=0,minutes=text_new.response_time,seconds=0)
 
 	wen=text_new
-	ltm = ActualTextLTM(user=wen.user,response=wen.response,text_set=wen.text_set,text_id=wen.text_id,text=wen.text,time_to_add=wen.time_to_add,text_type=wen.text_type,response_type=wen.response_type,time_response=wen.time_response,time_to_send=wen.time_to_send,time_sent=wen.time_sent,simulated=wen.simulated)
+	ltm = ActualTextLTM(user=wen.user,response=wen.response,feed_name=wen.feed_name,text_id=wen.text_id,text=wen.text,time_to_add=wen.time_to_add,feed_type=wen.feed_type,response_type=wen.response_type,time_response=wen.time_response,time_to_send=wen.time_to_send,time_sent=wen.time_sent,simulated=wen.simulated)
 	if ltm.response_type == '0 to 10':
 		if ltm.response != "":
 			ltm.response_dim = ltm.response
@@ -96,7 +96,7 @@ def add_new_simulated_text(user,exp,tmp_date,exp_resp_rate):
 
 def generate_random_prompts_to_show(request,exp_resp_rate,week,number_of_prompts):
 	working_settings = UserSetting.objects.all().get(user=request.user)
-	# experience_settings = ExperienceSetting.objects.all().filter(experience="user").filter(text_set="user generated").filter(active=1).get(user=request.user)
+	# experience_settings = FeedSetting.objects.all().filter(text_type="user").filter(text_set="user generated").filter(active=1).get(user=request.user)
 	
 	#Generate 100 prompts
 	if ActualTextSTM_SIM.objects.all().filter(user=request.user).count()>0:
@@ -109,12 +109,12 @@ def generate_random_prompts_to_show(request,exp_resp_rate,week,number_of_prompts
 	tmp_date = local_tz.astimezone(pytz.UTC)
 
 
-	working_experience = ExperienceSetting.objects.all().filter(user=request.user).filter(experience="user").filter(prompts_per_week__gt = 0).filter(number_of_texts_in_set__gt = 0)
+	working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").filter(texts_per_week__gt = 0).filter(number_of_texts_in_set__gt = 0)
 
 	print("NUMBER OF EXPERIENCES:", working_experience.count())
 	for exp_name in working_experience:
 		tmp_date = datetime.now(pytz.UTC)
-		exp = ExperienceSetting.objects.all().exclude(experience="library").filter(ideal_id=exp_name.ideal_id).get(user=request.user)
+		exp = FeedSetting.objects.all().exclude(feed_type="library").filter(feed_id=exp_name.feed_id).get(user=request.user)
 		#go trhough and generate 100 or whatevs
 		start_date = tmp_date
 		latest_date = tmp_date
@@ -210,7 +210,7 @@ def determine_next_prompt_series(user):
 #This sets the number of minutes - this is crazy right now, please fix
 def next_prompt_minutes(user,simulation_val,send_now):
 	working_settings = UserSetting.objects.all().get(user=user)
-	experience_settings = ExperienceSetting.objects.all().filter(user=user).get(experience="user")
+	experience_settings = FeedSetting.objects.all().filter(user=user).get(experience="user")
 	
 	#get the time anchor.
 	if ActualTextSTM.objects.all().filter(user=user).filter(simulated=simulation_val).order_by('time_sent').count() < 1:
@@ -229,7 +229,7 @@ def next_prompt_minutes(user,simulation_val,send_now):
 	if send_now == 1:
 		time_away_minutes = 0
 	else:
-		# time_away_minutes = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		# time_away_minutes = int(triangular(experience_settings.text_interval_minute_min, experience_settings.text_interval_minute_max, experience_settings.text_interval_minute_avg)) 
 		time_away_minutes = generate_random_minutes(experience_settings)
 
 		

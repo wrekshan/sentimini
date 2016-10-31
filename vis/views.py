@@ -95,7 +95,7 @@ def text_data_detail_get_context(request,prompt_id,magic_simulated_value,demo):
 
 
 	#Table
-	table_latest_entry = ActualTextLTM.objects.all().filter(user=request.user).filter(text_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
+	table_latest_entry = ActualTextLTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
 	table_latest_entry = table_latest_entry.order_by('time_sent')
 
 	
@@ -152,7 +152,7 @@ def text_data_get_context(request,magic_simulated_value,demo):
 		table_emotion_centered = get_table_emotion_centered(request,simulated_val=magic_simulated_value)
 
 		#This gets the average and stuff for prompt centered table
-		table_latest_entry = ActualTextLTM.objects.filter(user=request.user).filter(text_type="user").filter(simulated=magic_simulated_value)
+		table_latest_entry = ActualTextLTM.objects.filter(user=request.user).filter(feed_type="user").filter(simulated=magic_simulated_value)
 		# table_latest_entry = table_latest_entry.order_by('-time_sent')
 		
 		context = {

@@ -8,7 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 
-from ent.models import UserSetting, ActualTextSTM, PossibleTextSTM, Ontology, Prompttext, UserGenPromptFixed, ActualTextLTM, ExperienceSetting, ActualTextSTM_SIM
+from ent.models import UserSetting, ActualTextSTM, PossibleTextSTM, Ontology, Prompttext, UserGenPromptFixed, ActualTextLTM, FeedSetting, ActualTextSTM_SIM
 import plotly.offline as opy
 import plotly.graph_objs as go
 from plotly.tools import FigureFactory as FF
@@ -124,10 +124,10 @@ def get_hourly_count_of_prompts(request,time_anchor):
 	
 
 
-	# for set in text_set:
+	# for set in feed_name:
 
 
-	# print(entries.values('text_set'))
+	# print(entries.values('feed_name'))
 
 
 	# print("HOURLY COUNT:",entries.count())
@@ -135,7 +135,7 @@ def get_hourly_count_of_prompts(request,time_anchor):
 	# print("SLEEP TIME: ",working_settings.sleep_time.hour)
 	# wake_time = working_settings.sleep_time + timedelta()
 	hourout = []
-	text_set_type = []
+	feed_name_type = []
 	tmp_hours = list(range(0,24))
 
 	tmp_mins = (0,15,30,45)
@@ -177,35 +177,35 @@ def get_hourly_count_of_prompts(request,time_anchor):
 			if working_settings.sleep_time > datetime(2016,1,12,12,00).time() and working_settings.wake_time < datetime(2016,1,12,12,00).time():
 				if sleep_datetime.time() <= dtnow.time() or dtnow.time() <= wake_datetime.time() :
 					if entries_sm.count()<1:
-						text_set_type.append(.2)
+						feed_name_type.append(.2)
 						promptout.append(str('Sleep'))
 					else:
 						promptout.append(str(entries_sm.first().text))
-						text_set_type.append(str(entries_sm.first().text_set))
+						feed_name_type.append(str(entries_sm.first().feed_name))
 							
 				elif entries_sm.count()>0:
 					promptout.append(str(entries_sm.first().text))
-					text_set_type.append(str(entries_sm.first().text_set))
+					feed_name_type.append(str(entries_sm.first().feed_name))
 				else:
 					promptout.append(str(''))
-					text_set_type.append(0)
+					feed_name_type.append(0)
 
 	
 	#This is to get the colors
-	text_sets = ActualTextSTM_SIM.objects.all().filter(user=request.user).values('text_set').distinct()
-	text_set_type_revised = []
-	for tmp in text_set_type:
+	feed_names = ActualTextSTM_SIM.objects.all().filter(user=request.user).values('feed_name').distinct()
+	feed_name_type_revised = []
+	for tmp in feed_name_type:
 		tset_counter = 1
 		if (isinstance(tmp,str)):
-			for w in text_sets:
-				if w['text_set'] == tmp:
-					text_set_type_revised.append(tset_counter)
+			for w in feed_names:
+				if w['feed_name'] == tmp:
+					feed_name_type_revised.append(tset_counter)
 				tset_counter = tset_counter + 1
 		else:
-			text_set_type_revised.append(tmp)
+			feed_name_type_revised.append(tmp)
 
 		
-	return text_set_type_revised, promptout
+	return feed_name_type_revised, promptout
 
 
 
@@ -242,7 +242,7 @@ def get_graph_data_simulated_heatmap(request):
 
 	y[0] = 'Today'
 
-	colorscale = [[0, '#fff'], [ActualTextSTM_SIM.objects.all().filter(user=request.user).values('text_set').distinct().count(), '#387db8']]
+	colorscale = [[0, '#fff'], [ActualTextSTM_SIM.objects.all().filter(user=request.user).values('feed_name').distinct().count(), '#387db8']]
 
 	trace1 = go.Heatmap(z=z, x=x, y=y, colorscale=colorscale, colorbar = {'tick0': 0,'dtick': 1 }, text = prompt_text_by_date, hoverinfo="text", showscale=False)
 	data=go.Data([trace1])
@@ -378,7 +378,7 @@ def get_graph_data_line_chart_plotly(request,simulated_val,prompt_id):
 
 def get_graph_data_by_prompt_bar(request,simulated_val):
 	#DIME
-	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user")
+	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user")
 	averagez = []
 	typez = []
 	countz = []
@@ -388,10 +388,10 @@ def get_graph_data_by_prompt_bar(request,simulated_val):
 	for tmp in tmp_prompts:
 		promptz.append(tmp['text'])
 
-		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text = tmp['text']).aggregate(Avg('response_dim'))
+		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text = tmp['text']).aggregate(Avg('response_dim'))
 		averagez.append(ha['response_dim__avg'])
 
-		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text = tmp['text']).aggregate(Count('response_dim'))
+		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text = tmp['text']).aggregate(Count('response_dim'))
 		countz.append(ha['response_dim__count'])
 
 	
@@ -408,7 +408,7 @@ def get_graph_data_by_prompt_bar(request,simulated_val):
 	div_dim = div.replace('modeBarButtonsToRemove:[]', 'modeBarButtonsToRemove:["sendDataToCloud","hoverCompareCartesian"]')
 
 	####### CATEGORICAL
-	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user")
+	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user")
 	averagez = []
 	typez = []
 	countz = []
@@ -418,10 +418,10 @@ def get_graph_data_by_prompt_bar(request,simulated_val):
 	for tmp in tmp_prompts:
 		promptz.append(tmp['text'])
 
-		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text = tmp['text']).aggregate(Avg('response_cat_bin'))
+		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text = tmp['text']).aggregate(Avg('response_cat_bin'))
 		averagez.append(ha['response_cat_bin__avg'])
 
-		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text = tmp['text']).aggregate(Count('response_cat_bin'))
+		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text = tmp['text']).aggregate(Count('response_cat_bin'))
 		countz.append(ha['response_cat_bin__count'])
 
 	
@@ -440,7 +440,7 @@ def get_graph_data_by_prompt_bar(request,simulated_val):
 	return div_dim, div_cat
 
 def get_graph_data_by_prompt(request,simulated_val,response_type):
-	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user")
+	entries = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user")
 	# entries = entries.order_by().annotate(Count('prompt_reply'))
 	# print("HERE HERE HERE", entries.aggregate(Count('prompt')))
 	
@@ -453,7 +453,7 @@ def get_graph_data_by_prompt(request,simulated_val,response_type):
 	for i in range(int(ents.count())):
 
 		tmp = []
-		working_ents = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text=ents[i]['text'])
+		working_ents = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text=ents[i]['text'])
 
 		for ent in working_ents:
 			# print("POOP: ", ent.prompt_reply)
@@ -598,12 +598,12 @@ def get_table_emotion_centered(request,simulated_val):
 	countz_bin = []
 	promptz = []
 	prompt_idz = []
-	text_setz = []
+	feed_namez = []
 
-	tmp_prompts = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").order_by().values('text').distinct()
+	tmp_prompts = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").order_by().values('text').distinct()
 
 	for tmp in tmp_prompts:
-		example_tmp = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text_type="user").filter(text=tmp['text']).first()
+		example_tmp = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(feed_type="user").filter(text=tmp['text']).first()
 
 		promptz.append(tmp['text'])
 		prompt_idz.append(example_tmp.text_id)
@@ -619,11 +619,11 @@ def get_table_emotion_centered(request,simulated_val):
 		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text = tmp['text']).aggregate(Count('response_cat_bin'))
 		countz_bin.append(ha['response_cat_bin__count'])
 
-		text_setz.append(example_tmp.text_set)
+		feed_namez.append(example_tmp.feed_name)
 
 	working_entry = []
 	for i in range(0,len(promptz)):
-		working_entry.append({'text': promptz[i],'text_id': prompt_idz[i], 'text_set': text_setz[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
+		working_entry.append({'text': promptz[i],'text_id': prompt_idz[i], 'feed_name': feed_namez[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
 		# working_entry.append({'text': promptz[i],'text_id': prompt_idz[i]})
 
 	print("WORKING ENTRY", working_entry)

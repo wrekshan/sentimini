@@ -23,7 +23,7 @@ import string
 
 # from django.db import models
 # from django.conf import settings
-from ent.models import PossibleTextSTM, ActualTextSTM, UserSetting, Incoming, Outgoing, ExperienceSetting, Ontology, Prompttext, ActualTextLTM
+from ent.models import PossibleTextSTM, ActualTextSTM, UserSetting, Incoming, Outgoing, FeedSetting, Ontology, Prompttext, ActualTextLTM
 # from sentimini.scheduler_functions import generate_random_minutes
 
 # from sentimini import settings
@@ -42,11 +42,11 @@ def hasNumbers(inputString):
 def generate_random_minutes(exp):
 	#V1
 	number_here = -100
-	while number_here < exp.prompt_interval_minute_min or number_here > exp.prompt_interval_minute_max:
-		number_here = int(gauss(exp.prompt_interval_minute_avg,exp.prompt_interval_minute_avg*.8)) 
+	while number_here < exp.text_interval_minute_min or number_here > exp.text_interval_minute_max:
+		number_here = int(gauss(exp.text_interval_minute_avg,exp.text_interval_minute_avg*.8)) 
 
 	#V2
-	# number_here = int(triangular(exp.prompt_interval_minute_min, exp.prompt_interval_minute_max, exp.prompt_interval_minute_avg))
+	# number_here = int(triangular(exp.text_interval_minute_min, exp.text_interval_minute_max, exp.text_interval_minute_avg))
 	return number_here
 ########### THINGS TO DO
 # Check to see if there is only one prompt.  if there are more scheduled to be sent, then remove one
@@ -123,10 +123,10 @@ def sleep_check(text):
 def send_text(text):
 	now = datetime.now(pytz.utc)
 	user_settings = UserSetting.objects.all().get(user=text.user)
-	if text.text_set == "system":
-		exp_settings = ExperienceSetting.objects.all().filter(experience="system").get(ideal_id=text.experience_id)
+	if text.feed_name == "system":
+		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="system").get(feed_id=text.feed_id)
 	else:
-		exp_settings = ExperienceSetting.objects.all().filter(experience="user").get(ideal_id=text.experience_id)
+		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="user").get(feed_id=text.feed_id)
 	# YOU CAN DO THE CHECKS HERE
 
 	#check is this during sleep?
@@ -153,12 +153,12 @@ def send_text(text):
 				send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
 			if tmp_user.send_text_check == True:
 				send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.text_set +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.text_set +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.text_set +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.text_set +'@gmail.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.feed_name +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.feed_name +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str(exp_settings.feed_name +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
+				# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.feed_name +'@gmail.com'), [addressee], fail_silently=False)
 
-			print("ALIAS NAME EMAIL", str(exp_settings.text_set +'<emojinseidev@gmail.com>'))
+			print("ALIAS NAME EMAIL", str(exp_settings.feed_name +'<emojinseidev@gmail.com>'))
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -166,9 +166,9 @@ def set_next_prompt(text):
 	working_settings = UserSetting.objects.all().get(user=text.user)
 
 	#I think this is a kludge
-	working_texts = PossibleTextSTM.objects.filter(user=text.user).filter(text_type=text.text_type).filter(show_user=False).filter(experience_id=text.experience_id)
-	# print("text.text_type", text.text_type)
-	# print("text.text_set", text.text_set)
+	working_texts = PossibleTextSTM.objects.filter(user=text.user).filter(feed_type=text.feed_type).filter(show_user=False).filter(feed_id=text.feed_id)
+	# print("text.feed_type", text.feed_type)
+	# print("text.feed_name", text.feed_name)
 	tmp_texts = []
 	tmp_id = []
 	for txt in working_texts:
@@ -177,20 +177,20 @@ def set_next_prompt(text):
 			tmp_texts.append(txt.text)
 			tmp_id.append(txt.id)
 	
-	# print("tmp_texts", tmp_texts)
-	working_emotion = PossibleTextSTM.objects.filter(user=text.user).filter(text_type=text.text_type).filter(show_user=False).filter(experience_id=text.experience_id).get(id=tmp_id[randint(0,len(tmp_id)-1)])
+	
+	working_emotion = PossibleTextSTM.objects.filter(user=text.user).filter(feed_type=text.feed_type).filter(show_user=False).filter(feed_id=text.feed_id).get(id=tmp_id[randint(0,len(tmp_id)-1)])
 	
 	return working_emotion, working_emotion.id	
 
 def determine_prompt_texts(text):
-	if text.text_type == 'user':
-		# print("TYPE", text.text_type)
+	if text.feed_type == 'user':
+		# print("TYPE", text.feed_type)
 		working_UPGR = PossibleTextSTM.objects.all().filter(user=text.user).filter(text=text.text).first()
 		prompt_full = text.text
 		prompt_reply_type = working_UPGR.response_type
 		
 	else:
-		# print("TYPE", text.text_type)
+		# print("TYPE", text.feed_type)
 		ontology_settings = Ontology.objects.all().filter(ontological_type='instruction')
 
 		# Figure out the type of response
@@ -210,7 +210,7 @@ def determine_prompt_texts(text):
 			prompt_reply_type = "none"
 
 		#Now figure out the specific texts
-		working_texts = Prompttext.objects.all().filter(text_type = prompt_reply_type)
+		working_texts = Prompttext.objects.all().filter(feed_type = prompt_reply_type)
 		tmp_texts = []
 		for txt in working_texts:
 			for i in range(0,txt.text_percent):
@@ -227,16 +227,16 @@ def determine_prompt_texts(text):
 
 def set_prompt_time(text,send_now,fake_time_now):
 	working_settings = UserSetting.objects.all().get(user=text.user)
-	print("---------------------------------")
-	print("text.text", text.text)
-	print("text.text_set", text.text_set)
-	print("text.text_type", text.text_type)
-	print("text.experience_id", text.experience_id)
-	print("---------------------------------")
-	if text.text_set =="system":
-		experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience='system')
+	# print("---------------------------------")
+	# print("text.text", text.text)
+	# print("text.feed_name", text.feed_name)
+	# print("text.feed_type", text.feed_type)
+	# print("text.feed_id", text.feed_id)
+	# print("---------------------------------")
+	if text.feed_name =="system":
+		experience_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_id=text.feed_id).get(feed_type='system')
 	else:
-		experience_settings = ExperienceSetting.objects.all().filter(user=text.user).filter(ideal_id=text.experience_id).get(experience=text.text_type)
+		experience_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_id=text.feed_id).get(feed_type=text.feed_type)
 	
 	#figure out the sleep time (ignoring tz)
 	if fake_time_now == 0:
@@ -249,7 +249,7 @@ def set_prompt_time(text,send_now,fake_time_now):
 		minutes_to_add = 0
 
 	else:
-		# minutes_to_add = int(triangular(experience_settings.prompt_interval_minute_min, experience_settings.prompt_interval_minute_max, experience_settings.prompt_interval_minute_avg)) 
+		# minutes_to_add = int(triangular(experience_settings.text_interval_minute_min, experience_settings.text_interval_minute_max, experience_settings.text_interval_minute_avg)) 
 		minutes_to_add = generate_random_minutes(experience_settings)
 		proposed_next_prompt_time = now + timedelta(hours=0,minutes=minutes_to_add,seconds=0)
 
@@ -277,8 +277,8 @@ def set_prompt_time(text,send_now,fake_time_now):
 
 	return minutes_to_add, time_to_send			
 
-def schedule_new_text(user,text_type,ideal_id,text_set):
-	text_new = ActualTextSTM(user=user,text_set=text_set, response=None,simulated=0,text_type=text_type,experience_id=ideal_id)
+def schedule_new_text(user,feed_type,feed_id,feed_name):
+	text_new = ActualTextSTM(user=user,feed_name=feed_name, response=None,simulated=0,feed_type=feed_type,feed_id=feed_id)
 	text_new.text, text_new.text_id = set_next_prompt(text=text_new)
 	text_new.text, text_new.response_type = determine_prompt_texts(text=text_new)
 	text_new.time_to_add, text_new.time_to_send = set_prompt_time(text=text_new,send_now=0,fake_time_now=0)
@@ -313,8 +313,8 @@ def determine_pause(tp):
 	#Send text, "pause until", you can start again by.
 
 def consolidate(ent):
-	print("Entry ID", ent.id)
-	ltm_new = ActualTextLTM(user=ent.user,stm_id=ent.id,text_id=ent.text_id,text=ent.text,text_type=ent.text_type,response_type=ent.response_type,response=ent.response,time_response=ent.time_response,response_time=ent.response_time,time_to_send=ent.time_to_send,time_sent=ent.time_sent,time_to_add=ent.time_to_add,series=ent.series,failed_series=ent.failed_series,simulated=ent.simulated)
+	print("CONSOLIDATE Entry ID", ent.id)
+	ltm_new = ActualTextLTM(user=ent.user,stm_id=ent.id,text_id=ent.text_id,text=ent.text,feed_type=ent.feed_type,response_type=ent.response_type,response=ent.response,time_response=ent.time_response,response_time=ent.response_time,time_to_send=ent.time_to_send,time_sent=ent.time_sent,time_to_add=ent.time_to_add,series=ent.series,failed_series=ent.failed_series,simulated=ent.simulated)
 	print("response", ent.response)
 	if ltm_new.response != "" and ltm_new.response != None:
 		print("To sort")
@@ -338,7 +338,7 @@ def consolidate(ent):
 	ent.save()
 
 def consolidate_update(ent):
-	print("Entry ID", ent.id)
+	print("CONSOLIDATE UPDATE Entry ID", ent.id)
 	ltm_new = ActualTextLTM.objects.all().filter(user=ent.user).get(stm_id=ent.id)
 	ltm_new.response = ent.response
 	print("response", ent.response)
@@ -401,7 +401,7 @@ def inhibition_individual(text):
 def send_texts():
 	today_date = datetime.now(pytz.utc)
 	#filter out the ones that haven't been sent out yet AND the ones that are suppose to be sent out now
-	user_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(text_type="user").filter(simulated=0)
+	user_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(feed_type="user").filter(simulated=0)
 	
 	system_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(system_text=1).filter(simulated=0)
 
@@ -423,11 +423,11 @@ def send_texts():
 
 def schedule_greeting_text(user):
 	working_settings = UserSetting.objects.all().get(user=user)
-	exp = ExperienceSetting.objects.all().filter(text_set="system").get(experience="system")
-	working_settings.prompts_per_week
+	exp = FeedSetting.objects.all().filter(feed_name="system").get(feed_type="system")
+	working_settings.texts_per_week
 
 	text1 = str('Hello! You just signed up to receive texts from sentimini.com.  If you did not, just reply with stop or visit sentimini.com to stop receiving these messages.')
-	ActualTextSTM(user=exp.user,text_set="system",system_text=1,experience_id=exp.id,text=text1,response=None,simulated=0,ready_for_next=1,text_type='user',time_to_send=datetime.now(pytz.utc)).save()
+	ActualTextSTM(user=exp.user,feed_name="system",system_text=1,feed_id=exp.id,text=text1,response=None,simulated=0,ready_for_next=1,feed_type='user',time_to_send=datetime.now(pytz.utc)).save()
 
 
 
@@ -435,21 +435,26 @@ def schedule_greeting_text(user):
 
 @periodic_task(run_every=timedelta(seconds=2))
 def schedule_texts():
-	exp_settings = ExperienceSetting.objects.all().filter(experience="user").filter(prompt_interval_minute_avg__gte=0).filter(number_of_texts_in_set__gte=0)
+	exp_settings = FeedSetting.objects.all().exclude(feed_type="system").exclude(feed_type="library").filter(text_interval_minute_avg__gte=0).filter(number_of_texts_in_set__gte=0)
 	
 
 	for exp in exp_settings:
 		#initialize new text for the experience
-		# print("exp.text_set", exp.text_set)
-		if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(text_type="user").filter(text_set=exp.text_set).count()<1:
-			if PossibleTextSTM.objects.all().filter(user=exp.user).filter(experience_id=exp.ideal_id).count() > 0:
-				schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
-		else:
-			texts = ActualTextSTM.objects.all().filter(user=exp.user).filter(text_type="user").filter(experience_id=exp.ideal_id)
-			text_last = texts.latest('time_to_send')
+		# print("exp.feed_name", exp.feed_name)
+		if PossibleTextSTM.objects.all().filter(user=exp.user).filter(feed_type=exp.feed_type).filter(feed_id=exp.feed_id).count() > 0:
+			if ActualTextSTM.objects.all().filter(simulated=0).filter(user=exp.user).filter(feed_name=exp.feed_name).count()<1:
+				if PossibleTextSTM.objects.all().filter(user=exp.user).filter(feed_id=exp.feed_id).count() > 0:
+					print("exp.feed_name",exp.feed_name)
+					print("exp.feed_name",exp.feed_id)
 
-			if texts.count() > 0 and text_last.ready_for_next == 1:
-				schedule_new_text(user=exp.user,text_type="user",ideal_id=exp.ideal_id,text_set=exp.text_set)
+
+					schedule_new_text(user=exp.user,feed_type=exp.feed_type,feed_id=exp.feed_id,feed_name=exp.feed_name)
+			else:
+				texts = ActualTextSTM.objects.all().filter(user=exp.user).filter(feed_type=exp.feed_type).filter(feed_id=exp.feed_id)
+				text_last = texts.latest('time_to_send')
+
+				if texts.count() > 0 and text_last.ready_for_next == 1:
+					schedule_new_text(user=exp.user,feed_type="user",feed_id=exp.feed_id,feed_name=exp.feed_name)
 
 	
 
@@ -532,8 +537,8 @@ def process_new_mail():
 					working_user.text_request_stop = True
 					working_user.save()
 					
-					possible_text = PossibleTextSTM.objects.all().get(text_type='system stop')
-					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system stop', system_text=1,experience_id=possible_text.experience_id)
+					possible_text = PossibleTextSTM.objects.all().get(feed_type='system stop')
+					text_out = ActualTextSTM(user=working_user.user,feed_name='system', response=None,simulated=0,feed_type='system stop', system_text=1,feed_id=possible_text.feed_id)
 					
 					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
 					text_out.text = possible_text.text
@@ -543,12 +548,12 @@ def process_new_mail():
 				elif 'pause' in tp.email_content.lower():
 					pause_until_date = determine_pause(tp)
 
-					possible_text = PossibleTextSTM.objects.all().get(text_type='system pause')
+					possible_text = PossibleTextSTM.objects.all().get(feed_type='system pause')
 
 					text_out = possible_text.text
 					possible_text.text = text_out.replace("XXX", str(pause_until_date))
 
-					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system pause', system_text=1,experience_id=possible_text.experience_id)
+					text_out = ActualTextSTM(user=working_user.user,feed_name='system', response=None,simulated=0,feed_type='system pause', system_text=1,feed_id=possible_text.feed_id)
 					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
 					text_out.text = possible_text.text
 					text_out.save()
@@ -560,8 +565,8 @@ def process_new_mail():
 					working_user.text_request_stop = False
 					working_user.save()
 
-					possible_text = PossibleTextSTM.objects.all().get(text_type='system start')
-					text_out = ActualTextSTM(user=working_user.user,text_set='system', response=None,simulated=0,text_type='system start', system_text=1,experience_id=possible_text.experience_id)
+					possible_text = PossibleTextSTM.objects.all().get(feed_type='system start')
+					text_out = ActualTextSTM(user=working_user.user,feed_name='system', response=None,simulated=0,feed_type='system start', system_text=1,feed_id=possible_text.feed_id)
 					text_out.time_to_add, text_out.time_to_send = set_prompt_time(text=possible_text,send_now=1,fake_time_now=0)
 					text_out.text = possible_text.text
 					text_out.save()
@@ -569,12 +574,15 @@ def process_new_mail():
 
 				working_entry = ActualTextSTM.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True)
 				working_entry = working_entry.filter(time_sent__lte=tp.email_date)
+				# print("working_entry.count",working_entry.count())
+				# print("working_user.user",working_user.user)
 				
 				if working_entry.count() > 0:
 					working_entry = working_entry.latest('time_sent')
 
 					
 					if working_entry.response is None or working_entry.response == "":
+						# print("first consolidate conditional")
 						#save in to actual stm
 						working_entry.time_response = tp.email_date
 						td =  working_entry.time_response - working_entry.time_sent
@@ -584,9 +592,12 @@ def process_new_mail():
 						working_entry.save()
 
 						if working_entry.ready_for_next == 1 and working_entry.system_text == 0:
+							# print("second consolidate conditional")
 							if ActualTextLTM.objects.all().filter(user=working_entry.user).filter(stm_id=working_entry.id).count()<1:
+								# print("just consolidate")
 								consolidate(working_entry)
 							else:
+								# print("consolidate update")
 								consolidate_update(working_entry)
 						
 
@@ -619,11 +630,11 @@ def actual_text_consolidate():
 @periodic_task(run_every=timedelta(seconds=2))
 def check_for_nonresponse():
 	if ActualTextSTM.objects.all().exclude(time_sent__isnull=True).filter(ready_for_next=0).count() > 0:
-		working_entry = ActualTextSTM.objects.all().exclude(text_set='system').exclude(time_sent__isnull=True).filter(ready_for_next=0)
+		working_entry = ActualTextSTM.objects.all().exclude(feed_name='system').exclude(time_sent__isnull=True).filter(ready_for_next=0)
 		
 		for ent in working_entry:
-			if ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).filter(user=ent.user).count() == 1:
-				exp_settings = ExperienceSetting.objects.all().filter(ideal_id=ent.experience_id).filter(experience=ent.text_type).get(user=ent.user)
+			if FeedSetting.objects.all().filter(feed_id=ent.feed_id).filter(feed_type=ent.feed_type).filter(user=ent.user).count() == 1:
+				exp_settings = FeedSetting.objects.all().filter(feed_id=ent.feed_id).filter(feed_type=ent.feed_type).get(user=ent.user)
 				time_lost =	exp_settings.time_to_declare_lost
 			else:
 				time_lost = 300

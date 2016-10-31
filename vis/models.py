@@ -80,9 +80,9 @@ class UserSettingDEV(models.Model):
 	respite_until_datetime = models.DateTimeField(blank=True,null=True) #The respite buttons change this field.  Email will only send if now greater than this value
 	
 	prompts_per_week = models.IntegerField(default=3) #Average number of prompts per day.  User can set this.  Used to calculate the average time between prompts
-	prompt_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
-	prompt_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
-	prompt_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion
+	text_interval_minute_avg =  models.IntegerField(default=10) # This is calculate by the number of desired prompts / time awake.  
+	text_interval_minute_min =  models.IntegerField(default=15) # This is largely hidden from users.  Used to define triangular distrubtuion
+	text_interval_minute_max =  models.IntegerField(default=1000) # This is largely hidden from users.  Used to define triangular distrubtuion
 
 	#these will be the different types of emotion prompts.  These should add up to 1.  These are lower level.  If 50% of prompts are emotions, then X% are for core
 	emotion_core_rate = models.DecimalField(max_digits=3, decimal_places=2,default=Decimal('0.6')) #core 8 emotions

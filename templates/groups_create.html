@@ -1,0 +1,73 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+   
+
+
+
+
+<div class="row" id="texts">
+  <div class="col-md-2">
+    <h1>Feeds</h1>
+    You can customize the experience
+  </div>
+
+
+  <div class="col-md-10">
+   
+ <form method='POST' action='' class="form-horizontal">
+      {% csrf_token %} {% crispy new_group_form %}
+
+    </form>
+</div>
+</div>
+
+
+
+
+
+
+
+
+</div>
+</br>
+<!-- Text content -->
+
+
+
+
+
+
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}

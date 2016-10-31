@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, ExperienceSetting, ResponseTypeStore, ActualTextSTM_SIM
+from .models import GroupSetting, Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, FeedSetting, ResponseTypeStore, ActualTextSTM_SIM
 
 # Register your models here.
 #NEW
@@ -9,41 +9,71 @@ from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
 
-class ExperienceSettingResource(resources.ModelResource):
+
+class GroupSettingResource(resources.ModelResource):
 	class Meta:
-		model = ExperienceSetting
-		import_id_fields = ('unique_text_set',)
-		fields = ('text_set', 'ordering_num', 'unique_text_set', 'description', "description_long", 'tags', 'prompts_per_week','time_to_declare_lost','experience',)
+		model = GroupSetting
+		import_id_fields = ('unique_group_name',)
+		fields = ('group_name', 'unique_group_name')
 
 
-class ExperienceSettingModelAdmin(ImportExportModelAdmin):
-    resource_class = ExperienceSettingResource   
-    list_filter = ["user", "experience"]
+class GroupSettingModelAdmin(ImportExportModelAdmin):
+    resource_class = GroupSettingResource   
+    list_filter = ["user", "group_name"]
 
     list_display = [
 		"user",
-		"text_set",
+		"id",
+		"ideal_id",
+		"passcode",
+		"group_name",
+		"group_type",
+		"unique_group_name",
+		"viewable",
+		"joinable",
+		"editable",
+		"feeds",
+	
+	]
+admin.site.register(GroupSetting,GroupSettingModelAdmin)
+
+
+class FeedSettingResource(resources.ModelResource):
+	class Meta:
+		model = FeedSetting
+		import_id_fields = ('unique_feed_name',)
+		fields = ('feed_name', 'ordering_num', 'unique_feed_name', 'description', "description_long", 'tags', 'texts_per_week','time_to_declare_lost','feed_type',)
+
+
+class FeedSettingModelAdmin(ImportExportModelAdmin):
+    resource_class = FeedSettingResource   
+    list_filter = ["user", "feed_type"]
+
+    list_display = [
+		"user",
+		"id",
+		"feed_id",
+		"feed_name",
+		"feed_type",
+		"group_id",
+		"group_name",
+		"feed_type",
 		"ordering_num",
-		"unique_text_set",
+		"unique_feed_name",
 		"tags",
 		"description",
 		"description_long",
-		"prompts_per_week",
-		"experience",
-		"id",
-		"ideal_id",
+		"texts_per_week",
 		"user_state",
 		"active",
-		"prompt_interval_minute_avg",
-		"prompt_interval_minute_min",
-		"prompt_interval_minute_max",
+		"text_interval_minute_avg",
+		"text_interval_minute_min",
+		"text_interval_minute_max",
 		"time_to_declare_lost",
-		"research_instr_dim_rate",
-		"research_prompt_multiple_rate",
 	]
 
 
-admin.site.register(ExperienceSetting,ExperienceSettingModelAdmin)
+admin.site.register(FeedSetting,FeedSettingModelAdmin)
 
 
 
@@ -52,9 +82,7 @@ class PossibleTextSTMResource(resources.ModelResource):
 	class Meta:
 		model = PossibleTextSTM
 		import_id_fields = ('csv_id',)
-		fields = ('csv_id','text','text_set', 'unique_text_set', 'text_importance', 'response_type', 'text_type',)
-
-
+		fields = ('csv_id','text','feed_name', 'unique_feed_name', 'text_importance', 'response_type', 'feed_type',)
 
 class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 	resource_class = PossibleTextSTMResource  
@@ -64,10 +92,12 @@ class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 		"text",
 		"csv_id",
 		"system_text",
-		"experience_id",
-		"text_set",
-		"unique_text_set",
-		"text_type",
+		"feed_id",
+		"feed_name",
+		"group_id",
+		"group_name",
+		"unique_feed_name",
+		"feed_type",
 		"text_importance",
 		"response_type",
 		"show_user",
@@ -75,7 +105,7 @@ class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 		"date_altered",
 	]
 
-	list_filter = ["user","text_set","text_type"]
+	list_filter = ["user","feed_name","feed_type"]
 
 admin.site.register(PossibleTextSTM,PossibleTextSTMModelAdmin)
 
@@ -83,9 +113,9 @@ class ATSMSIM_ModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
 		"text_id",
-		"experience_id",
+		"feed_id",
 		"response_time",
-		"text_set",
+		"feed_name",
 		"textstore_id",
 		"time_to_add",
 		"system_text",
@@ -96,7 +126,7 @@ class ATSMSIM_ModelAdmin(admin.ModelAdmin):
 		"failed_series",
 		"response",
 		"response_type",
-		"text_type",
+		"feed_type",
 		"time_to_send",
 		"time_sent",
 		"simulated",
@@ -130,7 +160,7 @@ class PossibleTextLTMModelAdmin(admin.ModelAdmin):
 		"user",
 		"stm_id",
 		"text",
-		"experience_id",
+		"feed_id",
 		"text_set",
 		"text_type",
 		"text_importance",
@@ -151,8 +181,8 @@ class ActualTextSTMModelAdmin(admin.ModelAdmin):
 		"user",
 		"response_type",
 		"text_id",
-		"experience_id",
-		"text_set",
+		"feed_id",
+		"feed_name",
 		"textstore_id",
 		"time_to_add",
 		"system_text",
@@ -162,13 +192,13 @@ class ActualTextSTMModelAdmin(admin.ModelAdmin):
 		"series",
 		"failed_series",
 		"response",
-		"text_type",
+		"feed_type",
 		"time_to_send",
 		"time_sent",
 		"simulated",
 	]
 	list_display_links = ["user"]
-	list_filter = ["user","text_set","text_type"]
+	list_filter = ["user","feed_name","feed_type"]
 	class Meta:
 		model = ActualTextSTM
 
@@ -180,15 +210,15 @@ class ActualTextLTMModelAdmin(admin.ModelAdmin):
 		"user",
 		"text_id",
 		"stm_id",
-		"experience_id",
-		"text_set",
+		"feed_id",
+		"feed_name",
 		"textstore_id",
 		"text",
 		"time_to_send_circa",
 		"time_to_send_day",
 		"series",
 		"failed_series",
-		"text_type",
+		"feed_type",
 		"response_type",
 		"response",
 		"response_cat",
@@ -219,7 +249,7 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 		"send_text",
 		"text_request_stop",
 		"respite_until_datetime",
-		"prompts_per_week",
+		"texts_per_week",
 		"phone",
 		"carrier",
 		"sms_address",
