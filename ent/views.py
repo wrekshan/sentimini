@@ -329,7 +329,7 @@ def text_set_detail(request,id=None):
 		else:
 			ideal_experience = FeedSetting.objects.all().get(id=id)
 			id_group = ideal_experience.group_id
-			working_group = GroupSetting.objects.all().get(id=id_group)
+			# working_group = GroupSetting.objects.all().get(id=id_group)
 
 			if ideal_experience.group_name == 'basic':
 				last_page_go_back = "feeds"
@@ -452,8 +452,8 @@ def text_set_detail(request,id=None):
 								tmp.feed_id=tmp_exp.id
 								tmp.feed_name=tmp_exp.feed_name
 								tmp.feed_type = 'user'
-								tmp.group_id=working_group.id
-								tmp.group_name=str(working_group.group_name)
+								# tmp.group_id=working_group.id
+								# tmp.group_name=str(working_group.group_name)
 
 								if tmp.date_created is None:
 									tmp.date_created = datetime.now(pytz.utc)
