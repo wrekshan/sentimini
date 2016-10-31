@@ -149,18 +149,18 @@ def send_text(text):
 			Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
 			
 			if tmp_user.send_email_check == True:
-
 				send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
+				text.time_sent = datetime.now(pytz.utc)
+				text.save()
 			if tmp_user.send_text_check == True:
 				send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.feed_name +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.feed_name +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str(exp_settings.feed_name +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
 				# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.feed_name +'@gmail.com'), [addressee], fail_silently=False)
-
-			print("ALIAS NAME EMAIL", str(exp_settings.feed_name +'<emojinseidev@gmail.com>'))
-			text.time_sent = datetime.now(pytz.utc)
-			text.save()
+				print("ALIAS NAME EMAIL", str(exp_settings.feed_name +'<emojinseidev@gmail.com>'))
+				text.time_sent = datetime.now(pytz.utc)
+				text.save()
 
 def set_next_prompt(text):	
 	working_settings = UserSetting.objects.all().get(user=text.user)
