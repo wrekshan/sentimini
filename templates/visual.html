@@ -19,8 +19,7 @@ $(document).ready(function() {
     { "width": "30%" },
     { "width": "10%" },
     { "width": "10%" },
-    { "width": "10%" },
-    { "width": "20%" },
+    { "width": "30%" },
   ]
 
     });
@@ -84,9 +83,10 @@ $(document).ready(function() {
 		        <th>Time and Date</th>
 	            <th>Text</th>
 	            <th>Feed</th>
+	            <th>Response Type</th>
 	            <th>Response</th>
-	            <th>0-10</th>
-	            <th>Yes/ No</th>
+	            
+	            
 				
 	        </tr>
 	    </thead>
@@ -110,10 +110,10 @@ $(document).ready(function() {
 				{% endif %}
 
 				</td> 
-				<td>{{ ent.text_set }}</td>
+				<td>{{ ent.feed_name }}</td>
 				<td>{{ ent.response_type }}</td>
-				<td>{{ ent.response_dim }}</td>
-				<td>{{ ent.response_cat }}</td>
+				<td>{{ ent.response }}</td>
+				
 				
 			</tr>
 			{% endfor %}
@@ -161,7 +161,7 @@ $(document).ready(function() {
 				{% endif %}
 
 				</td> 
-				<td>{{ entry.text_set }}</td>
+				<td>{{ entry.feed_name }}</td>
 				<td>{{ entry.response_dim__avg|floatformat:1 }}</td>
 				<td>{{ entry.response_dim__count }} </td>
 				<td>{{ entry.response_cat_bin__avg|floatformat:1 }}</td>
