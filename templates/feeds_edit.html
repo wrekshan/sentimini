@@ -52,10 +52,11 @@
     </div>
 
     <div class="col-md-10">
-  You have signed up for <mark>{{number_of_experiences}} feeds</mark> with a total of <mark>{{number_of_texts_per_week}} texts per week</mark>
+  You have signed up for <mark>{{number_of_experiences}} feeds</mark> with a total of <mark>{{number_of_texts_per_week}} texts per week</mark>.  All of your feeds, texts, and replies are private (social features are planned, but not yet implemented).
   </br></br>
   Click here for a <a href="{% url 'ent:simulate_week' %}">simulated week</a>
   </br></br>
+
    <form action="#" method="get">
        <input type="submit" class="btn-primary btn-sm" value="Create New Feed" name="create_new_feed">
      </form>
