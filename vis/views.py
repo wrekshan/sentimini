@@ -181,11 +181,12 @@ def text_data(request):
 			response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
 			writer = csv.writer(response)
 
-			headers = ["prompt","reply","time_sent"]
+			headers = ["text","response","time_sent"]
 			writer.writerow(headers)
 
-			for tmp in context.table_latest_entry:
-				row = [tmp.prompt,tmp.prompt_reply,tmp.time_sent]
+
+			for tmp in context['table_latest_entry']:
+				row = [tmp.text,tmp.response,tmp.time_sent]
 				writer.writerow(row)
 			return response
 
@@ -200,7 +201,7 @@ def text_data(request):
 			headers = ["text","response_average","response_counts"]
 			writer.writerow(headers)
 
-			for tmp in context.table_emotion_centered:
+			for tmp in context['table_emotion_centered']:
 				row = [tmp['text'],tmp['response__avg'],tmp['response__count']]
 				writer.writerow(row)
 			return response

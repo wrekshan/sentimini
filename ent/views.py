@@ -435,39 +435,37 @@ def text_set_detail(request,id=None):
 							tmp_new.save()
 
 
-					if formset.is_valid(): 
-						print("FORMSET VALID")
-						if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id).count()<0:
-							tmp_exp = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id)
-						else:
-							tmp_exp = FeedSetting.objects.all().get(id=ideal_experience.id)
-
-						#Save the Experience
-						for form in formset:
-
-							if form.is_valid() and form.has_changed():
-								tmp = form.save()
-
-								tmp.user=request.user
-								tmp.feed_id=tmp_exp.id
-								tmp.feed_name=tmp_exp.feed_name
-								tmp.feed_type = 'user'
-								# tmp.group_id=working_group.id
-								# tmp.group_name=str(working_group.group_name)
-
-								if tmp.date_created is None:
-									tmp.date_created = datetime.now(pytz.utc)
-								tmp.save()
-								
-								#Save any changes in long term storage
-								ptltm = PossibleTextLTM(user=request.user,feed_name=tmp.feed_name,feed_id=tmp.id,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
-								ptltm.save()
-
-						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
-
+				
+					print("FORMSET VALID")
+					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id).count()<0:
+						tmp_exp = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id)
 					else:
-						messages.add_message(request, messages.INFO, 'Not Valid')
-						return HttpResponseRedirect('/ent/text_set_detail/'+ str(ideal_experience.id))
+						tmp_exp = FeedSetting.objects.all().get(id=ideal_experience.id)
+
+					#Save the Experience
+					for form in formset:
+
+						if form.is_valid() and form.has_changed():
+							tmp = form.save()
+
+							tmp.user=request.user
+							tmp.feed_id=tmp_exp.id
+							tmp.feed_name=tmp_exp.feed_name
+							tmp.feed_type = 'user'
+							# tmp.group_id=working_group.id
+							# tmp.group_name=str(working_group.group_name)
+
+							if tmp.date_created is None:
+								tmp.date_created = datetime.now(pytz.utc)
+							tmp.save()
+							
+							#Save any changes in long term storage
+							ptltm = PossibleTextLTM(user=request.user,feed_name=tmp.feed_name,feed_id=tmp.id,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+							ptltm.save()
+
+					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+
+					
 
 				
 

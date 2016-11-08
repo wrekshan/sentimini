@@ -90,6 +90,7 @@ class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
 	list_display = [
 		"user",
 		"text",
+		"id",
 		"csv_id",
 		"system_text",
 		"feed_id",
