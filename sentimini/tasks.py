@@ -126,43 +126,46 @@ def send_text(text):
 	if text.feed_name == "system":
 		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="system").get(feed_id=text.feed_id)
 	else:
-		print("user:", text.user)
-		print("id:", text.feed_id)
-		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="user").get(feed_id=text.feed_id)
-	# YOU CAN DO THE CHECKS HERE
-
-	#check is this during sleep?
-	# text.time_to_send = sleep_check(text=text)
-	# text.save()
-
-	#This will check to see if we've emailed this person in the last ten minutes with the same message
-	now = datetime.now(pytz.utc)
-	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)
-	out_check = Outgoing.objects.all().filter(entry_id=text.id).filter(date_sent__gte=past_ten_minutes).count()
-	print("OUTCHECK:", out_check)
-
-	if now > text.time_to_send and out_check < 1:
-		tmp_user = UserSetting.objects.all().get(user=text.user)
-		addressee = tmp_user.sms_address
-		message_to_send = str(text.text)
-
-		if now > tmp_user.respite_until_datetime and tmp_user.text_request_stop == False or text.system_text==1: 
-
-			Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
+		if FeedSetting.objects.all().filter(user=text.user).filter(feed_type="user").filter(feed_id=text.feed_id).count()<1:
+			text.delete()
+		else:
+			exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="user").get(feed_id=text.feed_id)
 			
-			if tmp_user.send_email_check == True:
-				send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
-				text.time_sent = datetime.now(pytz.utc)
-				text.save()
-			if tmp_user.send_text_check == True:
-				send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.feed_name +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.feed_name +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str(exp_settings.feed_name +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
-				# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.feed_name +'@gmail.com'), [addressee], fail_silently=False)
-				print("ALIAS NAME EMAIL", str(exp_settings.feed_name +'<emojinseidev@gmail.com>'))
-				text.time_sent = datetime.now(pytz.utc)
-				text.save()
+
+			# YOU CAN DO THE CHECKS HERE
+
+			#check is this during sleep?
+			# text.time_to_send = sleep_check(text=text)
+			# text.save()
+
+			#This will check to see if we've emailed this person in the last ten minutes with the same message
+			now = datetime.now(pytz.utc)
+			past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)
+			out_check = Outgoing.objects.all().filter(entry_id=text.id).filter(date_sent__gte=past_ten_minutes).count()
+			print("OUTCHECK:", out_check)
+
+			if now > text.time_to_send and out_check < 1:
+				tmp_user = UserSetting.objects.all().get(user=text.user)
+				addressee = tmp_user.sms_address
+				message_to_send = str(text.text)
+
+				if now > tmp_user.respite_until_datetime and tmp_user.text_request_stop == False or text.system_text==1: 
+
+					Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
+					
+					if tmp_user.send_email_check == True:
+						send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
+						text.time_sent = datetime.now(pytz.utc)
+						text.save()
+					if tmp_user.send_text_check == True:
+						send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
+						# send_mail('',message_to_send,str(exp_settings.feed_name +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
+						# send_mail('',message_to_send,str(exp_settings.feed_name +' + emojinseidev@gmail.com'), [addressee], fail_silently=False)
+						# send_mail('',message_to_send,str(exp_settings.feed_name +'+emojinseidev@gmail.com'), [addressee], fail_silently=False)
+						# send_mail('',message_to_send,str('emojinseidev+ ' +exp_settings.feed_name +'@gmail.com'), [addressee], fail_silently=False)
+						print("ALIAS NAME EMAIL", str(exp_settings.feed_name +'<emojinseidev@gmail.com>'))
+						text.time_sent = datetime.now(pytz.utc)
+						text.save()
 
 def set_next_prompt(text):	
 	working_settings = UserSetting.objects.all().get(user=text.user)
