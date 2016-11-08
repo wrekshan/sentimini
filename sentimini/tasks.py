@@ -126,6 +126,8 @@ def send_text(text):
 	if text.feed_name == "system":
 		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="system").get(feed_id=text.feed_id)
 	else:
+		print("user:", text.user)
+		print("id:", text.feed_id)
 		exp_settings = FeedSetting.objects.all().filter(user=text.user).filter(feed_type="user").get(feed_id=text.feed_id)
 	# YOU CAN DO THE CHECKS HERE
 
