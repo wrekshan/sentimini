@@ -52,6 +52,8 @@ def create_new_feed_page(request,group_id=None):
 		else:
 			group_name = "basic"
 			group_id = 0
+		
+		
 
 		
 		form_feed_name_new= AddNewTextSetForm_full(request.POST or None)
