@@ -32,7 +32,11 @@ def advanced_uses(request):
 
 		return render(request,"advanced_uses.html",context)
 	else:
-		return HttpResponseRedirect('/accounts/signup/')
+		context = {
+			
+		}			
+
+		return render(request,"advanced_uses.html",context)
 
 def create_new_feed_page(request,group_id=None):
 	if request.user.is_authenticated():
