@@ -95,12 +95,15 @@ def text_data_detail_get_context(request,prompt_id,magic_simulated_value,demo):
 
 
 	#Table
-	table_latest_entry = ActualTextLTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
+	table_latest_entry = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
 	table_latest_entry = table_latest_entry.order_by('time_sent')
 
 	
 	tmp = ActualTextLTM.objects.all().filter(user=request.user).filter(text_id=prompt_id).first()
+	# you have to save 
 	emotion_name = tmp.text
+	print("FEED ID HERE HERE", tmp.feed_id)
+
 
 
 
@@ -116,29 +119,14 @@ def text_data_detail_get_context(request,prompt_id,magic_simulated_value,demo):
 	"graph_data_line_chart_plotly": graph_data_line_chart_plotly,
 
 	"table_latest_entry": table_latest_entry,
+	"feed_id": tmp.feed_id,
+	"text_id": prompt_id,
 		
     }
 	return context
 
 
 
-def text_data_detail(request,prompt_id=None):
-	if request.user.is_authenticated():	
-		#### IS THERE A NEED FOR A SIMULATION
-		magic_simulated_value = 0
-
-		if ActualTextLTM.objects.filter(user=request.user).count() > 1:
-
-			context = text_data_detail_get_context(request=request,prompt_id=prompt_id,magic_simulated_value=magic_simulated_value,demo=0)
-
-		else:
-			context = {
-			
-		    }
-	    
-		return render(request,"text_data_detail.html", context)
-	else:
-		return HttpResponseRedirect('/accounts/signup/')
 
 
 
@@ -181,12 +169,12 @@ def text_data(request):
 			response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
 			writer = csv.writer(response)
 
-			headers = ["text","response","time_sent"]
+			headers = ["text","response","response_type","time_sent"]
 			writer.writerow(headers)
 
 
 			for tmp in context['table_latest_entry']:
-				row = [tmp.text,tmp.response,tmp.time_sent]
+				row = [tmp.text,tmp.response,tmp.response_type,tmp.time_sent]
 				writer.writerow(row)
 			return response
 
@@ -206,11 +194,65 @@ def text_data(request):
 				writer.writerow(row)
 			return response
 
-		return render_to_response('visual.html', context)
+		return render(request,'visual.html', context)
 
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
+
+
+def text_data_detail(request,prompt_id=None):
+	if request.user.is_authenticated():	
+		#### IS THERE A NEED FOR A SIMULATION
+		magic_simulated_value = 0
+
+		
+
+		if ActualTextLTM.objects.filter(user=request.user).filter(text_id=prompt_id).count() > 1:
+
+			context = text_data_detail_get_context(request=request,prompt_id=prompt_id,magic_simulated_value=magic_simulated_value,demo=0)
+
+			table_latest_entry = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=0)
+			table_latest_entry = table_latest_entry.order_by('time_sent')
+
+
+
+			if request.GET.get('export_csv_responses'):
+				print("BUTTON PRESED")
+				# Create the HttpResponse object with the appropriate CSV header.
+				response = HttpResponse(content_type='text/csv')
+				response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
+				writer = csv.writer(response)
+
+				headers = ["text","time_sent","feed_name","response"]
+				writer.writerow(headers)
+
+				for tmp in table_latest_entry:
+					row = [tmp.text,tmp.time_sent,tmp.feed_name,tmp.response]
+					writer.writerow(row)
+				return response
+
+
+			return render(request,"text_data_detail_only_table.html", context)
+
+		else:
+			tmp = PossibleTextSTM.objects.all().filter(user=request.user).get(id=prompt_id)
+
+			
+			
+
+			context = {
+				"emotion_name": tmp.text,
+				"feed_id": tmp.feed_id,
+				"group_id": tmp.group_id,
+				"text_id": prompt_id,
+
+			
+		    }
+	    
+			return render(request,"text_data_detail_only_table.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
 
 
 def text_data_detail_demo(request,prompt_id=None):

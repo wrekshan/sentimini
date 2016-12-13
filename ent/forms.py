@@ -52,6 +52,14 @@ class AddNewGroup_Creator_Form(forms.ModelForm):
 		labels = {
             
         }
+		help_texts = {
+			'group_name': ('Name of Group'),
+			'description': ('Description of Group'),
+			'passcode': ('Is there a passcode needed to join the group?'),
+			'viewable': ('Is this group publically viewable and discoverable?'),
+			'joinable': ('Can this group be joined?'),
+			'editable': ('Can the users of this group edit the feeds and texts?'),
+		}
 
 	def __init__(self, *args, **kwargs):
 		super(AddNewGroup_Creator_Form, self).__init__(*args, **kwargs)
@@ -107,13 +115,23 @@ class PossibleTextSTMForm(forms.ModelForm):
 		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
 
 
+
 #Main form used to set the user settings
 class ContactSettingsForm(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone")
 	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier")
-	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
-	wake_time = forms.DateTimeField(label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	# sleep_time = forms.DateTimeField(help_text="This is the time you SLEEP",label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	wake_time_in = forms.DateTimeField(help_text="This is the time you WAKE", label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+
+
+	timez = ("Midnight", "1 AM ", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM","Noon", "1 PM ", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM")
+
+	sleep_time_in = forms.ChoiceField(label="Bed Time", help_text = "What time you do go to SLEEP?", choices=[(x, x) for x in timez],required=True)
+	wake_time_in = forms.ChoiceField(label="Wake Time", help_text = "What time you do WAKE up?", choices=[(x, x) for x in timez],required=True)
+
+
+
 
 	class Meta:
 		model = UserSetting
@@ -122,8 +140,8 @@ class ContactSettingsForm(forms.ModelForm):
 			"phone_input",
 			"carrier",
 			"timezone",
-			"sleep_time",
-			"wake_time",
+			"sleep_time_in",
+			"wake_time_in",
 			"send_text_check",
 			"send_email_check",
 		]
@@ -140,7 +158,7 @@ class ContactSettingsForm(forms.ModelForm):
         }
 
 	def __init__(self, *args, **kwargs):
-		super(UserSettingForm_Prompt, self).__init__(*args, **kwargs)
+		super(ContactSettingsForm, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
 		self.helper.form_class = 'form-horizontal'
@@ -155,8 +173,9 @@ class NewUserForm(forms.ModelForm):
 	#These are declared here to get the choice field
 	timezone = forms.ChoiceField(choices=[(x, x) for x in pytz.country_timezones['us']],label="Timezone")
 	carrier = forms.ChoiceField(choices=[(x, x) for x in Carrier.objects.all()],label="Carrier")
-	sleep_time = forms.DateTimeField(label='Bed Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
-	wake_time = forms.DateTimeField(label='Wake Time',input_formats = ['%H:%M'], required = True, widget=TimeWidget(usel10n=False, bootstrap_version=3, options={'minuteStep': 15, 'startView': 1, 'showMeridian': True, 'clearBtn': False, 'format': 'hh:ii'}))
+	timez = ("Midnight", "1 AM ", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM","Noon", "1 PM ", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM")
+	sleep_time_in = forms.ChoiceField(label="Bed Time", help_text = "What time you do go to SLEEP?", choices=[(x, x) for x in timez],required=True)
+	wake_time_in = forms.ChoiceField(label="Wake Time", help_text = "What time you do WAKE up?", choices=[(x, x) for x in timez],required=True)
 	
 
 	class Meta:
@@ -166,8 +185,8 @@ class NewUserForm(forms.ModelForm):
 			"phone_input",
 			"carrier",
 			"timezone",
-			"wake_time",
-			"sleep_time",
+			"wake_time_in",
+			"sleep_time_in",
 			
 		]
 
@@ -197,7 +216,7 @@ class NewUserForm(forms.ModelForm):
 class NewUser_PossibleTextSTMForm(forms.ModelForm):
 	helper = FormHelper()
 	
-	response_type = forms.ChoiceField(label="How will you respond to this?",choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
+	response_type = forms.ChoiceField(label="Response",help_text="What sort of response are you expecting?",choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
 	class Meta:
 		model = PossibleTextSTM
 		fields = [
@@ -208,11 +227,13 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 
 		labels = {
             'text': ('Text'),
-            'response_type': ('How will you respond to this?'),
-            'text_importance': ('How important is this?'),
+            'response_type': ('Response'),
+            'text_importance': ('Importance'),
         }
 
 		help_texts = {
+			'text': ('A question, a reminder, a contemplation, etc'),
+			'response_type': ('What sort of response are you expecting?'),
 			'text_importance': ('0 (not important/infrequent) to 10 (very important/frequenty)'),
 		}
 
@@ -221,37 +242,80 @@ class NewUser_PossibleTextSTMForm(forms.ModelForm):
 		self.helper = FormHelper()
 		self.helper.form_id = 'id-form'
 		self.helper.form_method = 'post'
-		# self.helper.label_class = 'col-lg-4'
-		# self.helper.field_class = 'col-lg-8'
+		self.helper.label_class = 'col-lg-4'
+		self.helper.field_class = 'col-lg-8'
 		self.helper.form_action = 'login'		
 		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
-		self.helper.add_input(Submit('submit_new_text', 'Submit text'))
+		self.helper.add_input(Submit('submit_new_text', 'Submit text and add more'))
+		self.helper.add_input(Submit('submit_finished_adding', 'Finished Adding (Back to Feed Overview)'))
+
+class Edit_PossibleTextSTMForm(forms.ModelForm):
+	helper = FormHelper()
+	
+	response_type = forms.ChoiceField(label="Response",help_text="What sort of response are you expecting?",choices=[(x, x) for x in ResponseTypeStore.objects.all().order_by('ordering_num')])
+	class Meta:
+		model = PossibleTextSTM
+		fields = [
+			"text",
+			"response_type",
+			"text_importance",
+		]
+
+		labels = {
+            'text': ('Text'),
+            'response_type': ('Response'),
+            'text_importance': ('Importance'),
+        }
+
+		help_texts = {
+			'text': ('A question, a reminder, a contemplation, etc'),
+			'response_type': ('What sort of response are you expecting?'),
+			'text_importance': ('0 (not important/infrequent) to 10 (very important/frequenty)'),
+		}
+
+	def __init__(self, *args, **kwargs):
+		super(Edit_PossibleTextSTMForm, self).__init__(*args, **kwargs)
+		self.helper = FormHelper()
+		self.helper.form_id = 'id-form'
+		self.helper.form_method = 'post'
+		self.helper.label_class = 'col-lg-4'
+		self.helper.field_class = 'col-lg-8'
+		self.helper.form_action = 'login'		
+		self.fields['text'].widget.attrs['placeholder'] = 'Add new text here (i.e."The world is beautiful and good")'
+		self.helper.add_input(Submit('submit_finished_adding', 'Finished Editing'))		
 		
 
 class AddNewTextSetForm_full(forms.ModelForm):
 	helper = FormHelper()
+	description = forms.CharField(label="Description",help_text="Write a description of this feed",widget=forms.Textarea(attrs={'rows':'2', 'cols': '1'}),required=True)
 	
 	class Meta:
 		model = FeedSetting
 		fields = [
 			"feed_name",
+			"description",
 			"texts_per_week",
 		]
 
 		labels = {
-            'feed_name': ('Text Set Name'),
+            'feed_name': ('Feed'),
             'description': ('Description'),
             'texts_per_week': ('Texts per Week'),
         }
+		help_texts = {
+			'feed_name': ('What is the name?'),
+			'texts_per_week': ('On average, how many texts per week do you want from this feed?'),
+		}
 
 	def __init__(self, *args, **kwargs):
 		super(AddNewTextSetForm_full, self).__init__(*args, **kwargs)
 		self.helper = FormHelper()
 		
-		# self.helper.label_class = 'col-lg-4'
-		# self.helper.field_class = 'col-lg-8'
+		self.helper.label_class = 'col-lg-4'
+		self.helper.field_class = 'col-lg-8'
 		# self.helper.form_class = 'form-horizontal'
 		self.fields['feed_name'].widget.attrs['placeholder'] = 'Mindfulness or Dream or Something'
+		self.fields['description'].widget.attrs['placeholder'] = 'Mindfulness or Dream or Something'
 		# self.fields['description'].widget.attrs['placeholder'] = 'Want to describe this in any way?'
 		# self.fields['number_of_texts_in_set'].widget.attrs['readonly'] = True
 		self.helper.add_input(Submit('submit_feed_description', 'Submit Feed Descriptions'))	

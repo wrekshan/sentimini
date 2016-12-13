@@ -1,5 +1,4 @@
-{% extends "base.html" %}
-{% load i18n %}
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
 
 
 
@@ -7,7 +6,7 @@
 
 <head>
 <title>Data - Sentimini</title>
-</head>
+
 
 
 
@@ -40,7 +39,7 @@ $(document).ready(function() {
     });
 } );
 </script>
-
+</head>
 <!-- Main jumbotron for a primary marketing message or call to action -->
 
 <div class="container">
@@ -105,7 +104,7 @@ $(document).ready(function() {
 					{% if ent.text_type == "user" %}
 						<a href="/vis/text_data_detail/{{ ent.text_id }}/">{{ ent.text }}</a>
 					{% else %}
-						{{ ent.text }}
+						<a href="/vis/text_data_detail/{{ ent.text_id }}/">{{ ent.text }}</a>
 					{% endif %}
 				{% endif %}
 

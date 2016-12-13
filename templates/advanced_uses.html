@@ -1,0 +1,91 @@
+{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+<!--DOCTYPE html -->
+{% block content %}
+
+
+<html>
+<head>
+<title>Uses - Sentimini!</title>
+</head>
+
+
+<body>
+	
+
+
+
+
+<div class="container">
+  <div class="row" id="overview">
+    <div class="col-md-3">
+      <h1>Sentimini</h1>
+    </div>
+    <div class="col-md-6">
+  <h3>Sends texts and collects the responses</h3>
+  You can have texts of whatever you want or you can sign up for predefined lists of texts.  Click here to sign up for texts.
+  </br></br>
+  All replies to texts are collected and stored.  Click here to see your data.
+
+    </div>     
+</div>
+<hr>
+
+	<div class="row" id="overview">
+		<div class="col-md-3">
+			<h1>Individual</h1>
+		</div>
+		<div class="col-md-6">
+  <h3>Getting texts can be great!</h3>
+  Get reminders to be mindful, that you love the people around you, or that can improve your life. 
+  <br><br>
+  Load up a feed of your favorite quotations or inspirational sayings.
+  <br><br>
+  Remind yourself why you are trying to change a behavior.  
+
+  <hr>
+  <h3>Personal Informatics</h3>
+  This is a great system to collect data about human experience because the content of and times of the texts are random.  
+  <br><br>
+  Sentimini can be used an emotion tracker, as a gratitude journal, etc.  Use it to track your pain or how much you've exercised.   
+  
+    </div>     
+</div>
+<hr>
+<div class="row" id="overview">
+    <div class="col-md-3">
+      <h1>With others</h1>
+    </div>
+    <div class="col-md-6">
+    <h3>Create programs for others</h3>
+    Use as a way for a therapist or doctor to communicate with a patient.  Can introduce specific circulum or track specific symptoms. 
+<hr>
+  <h3>Use to see how groups are doing</h3>
+  Sentimini could be used in research or corporate wellness.  In addition to providing text based communications, sentimini can collect the responses.  
+  <hr>
+  <h3>Open Data Set</h3>
+  Sentimini will ideally be an open dataset.
+    </div>     
+</div>
+</br>
+</div>
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+{% endblock %}

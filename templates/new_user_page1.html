@@ -15,6 +15,7 @@
 
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
+
     <div class="row" id="required_information">
       <div class = "col-md-2">
       <h1>Steps</h1>
@@ -42,7 +43,13 @@
     <div class="col-md-2">
       <h1>Contact</h1>
     </div>
-    <div class="col-md-5">   
+    <div class="col-md-5"> 
+      {% if messages %} {% for message in messages %}
+      <div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+      <a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
+      </div>
+      {% endfor %} {% endif %}  
+
      <form method='POST' action='' class="">
       {% csrf_token %} {% crispy form_new_user %}
       <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->

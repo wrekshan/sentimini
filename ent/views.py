@@ -12,13 +12,222 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from time import strptime
 # Create your views here.
-from .forms import  AddNewGroup_Creator_Form, KT_PossibleTextSTMForm, ContactSettingsForm, PossibleTextSTMForm, NewUserForm, NewUser_PossibleTextSTMForm, AddNewTextSetForm_full, AddNewTextSetForm_fullFormSetHelper, TextSetFormSetHelper, ExperienceTimingForm
+from .forms import  AddNewGroup_Creator_Form, KT_PossibleTextSTMForm, ContactSettingsForm, PossibleTextSTMForm, NewUserForm, NewUser_PossibleTextSTMForm, AddNewTextSetForm_full, AddNewTextSetForm_fullFormSetHelper, TextSetFormSetHelper, ExperienceTimingForm, Edit_PossibleTextSTMForm
 from .models import GroupSetting, PossibleTextSTM, ActualTextSTM, UserSetting, Carrier, Respite, Ontology, UserGenPromptFixed, PossibleTextLTM, FeedSetting, ActualTextSTM_SIM
 
 from sentimini.sentimini_functions import  get_graph_data_simulated, get_graph_data_simulated_heatmap
-from sentimini.scheduler_functions import generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes, figure_out_timing
+from sentimini.scheduler_functions import generate_random_prompts_to_show_no_sim, generate_random_prompts_to_show, next_prompt_minutes, determine_next_prompt_series, next_response_minutes, figure_out_timing
 
 from sentimini.tasks import send_texts, schedule_texts, set_next_prompt, determine_prompt_texts, set_prompt_time, check_email_for_new, process_new_mail, actual_text_consolidate, check_for_nonresponse, generate_random_minutes, schedule_greeting_text
+
+
+
+def advanced_uses(request):
+	if request.user.is_authenticated():	
+
+
+		context = {
+			
+		}			
+
+		return render(request,"advanced_uses.html",context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+def create_new_feed_page(request,group_id=None):
+	if request.user.is_authenticated():
+		working_settings = UserSetting.objects.all().get(user=request.user)
+		back_page = request.META['HTTP_REFERER']
+		pages = back_page.split("/")
+		print(pages)
+		print(pages[len(pages)-2])
+
+		if group_id is not None:
+			working_group = GroupSetting.objects.all().filter(user=request.user).get(id=pages[len(pages)-2])
+			group_name = working_group.group_name
+		else:
+			group_name = "basic"
+			group_id = 0
+
+		
+		form_feed_name_new= AddNewTextSetForm_full(request.POST or None)
+
+		if request.method == "POST":
+			if 'submit_feed_description' in request.POST:
+				if form_feed_name_new.is_valid():
+					tmp = form_feed_name_new.save(commit=True)
+					tmp.user = request.user
+					tmp.save()
+					
+					working_experience = FeedSetting.objects.all().filter(user=request.user).get(id=tmp.id)
+					working_experience.feed_id = working_experience.id
+					working_experience.group_id = group_id
+					working_experience.group_name = group_name
+					working_experience.user_state="disable"
+					print("NEW FEED VALID")
+					working_experience.text_interval_minute_avg,working_experience.text_interval_minute_min,working_experience.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=working_experience.texts_per_week)
+					print("AFTER FEED VALID")
+					working_experience.save()
+
+					return HttpResponseRedirect('/ent/add_texts/'+str(working_experience.id)+'/'+str(group_id))
+
+
+		context = {
+			"instruction_text": group_name,
+			"form_feed_name_new": form_feed_name_new,
+			"back_page": back_page,
+
+		}
+
+		return render(request, "text_set_detail_descriptions.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+				
+			
+
+
+def text_set_detail_descriptions(request, id=None):
+	if request.user.is_authenticated():
+		if FeedSetting.objects.all().filter(id=id).count()<1:
+			return HttpResponseRedirect('/ent/feeds_edit/')
+		else:
+			ideal_experience = FeedSetting.objects.all().get(id=id)
+			id_group = ideal_experience.group_id
+			instruction_text = "ha"
+			# working_group = GroupSetting.objects.all().get(id=id_group)
+
+			if ideal_experience.group_name == 'basic':
+				last_page_go_back = "feeds"
+			else:
+				last_page_go_back = "groups"
+
+			if UserSetting.objects.all().get(user=request.user).new_user_pages < 2:
+				new_user_pages = "new_user"
+			else:
+				new_user_pages = "old_user"
+
+			if id_group > 0:
+				working_group = GroupSetting.objects.all().filter(user=request.user).get(id=id_group)
+				group_name = working_group.group_name
+			else:
+				group_name = "basic"
+				group_id = 0
+
+			if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+				working_experience = FeedSetting.objects.all().get(id=id)
+			else:
+				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+				
+				
+			form_feed_name_new= AddNewTextSetForm_full(request.POST or None, instance = working_experience)
+			
+			########## NOW THE FORM HANDLING STUFF
+			if request.method == "POST":
+				if 'submit_feed_description' in request.POST:
+					if form_feed_name_new.is_valid():
+						# tmp_exp = FeedSetting.objects.all().filter(experience="user").get(feed_id=ideal_experience.id)
+
+						tmp = form_feed_name_new.save(commit=False)
+						tmp.texts_per_week = tmp.texts_per_week
+						tmp.text_interval_minute_avg,tmp.text_interval_minute_min,tmp.text_interval_minute_max = figure_out_timing(user=request.user,text_per_week=tmp.texts_per_week)
+						tmp.save()	
+
+					
+						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id)+'/'+str(id_group))
+
+
+			context = {
+				"form_feed_name_new": form_feed_name_new,
+				"new_user_pages": new_user_pages,
+				"last_page_go_back": last_page_go_back,
+				"id_group": id_group,
+				"feed_id": int(id),
+				"group_id": id_group,
+				"instruction_text": group_name,
+
+				
+				"working_experience": working_experience,
+
+			}
+			return render(request, "text_set_detail_descriptions.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+
+
+
+
+
+
+
+def group_edit_detail(request, id=None):
+	if request.user.is_authenticated():	
+		if FeedSetting.objects.all().filter(user=request.user).count()>0:
+			update_experiences(user=request.user)
+
+		if id is None:
+			form_group_settings = AddNewGroup_Creator_Form(request.POST or None)
+
+			context = {
+			
+				"form_group_settings": form_group_settings,
+			
+			}
+			
+		else:
+			working_group = GroupSetting.objects.all().get(id=id)
+			working_user_feeds = FeedSetting.objects.all().filter(feed_type="user").filter(group_id = id)
+			working_library_feeds = FeedSetting.objects.all().filter(feed_type="library").filter(group_id = id)
+
+			working_user_texts = PossibleTextSTM.objects.all().filter(group_id=id)
+
+			form_group_settings = AddNewGroup_Creator_Form(request.POST or None, instance = working_group)
+
+			form_new_text = KT_PossibleTextSTMForm(request.POST or None)
+			context = {
+				"working_group": working_group,
+				"form_group_settings": form_group_settings,
+				"form_new_text": form_new_text,
+				"working_user_feeds": working_user_feeds,
+				"working_library_feeds": working_library_feeds,
+			}
+
+		if request.GET.get('create_new_feed'):
+			print("CREATING NEW FEED PRESSED")
+			FeedSetting(user=request.user,feed_type='user',feed_name="New Set",group_name=working_group.group_name,group_id=working_group.id,user_state="disable").save()
+
+			working_experience = FeedSetting.objects.all().filter(user=request.user).filter(group_id=working_group.id).filter(feed_type="user").get(feed_name="New Set")
+			working_experience.feed_id = working_experience.id
+			working_experience.save()
+
+			return HttpResponseRedirect('/ent/text_set_detail/'+str(working_experience.id))
+
+
+		if request.method == "POST":
+			if 'submit_new_group' in request.POST:
+				print("NEW GROUP HERE HERE")
+				if form_group_settings.is_valid():	
+					print("IS VALID HERE HERE")
+					tmp = form_group_settings.save()
+					tmp.group_type="user"
+					tmp.save()
+				
+				return HttpResponseRedirect('/ent/group_detail/'+str(tmp.id))	
+
+				
+
+		
+			
+
+		return render(request, "group_edit_detail.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
 
 def group_detail(request,id=None):
 	if request.user.is_authenticated():	
@@ -35,15 +244,58 @@ def group_detail(request,id=None):
 
 		form_new_text = KT_PossibleTextSTMForm(request.POST or None)
 
+
+		if request.GET.get('remove_group'):
+			working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+			text_for_user = "This experience is enabled"
+			working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
+			number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+
+			user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_id=id)
+			user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+			user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=id).filter(time_sent__isnull=True)
+
+			for exp in user_experience:
+				exp.delete()
+
+			for text in user_texts:
+				text.delete()
+
+			for text in user_outgoing:
+				text.delete()
+			
+			return HttpResponseRedirect('/ent/feeds_edit/')
+
+		if request.GET.get('enable_group'):
+			ideal_group = GroupSetting.objects.all().get(id=id)
+			feeds = FeedSetting.objects.all().filter(group_id=id)
+
+			print("ENABLE PRESSED")
+
+			if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+				working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+				text_for_user = "This experience is NOT enabled"
+				working_experience = FeedSetting.objects.all().get(id=id)
+				number_of_experiences = 0
+				
+				# Create and save new one
+				create_new_user_experience(user=request.user,feed_id=working_experience.id,default_experience='library')
+				return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+
+
+
 		if request.GET.get('create_new_feed'):
-			print("CREATING NEW FEED PRESSED")
-			FeedSetting(user=request.user,feed_type='user',feed_name="New Set",group_name=working_group.group_name,group_id=working_group.id,user_state="disable").save()
+			
+			return HttpResponseRedirect('/ent/create_new_feed_page/'+str(id))			
 
-			working_experience = FeedSetting.objects.all().filter(user=request.user).filter(group_id=working_group.id).filter(feed_type="user").get(feed_name="New Set")
-			working_experience.feed_id = working_experience.id
-			working_experience.save()
+			# print("CREATING NEW FEED PRESSED")
+			# FeedSetting(user=request.user,feed_type='user',feed_name="New Set",group_name=working_group.group_name,group_id=working_group.id,user_state="disable").save()
 
-			return HttpResponseRedirect('/ent/text_set_detail/'+str(working_experience.id))
+			# working_experience = FeedSetting.objects.all().filter(user=request.user).filter(group_id=working_group.id).filter(feed_type="user").get(feed_name="New Set")
+			# working_experience.feed_id = working_experience.id
+			# working_experience.save()
+
+			# return HttpResponseRedirect('/ent/text_set_detail/'+str(working_experience.id))
 
 
 		if request.method == "POST":
@@ -82,6 +334,7 @@ def group_detail(request,id=None):
 
 	
 		context = {
+			"working_group": working_group,
 			"form_group_settings": form_group_settings,
 			"form_new_text": form_new_text,
 			"working_user_feeds": working_user_feeds,
@@ -91,6 +344,10 @@ def group_detail(request,id=None):
 		return render(request, "groups_detail.html", context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+
 
 def create_new_user_experience(user,feed_id,default_experience):
 	if feed_id == "Create New":
@@ -157,14 +414,15 @@ def groups_edit(request):
 		
 
 		number_of_experiences = GroupSetting.objects.all().filter(group_type='user').filter(user=request.user).count()
-		working_groups = GroupSetting.objects.all().filter(group_type='user').filter(user=request.user)
-		library_experiences = GroupSetting.objects.all().filter(group_type='library')
+		working_groups = GroupSetting.objects.all().filter(user=request.user).filter(group_type='user')
+		library_experiences = GroupSetting.objects.all().filter(viewable=True)
 
 		if request.GET.get('create_new_group'):		
-			new_group = GroupSetting(user=request.user,group_type="user")
-			new_group.save()
+			return HttpResponseRedirect('/ent/group_edit_detail/')		
+			# new_group = GroupSetting(user=request.user,group_type="user")
+			# new_group.save()
 			
-			return HttpResponseRedirect('/ent/group_detail/'+str(new_group.id))		
+			
 
 			
 			
@@ -258,8 +516,13 @@ def update_experiences(user):
 
 def text_delete(request,id=None):
 	print("ID HERE:'", id)
+
+	back_page = request.META['HTTP_REFERER']
 	PossibleTextSTM.objects.all().get(id=id).delete()
-	return HttpResponseRedirect('/ent/kt_group')
+
+	return HttpResponseRedirect(back_page)
+
+
 
 def text_activate(request,id=None):
 	print("ACTIVATE ID HERE:'", id)
@@ -322,12 +585,12 @@ def kt_group(request):
 
 
 
-def text_set_detail(request,id=None):
+def text_set_detail(request,feed_id=None,group_id=None):
 	if request.user.is_authenticated():
-		if FeedSetting.objects.all().filter(id=id).count()<1:
+		if FeedSetting.objects.all().filter(id=feed_id).count()<1:
 			return HttpResponseRedirect('/ent/feeds_edit/')
 		else:
-			ideal_experience = FeedSetting.objects.all().get(id=id)
+			ideal_experience = FeedSetting.objects.all().get(id=feed_id)
 			id_group = ideal_experience.group_id
 			# working_group = GroupSetting.objects.all().get(id=id_group)
 
@@ -341,39 +604,47 @@ def text_set_detail(request,id=None):
 			else:
 				new_user_pages = "old_user"
 
-
-			
-
-
-
-			if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
-				working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
-				text_for_user = "This experience is NOT enabled"
-				working_experience = FeedSetting.objects.all().get(id=id)
-				number_of_experiences = 0
+			if int(group_id)<1:
+				if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()<1:
+					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=feed_id)
+					text_for_user = "This experience is NOT enabled"
+					working_experience = FeedSetting.objects.all().get(id=feed_id)
+					number_of_experiences = 0
+				else:
+					working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=feed_id)
+					text_for_user = "This experience is enabled"
+					working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=feed_id)
+					number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()
 			else:
-				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
-				text_for_user = "This experience is enabled"
-				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
-				number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+				if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(group_id=group_id).filter(feed_id=feed_id).count()<1:
+					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(group_id=group_id).filter(feed_id=feed_id)
+					text_for_user = "This experience is NOT enabled"
+					working_experience = FeedSetting.objects.all().get(id=feed_id)
+					number_of_experiences = 0
+				else:
+					working_user_gen = PossibleTextSTM.objects.all().filter(group_id=group_id).filter(show_user=False).filter(feed_type="user").filter(feed_id=feed_id)
+					text_for_user = "This experience is enabled"
+					working_experience = FeedSetting.objects.all().filter(user=request.user).filter(group_id=group_id).filter(feed_type='user').get(feed_id=feed_id)
+					number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()
 				
 			helper = TextSetFormSetHelper()
 			UGPFormset = modelformset_factory(PossibleTextSTM, form = PossibleTextSTMForm, extra=1)
 			formset = UGPFormset(queryset = working_user_gen)
 			form_feed_name_new= AddNewTextSetForm_full(request.POST or None, instance = working_experience)
+			form_new_text = NewUser_PossibleTextSTMForm(request.POST)
 			
 			number_of_texts = working_user_gen.count()
 			text_per_week = working_experience.texts_per_week
 
 			if request.GET.get('remove_experience'):
-				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
+				working_user_gen = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=feed_id)
 				text_for_user = "This experience is enabled"
-				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=id)
-				number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()
+				working_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=feed_id)
+				number_of_experiences = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()
 
-				user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_id=id)
-				user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=id)
-				user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=id).filter(time_sent__isnull=True)
+				user_experience = FeedSetting.objects.all().filter(feed_type="user").filter(feed_id=feed_id)
+				user_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(show_user=False).filter(feed_type="user").filter(feed_id=feed_id)
+				user_outgoing = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(feed_id=feed_id).filter(time_sent__isnull=True)
 
 				for exp in user_experience:
 					exp.delete()
@@ -387,18 +658,18 @@ def text_set_detail(request,id=None):
 				return HttpResponseRedirect('/ent/feeds_edit/')
 
 			if request.GET.get('enable_experience'):
-				ideal_experience = FeedSetting.objects.all().get(id=id)
+				ideal_experience = FeedSetting.objects.all().get(id=feed_id)
 				print("ENABLE PRESSED")
 
-				if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
-					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=id)
+				if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()<1:
+					working_user_gen = PossibleTextSTM.objects.all().filter(show_user=False).filter(feed_type="library").filter(feed_id=feed_id)
 					text_for_user = "This experience is NOT enabled"
-					working_experience = FeedSetting.objects.all().get(id=id)
+					working_experience = FeedSetting.objects.all().get(id=feed_id)
 					number_of_experiences = 0
 					
 					# Create and save new one
 					create_new_user_experience(user=request.user,feed_id=working_experience.id,default_experience='library')
-					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id)+'/'+str(group_id))
 			
 				#Restore experience from defaul
 
@@ -415,12 +686,12 @@ def text_set_detail(request,id=None):
 						tmp.save()	
 
 					
-						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+						return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id)+'/'+str(group_id))
 
 
 				if 'submit_formset' in request.POST:
 					formset = UGPFormset(request.POST, queryset = working_user_gen )
-					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=id).count()<1:
+					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()<1:
 						#EXPERIENCE
 						tmp_exp = FeedSetting(user=request.user,user_state="disable",feed_id=ideal_experience.id,feed_type='user',description=working_experience.description,feed_name=working_experience.feed_name,texts_per_week=ideal_experience.texts_per_week)
 						#gotta do the other stuff too
@@ -437,8 +708,8 @@ def text_set_detail(request,id=None):
 
 				
 					print("FORMSET VALID")
-					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id).count()<0:
-						tmp_exp = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=id)
+					if FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=feed_id).count()<0:
+						tmp_exp = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').filter(description=working_experience.description).filter(feed_id=feed_id)
 					else:
 						tmp_exp = FeedSetting.objects.all().get(id=ideal_experience.id)
 
@@ -463,7 +734,7 @@ def text_set_detail(request,id=None):
 							ptltm = PossibleTextLTM(user=request.user,feed_name=tmp.feed_name,feed_id=tmp.id,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
 							ptltm.save()
 
-					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))
+					return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id)+'/'+str(group_id))
 
 					
 
@@ -481,6 +752,7 @@ def text_set_detail(request,id=None):
 				"new_user_pages": new_user_pages,
 				"last_page_go_back": last_page_go_back,
 				"id_group": id_group,
+				"form_new_text": form_new_text,
 
 				"helper": helper,
 				"formset": formset,
@@ -526,11 +798,8 @@ def feeds_edit(request):
 				library_experiences = library_experiences.exclude(id=tmp_remove.id)
 
 
-		if request.GET.get('create_new_feed'):
-			create_new_user_experience(user=request.user,feed_id="Create New",default_experience='user')
-			ideal_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").get(feed_name="New Set")
-			
-			return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))				
+		if request.GET.get('create_new_feed'):			
+			return HttpResponseRedirect('/ent/create_new_feed_page/')				
 
 	
 		context = {
@@ -547,6 +816,9 @@ def feeds_edit(request):
 
 def text_set_alter(request,id=None):
 	print("TEXT SET ALTER")
+	print(request.META['HTTP_REFERER'])
+
+	back_page = request.META['HTTP_REFERER']
 	ideal_experience = FeedSetting.objects.all().get(id=id)
 	working_settings = UserSetting.objects.all().get(user=request.user)
 
@@ -602,7 +874,7 @@ def text_set_alter(request,id=None):
 	if working_settings.new_user_pages < 2:
 		return HttpResponseRedirect('/ent/new_user/')
 	else:
-		return HttpResponseRedirect('/ent/feeds_edit/')
+		return HttpResponseRedirect(back_page)
 
 
 
@@ -654,43 +926,108 @@ def text_set(request):
 
 
 
-
-
-def add_texts(request):
+def text_edit(request,id=None):
 	if request.user.is_authenticated():	
-		form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+		working_text = PossibleTextSTM.objects.all().filter(user=request.user).get(id=id)
+		feed_id = working_text.feed_id
+		group_id = working_text.group_id
+		
+		form_new_text = Edit_PossibleTextSTMForm(request.POST or None, instance=working_text)
 		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(feed_type='user').count()
 
+		
+		
+		if feed_id is not None:
+			working_feed = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=feed_id)
 
 		if request.method == "POST":
-			
 			if 'submit_new_text' or 'submit_finished_adding' in request.POST:
 				if form_new_text.is_valid():	
 					tmp = form_new_text.save()
 					tmp.user=request.user
 					if tmp.date_created is None:
 						tmp.date_created = datetime.now(pytz.utc)
+						tmp.feed_id = feed_id
+						tmp.feed_type = "user"
+						tmp.feed_name = working_feed.feed_name
 						tmp.save()
+					
+					#Save any changes in long term storage
+					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
+					ptltm.save()
+					return HttpResponseRedirect('/ent/text_set_detail/'+str(feed_id)+'/'+str(group_id))
+		
+
+		context = {
+				"feed_name": working_feed.feed_name,
+				"number_of_texts": number_of_texts,
+				"form_new_text": form_new_text,
+				"feed_id": feed_id,
+				"group_id": group_id,
+			}
+		
+		return render(request, "add_new_texts.html", context)
+	else:
+		return HttpResponseRedirect('/accounts/signup/')
+
+
+
+def add_texts(request,feed_id=None,group_id=None):
+	if request.user.is_authenticated():	
+		working_settings = UserSetting.objects.all().get(user=request.user)
+		form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
+		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(feed_type='user').filter(feed_id=feed_id).count()
+		back_page = request.META['HTTP_REFERER']
+
+		if group_id is not None and int(group_id) > 0:
+			print("GROUP ID", group_id)
+			working_group = GroupSetting.objects.all().filter(user=request.user).get(id=group_id)
+			group_name = working_group.group_name
+		else:
+			group_id = 0
+			group_name = "basic"
+		
+		if feed_id is not None:
+			working_feed = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user').get(feed_id=feed_id)
+			feed_name = working_feed.feed_name
+		else:
+			feed_id = 0
+			feed_name = ""
+
+		if request.method == "POST":
+			if 'submit_new_text' or 'submit_finished_adding' in request.POST:
+				if form_new_text.is_valid():	
+					tmp = form_new_text.save()
+					tmp.user=request.user
+					if tmp.date_created is None:
+						tmp.date_created = datetime.now(pytz.utc)
+					tmp.feed_id = feed_id
+					tmp.group_id = group_id
+					tmp.group_name= group_name
+					tmp.feed_type = "user"
+					tmp.feed_name = feed_name
+					tmp.save()
 					
 					#Save any changes in long term storage
 					ptltm = PossibleTextLTM(user=request.user,stm_id=tmp.id,text=tmp.text,feed_type=tmp.feed_type,text_importance=tmp.text_importance,response_type=tmp.response_type,show_user=tmp.show_user,date_created=tmp.date_created,date_altered=datetime.now(pytz.utc))
 					ptltm.save()
 
 					if 'submit_new_text'in request.POST:
-						return HttpResponseRedirect('/ent/feeds_edit/add_texts')
-
+						return HttpResponseRedirect('/ent/add_texts/'+str(feed_id)+"/"+str(group_id))
 					else:
-						return HttpResponseRedirect('/ent/feeds_edit/')
-				else:
-					if 'submit_finished_adding' in request.POST and number_of_texts > 0:
-						return HttpResponseRedirect('/ent/feeds_edit/')
-
+						if working_settings.new_user_pages < 2:
+							return HttpResponseRedirect('/ent/new_user/')
+						else:
+							return HttpResponseRedirect('/ent/text_set_detail/'+str(feed_id)+'/'+str(group_id))
+				
 		else:
 			form_new_text = NewUser_PossibleTextSTMForm(request.POST or None)
 
 		context = {
+				"feed_name": working_feed.feed_name,
 				"number_of_texts": number_of_texts,
 				"form_new_text": form_new_text,
+				"feed_id": feed_id,
 			}
 		
 		return render(request, "add_new_texts.html", context)
@@ -734,14 +1071,14 @@ def new_user(request):
 		
 		
 		working_experience_sets = FeedSetting.objects.all().filter(user=request.user).filter(feed_type='user')
-		library_experiences = FeedSetting.objects.all().filter(feed_type='library').filter(active=1)
+		library_experiences = FeedSetting.objects.all().filter(feed_type='library').filter(active=1).filter(group_id=0)
 		
 		number_of_experiences = FeedSetting.objects.all().filter(feed_type='user').filter(user=request.user).count()
 		
 		texts_per_week = working_settings.texts_per_week
 		number_of_texts = PossibleTextSTM.objects.all().filter(user=request.user).filter(feed_type='user').count()
 
-		library_experiences_tmp = FeedSetting.objects.all().filter(feed_type='library')
+		library_experiences_tmp = FeedSetting.objects.all().filter(feed_type='library').filter(group_id=0)
 		library_experiences = library_experiences_tmp | working_experience_sets
 
 		for exp in library_experiences:
@@ -751,10 +1088,11 @@ def new_user(request):
 
 
 		if request.GET.get('create_new_feed'):
-			create_new_user_experience(user=request.user,feed_id="Create New",default_experience='user')
-			ideal_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").get(feed_name="New Set")
+			return HttpResponseRedirect('/ent/create_new_feed_page/')	
+			# create_new_user_experience(user=request.user,feed_id="Create New",default_experience='user')
+			# ideal_experience = FeedSetting.objects.all().filter(user=request.user).filter(feed_type="user").get(feed_name="New Set")
 			
-			return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))					
+			# return HttpResponseRedirect('/ent/text_set_detail/'+str(ideal_experience.id))					
 
 		# if working_settings.new_user_pages == 2:
 			# working_settings.new_user_pages = 3
@@ -778,6 +1116,26 @@ def new_user(request):
 					tmp_settings = form_new_user.save(commit=False)
 					tmp_settings.save()
 
+					if "midnight" in tmp_settings.sleep_time_in:
+						print("midnight")
+						tmp_settings.sleep_time = datetime(2016,1,30,00,00)
+					elif "noon" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,12,00)
+					elif "AM" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,int(tmp_settings.sleep_time_in.split(" AM")[0]),00)
+					elif "PM" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,int(tmp_settings.sleep_time_in.split(" PM")[0])+12,00)
+
+					if "midnight" in tmp_settings.wake_time_in:
+						print("midnight")
+						tmp_settings.wake_time = datetime(2016,1,30,00,00)
+					elif "noon" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,12,00)
+					elif "AM" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,int(tmp_settings.wake_time_in.split(" AM")[0]),00)
+					elif "PM" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,int(tmp_settings.wake_time_in.split(" PM")[0])+12,00)	
+
 					if tmp_settings.phone_input != "":
 						if len(str(get_num(tmp_settings.phone_input))) == 10:
 							tmp_settings.phone = str(get_num(tmp_settings.phone_input))
@@ -793,13 +1151,13 @@ def new_user(request):
 
 							schedule_greeting_text(user=request.user)
 						else:
-							messages.add_message(request, messages.INFO, 'Not 10 Expecting a 10 digit US number')
+							messages.add_message(request, messages.INFO, 'Expecting a 10 digit US number!')
 					
 					return HttpResponseRedirect('/ent/new_user/')		
 
 
 			print("NOTHING")
-			return HttpResponseRedirect('/ent/simulate_week/')		
+			return HttpResponseRedirect('/ent/new_user/')		
 
 		if number_of_texts > 0:
 			ready_to_move_on = 1
@@ -826,7 +1184,7 @@ def new_user(request):
 		elif working_settings.new_user_pages == 2:
 			return HttpResponseRedirect('/ent/simulate_week/')	
 		else:
-			return HttpResponseRedirect('/ent/simulate_week/')
+			return HttpResponseRedirect('/ent/new_user/')
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
 
@@ -846,6 +1204,14 @@ def texter(request):
 			return HttpResponseRedirect('/ent/texter/')
 			
 		# Send the text	
+
+		if request.GET.get('create_rando_generated'):
+			print("button pressed . sending texts")
+			generate_random_prompts_to_show_no_sim(request,exp_resp_rate=.8,week=0,number_of_prompts=100) #set up 20 random prompts based upon the settings
+			return HttpResponseRedirect('/ent/texter/')
+
+
+
 		if request.GET.get('check_for_unsent'):
 			print("button pressed . sending texts")
 			send_texts()
@@ -921,7 +1287,39 @@ def contact_settings(request):
 			if 'submit_contact' in request.POST:
 				if form_free.is_valid():
 					tmp_settings = form_free.save(commit=False)
+					print("SLEEP", tmp_settings.sleep_time_in)
 					print("Contact Valid")
+					messages.add_message(request, messages.INFO, 'Form Saved!')
+					if "midnight" in tmp_settings.sleep_time_in:
+						print("midnight")
+						tmp_settings.sleep_time = datetime(2016,1,30,00,00)
+					elif "noon" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,12,00)
+					elif "AM" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,int(tmp_settings.sleep_time_in.split(" AM")[0]),00)
+					elif "PM" in tmp_settings.sleep_time_in:
+						tmp_settings.sleep_time = datetime(2016,1,30,int(tmp_settings.sleep_time_in.split(" PM")[0])+12,00)
+
+					if "midnight" in tmp_settings.wake_time_in:
+						print("midnight")
+						tmp_settings.wake_time = datetime(2016,1,30,00,00)
+					elif "noon" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,12,00)
+					elif "AM" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,int(tmp_settings.wake_time_in.split(" AM")[0]),00)
+					elif "PM" in tmp_settings.wake_time_in:
+						tmp_settings.wake_time = datetime(2016,1,30,int(tmp_settings.wake_time_in.split(" PM")[0])+12,00)	
+						
+						
+
+						
+
+
+
+
+
+					# sleep_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
+					# wake_time = models.TimeField(default=datetime(2016,1,30,22,00))
 
 					if tmp_settings.phone_input != "":
 						print("LENGTH ONLY", len(str(get_num(tmp_settings.phone_input))))

@@ -1,0 +1,93 @@
+  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+
+
+  <!--DOCTYPE html -->
+
+
+  <html>
+  <head>
+
+  </head>
+
+  <body>
+    {% block content %}
+    <script>
+      $(document).ready(function() {
+        $('#possible_texts_table').DataTable({
+          "columns": [
+          { "width": "80%" },
+          { "width": "20%" },
+          
+
+          ]
+
+        });
+      } );
+    </script>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="container">
+    {% if last_page_go_back == "groups" %}
+    <a href="/ent/group_detail/{{ id_group }}/"><- Back to Group Detail</a>
+    {% else %}
+    {% if new_user_pages == "new_user" %}
+    <a href="{% url 'ent:new_user' %}"><- Back to Set Up</a>
+      
+    {% else %}
+    <a href="/ent/text_set_detail/{{ feed_id }}/{{ group_id }}/"><- Back to Feed Overview</a>
+    
+    {% endif %}
+
+    
+    {% endif %}
+
+      <div class="row" id="texts">
+        <div class="col-md-3">
+
+          <h1></h1>
+
+
+          
+        </div>
+        <div class="col-md-6">
+        Editing feed for group: <mark>{{instruction_text}}</mark>
+        </br></br>
+        <form method='POST' action='' class="form-horizontal">
+    {% csrf_token %} {% crispy form_feed_name_new %}
+    <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
+      </form>
+        
+         
+      </div>
+</div>
+
+
+
+</div>
+</br>
+<!-- Text content -->
+
+
+
+
+
+
+
+<!-- Contact Settings -->
+
+
+
+
+<!-- end of container -->
+</div> 
+
+
+
+
+<!-- /container -->
+
+
+</body>
+
+</html>
+{% endblock %}

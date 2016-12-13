@@ -28,6 +28,20 @@ def upload_feed_data(request):
 			exp.save()
 
 		print("UPLOAD")
+
+		if request.GET.get('reset_texts_to_send'):
+			# Get and delete unsent texts
+			texts = ActualTextSTM.objects.filter(time_sent=None).filter(feed_type="user").filter(simulated=0)
+			texts.delete()
+
+			# You actually don't have to schedule them because they should be scheduled in the peridoci tasks
+			
+
+					
+			return HttpResponseRedirect('/scaffold/upload_feed_data/')
+
+
+
 		
 		if request.GET.get('update_experience_settings'):
 			working_experience = FeedSetting.objects.all().exclude(feed_type='user')

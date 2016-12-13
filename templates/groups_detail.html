@@ -39,17 +39,29 @@
         <div class="col-md-2">
           <h1>Overview</h1>
         </div>
-        <div class="col-md-5">
-        <form method='POST' action='' class="">
-      {% csrf_token %} {% crispy form_group_settings %}
-    </form>
+        <div class="col-md-6">
+        <h1>Group: {{working_group.group_name}}</h1>
         
+        <h3>Description: {{working_group.description}}</h3>
+        </br>
+        </br>
+ 
+         <a href="/ent/group_edit_detail/{{working_group.id}}">Edit Group Settings</a>
+       {% if working_experience.user_state == "disable" %} 
+         <a href="/ent/text_set_detail_descriptions/{{working_experience.feed_id}}">Edit Feed Settings</a>
+</br></br>
+
+      <form action="#" method="get">
+       <input type="submit" class="btn-danger btn-sm" value="Delete Group" name="remove_group">
+     </form>
+
+     {% else %}
+     <form action="#" method="get">
+       <input type="submit" class="btn-primary btn-sm" value="Activate Group" name="enable_group">
+     </form>
+     {% endif %}
 
 
-
-
-
-   
 
       </div>
 
@@ -64,7 +76,10 @@
 <div class="row" id="texts">
   <div class="col-md-2">
     <h1>Feeds</h1>
-    You can customize the experience
+    <form action="#" method="get">
+       <input type="submit" class="btn-primary btn-sm" value="Create New Feed" name="create_new_feed">
+     </form>
+     </br>
   </div>
 
 
@@ -77,9 +92,7 @@
     </form>
 
     {% else %}
-<form action="#" method="get">
-       <input type="submit" class="btn-primary btn-sm" value="Create New Feed" name="create_new_feed">
-     </form>
+
     <table id="possible_texts_table" class="display" cellspacing="0" width="100%">
       <thead>
         <tr>
@@ -94,7 +107,7 @@
        {% for exp in working_user_feeds %}
        <tr>
 
-      <td><b>{{ exp.feed_name }}</b> (<a href="/ent/text_set_alter/{{ exp.feed_id }}/">{{exp.user_state}}</a>, <a href="/ent/text_set_detail/{{ exp.feed_id }}/">edit</a>)</td>
+      <td><b><a href="/ent/text_set_detail/{{ exp.feed_id }}/{{ exp.group_id }}/">{{ exp.feed_name }}</a></b> (<a href="/ent/text_set_alter/{{ exp.feed_id }}/">{{exp.user_state}}</a>)</td>
         <td>{{ exp.description }}</td>
         <td>{{ exp.texts_per_week }}</td>
         <td>{{ exp.number_of_texts_in_set }}</td>

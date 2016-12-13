@@ -166,7 +166,7 @@ def landing_page(request):
 	if request.user.is_authenticated():	
 		return HttpResponseRedirect(reverse('scaffold:about'))
 	else:
-		library_experiences = FeedSetting.objects.all().filter(feed_type='library')
+		library_experiences = FeedSetting.objects.all().filter(feed_type='library').filter(group_id=0)
 		number_of_users = UserSetting.objects.all().count()
 		
 

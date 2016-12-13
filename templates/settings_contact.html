@@ -26,10 +26,17 @@
   </div>
 
   <div class="col-md-5">
+  {% if messages %} {% for message in messages %}
+<div{% if message.tags %} class="alert alert-{{ message.tags }}" {% endif %}>
+<a class="close" data-dismiss="alert" href="#">&times;</a> {{ message }}
+</div>
+{% endfor %} {% endif %}
   </br>
     <form method='POST' action='' class="form-horizontal">
       {% csrf_token %} {% crispy form_free %}
     </form>
+
+
   </div>
 
   <div class="col-md-5">

@@ -15,9 +15,11 @@
       $(document).ready(function() {
         $('#possible_texts_table').DataTable({
           "columns": [
-          { "width": "40%" },
-          { "width": "30%" },
-          { "width": "30%" },
+          { "width": "70%" },
+          { "width": "10%" },
+          { "width": "20%" },
+          
+          
 
           ]
 
@@ -28,7 +30,7 @@
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="container">
     {% if last_page_go_back == "groups" %}
-    <a href="/ent/group_detail/{{ id_group }}/"><- Back to Group Detail</a>
+    <a href="/ent/group_detail/{{ working_experience.group_id }}/"><- Back to Group Detail</a>
     {% else %}
     {% if new_user_pages == "new_user" %}
     <a href="{% url 'ent:new_user' %}"><- Back to Set Up</a>
@@ -41,42 +43,32 @@
     {% endif %}
 
       <div class="row" id="texts">
-        <div class="col-md-2">
-          <h1>Overview</h1>
+        <div class="col-md-3">
+          <h1>Feed Overview</h1>
         </div>
-        <div class="col-md-5">
-         {% if working_experience.user_state == "disable" %} 
-
-         <form method='POST' action='' class="">
-          {% csrf_token %} {% crispy form_feed_name_new %}
-        </form>
-
-        {% else %}
-
-        <h1>{{working_experience.text_set}}</h1>
+        <div class="col-md-6">
+        <h1>{{working_experience.feed_name}}</h1>
         {{working_experience.description}}
+        </br></br>
+        {{number_of_texts}} texts in this experience.  {{text_per_week}} texts per week.
+</br></br>
 
-        {% endif %}
+         {% if working_experience.user_state == "disable" %} 
+         <a href="/ent/text_set_detail_descriptions/{{working_experience.feed_id}}">Edit Feed Settings</a>
+</br></br>
 
-      </div>
-      <div class="col-md-5">
-        <mark>{{text_for_user}}</mark>. 
-
-      </br></br>
-      {{number_of_texts}} texts in this experience.  {{text_per_week}} texts per week.
-      </br></br>
-
-      {% if working_experience.user_state == "disable" %} 
       <form action="#" method="get">
-       <input type="submit" class="btn-danger btn-lg" value="Delete Feed" name="remove_experience">
+       <input type="submit" class="btn-danger btn-sm" value="Delete Feed" name="remove_experience">
      </form>
 
      {% else %}
      <form action="#" method="get">
-       <input type="submit" class="btn-primary btn-lg" value="Activate Feed" name="enable_experience">
+       <input type="submit" class="btn-primary btn-sm" value="Activate Feed" name="enable_experience">
      </form>
      {% endif %}
-   </div>
+        
+         
+      </div>
 </div>
 
 
@@ -84,20 +76,40 @@
 
 <hr>
 <div class="row" id="texts">
-  <div class="col-md-2">
-    <h1>Edit Texts</h1>
-    You can customize the experience
+
+  <div class="col-md-3">
+    <h1>Texts</h1>
+    
   </div>
 
 
-  <div class="col-md-10">
+  <div class="col-md-6">
     {% if working_experience.user_state == "disable" %} 
 
+ <table id="possible_texts_table" class="display" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Importance</th>
+          <th></th>
+          
 
-    <form method='POST' action='' class="">
-      {% csrf_token %} {% crispy formset helper %}
+        </tr>
+      </thead>
+      <tbody>
+       {% for exp in working_user_gen %}
+       <tr>
+       <td><b><a href="/vis/text_data_detail/{{ exp.id }}/">{{ exp.text }}</b></a></td>
 
-    </form>
+        <td>{{ exp.text_importance }}</td>
+        <td><a href="/ent/text_edit/{{ exp.id }}/">Edit</a>, <a href="/ent/text_delete/{{ exp.id }}/">Delete</a></td>
+        
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h1><a href="/ent/add_texts/{{ working_experience.feed_id }}/{{ working_experience.group_id }}/">Add New Text!</a></h1>
 
     {% else %}
 
@@ -122,6 +134,8 @@
     </tbody>
   </table>
   {% endif %}
+
+  
 
 </div>
 </div>

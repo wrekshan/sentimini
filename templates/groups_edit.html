@@ -90,7 +90,7 @@
          {% for exp in working_groups %}
       <tr>
 
-        <td><b>{{ exp.group_name }}</b> (<a href="/ent/group_detail/{{ exp.id }}/">{{exp.user_state}}</a>, <a href="/ent/group_detail/{{ exp.id }}/">edit</a>)</td>
+        <td><b><a href="/ent/group_detail/{{ exp.id }}/">{{ exp.group_name }}</a></b> (<a href="/ent/group_detail/{{ exp.id }}/">{{exp.user_state}}</a>)</td>
         <td>{{ exp.description }}</td>
         <td>{{ exp.texts_per_week }}</td>
         <td>{{ exp.number_of_texts_in_set }}</td>

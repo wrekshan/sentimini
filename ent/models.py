@@ -60,7 +60,7 @@ class FeedSetting(models.Model):
 
 class PossibleTextSTM(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	feed_name = models.CharField(max_length=30,default='user generated',null=True)
+	feed_name = models.CharField(max_length=300,default='user generated',null=True)
 	unique_feed_name = models.CharField(max_length=30,default='',null=True) 
 	show_user = models.BooleanField(default=False) 
 	feed_id = models.IntegerField(default=0)
@@ -87,7 +87,7 @@ class ActualTextSTM(models.Model):
 	text_id = models.IntegerField(default=0)
 	textstore_id = models.IntegerField(default=0)
 	feed_id = models.IntegerField(default=0)
-	feed_name = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	feed_name = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	feed_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	system_text = models.IntegerField(default=0)
 	
@@ -116,7 +116,7 @@ class ActualTextSTM_SIM(models.Model):
 	text_id = models.IntegerField(default=0)
 	textstore_id = models.IntegerField(default=0)
 	feed_id = models.IntegerField(default=0)
-	feed_name = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	feed_name = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	feed_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	system_text = models.IntegerField(default=0)
 	
@@ -150,7 +150,7 @@ class PossibleTextLTM(models.Model):
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 
 	feed_id = models.IntegerField(default=0)
-	feed_name = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	feed_name = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	feed_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	text_set = models.CharField(max_length=30,default='',null=True) #This is the user phone number
 	text_type = models.CharField(max_length=120,default='library',null=True) #user or system
@@ -176,7 +176,7 @@ class ActualTextLTM(models.Model):
 	stm_id = models.IntegerField(default=0)
 	textstore_id = models.IntegerField(default=0)
 	feed_id = models.IntegerField(default=0)
-	feed_name = models.CharField(max_length=30,default='',null=True) #This is the user phone number
+	feed_name = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	feed_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	response_type = models.CharField(max_length=100,default='Open') 
@@ -217,6 +217,9 @@ class UserSetting(models.Model):
 	carrier = models.CharField(blank=True,max_length=100,default='CHANGE ME') #THis is the carrier
 	sms_address = models.EmailField(default='',null=True) #This is the address actually used.  Calculated from phone and carrier lookup
 	timezone = models.CharField(max_length=30,default='UTC') #THis is the timezone.  User encouraged to update when travelling.  Not sure if I want a stable timezone too.
+	sleep_time_in = models.CharField(max_length=30,default="11 PM",null=True) #This is the user phone number
+	wake_time_in = models.CharField(max_length=30,default="7 AM",null=True) #This is the user phone number
+
 	sleep_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
 	wake_time = models.TimeField(default=datetime(2016,1,30,22,00)) #This is the time the user sleeps.  Used to calculate deadtimes
 
