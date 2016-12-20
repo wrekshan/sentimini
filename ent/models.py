@@ -119,6 +119,7 @@ class ActualTextSTM_SIM(models.Model):
 	feed_name = models.CharField(max_length=300,default='',null=True) #This is the user phone number
 	feed_type = models.CharField(max_length=120,default='user',null=True) #user or system
 	system_text = models.IntegerField(default=0)
+	notuser = models.IntegerField(default=0)
 	
 	text = models.CharField(max_length=160,default='',null=True) #This is the emotion, of course
 	response = models.CharField(max_length=160,default='',null=True,blank=True) #This is the prompt type

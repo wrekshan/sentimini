@@ -596,6 +596,7 @@ def get_table_emotion_centered(request,simulated_val):
 	countz = []
 	averagez_bin = []
 	countz_bin = []
+	totz_bin = []
 	promptz = []
 	prompt_idz = []
 	feed_namez = []
@@ -614,16 +615,19 @@ def get_table_emotion_centered(request,simulated_val):
 		countz.append(ha['response_dim__count'])
 
 		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text = tmp['text']).aggregate(Avg('response_cat_bin'))
-		averagez_bin.append(ha['response_cat_bin__avg'])
+		averagez_bin.append(100*ha['response_cat_bin__avg'])
 
 		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text = tmp['text']).aggregate(Count('response_cat_bin'))
 		countz_bin.append(ha['response_cat_bin__count'])
+
+		ha = ActualTextLTM.objects.all().filter(user=request.user).filter(simulated=simulated_val).filter(text = tmp['text']).aggregate(Count('response'))
+		totz_bin.append(ha['response__count'])
 
 		feed_namez.append(example_tmp.feed_name)
 
 	working_entry = []
 	for i in range(0,len(promptz)):
-		working_entry.append({'text': promptz[i],'text_id': prompt_idz[i], 'feed_name': feed_namez[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
+		working_entry.append({'text': promptz[i],'response__count': totz_bin[i],'text_id': prompt_idz[i], 'feed_name': feed_namez[i], 'response_dim__avg': averagez[i], 'response_dim__count': countz[i], 'response_cat_bin__avg': averagez_bin[i], 'response_cat_bin__count': countz_bin[i]})
 		# working_entry.append({'text': promptz[i],'text_id': prompt_idz[i]})
 
 	print("WORKING ENTRY", working_entry)

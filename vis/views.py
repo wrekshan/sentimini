@@ -95,8 +95,12 @@ def text_data_detail_get_context(request,prompt_id,magic_simulated_value,demo):
 
 
 	#Table
-	table_latest_entry = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
-	table_latest_entry = table_latest_entry.order_by('time_sent')
+	if magic_simulated_value == 1:
+		table_latest_entry = ActualTextSTM_SIM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
+		table_latest_entry = table_latest_entry.order_by('time_sent')
+	else:
+		table_latest_entry = ActualTextSTM.objects.all().filter(user=request.user).filter(feed_type="user").filter(text_id=prompt_id).filter(simulated=magic_simulated_value)
+		table_latest_entry = table_latest_entry.order_by('time_sent')
 
 	
 	tmp = ActualTextLTM.objects.all().filter(user=request.user).filter(text_id=prompt_id).first()
@@ -140,7 +144,7 @@ def text_data_get_context(request,magic_simulated_value,demo):
 		table_emotion_centered = get_table_emotion_centered(request,simulated_val=magic_simulated_value)
 
 		#This gets the average and stuff for prompt centered table
-		table_latest_entry = ActualTextLTM.objects.filter(user=request.user).filter(feed_type="user").filter(simulated=magic_simulated_value)
+		table_latest_entry = ActualTextSTM_SIM.objects.filter(user=request.user).filter(feed_type="user").filter(simulated=magic_simulated_value)
 		# table_latest_entry = table_latest_entry.order_by('-time_sent')
 		
 		context = {
@@ -259,9 +263,13 @@ def text_data_detail_demo(request,prompt_id=None):
 	if request.user.is_authenticated():	
 		#### IS THERE A NEED FOR A SIMULATION
 		magic_simulated_value = 1
+
+
+
 		
 
-		if ActualTextLTM.objects.filter(user=request.user).count() > 1:
+		if ActualTextSTM_SIM.objects.filter(user=request.user).count() > 1:
+			print("DATA DEMO")
 
 			context = text_data_detail_get_context(request=request,prompt_id=prompt_id,magic_simulated_value=1,demo=1)
 
@@ -269,7 +277,23 @@ def text_data_detail_demo(request,prompt_id=None):
 			context = {
 			
 		    }
-	    
+
+		if request.GET.get('export_csv_responses'):
+			print("BUTTON PRESED")
+			# Create the HttpResponse object with the appropriate CSV header.
+			response = HttpResponse(content_type='text/csv')
+			response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
+			writer = csv.writer(response)
+
+			headers = ["text","time_sent","feed_name","response"]
+			writer.writerow(headers)
+
+			for tmp in context['table_latest_entry']:
+				row = [tmp.text,tmp.time_sent,tmp.feed_name,tmp.response]
+				writer.writerow(row)
+			return response
+
+
 		return render(request,"text_data_detail.html", context)
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
@@ -285,7 +309,7 @@ def text_data_demo(request):
 			for ltm in ActualTextSTM_SIM.objects.filter(user=request.user).filter(simulated=1):
 				ltm.delete()
 
-		generate_random_prompts_to_show(request,exp_resp_rate=.8,week=0,number_of_prompts=100) #set up 20 random prompts based upon the settings
+		generate_random_prompts_to_show(request,exp_resp_rate=.8,week=0,number_of_prompts=200) #set up 20 random prompts based upon the settings
 
 		context = text_data_get_context(request=request, magic_simulated_value=1,demo=1)
 
@@ -320,7 +344,7 @@ def text_data_demo(request):
 				writer.writerow(row)
 			return response
 
-		return render_to_response('visual.html', context)
+		return render(request,"visual.html", context)
 
 	else:
 		return HttpResponseRedirect('/accounts/signup/')
