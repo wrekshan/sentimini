@@ -150,13 +150,13 @@ def send_text(text):
 				message_to_send = str(text.text)
 
 				if now > tmp_user.respite_until_datetime and tmp_user.text_request_stop == False or text.system_text==1: 
-
 					Outgoing(addressee=addressee,date_sent=datetime.now(pytz.utc),message=text.text,entry_id=text.id).save()
 					
 					if tmp_user.send_email_check == True:
 						send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
 						text.time_sent = datetime.now(pytz.utc)
 						text.save()
+
 					if tmp_user.send_text_check == True:
 						send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
 						# send_mail('',message_to_send,str(exp_settings.feed_name +'<emojinseidev@gmail.com>'), [addressee], fail_silently=False)
@@ -168,6 +168,8 @@ def send_text(text):
 						text.save()
 
 def set_next_prompt(text):	
+	print("SET NEXT PROMPT")
+	print("text.user", text.user)
 	working_settings = UserSetting.objects.all().get(user=text.user)
 
 	#I think this is a kludge
@@ -387,7 +389,7 @@ def inhibition_global():
 		return False
 
 def inhibition_individual(text):
-	magic_number_text_per_hour_per_user = 20
+	magic_number_text_per_hour_per_user = 10
 
 	working_settings = UserSetting.objects.all().get(user=text.user)
 
@@ -410,15 +412,19 @@ def send_texts():
 	
 	system_texts = ActualTextSTM.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None).filter(system_text=1).filter(simulated=0)
 
+
+
 	for text in system_texts:
-		# print("inhibition global", inhibition_global())
-		# print("inhibition individual", inhibition_individual(text=text))
-		if inhibition_global() == True and inhibition_individual(text=text) == True:
-			send_text(text)
+		tmp_user = UserSetting.objects.all().get(user=text.user)
+		if tmp_user.send_text == True:
+			if inhibition_global() == True and inhibition_individual(text=text) == True:
+				send_text(text)
 
 	for text in user_texts:
-		if inhibition_global() == True and inhibition_individual(text=text) == True:
-			send_text(text)
+		tmp_user = UserSetting.objects.all().get(user=text.user)
+		if tmp_user.send_text == True:
+			if inhibition_global() == True and inhibition_individual(text=text) == True:
+				send_text(text)
 
 
 

@@ -248,6 +248,7 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 		"new_user_pages",
 		"begin_date",
 		"send_text",
+		"send_text_tmp",
 		"text_request_stop",
 		"respite_until_datetime",
 		"texts_per_week",

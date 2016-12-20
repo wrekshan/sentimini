@@ -1198,6 +1198,43 @@ def new_user(request):
 def texter(request):
 	if request.user.is_authenticated():	
 
+		# Send the text	
+
+		if request.GET.get('stop_sending_texts'):
+			print("pause texts for users")
+			working_users = UserSetting.objects.all()
+			for userz in working_users:
+				if userz.send_text == True:
+					userz.send_text_tmp = True
+					userz.send_text = False
+					userz.save()
+			
+			return HttpResponseRedirect('/ent/texter/')
+
+		if request.GET.get('start_sending_texts'):
+			print("pause texts for users")
+			working_users = UserSetting.objects.all()
+			for userz in working_users:
+				if userz.send_text_tmp == True:
+					userz.send_text = True
+					userz.send_text_tmp = False
+					userz.save()
+			
+			return HttpResponseRedirect('/ent/texter/')	
+
+			
+
+		if request.GET.get('delete_unsent_texts'):
+			
+			working_texts = ActualTextSTM.objects.all().filter(time_sent=None)
+			working_texts.delete()
+			
+			return HttpResponseRedirect('/ent/texter/')		
+
+
+
+
+
 		#Create the Text
 		if request.GET.get('create_unsent_text'):
 			print("Creating Unsent Texts")
