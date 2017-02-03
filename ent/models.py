@@ -152,7 +152,7 @@ class Collection(models.Model):
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	collection = models.ManyToManyField(Collection,default=1, related_name='texts')
-	timing = models.ForeignKey(Timing,default=1)
+	timing = models.ForeignKey(Timing,null=True)
 	text = models.CharField(max_length=160,default='')
 	date_created = models.DateTimeField(blank=True,null=True)
 	date_scheduled = models.DateTimeField(blank=True,null=True)
