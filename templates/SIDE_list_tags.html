@@ -24,7 +24,7 @@
 
   
 
-  <ul class="list collapsible side_bar" data-collapsible="expandable">
+  <ul class="list collapsible" data-collapsible="expandable">
 
     {% for key, value in tag_info %}
     <li>
@@ -36,9 +36,9 @@
         (<span class="num_texts">{{value.num_texts}}</span>)
       </div>
 
-      <div class="collapsible-body col s12 offset-s0 side_bar">
+      <div class="collapsible-body col s12 offset-s0">
         <div id="text_sort_{{key}}">
-          <ul class="list collapsible  side-text-header" data-collapsible="expandable">
+          <ul class="list collapsible" data-collapsible="expandable">
              <div class="waves-effect waves btn-flat chip sort" data-sort="burden">
             # per day
           </div>
@@ -51,13 +51,13 @@
           <div class="row"></div>
           {% for text in value.texts %}
     <li>
-      <div class="collapsible-header side-text-header" style="line-height: normal;"><i class="medium material-icons">message</i>
+      <div class="collapsible-header" style="line-height: normal;"><i class="medium material-icons">message</i>
         <span class="burden" style="font-weight: bold; font-size: 130%">{{text.burden|floatformat}}</span> per day
         <hr>
         <span class="side-text-content" >{{text.text}}</span>
       </div> 
 
-      <div class="collapsible-body col s12 side_bar">
+      <div class="collapsible-body col s12">
         <div class="row">
             <div class="col s3">
               <a href="/ent/add_new_text/{{text.id}}">Edit</a>

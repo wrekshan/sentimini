@@ -6,7 +6,8 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <meta name="description" content="">
   <meta name="author" content="">
@@ -25,8 +26,8 @@
   
   <link rel="stylesheet" href={% static "css/materialize-select2.css" %}> -->
   
-<script src={% static "js/list.min.js" %}></script>
-<script src={% static "js/list.pagination.min.js" %}></script>
+  <script src={% static "js/list.min.js" %}></script>
+  <script src={% static "js/list.pagination.min.js" %}></script>
   <link rel="stylesheet" href={% static "css/nouislider.css" %}>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
@@ -36,7 +37,7 @@
 
   <script src={% static "js/materialize.min.js" %}></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href={% static "css/materialize.css" %}>
+  <link rel="stylesheet" href={% static "css/materialize.css" %}>
   <link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
 
 
@@ -68,49 +69,47 @@
  <!-- LINK ROW -->
  <div class="row">
    {% if user.is_authenticated %}
-  
-  <div class="col s4 center-align">
-  <a href="/feed/" class="">   
-        <i class="material-icons small">question_answer</i>
-      </a>
-  <span>Texts</span>
+
+   <div class="col s4 center-align">
+    <a href="/feed/" class="">   
+      <i class="material-icons small">question_answer</i>
+    </a>
+    <span>Texts</span>
   </div>
   <div class="col s4 right-align">
-  <a href="/ent/collection/" class="">   
-        <i class="material-icons small">collections</i>
-      </a>
-      Collections
+    <a href="/ent/collection/" class="">   
+      <i class="material-icons small">collections</i>
+    </a>
+    Collections
   </div>
   <div class="col s4 center-align">
-  <a href="/settings/" class="left-align ">   
-        <i class="material-icons small">settings</i>
-      </a>
-      <span>Settings</span>
+    <a href="/settings/" class="left-align ">   
+      <i class="material-icons small">settings</i>
+    </a>
+    <span>Settings</span>
   </div>
 
   {% else %}
-    <a href="/ent/add_new_text/" class="">   
-        <i class="material-icons small">textsms</i>See how easy to schedule text
-    </a>
-    <a href="/ent/collection/" class="">   
-      <i class="material-icons small">collections</i>See all different uses
-    </a>
-    <a href="/landing/" class="">   
-      <i class="material-icons small">info_outline</i>Back to about page
-    </a> 
- {% endif %}
+  <a href="/ent/add_new_text/" class="">   
+    <i class="material-icons small">textsms</i>See how easy to schedule text
+  </a>
+  <a href="/ent/collection/" class="">   
+    <i class="material-icons small">collections</i>See all different uses
+  </a>
+  <a href="/landing/" class="">   
+    <i class="material-icons small">info_outline</i>Back to about page
+  </a> 
+  {% endif %}
 </div>
- <!-- BUTTON -->
- {% if user.is_authenticated %}
- <a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Schedule a text</a>
- <!-- <a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Pause all text</a> -->
- {% else %}
- 
- <a class="waves-effect waves-light btn z-depth-4" href="{% url 'account_signup' %}" > Sign Up</a>
- {% endif %}
-</div>
-</div>
-</div>
+
+<!-- BUTTON -->
+{% if user.is_authenticated %}
+<a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Schedule a text</a>
+<!-- <a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Pause all text</a> -->
+{% else %}
+
+<a class="waves-effect waves-light btn z-depth-4" href="{% url 'account_signup' %}" > Sign Up</a>
+{% endif %}
 
 
 
@@ -130,10 +129,11 @@
       </div>
     </p>
   </div>
+</div>
   {% endif %}
 
   <!-- LIST OF TEXTS / TAGS-->
-  <div class="col l12 s12">
+  <div class="row">
     <div id="side_content"></div>
   </div>
 
@@ -142,9 +142,6 @@
   
   <div class="row">
     <div class="col l12 s12">
-
-
-
       {% if user.is_superuser %}
       <a class="waves-effect waves-light btn" href="/ent/simulate/" > Simulate</a>
       <a class="waves-effect waves-light btn" href="/ent/update_db_after_import/" > update_db_after_import</a>
@@ -155,35 +152,29 @@
 
 
       <div class="row">
-       
 
        {% if user.is_authenticated %}
 
-         <p>
-           <a class="" href="/ent/about/"><i class="material-icons small">info_outline</i>about</a>
-         
-           <a class="" href="{% url 'account_logout' %}"><i class="material-icons small">perm_identity</i>sign out</a>
-         </p>
+       <p>
+         <a class="" href="/ent/about/"><i class="material-icons small">info_outline</i>about</a>
+         <a class="" href="{% url 'account_logout' %}"><i class="material-icons small">perm_identity</i>sign out</a>
+       </p>
+
+       {% else %}
+
+       <li class="collection-item valign-wrapper">
+         <a class="" href="{% url 'account_login' %} valign-wrapper"><i class="material-icons small valign">perm_identity</i><span>sign in</span></a>
+       </li>
 
 
-      {% else %}
-      
+       {% endif %}
+     </div>
 
-                              
-    
-      <li class="collection-item valign-wrapper">
-           <a class="" href="{% url 'account_login' %} valign-wrapper"><i class="material-icons small valign">perm_identity</i><span>sign in</span></a>
-        </li>
-      
-      
-      {% endif %}
-    </div>
-    
- 
-  
-</div>
-</div>
-</div>
+
+
+   </div>
+ </div>
+
 
 
 </ul>
@@ -251,10 +242,11 @@
 <script>
  $(document).ready(function(){
   $('.collapsible').collapsible();
+  $(".button-collapse").sideNav();
 });
 
   // Initialize collapse button
-  $(".button-collapse").sideNav();
+  
   // Initialize collapsible (uncomment the line below if you use the dropdown variation)
   //$('.collapsible').collapsible();
 </script>
