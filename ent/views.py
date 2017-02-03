@@ -28,6 +28,98 @@ from django.db.models import Q
 from .models import PossibleText, ActualText, Collection, Tag, Timing
 
 
+
+def update_db_after_import(request):
+	print("update_db_after_import")
+	
+
+
+
+	# Set up the collection
+	working_collections = Collection.objects.all().filter(user=request.user)
+	for collection in working_collections:
+		tags = collection.intended_tags.split(',')
+		for tag in tags:
+			if tag !='':
+				if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+					tmp = Tag(tag=tag,user=request.user)
+					tmp.save()
+				else:
+					tmp = Tag.objects.all().get(tag=tag)
+				collection.tag.add(tmp)
+
+		collection.publish=True
+		collection.save()
+
+	# Set up the timings
+	working_timing = Timing.objects.all().filter(user=request.user)
+	for timing in working_timing:
+		print("ID", timing.id)
+		timing.repeat = True
+
+		if timing.hour_start is not None:
+			timing.hour_start_value = (int(str(timing.hour_start.hour))*60) + int(str(timing.hour_start.minute))
+
+		if timing.hour_end is not None:
+			timing.hour_end_value = (int(str(timing.hour_end.hour))*60) + int(str(timing.hour_end.minute))	
+
+		
+		timing.date_start = datetime.now(pytz.utc)
+		timing.repeat_summary = "Repeating X times a day between " + str(timing.hour_start) + " and " + str(timing.hour_end)
+
+
+		if timing.fuzzy == True:
+			if timing.fuzzy_denomination == 'minutes':
+				timing.iti = int(timing.iti_raw)
+			elif timing.fuzzy_denomination == 'hours':
+				timing.iti = int(timing.iti_raw) * 60
+			elif timing.fuzzy_denomination == 'days':
+				timing.iti = int(timing.iti_raw) * 60 * 24
+			elif timing.fuzzy_denomination == 'weeks':
+				timing.iti = int(timing.iti_raw) * 60 * 24 * 7
+			elif timing.fuzzy_denomination == 'months':
+				timing.iti = int(timing.iti_raw) * 60 * 24 * 7 * 4	
+				
+			timing.repeat_summary = "Repeating on average every " + str(timing.iti_raw) + " " + timing.fuzzy_denomination + " between " + str(timing.hour_start) + " and " + str(timing.hour_end)
+
+		timing.save()
+
+	# Set up the texts
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	for text in working_texts:
+		# Get the timing object
+		timing = Timing.objects.all().get(intended_text=text.text)
+		text.timing = timing
+
+		#add the tags
+		tags = text.intended_tags.split(',')
+		for tag in tags:
+			if tag !='':
+				if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+					tmp = Tag(tag=tag,user=request.user)
+					tmp.save()
+				else:
+					tmp = Tag.objects.all().get(tag=tag)
+				text.tag.add(tmp)
+
+		#add the collections
+		collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
+		text.collection.add(collection)
+
+		text.save()
+
+
+
+
+
+			 
+
+
+		
+	return redirect('feed')
+
+
+
 def add_to_collection(request):
 	print("ADDING TO COLECTION")
 	response_data = {}

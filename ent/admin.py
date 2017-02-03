@@ -72,8 +72,39 @@ admin.site.register(Tag,TagModelAdmin)
 
 
 
-class TimingModelAdmin(admin.ModelAdmin):
+
+
+class ActualTextModelAdmin(admin.ModelAdmin):
 	list_display = [
+		"user",
+		"text",
+		"time_to_send",
+		"time_sent",
+		"time_response",
+		"response",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user","text"]
+	class Meta:
+		model = ActualText
+
+admin.site.register(ActualText,ActualTextModelAdmin)
+
+
+
+class TimingResource(resources.ModelResource):
+	class Meta:
+		model = Timing
+		import_id_fields = ('intended_text',)
+		# fields = ('intended_text', 'hour_start', 'hour_end','fuzzy','fuzzy_denomination','iti','iti_noise','monday','tuesday','wednesday','thursday','friday','saturday','sunday')
+		fields = ('intended_text', 'hour_start', 'hour_end','fuzzy','fuzzy_denomination','iti_raw','iti_noise')
+
+
+class TimingModelAdmin(ImportExportModelAdmin):
+	resource_class = TimingResource   
+
+	list_display = [
+		"id",
 		"user",
 		"timing",
 		"repeat",
@@ -98,33 +129,25 @@ class TimingModelAdmin(admin.ModelAdmin):
 		"saturday",
 		"sunday",
 	]
-	list_display_links = ["user","timing"]
-	list_filter = ["user","timing","system_time"]
+	list_display_links = ["user"]
+	list_filter = ["user","timing"]
 	class Meta:
 		model = Timing
-
+		
 admin.site.register(Timing,TimingModelAdmin)
 
 
 
-class ActualTextModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"text",
-		"time_to_send",
-		"time_sent",
-		"time_response",
-		"response",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user","text"]
+class PossibleTextResource(resources.ModelResource):
 	class Meta:
-		model = ActualText
+		model = PossibleText
+		import_id_fields = ('text',)
+		fields = ('intended_collection', 'text', 'intended_tags')
 
-admin.site.register(ActualText,ActualTextModelAdmin)
 
+class PossibleTextModelAdmin(ImportExportModelAdmin):
+	resource_class = PossibleTextResource   
 
-class PossibleTextModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"id",
 		"active",
@@ -140,12 +163,22 @@ class PossibleTextModelAdmin(admin.ModelAdmin):
 admin.site.register(PossibleText,PossibleTextModelAdmin)
 
 
-class CollectionModelAdmin(admin.ModelAdmin):
+
+class CollectionResource(resources.ModelResource):
+	class Meta:
+		model = Collection
+		import_id_fields = ('collection_name',)
+		fields = ('collection', 'collection_name', 'intended_tags', 'description')
+
+
+class CollectionModelAdmin(ImportExportModelAdmin):
+	resource_class = CollectionResource   
+
+
 	list_display = [
 		"id",
 		"user",
 		"collection",
-
 	]
 	list_display_links = ["user"]
 	list_filter = ["user","collection"]
@@ -153,3 +186,5 @@ class CollectionModelAdmin(admin.ModelAdmin):
 		model = Collection
 		
 admin.site.register(Collection,CollectionModelAdmin)
+
+

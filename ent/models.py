@@ -50,6 +50,7 @@ class Tag(models.Model):
 
 class Timing(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	intended_text = models.CharField(max_length=160,blank=True,null=True)
 	repeat_summary = models.CharField(max_length=2000,blank=True,null=True)
 	system_time  = models.BooleanField(default=False)
 	show_user  = models.BooleanField(default=False)
@@ -140,11 +141,12 @@ class Timing(models.Model):
 class Collection(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	collection = models.CharField(max_length=160,default='')
-	picture_name = models.CharField(max_length=160,default='')
+	collection_name = models.CharField(max_length=160,default='')
 	description = models.CharField(max_length=3000,default='')
 	tag = models.ManyToManyField(Tag,blank=True)
 	publish  = models.BooleanField(default=False) 
 	explict_save  = models.BooleanField(default=False) 
+	intended_tags = models.CharField(max_length=600,blank=True,null=True)
 
 	def __str__(self):
 		return self.collection
@@ -158,6 +160,9 @@ class PossibleText(models.Model):
 	date_scheduled = models.DateTimeField(blank=True,null=True)
 	tag = models.ManyToManyField(Tag,blank=True)
 	active = models.BooleanField(default=True) 
+
+	intended_collection = models.CharField(max_length=160,blank=True,null=True)
+	intended_tags = models.CharField(max_length=600,blank=True,null=True)
 	
 	def __str__(self):
 		return self.text

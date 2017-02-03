@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from django.views.generic import TemplateView
 
-from .views import fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
+from .views import upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^vis/', include('vis.urls',namespace="vis")),
 
     url(r'^test_page/$', test_page, name='test_page'),
+    url(r'^upload_text_csv/$', upload_text_csv, name='upload_text_csv'),
     url(r'^feed/$', feed, name='feed'),
     url(r'^app_home/$', app_home, name='app_home'),
     url(r'^fun_splash/$', fun_splash, name='fun_splash'),

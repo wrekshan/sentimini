@@ -25,6 +25,17 @@ from django.db.models import Q
 
 from ent.models import PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting
 
+
+def upload_text_csv(request):
+	response_data = {}
+	print("UPLOAD CSV")
+	print(request.POST.keys())
+	print(request.POST['file'])
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")					
+
+
+
 def fun_splash_description(request):
 	response_data = {}
 	context = {}
