@@ -4,242 +4,196 @@
 
 <!-- CARD FOR NEW TEXTS -->
 <div class = "container">
-<div class="row">
-  <div class="col l4 push-l8 hide-on-med-and-down">
-    <div class= "card">
-      <div class="card-content small_spaces">
-        <div class="row">
-          <div class="col s12">
-            <span class="card-title">Text</span>
-            <p>
-              Text yourself whatever you want.
-            </p>
-            <div class="row"></div>
-            <p>
-              You can repeat the texts and have more advanced scheduling features.
-            </p>
-            <div class="row"></div>
-            <p>
-              Sentimini will collect any responses.  Graphs will be generated for responses on a yes/no scale or a 0-10 scale.
-            </p>
+  <div class="row">
+    <div class="col l4 push-l8 hide-on-med-and-down">
+      <div class= "card">
+        <div class="card-content small_spaces">
+          <div class="row">
+            <div class="col s12">
+              <span class="card-title">Text</span>
+              <p>
+                Text yourself whatever you want.
+              </p>
+              <div class="row"></div>
+              <p>
+                You can repeat the texts and have more advanced scheduling features.
+              </p>
+              <div class="row"></div>
+              <p>
+                Sentimini will collect any responses.  Graphs will be generated for responses on a yes/no scale or a 0-10 scale.
+              </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="col l8 pull-l4 m12 s12">
-    <div class="card">
-      <div class="card-content small_spaces">
+    <div class="col l8 pull-l4 m12 s12">
+      <div class="card">
+        <div class="card-content small_spaces">
 
-        <!-- TEXT -->
-        <div class="row">
-          <div class="col s12">
-            {% if editing_text %}
-            <span class="card-title">Editing text</span>
-            {% else %}
-            <span class="card-title">Create new text</span>
-            {% endif %}
+          <!-- TEXT -->
+          <div class="row">
+            <div class="col s12">
+              {% if editing_text %}
+              <span class="card-title">Editing text</span>
+              {% else %}
+              <span class="card-title">Create new text</span>
+              {% endif %}
 
-            <!-- TEXT -->
-            <div class="input-field col s12">
-              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Text yourself antyhing you want.">chat</i>
-              <textarea id="textarea1" class="materialize-textarea sentimini_text" length="160" rows="1"></textarea>
-              <label for="textarea1" class="active">Text content</label>
-            </div>
+              <!-- TEXT -->
+              <div class="input-field col s12">
+                <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Text yourself antyhing you want.">chat</i>
+                <textarea id="textarea1" class="materialize-textarea sentimini_text" length="160" rows="1"></textarea>
+                <label for="textarea1" class="active">Text content</label>
+              </div>
 
 
-            <!-- DATE -->
-            <div class="input-field col s12">
-              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to send the text?">today</i>
-              <!-- <input id="datepicker" placeholder="What date do you want to start receiving this text?"/> -->
-              <input id="start_date" type="date" class="datepicker">
-              <label class="active" for="start_date">Start date</label>
-            </div>
+              <!-- DATE -->
+              <div class="input-field col s12">
+                <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to send the text?">today</i>
+                <!-- <input id="datepicker" placeholder="What date do you want to start receiving this text?"/> -->
+                <input id="start_date" type="date" class="datepicker">
+                <label class="active" for="start_date">Start date</label>
+              </div>
 
-            <!-- HOUR -->
-            <div class="input-field col s12 ">
-              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i>
-              <div class="col s11 offset-s1">
+              <!-- HOUR -->
+              <div class="input-field col s12 ">
+                <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i>
+                <div class="col s11 offset-s1">
                   <p class="range-field">
                     <div type="range" id="specific_time_hours"></div>
                   </p>
-              
-                <div class="row"></div>
-                Hour Range: <span id="time"></span>
+
+                  <div class="row"></div>
+                  Hour Range: <span id="time"></span>
+                </div>
               </div>
-            </div>
-            
 
 
-            <!-- TAGS -->
-            <div class="input-field col s12">
-              <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-              <i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+
+              <!-- TAGS -->
+              <div class="input-field col s12">
+                <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+                <i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+                <div class="row">
+                  <div class="col s12">
+                   <select id="tag_bar" multiple="multiple" placeholder="">
+                     {% for tag in working_tags %}
+                     <option value="{{tag.tag}}">{{tag.tag}}</option>
+                     {% endfor %}
+                   </select>
+                 </div>
+               </div>
+             </div>
+
+
+             <!-- REPEAT -->
+             <div class="input-field col s12 ">
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?">repeat</i>
+              <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
               <div class="row">
-                <div class="col s12">
-                 <select id="tag_bar" multiple="multiple" placeholder="">
-                   {% for tag in working_tags %}
-                   <option value="{{tag.tag}}">{{tag.tag}}</option>
-                   {% endfor %}
-                  </select>
+                <div class="col s10 offset-s1">
+                  <p>
+                    <!-- CHECKBOX -->
+                    <input data-target="modal1" name="repeat_checkbox" type="checkbox" id="repeat_checkbox" value="" />
+                    <label for="repeat_checkbox" id="repeat_summary2" class="">Click here to repeat</label>
+                  </p>
                 </div>
               </div>
             </div>
 
-
-            <!-- REPEAT -->
+            <!-- ACTIVE -->
             <div class="input-field col s12 ">
-            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?">repeat</i>
-            <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
-            <div class="row">
-              <div class="col s10 offset-s1">
-                <p>
-                  <!-- CHECKBOX -->
-                  <input data-target="modal1" name="repeat_checkbox" type="checkbox" id="repeat_checkbox" value="" />
-                  <label for="repeat_checkbox" id="repeat_summary2" class="">Click here to repeat</label>
-                </p>
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This text will be sent ONLY if this box is checked">alarm_on</i>
+              <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
+              <div class="row">
+                <div class="col s10 offset-s1">
+                  <p>
+                    <!-- CHECKBOX -->
+                    <input name="active_text_checkbox" type="checkbox" id="active_text_checkbox" value="" checked>
+                    <label for="active_text_checkbox" class="">Active text</label>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- ACTIVE -->
-          <div class="input-field col s12 ">
-            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This text will be sent ONLY if this box is checked">alarm_on</i>
-            <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
-            <div class="row">
-              <div class="col s10 offset-s1">
-                <p>
-                  <!-- CHECKBOX -->
-                  <input name="active_text_checkbox" type="checkbox" id="active_text_checkbox" value="" checked>
-                  <label for="active_text_checkbox" class="">Active text</label>
-                </p>
-              </div>
-            </div>
-          </div>
-      </div>
-      </div>
-
-
-      <!-- MODAL buTTON -->
-      <!-- <button data-target="modal1" class="btn">Modal</button> -->
-      <form>{% csrf_token %}
-        <div class="card-action">
-          {% if user.is_authenticated %}
-          <a id="save_new_text_button" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
-          {% else %}
-          <a href="{% url 'account_signup' %}" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Sign up</a>
-          {% endif %}
         </div>
-      </form>
+
+
+        <!-- MODAL buTTON -->
+        <!-- <button data-target="modal1" class="btn">Modal</button> -->
+        <form>{% csrf_token %}
+          <div class="card-action">
+            {% if user.is_authenticated %}
+            <a id="save_new_text_button" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
+            {% else %}
+            <a href="{% url 'account_signup' %}" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Sign up</a>
+            {% endif %}
+          </div>
+        </form>
+      </div>
     </div>
+
+
+
+
+    <!-- </div> -->
+
+
+    <!-- MODAL -->
+    <div id="modal1" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <div class="col s12">
+          <!-- TEXTS SUMMARY OF REPEAT -->
+          <h5><div id ="repeat_summary">Repeat</div></h5>
+          <hr>
+
+          <!-- SWITCH.  THIS TRIGGERS FUZZY OR SPECIFIC -->
+          <div class="switch">
+            <label>
+              Specific
+              <input type="checkbox" id="timing_switch">
+              <span class="lever"></span>
+              Fuzzy
+            </label>
+          </div>
+
+          <!-- FUZZY OR SPECIFIC CONTENT -->
+          <div id="model_content_for_switch"></div>
+
+          <!-- DT IF END -->
+          <div class="row">
+            <div class="col s12">
+              <b>Ends on:</b>
+            </div>
+            <div class="input-field col s12 m8 l6">
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to stop the texts?">today</i>
+              <!-- <input type="date" id="end_datepicker" class="datepicker" placeholder="Never"> -->
+              <input id="end_datepicker" type="date" class="datepicker" placeholder="Never?">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- FOOTER -->
+      <div class="modal-footer">
+        <a id="modal_save" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Save</a>
+        <a id="modal_dismiss" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+      </div>
+    </div>
+    
   </div>
 
-
-
-
-  <!-- </div> -->
-
-
-  <!-- MODAL -->
-  <div id="modal1" class="modal">
-    <div class="modal-content">
-      <div class="col s12">
-        <!-- TEXTS SUMMARY OF REPEAT -->
-        <h5><div id ="repeat_summary">Repeat</div></h5>
-        <hr>
-
-        <!-- SWITCH.  THIS TRIGGERS FUZZY OR SPECIFIC -->
-        <div class="switch">
-          <label>
-            Specific Timings
-            <input type="checkbox" id="timing_switch">
-            <span class="lever"></span>
-            Fuzzy Timings
-          </label>
-        </div>
-
-        <!-- FUZZY OR SPECIFIC CONTENT -->
-        <div id="model_content_for_switch"></div>
-
-        <!-- REPEAT this will be for later! -->
-      <!-- <div class="row">
-        <div class="col s12">
-          <span class="card-title">Repeats</span>
-          <div class="input-field col s12 ">
-            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?">repeat</i>
-            <div class="row">
-              <div class="col s10 offset-s1 black-text">
-                <select id="timing_select" class="browser-default" >
-                  <option value="" disabled selected>No repeats</option>
-                  {% for timing in working_timings %}
-                  <option value="{{timing.id}}">{{timing.timing}}</option>
-                  {% endfor %}
-                  <option value="new_timing">Add a new timing preset</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-
-
-      <!-- DT IF END -->
-      <div class="row">
-        <div class="col s12">
-          <b>Ends on:</b>
-        </div>
-        <div class="input-field col s5">
-          <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to stop the texts?">today</i>
-          <!-- <input type="date" id="end_datepicker" class="datepicker" placeholder="Never"> -->
-          <input id="end_datepicker" type="date" class="datepicker" placeholder="Never?">
-        </div>
-        <!-- <div class="col s1">
-        Or:
-        </div>
-        <div class="input-field col s6">
-
-          <input id="text_until" type="text" class="validate" placeholder="I say stop (not connected yet)">
-          <label for="text_until">Passcode to stop</label>
-        </div> -->
-
-      </div>
-
-
-
-      <!-- SAVE TIMING NAME -->
-   <!--  <div class="row">
-      <form class="col s5">
-        <b>Timing Setting Name:</b>
-        <p>
-          
-          <input name="time_setting_name_save" type="checkbox" id="time_setting_name_save" value="" />
-          <label for="time_setting_name_save">Save Time Setting For Future</label>
-          
-        </p>
-      </form>
-
-      <div id = "time_setting_name_container" class="input-field col s7">
-        <input id="time_setting_name" type="text" class="validate">
-        <label for="time_setting_name">Time Setting Name</label>
-      </div>
-    </div> -->
-
-
-
-    <!-- FOOTER -->
-    <div class="modal-footer">
-      <a id="modal_save" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Save</a>
-      <a id="modal_dismiss" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
-    </div>
-  </div>
 </div>
-</div>
+
 
 
 
 
 <script src={% static "js/nouislider.js" %}></script>
+
 <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"> -->
 
 
@@ -273,12 +227,12 @@
  });
 
 
-var connect = slider.querySelectorAll('.noUi-connect');
-var classes = ['c-1-color'];
+  var connect = slider.querySelectorAll('.noUi-connect');
+  var classes = ['c-1-color'];
 
-for ( var i = 0; i < connect.length; i++ ) {
+  for ( var i = 0; i < connect.length; i++ ) {
     connect[i].classList.add(classes[i]);
-}
+  }
 
   slider.noUiSlider.on('update', function(){
 
@@ -355,7 +309,7 @@ for ( var i = 0; i < connect.length; i++ ) {
   $('#end_datepicker').val("{{editing_text.timing.date_end_value}}")
 
 
-  
+
   // $('#repeat_summary').html()
 
 </script>
@@ -583,48 +537,48 @@ for ( var i = 0; i < connect.length; i++ ) {
 
 
 // REPEAT SUMMARY
- var get_repeat_summary = function(){
+var get_repeat_summary = function(){
 
   var output = get_repeat_summary_model()
-   
+
   console.log("OUTPUT 51 " + output)
-   if ($('#repeat_checkbox').is(':checked') === "false") {
-      console.log("NO REPEAT")
-      $('#repeat_summary').html(output)
-      $('#repeat_summary2').text("Click here to repeat")
-    } else {
-      console.log("REPEAT DEFINED")
-        $('#repeat_summary').html(output)
-        $('#repeat_summary2').html(output+ " <a data-target='modal1'> EDIT </a>")
-    }
+  if ($('#repeat_checkbox').is(':checked') === "false") {
+    console.log("NO REPEAT")
+    $('#repeat_summary').html(output)
+    $('#repeat_summary2').text("Click here to repeat")
+  } else {
+    console.log("REPEAT DEFINED")
+    $('#repeat_summary').html(output)
+    $('#repeat_summary2').html(output+ " <a data-target='modal1'> EDIT </a>")
   }
+}
 
 
 
 
- var get_repeat_summary_model = function(){
+var get_repeat_summary_model = function(){
   console.log("STEP 2 get_repeat_summary_model")
   console.log("----- REPEAT CHECK VAL: ", $('#repeat_checkbox').is(':checked'))
 
-    var output = ""
-    var end_date = $('#end_datepicker').val()
-    if ($('#end_datepicker').val() === "")
-    {
-      var end_date = "forever"
-      console.log("&&&&& END DATE EMPTY")
-    } else {
-      console.log("&&&&& END DATE FULL")
-    }
+  var output = ""
+  var end_date = $('#end_datepicker').val()
+  if ($('#end_datepicker').val() === "")
+  {
+    var end_date = "forever"
+    console.log("&&&&& END DATE EMPTY")
+  } else {
+    console.log("&&&&& END DATE FULL")
+  }
 
-    var start_date = $('#datepicker').val()
+  var start_date = $('#datepicker').val()
 
     // TIME RANGE
     var start_time = slideTime_start()
     var end_time = slideTime_end()
 
 
-      if ($('#timing_switch').is(':checked'))
-      {
+    if ($('#timing_switch').is(':checked'))
+    {
         // ITI
         var ITI_mean = $('#ITI_mean').val()
         var ITI_noise = $('#ITI_noise').val()
@@ -656,29 +610,29 @@ for ( var i = 0; i < connect.length; i++ ) {
         var repeat_num_weeks = $('#repeat_num_weeks').val()
 
        // GET THE WEEK DAYS
-        var weekdays = [];
-        $('input[name=weekdays]:checked').each(function() {
-           weekdays.push($(this).val());
-         });
+       var weekdays = [];
+       $('input[name=weekdays]:checked').each(function() {
+         weekdays.push($(this).val());
+       });
 
-        var num_per_week = weekdays.length*num_repeats
-        var num_per_day = (num_per_week )/7
+       var num_per_week = weekdays.length*num_repeats
+       var num_per_day = (num_per_week )/7
 
-        if (weekdays.length>6){
-          weekdays = "all days"
-        } 
-         var summary = "Repeating " + num_repeats + " times a day between " + start_time + " and " + end_time + " on " + weekdays + " until " + end_date
-         console.log("SUMMARY 120 " + summary)
+       if (weekdays.length>6){
+        weekdays = "all days"
       } 
+      var summary = "Repeating " + num_repeats + " times a day between " + start_time + " and " + end_time + " on " + weekdays + " until " + end_date
+      console.log("SUMMARY 120 " + summary)
+    } 
 
-     
 
-      
 
-       output = summary
-      console.log("OUTPUT 133 " + output)
-      return output
-}
+
+
+    output = summary
+    console.log("OUTPUT 133 " + output)
+    return output
+  }
 </script>
 <script type="text/javascript">
   var save_text_data = function(){
