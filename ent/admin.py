@@ -1,263 +1,28 @@
 from django.contrib import admin
 
-from .models import GroupSetting, Carrier, Respite, UserSetting, Incoming, Outgoing, Ontology, Prompttext, UserGenPromptFixed, PossibleTextSTM, PossibleTextLTM, ActualTextSTM, ActualTextLTM, FeedSetting, ResponseTypeStore, ActualTextSTM_SIM
-
-# Register your models here.
-#NEW
-
+# Register your models here
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
+from .models import ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
-class GroupSettingResource(resources.ModelResource):
-	class Meta:
-		model = GroupSetting
-		import_id_fields = ('unique_group_name',)
-		fields = ('group_name', 'unique_group_name')
-
-
-class GroupSettingModelAdmin(ImportExportModelAdmin):
-    resource_class = GroupSettingResource   
-    list_filter = ["user", "group_name"]
-
-    list_display = [
-		"user",
-		"id",
-		"ideal_id",
-		"passcode",
-		"group_name",
-		"group_type",
-		"unique_group_name",
-		"viewable",
-		"joinable",
-		"editable",
-		"feeds",
-	
-	]
-admin.site.register(GroupSetting,GroupSettingModelAdmin)
-
-
-class FeedSettingResource(resources.ModelResource):
-	class Meta:
-		model = FeedSetting
-		import_id_fields = ('unique_feed_name',)
-		fields = ('feed_name', 'ordering_num', 'unique_feed_name', 'description', "description_long", 'tags', 'texts_per_week','time_to_declare_lost','feed_type',)
-
-
-class FeedSettingModelAdmin(ImportExportModelAdmin):
-    resource_class = FeedSettingResource   
-    list_filter = ["user", "feed_type"]
-
-    list_display = [
-		"user",
-		"id",
-		"feed_id",
-		"feed_name",
-		"feed_type",
-		"group_id",
-		"group_name",
-		"feed_type",
-		"ordering_num",
-		"unique_feed_name",
-		"tags",
-		"description",
-		"description_long",
-		"texts_per_week",
-		"user_state",
-		"active",
-		"text_interval_minute_avg",
-		"text_interval_minute_min",
-		"text_interval_minute_max",
-		"time_to_declare_lost",
-	]
-
-
-admin.site.register(FeedSetting,FeedSettingModelAdmin)
-
-
-
-
-class PossibleTextSTMResource(resources.ModelResource):
-	class Meta:
-		model = PossibleTextSTM
-		import_id_fields = ('csv_id',)
-		fields = ('csv_id','text','feed_name', 'unique_feed_name', 'text_importance', 'response_type', 'feed_type',)
-
-class PossibleTextSTMModelAdmin(ImportExportModelAdmin):
-	resource_class = PossibleTextSTMResource  
-	
-	list_display = [
-		"user",
-		"text",
-		"id",
-		"csv_id",
-		"system_text",
-		"feed_id",
-		"feed_name",
-		"group_id",
-		"group_name",
-		"unique_feed_name",
-		"feed_type",
-		"text_importance",
-		"response_type",
-		"show_user",
-		"date_created",
-		"date_altered",
-	]
-
-	list_filter = ["user","feed_name","feed_type"]
-
-admin.site.register(PossibleTextSTM,PossibleTextSTMModelAdmin)
-
-class ATSMSIM_ModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"text_id",
-		"feed_id",
-		"response_time",
-		"feed_name",
-		"textstore_id",
-		"time_to_add",
-		"system_text",
-		"text",
-		"consolidated",
-		"ready_for_next",
-		"series",
-		"failed_series",
-		"response",
-		"response_type",
-		"feed_type",
-		"time_to_send",
-		"time_sent",
-		"simulated",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = ActualTextSTM_SIM
-
-admin.site.register(ActualTextSTM_SIM,ATSMSIM_ModelAdmin)
-
-
-class ResponseTypeStoreModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"response_type",
-		"ordering_num",
-	]
-	list_display_links = ["response_type"]
-	list_filter = ["response_type"]
-	class Meta:
-		model = ResponseTypeStore
-
-admin.site.register(ResponseTypeStore,ResponseTypeStoreModelAdmin)
-
-
-
-
-
-class PossibleTextLTMModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"stm_id",
-		"text",
-		"feed_id",
-		"text_set",
-		"text_type",
-		"text_importance",
-		"response_type",
-		"show_user",
-		"date_created",
-		"date_altered",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = PossibleTextLTM
-
-admin.site.register(PossibleTextLTM,PossibleTextLTMModelAdmin)
-
-class ActualTextSTMModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"response_type",
-		"text_id",
-		"feed_id",
-		"feed_name",
-		"textstore_id",
-		"time_to_add",
-		"system_text",
-		"text",
-		"consolidated",
-		"ready_for_next",
-		"series",
-		"failed_series",
-		"response",
-		"feed_type",
-		"time_to_send",
-		"time_sent",
-		"simulated",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user","feed_name","feed_type"]
-	class Meta:
-		model = ActualTextSTM
-
-admin.site.register(ActualTextSTM,ActualTextSTMModelAdmin)
-
-
-class ActualTextLTMModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"text_id",
-		"stm_id",
-		"feed_id",
-		"feed_name",
-		"textstore_id",
-		"text",
-		"time_to_send_circa",
-		"time_to_send_day",
-		"series",
-		"failed_series",
-		"feed_type",
-		"response_type",
-		"response",
-		"response_cat",
-		"response_cat_bin",
-		"response_dim",
-		"time_response",
-		"time_to_send",
-		"time_sent",
-		"simulated",
-	]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	class Meta:
-		model = ActualTextLTM
-
-admin.site.register(ActualTextLTM,ActualTextLTMModelAdmin)
-
-
-
-
-
+#This is the other main workhorse that keeps user preferences.  
 class UserSettingModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
-		"active_experiences",
-		"new_user_pages",
 		"begin_date",
 		"send_text",
 		"send_text_tmp",
 		"text_request_stop",
-		"respite_until_datetime",
-		"texts_per_week",
+		"phone_input",
 		"phone",
 		"carrier",
 		"sms_address",
 		"timezone",
-		"sleep_time",
-		"sleep_duration",
+		"research_check",
+		"send_email_check",
+		"send_text_check",
 	]
 	list_display_links = ["user"]
 	list_filter = ["user"]
@@ -267,83 +32,124 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 admin.site.register(UserSetting,UserSettingModelAdmin)
 
 
-class RespiteModelAdmin(admin.ModelAdmin):
-	list_display = ["user","date_request","respite_type"]
-	list_display_links = ["user"]
-	list_filter = ["user"]
-	search_fields = ["user"]
-	class Meta:
-		model = Respite
-
-admin.site.register(Respite,RespiteModelAdmin)
-
-class CarrierModelAdmin(admin.ModelAdmin):
-	list_display = ["carrier","sms_address"]
-	list_display_links = ["carrier","sms_address"]
-	list_filter = ["carrier","sms_address"]
-	class Meta:
-		model = Carrier
-
-admin.site.register(Carrier,CarrierModelAdmin)
-
-
-class IncomingModelAdmin(admin.ModelAdmin):
-	list_display = ["email_user","email_date","email_content","processed"]
-	list_display_links = ["email_user"]
-	list_filter = ["email_user"]
-	search_fields = ["email_user"]
-	class Meta:
-		model = Incoming
-
-admin.site.register(Incoming,IncomingModelAdmin)
-
 class OutgoingModelAdmin(admin.ModelAdmin):
-	list_display = ["addressee","date_sent","message","entry_id"]
-	list_display_links = ["addressee"]
-	list_filter = ["addressee"]
-	search_fields = ["addressee"]
+	list_display = [
+		"text",
+		"date_sent",
+	]
+	list_display_links = ["date_sent"]
+	list_filter = ["date_sent"]
 	class Meta:
 		model = Outgoing
 
 admin.site.register(Outgoing,OutgoingModelAdmin)
 
 
-
-class OntologyModelAdmin(admin.ModelAdmin):
-	list_display = ["ontological_name","ontological_type","prompt_set","prompt_set_percent"]
-	list_display_links = ["ontological_name"]
-	list_filter = ["ontological_name"]
-	search_fields = ["ontological_name"]
+class CarrierModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"carrier",
+		"sms_address",
+	]
+	list_display_links = ["carrier"]
+	list_filter = ["carrier"]
 	class Meta:
-		model = Ontology
+		model = Carrier
 
-admin.site.register(Ontology,OntologyModelAdmin)
+admin.site.register(Carrier,CarrierModelAdmin)
 
 
-class PrompttextModelAdmin(admin.ModelAdmin):
-	list_display = ["text","text_type","text_percent"]
-	list_display_links = ["text"]
-	list_filter = ["text"]
-	search_fields = ["text"]
+class TagModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"tag",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user"]
 	class Meta:
-		model = Prompttext
+		model = Tag
 
-admin.site.register(Prompttext,PrompttextModelAdmin)
+admin.site.register(Tag,TagModelAdmin)
 
-class UserGenPromptFixedModelAdmin(admin.ModelAdmin):
-	list_display = ["id","user","prompt","date_created","begin_datetime","end_datetime", "repeat_denomination", "repeat_number"]
-	list_display_links = ["user","prompt"]
-	list_filter = ["user","prompt"]
-	search_fields = ["user","prompt"]
-	
+
+
+class TimingModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"timing",
+		"repeat",
+		"repeat_summary",
+		"system_time",
+		"show_user",
+		"description",
+		"date_start",
+		"date_end",
+		"hour_start",
+		"hour_end",
+		"fuzzy",
+		"iti",
+		"iti_noise",
+		"repeat_in_window",
+		"repeat_weeks",
+		"monday",
+		"tuesday",
+		"wednesday",
+		"thursday",
+		"friday",
+		"saturday",
+		"sunday",
+	]
+	list_display_links = ["user","timing"]
+	list_filter = ["user","timing","system_time"]
 	class Meta:
-		model = UserGenPromptFixed
+		model = Timing
 
-admin.site.register(UserGenPromptFixed,UserGenPromptFixedModelAdmin)
-
-
+admin.site.register(Timing,TimingModelAdmin)
 
 
 
+class ActualTextModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"text",
+		"time_to_send",
+		"time_sent",
+		"time_response",
+		"response",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user","text"]
+	class Meta:
+		model = ActualText
+
+admin.site.register(ActualText,ActualTextModelAdmin)
 
 
+class PossibleTextModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"id",
+		"active",
+		"user",
+		"text",
+		"date_created",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user","text"]
+	class Meta:
+		model = PossibleText
+		
+admin.site.register(PossibleText,PossibleTextModelAdmin)
+
+
+class CollectionModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"id",
+		"user",
+		"collection",
+
+	]
+	list_display_links = ["user"]
+	list_filter = ["user","collection"]
+	class Meta:
+		model = Collection
+		
+admin.site.register(Collection,CollectionModelAdmin)

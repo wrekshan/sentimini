@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<main>
+<nav>
+  <div class="nav-wrapper z-depth-1">
+    <div class="row">
+      <div class="col l12 s12">
+      <div class="col s4">
+        <a href="/feed/" class="brand-logo">Texts</a>
+      </div>
+     
+         
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
+
+        <ul class="right hide-on-med-and-down">
+         <ul class="right hide-on-med-and-down">
+          <li>
+            <a class="waves-effect waves-light btn" href="/ent/collection_create_scaffold/" >Download.csv</a>
+          </li>
+        </ul>
+          <!-- <li><a href="sass.html">Sass</a></li> -->
+          <!-- <li><a href="badges.html">Components</a></li> -->
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+</nav>
+ 
+
+<div id = "MAIN">
+<div class="col s12 center-align">
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+</div>
+</div>
+</div>
+</main>
+
+
+
+
+
+
+<script type="text/javascript">
+function startClock(){
+  var locs = document.location.href.split("/")
+  console.log("LOCS HERE" + locs)
+  
+  // locs[locs.length - 2]
+
+  $.ajax({
+    type: 'POST',
+    url: '/get_feed_specific/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'id': locs[locs.length - 2],
+    'type': locs[locs.length - 2],
+    },
+     success : function(data) {
+             $('#MAIN').html(data['FEED']);
+         }
+
+    })
+}
+if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+}
+else{
+    window.attachEvent('onload',startClock); //IE
+}
+</script>
+
+
+
+{% endblock %}

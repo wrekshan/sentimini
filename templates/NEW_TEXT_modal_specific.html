@@ -1,0 +1,102 @@
+{% load static %}
+<link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
+
+<!-- REPEAT EVERY -->
+<div class="row"></div>
+ <div class = "row">
+ <div class="col s2">
+ <b>Times per day:</b>
+  <select id="repeat_time" class="browser-default">
+    <option value="1" selected>1 time</option>
+    <option value="2">2 times</option>
+    <option value="3">3 times</option>
+    <option value="4">4 times</option>
+    <option value="5">5 times</option>
+    <option value="6">6 times</option>
+    <option value="7">7 times</option>
+    <option value="8">8 times</option>
+    <option value="9">9 times</option>
+    <option value="10">10 times</option>
+    <option value="11">11 times</option>
+    <option value="12">12 times</option>
+  </select>
+  </div>
+  </div>
+
+
+<!-- WEEK -->
+<div class = "row">
+  <div class="col s12">
+  <b>Repeat on:</b>
+    <form action="#">
+      <p>
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday" checked />
+        <label class="modal_check_label" for="Sunday">Sun</label>
+      
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" checked/>
+        <label class="modal_check_label" for="Monday">Mon</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" checked/>
+        <label class="modal_check_label" for="Tuesday">Tues</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" checked/>
+        <label class="modal_check_label" for="Wednesday">Wed</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" checked/>
+        <label class="modal_check_label" for="Thursday">Thus</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" checked/>
+        <label class="modal_check_label" for="Friday">Fri</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday" checked />
+        <label class="modal_check_label" for="Saturday">Sat</label>
+      </p>
+
+    </form>
+  </div>
+</div>
+
+<!-- REPEAT EVERY -->
+ <!-- <div class = "row">
+ <div class="col s3">
+ <b>Repeat every:</b>
+ 
+  <select id="repeat_num_weeks" class="browser-default">
+    <option value="1" selected>Every week</option>
+    <option value="2">2 weeks</option>
+    <option value="3">3 weeks</option>
+    <option value="4">4 weeks</option>
+  </select>
+  </div>
+  </div> -->
+
+
+  
+</div>
+
+
+
+
+
+<script>
+$('#repeat_checkbox').change(function() {
+    get_repeat_summary()
+    $('#modal1').openModal();
+  })
+
+$('input[name=weekdays]').change(function() {
+  get_repeat_summary()
+})
+
+$('#repeat_num_weeks').change(function() {
+    get_repeat_summary()
+})
+
+$('#repeat_time').change(function() {
+  get_repeat_summary()
+})
+
+$('#repeat_time').change(function() {
+  get_repeat_summary()
+})
+</script>

@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     #my apps
     'ent',
     'vis',
-    'scaffold',
+    
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -158,7 +158,7 @@ STATICFILES_DIRS = (
 
 # ACTIVATION STUFF
 # auth and allauth settings
-LOGIN_REDIRECT_URL = '/ent/new_user/'
+LOGIN_REDIRECT_URL = '/app_home/'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (

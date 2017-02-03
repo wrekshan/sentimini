@@ -1,0 +1,34 @@
+
+      <div class="row">
+      <div class='col s6'>
+      {{working_collection.description}}
+      </div>
+      <div class='col s6'>
+      <table class="striped">
+		<thead>
+		<tr>
+		  <th data-field="id">Text</th>
+		  <th data-field="name">Summary</th>
+		</tr>
+		</thead>
+
+		<tbody>
+		{% for text in working_collection.texts.all %}
+		<tr>
+		    <td>{{text.text}}</td>
+		    <td>{{text.timing.repeat_summary}}</td>
+		  </tr>
+		  {% endfor %}
+		  </tbody>
+		</table>
+		<div class="row"></div>
+        <div class="row"></div>
+		<a class="waves-effect waves-light btn z-depth-4" href="{% url 'account_signup' %}" > Sign Up</a>
+      </div>
+      </div>
+      
+
+
+
+
+

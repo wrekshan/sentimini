@@ -1,0 +1,138 @@
+{% load static %}
+
+
+
+  
+<div class="row">
+  <div class="col s12">
+  <div id="histo_loading" class="preloader-wrapper active">
+    <div class="spinner-layer spinner-red-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+        <div class="circle"></div>
+      </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+      <div id="new_text_histogram">
+      </div>
+  </div>
+</div>
+
+<div class="row">
+<div class="col s3">
+<b>Denomination:</b>
+     <select id="fuzzy_denomination"  placeholder="" class="browser-default">
+     <option value="minutes">Minutes</option>
+     <option value="hours" selected="selected">Hours</option>
+     <option value="days">Days</option>
+     <option value="weeks">Weeks</option>
+     <option value="months">Months</option>
+      </select>
+</div>
+</div>
+
+  <div class="col s12">
+      <form action="#">
+      <p class="range-field">
+      <input type="range" id="ITI_mean" min="1" max="72" />
+      </p>
+	  </form>
+	  <div id="ITI_mean_output"></div>
+
+	  <form action="#">
+	  <p class="range-field">
+	  <input type="range" id="ITI_noise" min="0" max="1000" />
+	  </p>
+	  </form>
+	  <div id="ITI_noise_output"></div>
+    </br></br>
+	</div>
+</div>
+
+
+<!-- THIS WILL BE THE SELECT BAR...TRY TO DO THE RANGES WITH JS -->
+<script src={% static "js/select2.full.min.js" %}></script>
+<!-- <script src={% static "js/editing_text_helpers.js" %}></script> -->
+<!-- <script>
+  $("#time_denomination").select2({
+  })
+</script> -->
+
+<script>
+$('#fuzzy_denomination').change(function() {
+  console.log("TIME DEMO CHANGE")
+  console.log("VALUE " + $('#fuzzy_denomination').val())
+  if ($('#fuzzy_denomination').val()=="minutes"){
+    $("#ITI_mean").prop({min: 1, max: 600});
+    console.log("MINUTES!")
+  } 
+  if ($('#fuzzy_denomination').val()=="hours"){
+    $("#ITI_mean").prop({min: 1, max: 72});
+  } 
+  if ($('#fuzzy_denomination').val()=="days"){
+    $("#ITI_mean").prop({min: 1, max: 30});
+  } 
+  if ($('#fuzzy_denomination').val()=="weeks"){
+    $("#ITI_mean").prop({min: 1, max: 52});
+  } 
+  if ($('#fuzzy_denomination').val()=="months"){
+    $("#ITI_mean").prop({min: 1, max: 24});
+  } 
+  $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+  $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+  get_repeat_summary()
+})
+</script>
+
+
+<!-- HOW OT INITIALIZE GRAPH? -->
+
+<script type="text/javascript">
+var update_histogram = function(){
+	$('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+	$('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+	
+	get_repeat_summary()
+	$.ajax({
+    type: 'POST',
+    url: '/get_new_text_hist/',
+    data: {
+    	'csrfmiddlewaretoken': '{{ csrf_token }}',
+    	'ITI_mean': $('#ITI_mean').val(),
+    	'ITI_noise': $('#ITI_noise').val(),
+      'time_denomination': $('#fuzzy_denomination').val()
+	      },
+	success : function(data) {
+			$('#histo_loading').hide()
+             $('#new_text_histogram').html(data['new_text_histogram']);
+         }
+    })
+}	
+</script>
+
+
+
+<script>
+$(document).ready ( function(){
+	update_histogram()
+	
+})
+</script>
+
+<!-- IF SLIDER CHANGED UPDATE HISTOGRAM -->
+<script type="text/javascript">
+$('#ITI_mean').on('change', function(){
+	// $('#new_text_histogram').empty()
+	// $('#histo_loading').show()
+	update_histogram()
+});
+
+$('#ITI_noise').on('change', function(){
+	// $('#new_text_histogram').empty()
+	// $('#histo_loading').show()
+	update_histogram()
+});
+</script>

@@ -1,218 +1,264 @@
-{% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
-
-
-<!--DOCTYPE html -->
+{% load static %}
 {% block content %}
-<script>
-      $(document).ready(function() {
-        $('#library_experiences_table').DataTable({
-          "columns": [
-          { "width": "30%" },
-          { "width": "70%" },
-          ]
+<main>
 
-        });
-      } );
-    </script>
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>Sentimini!</title>
 
-<html>
-<head>
-<title>About - Sentimini!</title>
+  <!-- CSS  -->
+  <!-- Optional theme -->  
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href={% static "css/materialize.css" %}>
+  <link rel="stylesheet" href={% static "css/parallax-style.css" %}>
+
+  <script src={% static "js/materialize.min.js" %}></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src={% static "js/select2.full.min.js" %}></script>
+  <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
 </head>
-
-
 <body>
-  
 
+  <!-- NAV BAR -->
+  <nav class="white" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo black-text">Sentimini!</a>
+      <ul class="right hide-on-med-and-down">
+      {% if user.is_authenticated %}
+      <li><a href="/app_home/">App Home</a></li>
+      
+      {% else %}
+       <li><a href="{% url 'account_login' %}">Sign In</a></li>
+       <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+      
+       {% endif %}
+     </ul>
 
-
-
-<div class="container">
-  <div class="row" id="overview">
-    <div class="col-md-3">
-      <h1>Overview</h1>
-    </div>
-    <div class="col-md-6">
-
-
-    Sentimini sends <mark>periodic text messages</mark> with varying content at <mark>semi-random times</mark>.
-    </br></br>
-    Responses are stored in <mark>downloadable tables and figures</mark>, making it <mark>easy to obtain data</mark> about your experience.
-  </br></br>
-  Signing up takes <mark>less than 3 minutes</mark>.
-  </br></br><a href="{% url 'account_signup' %}" class="btn-default btn-lg" role="button">Sign Up</a>
-    </br></br><a href="{% url 'account_login' %}">Sign In</a> if you are already a user.
-  
-</div>     
-</div>
-<hr>
-<div class="row" id="contact">
-  <div class="col-md-3">
-    <h1>Feeds</h1>
-    Click on the name to learn more
-    
-    
+     <ul id="nav-mobile" class="side-nav">
+      <li><a href="#">Sign up</a></li>
+    </ul>
+    <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
   </div>
+</nav>
 
-  <div class="col-md-6">
-  
-    You can <mark>sign up for any number of prepopulated, but fully customizable lists of texts</mark> (called feeds). 
-    </br></br>
-
-
-
-     <table id="library_experiences_table" class="display" cellspacing="0" width="100%">
-      <thead>
-          <tr>
-              <th>Feed</th>
-              <th>Description</th>        
-          </tr>
-      </thead>
-      <tbody>
-         {% for exp in library_experiences %}
-      <tr>
-
-        <td><a href="/feed_view/{{ exp.feed_id }}/">{{exp.feed_name}}</a></td>
-        <td>{{ exp.description }}</td>
+<!-- FIRST PIC -->
+<div id="index-banner" class="parallax-container">
+  <div class="section no-pad-bot">
+    <div class="container ">
+      <h1 class="header center">Text scheduling + data visualizations</h1>
+      <div class="row center">
+        <h5 class="header col s12 light">
+          Free.  Beta.  Tools to enhance life.  Data to learn from it.
+        </h5>
+      </div>
+      <div class="row center">
+      {% if user.is_authenticated %}
+      <a class="btn-large waves-effect waves-light" href="/ent/add_new_text/" > Schedule a text</a>
         
-      </tr>
-      {% endfor %}
-      </tbody>
-  </table>
-
-</br>
-  </div>
-
-  
-</div>
-<hr>
-<div class="row" id="overview">
-    <div class="col-md-3">
-      <h1>Why</h1>
+        {% else %}
+      <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
+        {% endif %}
+      </div>
     </div>
-    <div class="col-md-6">
-    One of the major frustrations about being human is that <mark>we forget</mark> about things <mark>all of the time</mark>.  I want to be more mindful, I forget.  I want to be more loving, I forget.  I want to quit smoking, I forget.
-    </br></br>
-    Sentimini sends texts at semi-random times to just help you <mark>remember what you want to remember</mark>.  The hope is that this will help you <mark>to improve your own life</mark> without being burdensome.  There is merit in just reading the text.  
-    </br></br>
-    Not only do <mark>randomized texts</mark> help you remember what you want to remember, they also allow for a relatively bias free method of data collection to help <mark>quantitatively answer questions about your experience</mark>.  Are you happier than other people?  Does this pain medication actually change your subjective experience of pain?  
-    </br></br>
+  </div>
+  <div class="parallax"><img src= "/static/images/bunch/Clouds.jpg" ></div>
+</div>
+
+<!-- Three panel with ICON -->
+<div class="container">
+  <div class="section">
+    <div class="row">
+
+   <!--    <div class="col s12 m4">
+        <div class="icon-block">
+          <div class="row center"></div>
+          <div class="row center"></div>
+          <div class="row center"></div>
+          <div class="row center"></div>
+          <div class="row center"></div>
+          <div class="row center"></div>
+          <p class="light">Sentimini provides tools to schedule text messages and visualize any replies.  </p>
+        </div>
+      </div> -->
+
      
-   
-</div>     
+
+      <div class="col s12 m6">
+        <div class="icon-block">
+          <h2 class="center brown-text"><i class="material-icons">textsms</i></h2>
+          <h5 class="center">Schedule a text</h5>
+          <p class="light">You can send yourself a one time or repeating text with any content at any time.  Think google calendars for text messages.  </p>
+          <a href="/ent/add_new_text/" class="">See how easy it is to schedule a new text</a>
+        </div>
+      </div>
+
+       <div class="col s12 m6">
+        <div class="icon-block">
+          <h2 class="center brown-text"><i class="material-icons">collections</i></h2>
+          <h5 class="center">Collections</h5>
+          <p class="light">Sign up for any number of prepopulated lists of texts covering a range of topics from scheduling a text to reminder to pick up coffee, to interactive programs to inspire creativity, to monitoring aspects of health.</p>
+          <a href="/ent/collection/" class=""><!-- <i class="material-icons left">today</i> -->See all all the different ways you can use sentimini</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 
-
-<hr>
-
-<div class="row" id="beta">
-  <div class="col-md-3">
-    <h1>Beta</h1>
+<!-- WHY PICTURE-->
+<div class="parallax-container valign-wrapper">
+  <div class="section no-pad-bot">
+    <div class="container">
+      <div class="row center">
+        <h5 class="header col s12 light">Easily obtain quantiative data about your life</h5>
+      </div>
+    </div>
   </div>
-  <div class="col-md-6">
-  <div class="row" id="beta">
-  <div class="col-md-12">
-  <mark>Sentimini is in beta status</mark>.  For context, there is a total of {{number_of_users}} users.
-  </br></br>
-  This is a minimum viable product but work still needs to be done to ensure a fulfilling and technological stable experience.  As such, it is 'use at your own risk', especially when it comes to data security.  
-  </div>
-  </div>
-  </br>
-
-  <div class="row" id="beta">
-  <div class="col-md-6">
-  Next major steps:
-  <li>Sets of text centered around a specific experience</li>
-  <li>Greater control of text timing</li>
-  <li>Sharing of data for use with professional helpers</li>
-  <li>Sharing of data in open science / open data frameworks</li>
-  </br>
-  </div>
-  <div class="col-md-6">
-  Using the following use cases at examples:
-  <li>Slow learning / Courses / Guided Experiences</li>
-  <li>Behavior Change Assist</li>
-  <li>Wellness assist - evaluation</li>
-  <li>Wellness assist - diagnsosis/communication</li>
-
-  </br>
-  </div>
-
-  </div>
-  
-  
-  
-  </div>     
+  <div class="parallax"><img src= "/static/images/bunch/January 2014 (5).jpg" alt="Unsplashed background img 2"></div>
 </div>
 
+<!-- WHY -->
+<div class="container">
+  <div class="section">
+    <div class="row">
+      <div class="col s12 center">
+        <h3><i class="mdi-content-send brown-text"></i></h3>
+        <h4>Why?</h4>
+        <p class="left-align light">
+          After working in <a href="https://www.linkedin.com/in/williamrekshan">psychology and neuroscience research for nearly 10 years</a> and meditating for nearly 5, I wanted to make something that would be beneficial in research and easy to use.  So, I set out to create an emotion tracker, something to help me in a meditation class.  Along the way I discovered three things:
+          </br></br>
+          1.  Text messages are a scalable, accessible, low cost, and low time way to do research about the human experience.  Nobel wining economist, <a href="http://www.uvm.edu/pdodds/files/papers/others/everything/kahneman2004a.pdf">Daniel Kahneman</a>, uses experience sampling, 
+         texts have been used to  <a href="http://www.mappiness.org.uk/">map happiness</a> at the london school of econmoics, <a href="http://www.healthandsocietyscholars.org/1822/16821/284347"> Matt Killingsworth</a> used texts to investiage happiness while at Harvard, 153 clincial trials have utilized SMS in some way and 480 have evaluated mindfuless (obtained by searching 'SMS' and 'mindfulness' in the NIH Clinical Trials Categlogue accessed through <a href='enigma.io'> enigma.io</a>.
+         </br>----- People should have these tools to learn about their own lives.
+          </br></br>
+          2.  Just receiving text messages could be beneficial.  Journaling about dreams, increases likelihood of dreams.  Thinking about pain and depression and allievate it.  Reminders to be mindful could go a long way in increases wellness.  <!-- <i class="material-icons left">today</i> -->Explore all the <a href="/ent/collection/" class="">different uses of sentimini</a>.
+          </br>----- People should have these tools to learn about their own lives.
+          </br></br>
+          In other words, texts are a very cost-effective way of obtaining data about human experience, especially if the system is easy to use (let me know how I can do better!).  I truly believe that data can improve our lives, allow for better decisions, and alleviate suffering.  I think that being curious about our world and other human beings can lead to better interations and society.  I also believe that transparency is crucial for <a href="https://cos.io/">efficient scientific progress</a>.  
+          </br></br>
+          Sentimini is currently in beta.  The intention is to develop free tools and an open data set of human experience that contributes to understand and improving the human experience as measured by the number of people using this site and contributions to applied scientific projects.  
+        </p>
 
-{% if user.is_authenticated %}
-<hr>
-<div class="row" id="donate">
-  <div class="col-md-3">
-    <h1>Donate</h1>
+      </div>
+    </div>
   </div>
-  <div class="col-md-6">
-  This is a big idea. I've found Sentimini helpful in my life and I would like to learn about others.  This will take resources.
-  </br></br>
-  The plan is to charge a small amount (around 5 USD per month) for an advanced feature (probably the ability to schedule texts at specific times).
-  <mark>Until that time, please consider donating!</mark>
-  </br></br>
-  You can do through my personal paypal for the time being <mark><a href="https://www.paypal.me/williamrekshan"> here</a></mark>.
-  </br></br>
-
-  </div>     
 </div>
-{% endif %}
 
-<hr>
-
-<div class="row" id="donate">
-  <div class="col-md-3">
-    <h1>Personal note</h1>
+<!-- PICTURE -->
+<div class="parallax-container valign-wrapper">
+  <div class="section no-pad-bot">
+    <div class="container">
+      <div class="row center">
+        <h5 class="header col s12 light">Sign up for prepopulated lists of texts</h5>
+      </div>
+    </div>
   </div>
-  <div class="col-md-6">
-  I know that <mark>data can transform our lives</mark> and ways of being.  I've worked in psychology and neuroscience research for nearly 10 years, 4 of these as a senior biostatician (check out my <a href='Public Profilehttps://www.linkedin.com/in/williamrekshan'>LinkedIn</a> or <a href='https://www.ncbi.nlm.nih.gov/pubmed/?term=rekshan'>scientific papers</a>). 
-  </br></br>
-  I know that just asking questions and <mark>being curious the world can improve my life</mark>.  I've learned this though meditating in a structured way for 5 years (and reading about mindfulness in the scientific literature).
-  </br></br>
-  Sentimini is the result this experience.  Sentimini just seeks to provide <mark>reminders to pay attention to this world</mark> and your life, in a way that is most meaningful to you.  You can add any content that you wish or choose from lists of texts.  The whole goal is to make Sentimini as easy a possible and in a way that <mark>respects your rich experience of life</mark>.
-  </br></br>
-  I wanted this experience to provide a structure to sensibily <mark>answer quantitative questions</mark> about this world.  Randomization is crucial for this (in addition to removing the burden of having to remember to record something).  Graphs and tables are provided for all texts and responses.
-  </br></br>
-  I hope that Sentimini is helpful to you.  If you have any thoughts, comments, or suggestions, please email me at sentimini@gmail.com.
-  </br></br>
-  Enjoy!
-  </br></br>
-  William Rekshan
-</br></br>
-
-  </div>     
-
+  <div class="parallax"><img src= "/static/images/bunch/trees.jpg"  alt="Unsplashed background img 3"></div>
 </div>
 
+<!-- FOOTER -->
+<footer class="page-footer blue lighten-2">
+  <div class="container">
+    <div class="row">
+      <div class="col l3 s12">
+        <h5 class="white-text">Sentimini</h5>
+        <p class="grey-text text-lighten-4">In beta.  Free tools to schedule texts and view replies.</p>
+      </div>
+      <div class="col l3 s12">
+      <h5 class="white-text"><a href="/ent/add_new_text/" class="white-text">Schedule a text</a></h5>
+      </div>
+
+      <div class="col l3 s12">
+        <h5 class="white-text"><a href="/ent/collection/" class="white-text">View collections</a></h5>
+          <!-- <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul> -->
+        </div>
+        <div class="col l3 s12">
+        {% if user.is_authenticated %}
+      <h5 class="white-text"><a href="/ent/collection/" class="white-text">Log out</a></h5>
+      {% else %}
+       <h5 class="white-text"><a href="/ent/collection/" class="white-text">Sign up</a></h5>
+       <a href="/ent/collection/" class="white-text">Sign in</a>
+       {% endif %}
+          <!-- <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+        Sentimini
+      </div>
+    </div>
+  </footer>
 
 
-
-
-</div>
-
-
-<!-- /container -->
 
 
 </body>
-
 </html>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-85360122-1', 'auto');
-  ga('send', 'pageview');
+
+{% endblock %}
+
+<script>
+  $(document).ready(function(){
+    $('.parallax').parallax();
+  });
+</script>
+
+
+<!-- SEARCH BAR -->
+<script>
+  $("#collection_tag_bar").select2({
+      // tags: true,
+    // tokenSeparators: [',', ' '],
+    placeholder: "Search for a text or tag...",
+  }).on('select2:unselecting', function() {
+    $(this).data('unselecting', true);
+  }).on('select2:opening', function(e) {
+    if ($(this).data('unselecting')) {
+      $(this).removeData('unselecting');
+      e.preventDefault();
+    }
+  });
 
 </script>
-{% endblock %}
+
+
+<script type="text/javascript">
+  $('#collection_tag_bar').change(function(){
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/fun_splash_description/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_id': $('#collection_tag_bar').val(),
+    },
+
+
+
+    success : function(data) {
+      console.log("COLLECTION DISPLAY WORKED!")
+      $('#collection_descrption').html(data['description']);
+    }
+  })
+
+  })
+</script>

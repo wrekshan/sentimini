@@ -1,5 +1,5 @@
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -12,230 +12,247 @@
   <meta name="author" content="">
   <link rel="icon" href="../../favicon.ico">
 
+  <!--THIS IS ALL OLD!-->  
+  <!-- <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href={% static "css/materialize.css" %}>
   
-  <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-
-
-  <!-- Optional theme -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css" />
-  <link href={% static "css/WR_datatable.css" %} rel="stylesheet" />
-  <link href={% static "css/sentimini-css.css" %} rel="stylesheet" />
-
-
   
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link rel="stylesheet" href={% static "css/nouislider.css" %}>
+  <script src={% static "js/list.min.js" %}></script>
+  <script src={% static "js/list.pagination.min.js" %}></script>
+  <link rel="stylesheet" href={% static "css/materialize-select2.css" %}> -->
+  
+
+
+
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-  
   <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
   
-  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-  <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+  <link rel="stylesheet" href={% static "css/parallax-style.css" %}>
 
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>   
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+  <script src={% static "js/materialize.min.js" %}></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+  <link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
 
   
-  {{ form.media }}
+  
+
+
+
+
+
+
+
+
+
+  <!-- STARS -->
+  <script src="https://use.fontawesome.com/d86baeb400.js"></script>
 </head>
 
 
+<ul id="slide-out" class="side-nav fixed side_bar">
 
-<body>
-<div class = "nav_bar_first">
-  <div class="container navbar">
-    <div class="navbar-header">
-     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-   
-           <i class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></i>
-            <span class="sr-only">Toggle navigation</span>
-            
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-      {% if user.is_authenticated %}
-      <a class="navbar-brand" href="{% url 'ent:simulate_week' %}">Sentimini!</a>
-      {% else %}
-      <a class="navbar-brand"  href="/">Sentimini!</a>
-      {% endif %}
-     
-    </div>
+ <div class = "center-align">
+   <!-- GLOBE -->
+   <div class="row"></div>
+   <i class=" center-align fa fa-globe fa-5x" aria-hidden="true"></i>
+   <a href="/app_home/"><h4 class="tooltipped" data-position="top" data-delay="50" data-tooltip="In Latin, Sentimini is the plural passive imperative for sentio, a word that includes both thoughts and feelings.">Sentimini!</h4></a>
+ </div>
+
+ <!-- LINK ROW -->
+ <div class="row">
+   {% if user.is_authenticated %}
+  
+  <div class="col s4 center-align">
+  <a href="/feed/" class="">   
+        <i class="material-icons small">question_answer</i>
+      </a>
+  <span>Texts</span>
+  </div>
+  <div class="col s4 right-align">
+  <a href="/ent/collection/" class="">   
+        <i class="material-icons small">collections</i>
+      </a>
+      Collections
+  </div>
+  <div class="col s4 center-align">
+  <a href="/settings/" class="left-align ">   
+        <i class="material-icons small">settings</i>
+      </a>
+      <span>Settings</span>
+  </div>
+
+  {% else %}
+    <a href="/ent/add_new_text/" class="">   
+        <i class="material-icons small">textsms</i>See how easy to schedule text
+    </a>
+    <a href="/ent/collection/" class="">   
+      <i class="material-icons small">collections</i>See all different uses
+    </a>
+    <a href="/landing/" class="">   
+      <i class="material-icons small">info_outline</i>Back to about page
+    </a> 
+ {% endif %}
+</div>
+ <!-- BUTTON -->
+ {% if user.is_authenticated %}
+ <a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Schedule a text</a>
+ <!-- <a class="waves-effect waves-light btn z-depth-4" href="/ent/add_new_text/" > Pause all text</a> -->
+ {% else %}
+ 
+ <a class="waves-effect waves-light btn z-depth-4" href="{% url 'account_signup' %}" > Sign Up</a>
+ {% endif %}
+</div>
+</div>
+</div>
 
 
-    <div id="navbar" class="navbar-collapse collapse">
-    <div id="navbar" class="nav nav-justified">
-      <ul class="nav navbar-nav">
-      {% if user.is_authenticated %}
-      <li><a href="{% url 'ent:feeds_edit' %}">Feeds</a></li>
-      <li><a href="{% url 'vis:text_data' %}">Data</a></li>
-      
-      
-      {% endif %}
-        
-      
+
+<!-- SWITCH -->
+{% if user.is_authenticated %}
+<div class="row">
+  <div class="col l12 s12">
+    <p>
+      <!-- Switch -->
+      <div class="switch">
+        <label>
+          Texts
+          <input type="checkbox" id="side_switch">
+          <span class="lever"></span>
+          Tags
+        </label>
+      </div>
+    </p>
+  </div>
+  {% endif %}
+
+  <!-- LIST OF TEXTS / TAGS-->
+  <div class="col l12 s12">
+    <div id="side_content"></div>
+  </div>
+
+
+  <!-- FOOTER -->
+  
+  <div class="row">
+    <div class="col l12 s12">
+
+
 
       {% if user.is_superuser %}
-      <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dev<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'scaffold:business_model' %}">Business</a></li>
-            <li><a href="{% url 'scaffold:power' %}">Power Analysis</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'vis:text_data_demo' %}">Data Demo</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'ent:texter' %}">Texter</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'scaffold:upload_feed_data' %}">Upload Feed Data</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'karuna_training' %}">KT</a></li>
-            <li><a href="{% url 'ent:groups_edit' %}">Groups</a></li>
-
-            
-            
-          </ul>
-        </li>
+      <a class="waves-effect waves-light btn" href="/ent/simulate/" > Simulate</a>
       {% endif %}
-      </ul>
+
+      <!-- <a class="waves-effect waves-light btn" href="/ent/add_new_text/" > Download Text Data (.csv)</a> -->
 
 
+      <div class="row">
+       
+
+       {% if user.is_authenticated %}
+
+         <p>
+           <a class="" href="/ent/about/"><i class="material-icons small">info_outline</i>about</a>
+         
+           <a class="" href="{% url 'account_logout' %}"><i class="material-icons small">perm_identity</i>sign out</a>
+         </p>
 
 
-      <ul class="nav navbar-nav navbar-right">
-      <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">About<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'scaffold:about' %}">About</a></li>
-            <li><a href="{% url 'ent:advanced_uses' %}">Uses</a></li>
-            <li><a href="{% url 'scaffold:business_model' %}">Feasibility</a></li>
-            <li><a href="{% url 'vis:text_data_demo' %}">Data Demo</a></li>
-            <li><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></li>
-
-
-
-          </ul>
-        </li>
-            {% if user.is_authenticated %}
+      {% else %}
       
 
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Pause Texts<span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'ent:respite_one_day' %}">Pause 1 Day</a></li>
-            <li><a href="{% url 'ent:respite_three_day' %}">Pause 3 Days</a></li>
-            <li><a href="{% url 'ent:respite_seven_day' %}">Pause 7 Days</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="{% url 'ent:respite_start_again' %}">Start Again</a></li>
-          </ul>
+                              
+    
+      <li class="collection-item valign-wrapper">
+           <a class="" href="{% url 'account_login' %} valign-wrapper"><i class="material-icons small valign">perm_identity</i><span>sign in</span></a>
         </li>
+      
+      
+      {% endif %}
+    </div>
+    
+ 
+  
+</div>
+</div>
+</div>
 
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-user"></i> {{request.user.username}} <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'ent:contact_settings' %}">Contact Settings</a></li>
-            <li><a href="{% url 'account_change_password' %}">Change Password</a></li>
-            <li><a href="{% url 'account_email' %}">Change E-mail</a></li>
-            <li><a href="{% url 'account_logout' %}">Sign Out</a></li>
-          </ul>
-        </li>
 
-        {% else %}
-        <!-- log in -->
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="{% url 'account_login' %}">Sign In</a></li>
-          <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-        </ul>
-        {% endif %}
-      </div>
-    </ul>        
-  </nav>
-</div>
-</div>
-</div>
+</ul>
+
 
 {% block content %}
-
 {% endblock %}
 
 
-<footer>
-  <div id="services" class="pad-section nav_bar_first">
-    <div class="container">
-      <div class="row" id="overview">
-       <div class="col-md-2">
-       </br>
-        <a class="navbar-brand-footer" href="{% url 'ent:simulate_week' %}">Sentimini!</a>
-
-      </div>
-      
-      <div class="col-md-3">
-      </br>
-
-
-
-
-        <h4><a href="{% url 'scaffold:about' %}">About</a></h4>
-        <h4><a href="{% url 'scaffold:sentimini_help' %}">Help and FAQ</a></h4>
-      </div>
-
-      <div class="col-md-2">
-      </br>
-      {% if user.is_authenticated %}
-        <h4><a href="{% url 'ent:feeds_edit' %}">Feeds</a></h4>
-        <h4><a href="{% url 'vis:text_data' %}">Data</a></h4>
-        <h4><a href="{% url 'ent:simulate_week' %}">Simulation</a></h4>
-        <h4><a href="{% url 'ent:contact_settings' %}">Contact Settings</a></h4>
-        {% else %}
-        <h4><a href="{% url 'account_login' %}">Sign In</a></h4>
-          <h4><a href="{% url 'account_signup' %}">Sign Up</a></h4>
-        
-        {% endif %}
-      </div>
-
-
-      <div class="col-md-5">
-      </br>
-            {% if user.is_authenticated %}
-          Sentimini sends <b>periodic text messages</b> with varying content at <b>semi-random times</b>.  Control the content and the timing at the <a href="{% url 'ent:feeds_edit' %}">feeds page</a>.
-    </br></br>
-    Responses are stored in <b>downloadable tables and figures</b>, making it <b>easy to obtain data</b> about your experience.  View and access your data at the <a href="{% url 'vis:text_data' %}">data page.</a>  
-      
-      {% else %}
-
-          Sentimini sends <b>periodic text messages</b> with varying content at <b>semi-random times</b>.  
-    </br></br>
-    Responses are stored in <b>downloadable tables and figures</b>, making it <b>easy to obtain data</b> about your experience.  
-
-
-
-      {% endif %}
-      </br>
-    
-      </div>
-    </div>
-    <p>&copy; 2016 Sentimini!</p>
-  </div>
-
-</div>
-
-</footer>
-</div>
-
-
-
-</div><!-- /.container -->
-
-
-<!-- Bootstrap core JavaScript
-  ================================================== -->
-  <!-- Placed at the end of the document so the pages load faster -->
-  
-  
-  
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  
-</body>
 </html>
+
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/get_side/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'side_switch': $('#side_switch').is(':checked')
+    },
+    success : function(data) {
+     $('#side_content').html(data['SIDE']);
+   }
+
+ })
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+<!-- SELECT2 TAG -->
+<script src={% static "js/select2.full.min.js" %}></script>
+<script>
+  $("#side_tag_bar").select2({
+    tags: true,
+    tokenSeparators: [',', ' ']
+  })
+</script>
+
+
+<script type="text/javascript">
+  $('#side_switch').click(function(){
+    console.log("SWTICH")
+    $.ajax({
+      type: 'POST',
+      url: '/get_side/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'side_switch': $('#side_switch').is(':checked')
+    },
+    success : function(data) {
+     $('#side_content').html(data['SIDE']);
+   }
+
+ })
+  })
+</script>
+
+
+
+
+<script>
+ $(document).ready(function(){
+  $('.collapsible').collapsible();
+});
+
+  // Initialize collapse button
+  $(".button-collapse").sideNav();
+  // Initialize collapsible (uncomment the line below if you use the dropdown variation)
+  //$('.collapsible').collapsible();
+</script>

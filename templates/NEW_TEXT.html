@@ -1,0 +1,782 @@
+{% load static %}
+
+<!-- NAV BAR -->
+
+<!-- CARD FOR NEW TEXTS -->
+<div class = "container">
+<div class="row">
+  <div class="col l4 push-l8 hide-on-med-and-down">
+    <div class= "card">
+      <div class="card-content small_spaces">
+        <div class="row">
+          <div class="col s12">
+            <span class="card-title">Text</span>
+            <p>
+              Text yourself whatever you want.
+            </p>
+            <div class="row"></div>
+            <p>
+              You can repeat the texts and have more advanced scheduling features.
+            </p>
+            <div class="row"></div>
+            <p>
+              Sentimini will collect any responses.  Graphs will be generated for responses on a yes/no scale or a 0-10 scale.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col l8 pull-l4 m12 s12">
+    <div class="card">
+      <div class="card-content small_spaces">
+
+        <!-- TEXT -->
+        <div class="row">
+          <div class="col s12">
+            {% if editing_text %}
+            <span class="card-title">Editing text</span>
+            {% else %}
+            <span class="card-title">Create new text</span>
+            {% endif %}
+
+            <!-- TEXT -->
+            <div class="input-field col s12">
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Text yourself antyhing you want.">chat</i>
+              <textarea id="textarea1" class="materialize-textarea sentimini_text" length="160" rows="1"></textarea>
+              <label for="textarea1" class="active">Text content</label>
+            </div>
+
+
+            <!-- DATE -->
+            <div class="input-field col s12">
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to send the text?">today</i>
+              <!-- <input id="datepicker" placeholder="What date do you want to start receiving this text?"/> -->
+              <input id="start_date" type="date" class="datepicker">
+              <label class="active" for="start_date">Start date</label>
+            </div>
+
+            <!-- HOUR -->
+            <div class="input-field col s12 ">
+              <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i>
+              <div class="col s11 offset-s1">
+                  <p class="range-field">
+                    <div type="range" id="specific_time_hours"></div>
+                  </p>
+              
+                <div class="row"></div>
+                Hour Range: <span id="time"></span>
+              </div>
+            </div>
+            
+
+
+            <!-- TAGS -->
+            <div class="input-field col s12">
+              <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+              <i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+              <div class="row">
+                <div class="col s12">
+                 <select id="tag_bar" multiple="multiple" placeholder="">
+                   {% for tag in working_tags %}
+                   <option value="{{tag.tag}}">{{tag.tag}}</option>
+                   {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- REPEAT -->
+            <div class="input-field col s12 ">
+            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?">repeat</i>
+            <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
+            <div class="row">
+              <div class="col s10 offset-s1">
+                <p>
+                  <!-- CHECKBOX -->
+                  <input data-target="modal1" name="repeat_checkbox" type="checkbox" id="repeat_checkbox" value="" />
+                  <label for="repeat_checkbox" id="repeat_summary2" class="">Click here to repeat</label>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTIVE -->
+          <div class="input-field col s12 ">
+            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This text will be sent ONLY if this box is checked">alarm_on</i>
+            <!-- <i class=" prefix tooltipped fa fa-repeat" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?"></i> -->
+            <div class="row">
+              <div class="col s10 offset-s1">
+                <p>
+                  <!-- CHECKBOX -->
+                  <input name="active_text_checkbox" type="checkbox" id="active_text_checkbox" value="" checked>
+                  <label for="active_text_checkbox" class="">Active text</label>
+                </p>
+              </div>
+            </div>
+          </div>
+      </div>
+      </div>
+
+
+      <!-- MODAL buTTON -->
+      <!-- <button data-target="modal1" class="btn">Modal</button> -->
+      <form>{% csrf_token %}
+        <div class="card-action">
+          {% if user.is_authenticated %}
+          <a id="save_new_text_button" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
+          {% else %}
+          <a href="{% url 'account_signup' %}" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Sign up</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+
+
+  <!-- </div> -->
+
+
+  <!-- MODAL -->
+  <div id="modal1" class="modal">
+    <div class="modal-content">
+      <div class="col s12">
+        <!-- TEXTS SUMMARY OF REPEAT -->
+        <h5><div id ="repeat_summary">Repeat</div></h5>
+        <hr>
+
+        <!-- SWITCH.  THIS TRIGGERS FUZZY OR SPECIFIC -->
+        <div class="switch">
+          <label>
+            Specific Timings
+            <input type="checkbox" id="timing_switch">
+            <span class="lever"></span>
+            Fuzzy Timings
+          </label>
+        </div>
+
+        <!-- FUZZY OR SPECIFIC CONTENT -->
+        <div id="model_content_for_switch"></div>
+
+        <!-- REPEAT this will be for later! -->
+      <!-- <div class="row">
+        <div class="col s12">
+          <span class="card-title">Repeats</span>
+          <div class="input-field col s12 ">
+            <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Do you want to recive this text more than once?">repeat</i>
+            <div class="row">
+              <div class="col s10 offset-s1 black-text">
+                <select id="timing_select" class="browser-default" >
+                  <option value="" disabled selected>No repeats</option>
+                  {% for timing in working_timings %}
+                  <option value="{{timing.id}}">{{timing.timing}}</option>
+                  {% endfor %}
+                  <option value="new_timing">Add a new timing preset</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+
+      <!-- DT IF END -->
+      <div class="row">
+        <div class="col s12">
+          <b>Ends on:</b>
+        </div>
+        <div class="input-field col s5">
+          <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="When do you want to stop the texts?">today</i>
+          <!-- <input type="date" id="end_datepicker" class="datepicker" placeholder="Never"> -->
+          <input id="end_datepicker" type="date" class="datepicker" placeholder="Never?">
+        </div>
+        <!-- <div class="col s1">
+        Or:
+        </div>
+        <div class="input-field col s6">
+
+          <input id="text_until" type="text" class="validate" placeholder="I say stop (not connected yet)">
+          <label for="text_until">Passcode to stop</label>
+        </div> -->
+
+      </div>
+
+
+
+      <!-- SAVE TIMING NAME -->
+   <!--  <div class="row">
+      <form class="col s5">
+        <b>Timing Setting Name:</b>
+        <p>
+          
+          <input name="time_setting_name_save" type="checkbox" id="time_setting_name_save" value="" />
+          <label for="time_setting_name_save">Save Time Setting For Future</label>
+          
+        </p>
+      </form>
+
+      <div id = "time_setting_name_container" class="input-field col s7">
+        <input id="time_setting_name" type="text" class="validate">
+        <label for="time_setting_name">Time Setting Name</label>
+      </div>
+    </div> -->
+
+
+
+    <!-- FOOTER -->
+    <div class="modal-footer">
+      <a id="modal_save" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Save</a>
+      <a id="modal_dismiss" href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Dismiss</a>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
+<script src={% static "js/nouislider.js" %}></script>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"> -->
+
+
+<!-- <script src={% static "js/materialize.min.js" %}></script> -->
+
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+<!-- <link rel="stylesheet" href={% static "css/select2.min.css" %}> -->
+
+<!-- <script src={% static "js/date.js" %}></script> -->
+<script src={% static "js/picker.js" %}></script>
+<script src={% static "js/picker.date.js" %}></script>
+<script src={% static "js/editing_text_helpers.js" %}></script>
+
+
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+</script>
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+  noUiSlider.create(slider, {
+   start: [540, 1260],
+   connect: true,
+   step: 1,
+   range: {
+     'min': 0,
+     'max': 1439
+   },
+ });
+
+
+var connect = slider.querySelectorAll('.noUi-connect');
+var classes = ['c-1-color'];
+
+for ( var i = 0; i < connect.length; i++ ) {
+    connect[i].classList.add(classes[i]);
+}
+
+  slider.noUiSlider.on('update', function(){
+
+    var startTime = slideTime_start()
+    var endTime = slideTime_end()
+    $("#time").text(startTime + ' - ' + endTime);
+    $("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
+
+  });
+</script>
+
+
+<!-- FOR THE EDIT -->
+{% if editing_text %}
+<script type="text/javascript">
+  $('#textarea').change(function() {
+    console.log("CHANGE !!! ")
+    $('#text_name').texts(textarea.val())
+
+
+  })
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    console.log("EDIT TEXT")
+  // TEXT
+  $('#textarea1').val('{{editing_text.text}}');
+  $('#textarea1').trigger('autoresize');
+  
+  
+  // DATE
+  $('#start_date').val("{{today_date|safe}}");
+  var old_date = "{{editing_text.timing.date_start_value}}" 
+  $('#start_date').val(old_date);
+
+
+
+  // HOURS RANGE
+  slider.noUiSlider.set( [{{editing_text.timing.hour_start_value}},{{editing_text.timing.hour_end_value}}] );
+
+  // TAG BAR IS BELOW
+
+  // REPEAT SUMMARY (some is below)
+  
+  // var slider = document.getElementById('#specific_time_hours');
+  
+
+})
+  console.log("EDIT")
+</script>
+{% endif %}
+
+{% if editing_text.active != None %}
+<script type="text/javascript">
+  $('#active_text_checkbox').prop('checked', false);
+</script>
+{% else %}
+<script type="text/javascript">
+  $('#active_text_checkbox').prop('checked', true);
+</script>
+{% endif %}
+
+
+
+
+{% if editing_text.timing.repeat %}
+<script type="text/javascript">
+  console.log("LOADING EDIT REPEAT 314")
+  $('#repeat_checkbox').prop('checked', true);
+  $('#repeat_summary').html("{{editing_text.timing.repeat_summary}}")
+  $('#repeat_summary2').html("{{editing_text.timing.repeat_summary}} <a data-target='modal1'> EDIT </a>")
+  $('#end_datepicker').val("{{editing_text.timing.date_end_value}}")
+
+
+  
+  // $('#repeat_summary').html()
+
+</script>
+{% endif %}
+
+
+{% if editing_text.timing.fuzzy %}
+<script type="text/javascript">
+  console.log("CHANGING SWICH 330")
+  $('#timing_switch').prop('checked', true);
+
+</script>
+
+{% endif %}
+
+
+<!-- TAG BAR -->
+{% if tags %}
+<script type="text/javascript">
+  console.log("TAG + {{tags|safe}}")
+  // $('#tag_bar').val(['good', 'bad']);
+  $('#tag_bar').val({{tags|safe}})
+  // $(".tag_bar").select2("val", "{{tag.tag}}");
+</script>
+
+{% endif %}
+
+
+
+<script>
+  $('#save_new_text_button').click(function() {
+    console.log("SAVE CLICKED")
+    save_text_data()  
+  })
+
+</script>
+
+<!-- SELECT2 TAG -->
+<script>
+  $("#tag_bar").select2({
+    tags: true,
+    tokenSeparators: [',', ' '],
+    placeholder: "Tags",
+    allowClear: true
+  }).on('select2:unselecting', function() {
+    $(this).data('unselecting', true);
+  }).on('select2:opening', function(e) {
+    if ($(this).data('unselecting')) {
+      $(this).removeData('unselecting');
+      e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+<!-- OPEN THE MODAL -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#modal1').modal(
+      )
+  })
+</script>
+
+
+<!-- TIME SETTING NAME CHECK BOX -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    // console.log("READY ~line 346")
+
+    if ($('#time_setting_name_save').is(':checked')) {
+      $('#time_setting_name_container').show()
+
+    } else {
+      $('#time_setting_name_container').hide()
+
+    }
+  })
+
+  $('#time_setting_name_save').change(function(){
+   if ($('#time_setting_name_save').is(':checked')) {
+    $('#time_setting_name_container').show()
+
+  } else {
+    $('#time_setting_name_container').hide()
+
+  }
+
+})
+</script>
+
+<!-- TOOLTIPS -->
+<script>
+ $(document).ready(function(){
+  $('.tooltipped').tooltip({delay: 50});
+});
+</script>
+
+<!-- CHARACTER COUNT IN TEXT AREA -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    // console.log("READY ~line 378")
+    $('input#input_text, textarea#textarea1').characterCounter();
+  });
+</script>
+
+
+
+
+<!-- END ON VALUES -->
+<!-- MODAL -->
+
+
+<!-- This is for the initialize the modal -->
+<script>
+  $(document).ready(function(){
+    console.log("READY ~line 392")
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('#modal1').modal();
+    // get_repeat_summary()
+    // console.log("BEFORE AJAX ~line 392")
+
+    console.log("START DAY SET {{today_date}}")
+    $('#start_date').val("{{today_date}}");
+    
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/get_next_text_modal/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'timing_switch': $('#timing_switch').is(':checked'),
+    },
+    success : function(data) {
+      // console.log("SUCESS AJAX ~line 392")
+      $('#model_content_for_switch').html(data['model_content_for_switch']);
+    }
+  })
+  });
+</script>
+
+
+
+<!-- MODAL OPEN AND REFRESH -->
+
+<script type="text/javascript">
+  $('#repeat_checkbox').click(function(){
+
+    console.log("STEP 1.  Repeat check ~line 415")
+    console.log("----- REPEAT CHECK VAL: ", $('#repeat_checkbox').is(':checked'))
+    get_repeat_summary()
+  })
+
+  $('#end_datepicker').change(function() {
+    console.log("END DATEPICKER 457")
+    get_repeat_summary()
+  })
+
+</script>
+
+
+
+<!-- MODAL SHUT -->
+<script type="text/javascript">
+  $('#modal_save').click(function() {
+    console.log("MODAL 468")
+    $('#repeat_checkbox').prop("checked", true);
+    // console.log("SAVE")
+  })
+  $('#modal_dismiss').click(function() {
+    console.log("MODAL 473")
+    $('#repeat_checkbox').removeAttr('checked');
+    $('#repeat_summary2').text("Click here to repeat")
+    // console.log("DISMISS")
+  })
+</script>
+
+<!-- DATE PICKERS -->
+
+
+<script type="text/javascript">
+ $('.datepicker').pickadate({
+  closeOnSelect: true,
+  format: 'yyyy-mm-dd',
+  formatSubmit: 'yyyy-mm-dd',
+  
+
+});
+
+ $('.end_datepicker').pickadate({
+  closeOnSelect: true,
+  format: 'yyyy-mm-dd',
+  formatSubmit: 'yyyy-mm-dd',
+});
+
+</script>
+
+
+
+<!-- THIS LOADS UP AND CHECKS FOR CHANGES IN THE MODAL -->
+<script>
+  $('#timing_switch').click(function() {
+    console.log("TIMING SWITCH HIT 500")
+    
+    $.ajax({
+      type: 'POST',
+      url: '/get_next_text_modal/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'timing_switch': $('#timing_switch').is(':checked'),
+    },
+    success : function(data) {
+     $('#model_content_for_switch').html(data['model_content_for_switch']);
+     // console.log("MODAL UPDATED")
+     get_repeat_summary()
+   }
+ })  
+  });
+
+</script>
+
+
+
+<script>
+
+
+// REPEAT SUMMARY
+ var get_repeat_summary = function(){
+
+  var output = get_repeat_summary_model()
+   
+  console.log("OUTPUT 51 " + output)
+   if ($('#repeat_checkbox').is(':checked') === "false") {
+      console.log("NO REPEAT")
+      $('#repeat_summary').html(output)
+      $('#repeat_summary2').text("Click here to repeat")
+    } else {
+      console.log("REPEAT DEFINED")
+        $('#repeat_summary').html(output)
+        $('#repeat_summary2').html(output+ " <a data-target='modal1'> EDIT </a>")
+    }
+  }
+
+
+
+
+ var get_repeat_summary_model = function(){
+  console.log("STEP 2 get_repeat_summary_model")
+  console.log("----- REPEAT CHECK VAL: ", $('#repeat_checkbox').is(':checked'))
+
+    var output = ""
+    var end_date = $('#end_datepicker').val()
+    if ($('#end_datepicker').val() === "")
+    {
+      var end_date = "forever"
+      console.log("&&&&& END DATE EMPTY")
+    } else {
+      console.log("&&&&& END DATE FULL")
+    }
+
+    var start_date = $('#datepicker').val()
+
+    // TIME RANGE
+    var start_time = slideTime_start()
+    var end_time = slideTime_end()
+
+
+      if ($('#timing_switch').is(':checked'))
+      {
+        // ITI
+        var ITI_mean = $('#ITI_mean').val()
+        var ITI_noise = $('#ITI_noise').val()
+        var ITI_noise_small = ITI_noise / 100
+        var ITI_noise_remove = ITI_noise_small * ITI_mean
+
+        var ITI_min = Number(ITI_mean) - Number(ITI_noise_remove)
+        if (ITI_min < 0){
+          ITI_min = 0
+        }
+
+        var ITI_max = Number(ITI_mean) + Number(ITI_noise_remove)
+
+        var num_per_week = 960 / ITI_mean
+        num_per_day = num_per_week/7
+
+        num_per_day = num_per_day.toFixed(1)
+        var num_per_month = num_per_week * 4
+        num_per_month = num_per_month.toFixed(1)
+
+        console.log("----- RS TD: " + $('#fuzzy_denomination').val())
+        console.log("SHOULD BE ITIT")
+
+        var summary = "Repeating on average every " + ITI_mean + " " + $('#fuzzy_denomination').val() + " (range: " + ITI_min.toFixed(1) + " to " + ITI_max.toFixed(1) + ")  between " + start_time + " and " + end_time + "; " + num_per_day + " per day until " + end_date
+        console.log("SUMMARY 100 " + summary)
+      } else {
+        // SPECIFIC
+        var num_repeats = $('#repeat_time').val()
+        var repeat_num_weeks = $('#repeat_num_weeks').val()
+
+       // GET THE WEEK DAYS
+        var weekdays = [];
+        $('input[name=weekdays]:checked').each(function() {
+           weekdays.push($(this).val());
+         });
+
+        var num_per_week = weekdays.length*num_repeats
+        var num_per_day = (num_per_week )/7
+
+        if (weekdays.length>6){
+          weekdays = "all days"
+        } 
+         var summary = "Repeating " + num_repeats + " times a day between " + start_time + " and " + end_time + " on " + weekdays + " until " + end_date
+         console.log("SUMMARY 120 " + summary)
+      } 
+
+     
+
+      
+
+       output = summary
+      console.log("OUTPUT 133 " + output)
+      return output
+}
+</script>
+<script type="text/javascript">
+  var save_text_data = function(){
+  // GET THE DIFFERENT VALUES
+  var text = $('#textarea1').val()
+  var start_date = $('#start_date').val()
+  var end_date = $('#end_datepicker').val()
+  var start_time = slideTime_start()
+  var end_time = slideTime_end()
+  console.log("SAVE TEXT")
+  // console.log("EDIT ID: {{editing_text.id}}")
+  console.log("end_date" + end_date)
+  // console.log("start_time" + start_time)
+  // console.log("end_time" + end_time)
+  // console.log("slider.noUiSlider.get()[0]" + slider.noUiSlider.get()[0])
+  // console.log("slider.noUiSlider.get()[1]" + slider.noUiSlider.get()[1])
+  
+
+  if ($("#tag_bar").val() !== null){
+    var tag_vals = $('#tag_bar').val().join(',')  
+  }
+
+  if ($("#timing_select").val() === null){
+    var timing_select = "no repeats"
+  } else {
+    var timing_select = $('#timing_select').val()  
+  }
+
+  var timing_name = $('#time_setting_name').val()
+  var fuzzy = $('#timing_switch').is(':checked')
+  var num_repeats = $('#repeat_time').val()
+  var repeat_num_weeks = $('#repeat_num_weeks').val()
+  var weekdays = [];
+  $('input[name=weekdays]:checked').each(function() {
+   weekdays.push($(this).val());
+ });
+
+  var ITI_mean = $('#ITI_mean').val()
+  var ITI_noise = $('#ITI_noise').val()
+  
+  var repeat_summary = get_repeat_summary_model()
+
+
+  // I had the devil of a time getting the repeat summary to work.  for some reason it has to be here.
+  if ($('#repeat_checkbox').is(':checked') === false) {
+    var repeat_summary = "Sending 1 text between " + start_time + " and " + end_time + " on " + start_date
+  } 
+  
+  // LOAD THE AJAX
+  $.ajax({
+    type: 'POST',
+    url: '/save_new_text/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'id': "{{editing_text.id}}",
+    'text': text,
+    'date_start': start_date,
+    'end_date': end_date,
+    'hour_start': start_time,
+    'hour_start_value': slider.noUiSlider.get()[0],
+    'hour_end_value': slider.noUiSlider.get()[1],
+    'hour_end': end_time,
+    'tag_vals': tag_vals,
+    'fuzzy': fuzzy,
+    'timing_name': timing_name,
+    'repeat': $('#repeat_checkbox').is(':checked'),
+    'active_text_checkbox': $('#active_text_checkbox').is(':checked'),
+    'repeat_in_window': num_repeats,
+    'repeat_weeks': repeat_num_weeks,
+    'weekdays': weekdays.join(','),
+    'iti': ITI_mean,
+    'iti_noise': ITI_noise,
+    'fuzzy_denomination': $('#fuzzy_denomination').val(),
+    'repeat_summary': repeat_summary,
+  },
+  success : function(data) {
+    console.log("WORKED")
+    console.log(data['message'])
+    $.ajax({
+      type: 'POST',
+      url: '/get_new_text_form/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#MAIN').html(data['NEW_TEXT']);
+     }
+   })
+    $.ajax({
+      type: 'POST',
+      url: '/get_side/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'side_switch': $('#side_switch').is(':checked')
+    },
+    success : function(data) {
+     $('#side_content').html(data['SIDE']);
+   }
+
+ })
+     // $('#model_content_for_switch').html(data['model_content_for_switch']);
+   }
+ })
+}
+</script>

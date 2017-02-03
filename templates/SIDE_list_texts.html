@@ -1,0 +1,127 @@
+{% load static %}
+<script src="http://listjs.com/assets/javascripts/list.min.js"></script>
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+<script src={% static "js/materialize.min.js" %}></script>
+
+<!-- <script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+<link rel="stylesheet" href={% static "css/sentimini-css.css" %}> -->
+<!-- CHECKBOX -->
+<!-- <p>
+  <input data-target="modal1" name="repeat_checkbox" type="checkbox" id="possible_text_vew" value="" />
+  <label for="possible_text_vew" id="repeat_summary2" class="black-text">View Possible</label>
+</p> -->
+
+
+<div id="side_tag_list">
+  
+
+    <!--DEFAULT SEARCH ONLY GIVES ONE RESULT  -->
+
+    <!-- <input class="search" placeholder="Search tags or texts" /> -->
+
+    <div class="waves-effect waves btn-flat chip sort" data-sort="burden">
+      # per day
+    </div>
+    <div class="waves-effect waves btn-flat chip sort" data-sort="side-text-content">
+      Text
+    </div>
+       <div class="waves-effect waves btn-flat chip sort" data-sort="active-sort">
+      Active
+    </div>
+  
+
+  <ul class="list collapsible  side-text-header" data-collapsible="expandable">
+  {% if working_texts %}
+    {% for text in working_texts %}
+    <li>
+      <div class="collapsible-header side-text-header" style="line-height: normal;"><i class="medium material-icons">message</i>
+        <span class="burden" style="font-weight: bold; font-size: 130%">{{text.burden|floatformat}}</span> per day
+        <hr>
+        <span class="side-text-content" >{{text.text}}</span>
+      </div> 
+
+      <div class="collapsible-body col s12 side_bar">
+        <div class="row">
+            <div class="col s3">
+              <a href="/ent/add_new_text/{{text.id}}">Edit</a>
+            </div>
+             <div class="col s3">
+              <a href="/feed_specific/{{text.id}}">View</a>
+              </div>
+             <div class="col s5 offset-s1">
+                 {% if text.active == True %}
+                   <div value="{{text.id}}" id="side_{{text.id}}" class="waves-effect btn pause-text-btn">Pause</div>
+                   <span class="active-sort" hidden>0</span>
+                 {% else %}
+                 <div style="background-color:#e57373;" value="{{text.id}}" id="side_{{text.id}}"  class="waves-effect btn pause-text-btn">Start</div>
+                 <span class="active-sort" hidden>1</span>
+                 {% endif %}
+             </div>
+       </div>
+
+       <span>{{text.timing.repeat_summary}}</span>
+     </div>
+     <div class="row"></div>
+   </li>
+   {% endfor %}
+   {% endif %}
+ </ul>
+ <div class="row"></div>
+ <div class="row"></div>
+ <div class="row"></div>
+
+ <div class="col s10">
+  <ul class="pagination"></ul>
+</div>
+
+
+<script type="text/javascript">
+$('.pause-text-btn').click(function() {
+  var text_id_button = $(this).attr('id')
+  var text_id_button_id = $(this).attr('id').split("_")[1]
+  $.ajax({
+      type: 'POST',
+      url: '/pause_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id').split("_")[1],
+    },
+    success : function(data) {
+      if ($('#'+text_id_button).text()=="Pause"){
+        
+       $('#side_'+text_id_button_id).text("Start")
+       $('#feed_'+text_id_button_id).text("Start")
+       $('#side_'+text_id_button_id).css('background-color', '#e57373');
+       $('#feed_'+text_id_button_id).css('background-color', '#e57373');
+       // $('#feed_'+text_id_button_id).css('background', 'red');
+       // $('#feed_'+text_id_button_id).css('color', 'red');
+      } else {
+        $('#side_'+text_id_button_id).text("Pause")
+        $('#feed_'+text_id_button_id).text("Pause")
+        $('#side_'+text_id_button_id).css('background-color', '#2196f3');
+        $('#feed_'+text_id_button_id).css('background-color', '#2196f3');
+      }
+      // console.log("SUCESS AJAX ~line 392")
+      // $('#model_content_for_switch').html(data['model_content_for_switch']);
+    }
+})
+})
+</script>
+
+
+<script type="text/javascript">
+  var monkeyList = new List('side_tag_list', {
+    valueNames: ['side-text-content', 'date_created','burden','active-sort'],
+    page: 5,
+    plugins: [ ListPagination({}) ] 
+  });
+</script>
+
+<script>
+ $(document).ready(function(){
+  $('.tooltipped').tooltip({delay: 50});
+});
+</script>

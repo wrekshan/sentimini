@@ -1,0 +1,127 @@
+{% load static %}
+
+<script src="http://listjs.com/assets/javascripts/list.min.js"></script>
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+
+<script src={% static "js/select2.full.min.js" %}></script>
+  <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+
+<div class="row">
+  <div class="col s11 m11 offset-s1 offset-m1">
+    <div id="possible_text_list">
+    <!-- SEARCH BAR -->
+              <div class="row">
+                <div class="input-field col s11">
+                
+                 <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Use this search bar to add texts">search</i>
+                 <select id="all_actual_texts" multiple="multiple">
+                   <!-- ADD BY TAG (ALL WITH A TAG) OR BY INDIVIDUAL, SO MULTI TIERED SEARCH-->
+                   {% for text in actual_texts %}
+                   <option value="{{text.id}}">{{text.text}}</option>
+                   {% endfor %}
+                 </select>
+                 </div>
+               </div>
+              <!-- Switch -->
+      <p>
+          <div class="waves-effect btn chip sort" data-sort="text-text">
+            Text
+          </div>
+
+          <div class="waves-effect btn chip sort" data-sort="time_sent">
+            Date
+          </div>
+
+          <div class="waves-effect btn chip sort" data-sort="response">
+            Response
+          </div>
+      </p>
+
+
+      <div class="row">
+        <div class="col s10 m10 offset-s1 offset-m1">
+          <div id="lens_filter_options"></div>
+        </div>
+      </div>
+
+      <ul class="list">
+      {% if text_present == 0 %}
+        <div class="col s12 m11">
+          <div class="card">
+            <div class="card-content">
+        No texts have been sent.  
+        </br></br>
+        <a class="waves-effect waves-light btn" href="/ent/add_new_text" >Schedule a text</a>
+        
+        </div>
+        </div>
+        </div>
+        {% else %}
+      {% for text in working_texts %}
+        <div class="col s11 m11">
+          <div class="card">
+            <div class="card-content">
+              <span class="card-title text-text"  style="line-height: normal;">{{text.text.text}}</span>
+              <div class="row"></div>
+              Sent at: <span class="time_sent">{{text.time_sent}}</span> </br>
+              Response at: <span class="time_response">{{text.time_response}}</span></br>
+              <div class="row"></div>
+              Response: <span class="response">  {{text.response}}</span>
+              
+            </div>
+            <div class="card-action">
+              <a href="#">View Data</a>
+              <a href="/ent/add_new_text/{{text.text.id}}">Edit</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+      {% endif %}
+    </ul>
+    <div class="col s10">
+      <ul class="pagination"></ul>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $("#all_actual_texts").select2({
+  })
+</script>    
+
+<script type="text/javascript">
+$('#actual_switch').change(function(){
+  console.log("ACTUAL SWITCH PRESSED!")
+  $.ajax({
+    type: 'POST',
+    url: '/get_feed/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'actual_switch':$('#actual_switch').is(':checked'),
+    }, 
+     success : function(data) {
+             $('#MAIN').html(data['FEED']);
+         }
+
+    })
+
+})
+</script>
+
+
+<script type="text/javascript">
+// var options = {
+//   valueNames: [ 'text-text', 'text_id' ]
+// };
+
+// var userList = new List('possible_text_list', options);
+
+
+  var monkeyList = new List('possible_text_list', {
+    valueNames: ['text-text', 'time_sent',''],
+    page: 5,
+    plugins: [ ListPagination({}) ] 
+  });
+</script>

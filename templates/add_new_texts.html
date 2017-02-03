@@ -1,69 +1,62 @@
-  {% extends "base.html" %} {% load i18n %} {% load crispy_forms_tags %} {% crispy form %}
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<main>
+<nav>
+  <div class="nav-wrapper z-depth-1">
+    <div class="row">
+      <div class="col l12 s12">
+      
+          <a href="/app_home/" class="breadcrumb">Home</a>
+          <a href="/feed/" class="breadcrumb">Schedule text</a>
+      
 
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
 
-  <!--DOCTYPE html -->
-
-
-  <html>
-  <head>
-
-  </head>
-
-  <body>
-    {% block content %}
-
-
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="container">
-
-    
- <div class="row" id="texts">
- <div class="col-md-2">
- <a href="/ent/text_set_detail/{{ feed_id }}/{{ group_id }}/"><- Back to Feed Overview</a>
- </div>
-  <div class="col-md-10">
-  
-
-  <h1> {{feed_name}}</h1>
-  {{number_of_texts}} texts in feed
+        <ul class="right hide-on-med-and-down">
+          <ul class="right hide-on-med-and-down">
+            <li>
+              {% if user.is_authenticated %}
+              
+              {% else %}
+              <a href="{% url 'account_signup' %}" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Sign up</a>
+              {% endif %}
+            </li>
+          </ul>
+        </ul>
+      </div>
+    </div>
   </div>
-  </div>
-  </br>
+</nav>
 
-<div class="row" id="texts">
-  <div class="col-md-10">
-    <form method='POST' action='' class="form-horizontal">
-    {% csrf_token %} {% crispy form_new_text %}
-    <!-- <input type="submit" name="submit_paid" value="Submit Paid Settings" class="btn btn-primary btn-lg btn-block"> -->
-  </form>
-  </div>
-  </div>
-
-</br>  
-
-
-</div>
-
-
-</div>
-</div>
-
-<!-- Contact Settings -->
+<div id = "MAIN"></div>
+</main>
 
 
 
 
-<!-- end of container -->
-</div> 
+<script type="text/javascript">
+function startClock(){
+  console.log("STARTING")
 
+  $.ajax({
+    type: 'POST',
+    url: '/get_new_text_form/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'id': "{{id}}",
+    },
+     success : function(data) {
+             $('#MAIN').html(data['NEW_TEXT']);
+         }
 
+    })
+}
+if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+}
+else{
+    window.attachEvent('onload',startClock); //IE
+}
+</script>
 
-
-<!-- /container -->
-
-
-</body>
-
-</html>
 {% endblock %}
