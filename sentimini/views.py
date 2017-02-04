@@ -126,13 +126,13 @@ def feed_specific(request,id=None):
 
 		}			
 
-		return render(request,"feed_specific_scaffold.html",context)
+		return render(request,"FEED_specific_scaffold.html",context)
 	else:
 		context = {
 			
 		}			
 
-		return render(request,"feed_specific_scaffold.html",context)
+		return render(request,"FEED_specific_scaffold.html",context)
 
 
 

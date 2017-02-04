@@ -111,7 +111,8 @@
 
           <p> 
             {% for tag in value.text.tag.all %}
-            <span><a href='/tag_specific/{{tag.id}}'>#{{tag.tag}}</a></span>
+            <!-- <span><a href='/tag_specific/{{tag.id}}'>#{{tag.tag}}</a></span> -->
+            <span>#{{tag.tag}}</span>
             {% endfor %}
           </p>
           <div class="row"></div>
