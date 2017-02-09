@@ -107,7 +107,17 @@
     </div>
 
     <div class="card-action">
-      <div value="add" id="collection_{{value.collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> (<span class="activator">See texts</span>) - You have signed for XX texts
+        {% if user.is_authenticated %}
+          <div value="add" id="collection_{{value.collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> (<span class="activator">See texts</span>) - You have signed for XX texts
+
+          {% else %}
+          <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
+          or <a href="{% url 'account_login' %}"">Sign In</a>
+
+          {% endif %}
+
+
+      
       {% if value.collection.user == user %}
       <a href="/ent/collection_create_scaffold/{{value.collection.id}}">Edit collection</a>
       {% endif %}
