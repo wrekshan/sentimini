@@ -29,52 +29,52 @@
   <nav class="white" role="navigation">
     <div class="nav-wrapper container">
       <a id="logo-container" href="#" class="brand-logo black-text">Sentimini!</a>
-      <ul class="right hide-on-med-and-down">
-      {% if user.is_authenticated %}
-      <li><a href="/app_home/">App Home</a></li>
-      
-      {% else %}
-       <li><a href="{% url 'account_login' %}">Sign In</a></li>
-       <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-      
-       {% endif %}
-     </ul>
+      <ul class="right ">
+        {% if user.is_authenticated %}
+        <li><a href="/app_home/">App Home</a></li>
 
-     <ul id="nav-mobile" class="side-nav">
-      <li><a href="{% url 'account_login' %}">Sign In</a></li>
-       <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
-    </ul>
-    <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-  </div>
-</nav>
-
-<!-- FIRST PIC -->
-<div id="index-banner" class="parallax-container">
-  <div class="section no-pad-bot">
-    <div class="container ">
-      <h1 class="header center">Text scheduling + data visualizations</h1>
-      <div class="row center">
-        <h5 class="header col s12 light">
-          Free.  Beta.  Tools to enhance life.  Data to learn from it.
-        </h5>
-      </div>
-      <div class="row center">
-      {% if user.is_authenticated %}
-      <a class="btn-large waves-effect waves-light" href="/ent/add_new_text/" > Schedule a text</a>
-        
         {% else %}
-      <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
+        <li><a href="{% url 'account_login' %}">Sign In</a></li>
+        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+
         {% endif %}
+      </ul>
+
+
+    </div>
+  </nav>
+
+  <!-- FIRST PIC -->
+  <div id="index-banner" class="parallax-container">
+    <div class="section no-pad-bot">
+      <div class="container ">
+        <h1 class="header center">Simple, free text scheduling</h1>
+        <div class="row center">
+          <h5 class="header col s12 light">
+            Tools to enhance life.  Data to learn from it.
+          </h5>
+        </div>
+        <div class="row center">
+          {% if user.is_authenticated %}
+          <a class="btn-large waves-effect waves-light" href="/ent/add_new_text/" > Schedule a text</a>
+
+          {% else %}
+          <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
+          
+          <div class="row"></div>
+          <a href="{% url 'account_login' %}"">Already signed up, then sign in</a>
+
+          {% endif %}
+        </div>
       </div>
     </div>
+    <div class="parallax"><img src= "/static/images/bunch/Clouds.jpg" ></div>
   </div>
-  <div class="parallax"><img src= "/static/images/bunch/Clouds.jpg" ></div>
-</div>
 
-<!-- Three panel with ICON -->
-<div class="container">
-  <div class="section">
-    <div class="row">
+  <!-- Three panel with ICON -->
+  <div class="container">
+    <div class="section">
+      <div class="row">
 
    <!--    <div class="col s12 m4">
         <div class="icon-block">
@@ -88,22 +88,22 @@
         </div>
       </div> -->
 
-     
+
 
       <div class="col s12 m6">
         <div class="icon-block">
           <h2 class="center brown-text"><i class="material-icons">textsms</i></h2>
-          <h5 class="center">Schedule a text</h5>
+          <h5 class="center">Create a text</h5>
           <p class="light">You can send yourself a one time or repeating text with any content at any time.  Think google calendars for text messages.  </p>
           <a href="/ent/add_new_text/" class="">See how easy it is to schedule a new text</a>
         </div>
       </div>
 
-       <div class="col s12 m6">
+      <div class="col s12 m6">
         <div class="icon-block">
           <h2 class="center brown-text"><i class="material-icons">collections</i></h2>
-          <h5 class="center">Collections</h5>
-          <p class="light">Sign up for any number of prepopulated lists of texts covering a range of topics from scheduling a text to reminder to pick up coffee, to interactive programs to inspire creativity, to monitoring aspects of health.</p>
+          <h5 class="center">Sign up for collections</h5>
+          <p class="light">You can sign up for lists of texts covering a range of topics from scheduling a text to reminder to pick up coffee, to interactive programs to inspire creativity, to monitoring aspects of health.</p>
           <a href="/ent/collection/" class=""><!-- <i class="material-icons left">today</i> -->See all all the different ways you can use sentimini</a>
         </div>
       </div>
@@ -112,49 +112,136 @@
   </div>
 </div>
 
-
-<!-- WHY PICTURE-->
+<!-- USE PICTURE -->
 <div class="parallax-container valign-wrapper">
   <div class="section no-pad-bot">
     <div class="container">
       <div class="row center">
-        <h5 class="header col s12 light">Easily obtain quantiative data about your life</h5>
+        <h5 class="header col s12 light">Uses</h5>
       </div>
     </div>
   </div>
-  <div class="parallax"><img src= "/static/images/bunch/January 2014 (5).jpg" alt="Unsplashed background img 2"></div>
+  <div class="parallax"><img src= "/static/images/bunch/Crazy Woods.jpg" ></div>
 </div>
+
+<!-- Three panel with ICON -->
+<div class="container">
+  <div class="section">
+
+
+
+    <!-- USE RIGHT -->
+    <div class="row">
+      <div class="valign-wrapper">
+      <div class="col s12 m8 center-align">
+          <h5>Inspirations / Reminders</h5>
+          <p class="light">Schedule a one time text to remember to pick up coffee.  Schedule a repeating text to reminder yourself to be more mindful or more loving.</p>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center brown-text"><i class="material-icons">textsms</i></h2>
+          </div>
+        </div>     
+      </div>
+    </div>
+
+    <!-- USE LEFT -->
+    <div class="row">
+
+      <div class="valign-wrapper">
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center brown-text"><i class="material-icons">textsms</i></h2>
+          </div>
+        </div>
+        <div class="col s12 m8 center-align">
+          <h5>Productivity / Creativity</h5>
+          <p class="light">Sign up for texts to help with productivity.  Receive a text in the morning asking what is the one most important thing to do today followed by another text in the evening asking you if you completed the goal.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- USE RIGHT -->
+    <div class="row">
+      <div class="valign-wrapper">
+      <div class="col s12 m8 center-align">
+          <h5>Heath / Wellnesss</h5>
+          <p class="light">Sentimini records any replies, so it is great to track health and wellness experience.  Sentimini could be used to track pain levels, if medication was taken, or provide tools for communication between clients and health/wellness professionals.</p>
+        </div>
+
+        <div class="col s12 m4">
+          <div class="icon-block">
+            <h2 class="center brown-text"><i class="material-icons">textsms</i></h2>
+          </div>
+        </div>     
+      </div>
+    </div>
+
+ 
+  
+  </div>
+
+</div>
+</div>
+
+<!-- OPEN SOURCE PICTURE-->
+<div class="parallax-container valign-wrapper">
+  <div class="section no-pad-bot">
+    <div class="container">
+      <div class="row center">
+        <h5 class="header col s12 light">Why</h5>
+      </div>
+    </div>
+  </div>
+  <div class="parallax"><img src= "/static/images/bunch/Daisies.jpg" alt="Unsplashed background img 2"></div>
+</div>
+
+
+
 
 <!-- WHY -->
 <div class="container">
   <div class="section">
     <div class="row">
-      <div class="col s12 center">
+      <div class="col s12">
         <h3><i class="mdi-content-send brown-text"></i></h3>
-        <h4>Why?</h4>
-        <p class="left-align light">
-          After working in <a href="https://www.linkedin.com/in/williamrekshan">psychology and neuroscience research for nearly 10 years</a> and meditating for nearly 5, I wanted to make something that would be beneficial in research and easy to use.  So, I set out to create an emotion tracker, something to help me in a meditation class.  Along the way I discovered two things:
-          </br></br>
-          1.  Text messages are a scalable, accessible, low cost, and low time way to do research about the human experience.  Nobel wining economist, <a href="http://www.uvm.edu/pdodds/files/papers/others/everything/kahneman2004a.pdf">Daniel Kahneman</a>, uses experience sampling, 
-         texts have been used to  <a href="http://www.mappiness.org.uk/">map happiness</a> at the london school of econmoics, <a href="http://www.healthandsocietyscholars.org/1822/16821/284347"> Matt Killingsworth</a> used texts to investiage happiness while at Harvard, 153 clincial trials have utilized SMS in some way and 480 have evaluated mindfuless (obtained by searching 'SMS' and 'mindfulness' in the NIH Clinical Trials Categlogue accessed through <a href='enigma.io'> enigma.io</a>.
-         </br>----- People should have these tools to learn about their own lives.
-          </br></br>
-          2.  Just receiving text messages could be beneficial.  Journaling about dreams, increases likelihood of dreams.  Thinking about pain and depression and allievate it.  Reminders to be mindful could go a long way in increases wellness.  <!-- <i class="material-icons left">today</i> -->Explore all the <a href="/ent/collection/" class="">different uses of sentimini</a>.
-          </br>----- People should have these tools to learn about their own lives.
-          </br></br>
-          In other words, texts are a very cost-effective way of obtaining data about human experience, especially if the system is easy to use (let me know how I can do better!).  
+          <h5>Texts can reach almost anyone, inexpensive, and quick.</h5>
+          </br>
 
 
-          I truly believe that data can improve our lives, allow for better decisions, and alleviate suffering.  I think that being curious about our world and other human beings can lead to better interations and society.  I also believe that transparency is crucial for <a href="https://cos.io/">efficient scientific progress</a>.  
-          </br></br>
-          Sentimini is currently in beta.  The intention is to develop free tools and an open data set of human experience that contributes to understand and improving the human experience as measured by the number of people using this site and contributions to applied scientific projects.  
-          </br></br></br></br></br></br></br></br></br></br>
-          New thing on open source.  list tools used here.  
-        </p>
+        
+        <div class="row">
 
-      </div>
-    </div>
-  </div>
+        <div class="col s12 m6">
+
+        <b>Texts are a great way to learn about human life.</b>  
+      
+        <li>Nobel wining economist, <a href="http://www.uvm.edu/pdodds/files/papers/others/everything/kahneman2004a.pdf">Daniel Kahneman</a>, uses experience sampling</li>
+        <li>
+        Texts have been used to  <a href="http://www.mappiness.org.uk/">map happiness</a> at the London School of Economics</li>
+        <li> At least 153 clincial trials have utilized SMS in some way and 480 have evaluated mindfulness (from the NIH Clinical Trials Catalog accessed through <a href='enigma.io'> enigma.io</a>)</li>
+        
+      
+        </div>
+        <div class="col s12 m6">
+        <b>Texts can remind, inspire, or teach.  They can enhance life in any number of ways.</b>
+
+        <li>Journaling about dreams, increases likelihood of dreams</li>
+        <li>Mindfulness has been shown to be helpful for a wide range of things</li>
+        <li>Reminders to be mindful could go a long way in increasing wellness</li>  <!-- <i class="material-icons left">today</i> --><li>Explore all the <a href="/ent/collection/" class="">different uses of sentimini</a>.</li>
+  
+</div>
+</div>
+Therefore, the aim of Sentimini is to provide inexpensive and quick tools learn about and enhance human life.  This ideally will include open dataset and free statistically-informed tools to assist in the quantitative investigation of human experience.
+</br></br>
+Sentimini is currently in beta.  I (<a href="https://www.linkedin.com/in/williamrekshan">William Rekshan</a>) developed this application because I wanted these tools to help me in my own life and I wanted to give back to this world.  Over the last 10 years of working on research studies, I was able to travel the world, learn about neuroscience, statistics, and computer programming.  I learned a lot of this through open science and data resources found on the internet.  These experiences enhanced my life.  I would like to give back.  
+
+</p>
+
+</div>
+</div>
+</div>
 </div>
 
 <!-- PICTURE -->
@@ -162,7 +249,11 @@
   <div class="section no-pad-bot">
     <div class="container">
       <div class="row center">
-        <h5 class="header col s12 light">Sign up for prepopulated lists of texts</h5>
+        <h5 class="header col s12">Signing up is free and should take less than 1 minute.</h5>
+        <a class="btn-large waves-effect waves-light" href="{% url 'account_signup' %}" >Sign Up</a>
+        <div class="row"></div>
+        <a href="{% url 'account_login' %}">Already signed up, then sign in</a>
+        
       </div>
     </div>
   </div>
@@ -178,7 +269,7 @@
         <p class="grey-text text-lighten-4">In beta.  Free tools to schedule texts and view replies.</p>
       </div>
       <div class="col l3 s12">
-      <h5 class="white-text"><a href="/ent/add_new_text/" class="white-text">Schedule a text</a></h5>
+        <h5 class="white-text"><a href="/ent/add_new_text/" class="white-text">Schedule a text</a></h5>
       </div>
 
       <div class="col l3 s12">
@@ -191,12 +282,12 @@
           </ul> -->
         </div>
         <div class="col l3 s12">
-        {% if user.is_authenticated %}
-      <h5 class="white-text"><a href="/ent/collection/" class="white-text">Log out</a></h5>
-      {% else %}
-       <h5 class="white-text"><a href="/ent/collection/" class="white-text">Sign up</a></h5>
-       <a href="{% url 'account_login' %}" class="white-text">Sign in</a>
-       {% endif %}
+          {% if user.is_authenticated %}
+          <h5 class="white-text"><a href="/ent/collection/" class="white-text">Log out</a></h5>
+          {% else %}
+          <h5 class="white-text"><a href="/ent/collection/" class="white-text">Sign up</a></h5>
+          <a href="{% url 'account_login' %}" class="white-text">Sign in</a>
+          {% endif %}
           <!-- <ul>
             <li><a class="white-text" href="#!">Link 1</a></li>
             <li><a class="white-text" href="#!">Link 2</a></li>
