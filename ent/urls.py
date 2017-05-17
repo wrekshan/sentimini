@@ -14,12 +14,10 @@ urlpatterns = [
 	url(r'^save_collection/$', save_collection, name='save_collection'),
 	url(r'^save_collection_explicit/$', save_collection_explicit, name='save_collection_explicit'),
 	url(r'^add_to_collection/$', add_to_collection, name='add_to_collection'),
-
 	url(r'^simulate/$', simulate, name='simulate'),
 
 	url(r'^add_new_text/$', add_new_text, name='add_new_text'),
 	url(r'^add_new_text/(?P<id>[0-9]+)/$', add_new_text, name='add_new_text'),
-
 
 	url(r'^collection_create_scaffold/$', collection_create_scaffold, name='collection_create_scaffold'),
 	url(r'^collection_create_scaffold/(?P<id>[0-9]+)/$', collection_create_scaffold, name='collection_create_scaffold'),	

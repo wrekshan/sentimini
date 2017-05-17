@@ -2,9 +2,7 @@
 
 
 {% load static %}
-<link rel="stylesheet" href={% static "css/materialize.css" %}>
-<link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
-<script src={% static "js/materialize.min.js" %}></script>
+
 
 
 
@@ -14,28 +12,12 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
-<main>
-<nav>
-  <div class="nav-wrapper z-depth-1">
+
     <div class="row">
-      <div class="col l12 s12">
-      <a href="#" class="brand-logo">Sign in</a>
-      
-        <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
-
-       
-      </div>
-    </div>
-  </div>
-</nav>
-
-
-  <div class="container">
-    <div class="row">
-      <div class="col s12 m7 offset-m2">
+      <div class="col s6">
         <div class="card">
           <div class="card-content">
-            <span class="card-title">{% trans "Sign In" %}</span>
+            <span class="card-title"><h4>{% trans "Sign In" %}</h4></span>
 
             {% get_providers as socialaccount_providers %}
 
@@ -72,7 +54,30 @@
 
             </div>
           </div>
+
+          <div class="col s6">
+        <div class="card">
+          <div class="card-content small_spaces">
+            <span class="card-title"><h4>Welcome back!</h4></span>
+          
+            At its current beta state, Sentimini cannot not assume responsibility over your privacy or data security.  As a result, please do not use it to collect sensitive information about yourself.
+            </br></br>
+            Additionally, Sentimini does not assume any responsibility over any costs for the text messaging.  Most current data plans have unlimited texts.
+            </br></br>
+            I hope you enjoy using Sentimini.  We are all good and have the ability to transform our lives, simply because we were born human.
+
+            <p>
+              
+            </p>
+
+            
+          </div>
         </div>
       </div>
-    </main>
+
+
+
+
+        </div>
+      
     {% endblock %}

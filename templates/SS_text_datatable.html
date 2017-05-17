@@ -1,0 +1,271 @@
+
+<div class="col s12">
+  <div class="card">
+    <div class="card-content small_spaces">
+      
+
+<span class="card-title"><h4>Scheduled Texts<a href="#datatable_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+
+
+      <table id="text_data_table" class="display" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Text</th>
+            <th>Summary</th>
+            <th>Control</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for text in working_texts %}
+          <tr>
+            <td>
+            {{text.text}} (
+            <a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
+            ,
+            <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>
+            )
+             </td>
+            <td><a id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary}}</a></td>
+            <td>
+          <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Increase frequency">trending_up</i>
+          <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Decrease frequency">trending_down</i> -->
+
+          
+          
+          {% if text.active == True %}
+          <div style="background-color:#e4e4e4;" id = "table_{{text.id}}" class = "waves-effect waves-teal btn-flat chip feed-pause-text-btn">
+            <i  class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">pause</i>
+          </div>
+          {% else %}
+
+          <div style="background-color:#2196f3;" id = "table_{{text.id}}" class = "waves-effect waves-teal btn-flat chip feed-pause-text-btn">
+            <i class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">play_arrow</i>
+          </div>
+          {% endif %}
+          
+
+            <!-- <a class="waves-effect waves-light btn" href="#modal1">Modal</a> -->
+
+
+          <a class="modal-trigger waves-effect waves-teal btn-flat chip" href="#modal_delete_texts_{{text.id}}">
+            <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Delete">delete</i>
+          </a>
+
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- MODAL DELETE BUTTON -->
+{% for text in working_texts %}
+<div id="modal_delete_texts_{{text.id}}" class="modal modal-fixed-footer" name ="delete_modal" style="max-height:25%;">
+
+  <div class="modal-content">
+    <h4>Are you sure?</h4>
+    <p>This will delete this text and all data associated with it.  You can always just 'pause' the text</p>
+    
+  </div>
+  <div class="modal-footer">
+    <div value="{{text.id}}" id="delete_{{text.id}}" class="red lighten-2 modal-action modal-close waves-effect waves-red btn-flat feed-delete-text-btn">Delete</div>
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Keep</a>
+  </div>
+</div>
+{% endfor %}
+
+
+ <div id="datatable_modal" class="modal modal-fixed-footer" style="max-height:35%;">
+    <div class="modal-content">
+      <h4>Scheduled Texts</h4>
+      <p>These are all of the texts you have scheduled.  You should be able to sort and that sort of things.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+    </div>
+  </div>
+
+
+<!-- DELETE BUTTONS -->
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+<script type="text/javascript">
+  $('.feed-delete-text-btn').click(function() {
+
+    $.ajax({
+      type: 'POST',
+      url: '/delete_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id').split("_")[1],
+    },
+    success : function(data) {
+
+      $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+    }
+  })
+  })
+
+</script>
+
+
+
+
+
+
+<!-- PAUSE BUTTON -->
+<script type="text/javascript">
+  $('.feed-pause-text-btn').click(function() {
+    var text_id_button = $(this).attr('id')
+    var text_id_button_id = $(this).attr('id').split("_")[1]
+    console.log(text_id_button)
+    console.log(text_id_button_id)
+    $.ajax({
+      type: 'POST',
+      url: '/pause_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id').split("_")[1],
+    },
+    success : function(data) {
+      if (data['pause_type'] == "paused"){
+        $("#"+text_id_button).html('<i class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">play_arrow</i>')
+        $("#"+text_id_button).css('background-color', '#2196f3');
+
+      } else {
+        $("#"+text_id_button).html('<i class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">pause</i>')
+        $("#"+text_id_button).css('background-color', '#e4e4e4');
+      }
+      // console.log("SUCESS AJAX ~line 392")
+      // $('#model_content_for_switch').html(data['model_content_for_switch']);
+    }
+  })
+  })
+</script>
+
+
+<!-- TEXT EDIT -->
+<script type="text/javascript">
+  $('.text_edit').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_options_to_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id'),
+      'text_message': "Edit Text",
+    },
+    success : function(data) {
+      $('#text_input').html("");
+      $('#text_datatable').html(data['text_input']);
+    }
+  })
+  })
+</script>
+
+<!-- TEXT EDIT -->
+<script type="text/javascript">
+  $('.text_datatable_response').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable_response/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id'),
+      'text_message': "Viewing Data",
+    },
+    success : function(data) {
+      $('#text_input').html("");
+      $('#text_datatable').html(data['text_datatable_response']);
+    }
+  })
+  })
+</script>
+
+
+
+
+<!-- TIMING OPTIONS EDIT -->
+<script type="text/javascript">
+  $('.timing_edit').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_input_to_options/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': $(this).attr('id'),
+      'timing_message': "Edit Timing Options"},
+      success : function(data) {
+        $('#text_input').html("");
+        $('#text_datatable').html(data['text_input']);
+      }
+    })
+  })
+</script>
+
+
+<!-- MODAL ACTION BUTTIONS -->
+<script>
+  $('.savemodal').click(function() {
+    console.log("SAVE CLICKED SS")
+    console.log($(this).attr('id'))
+    var text_content = $("#textarea_"+$(this).attr('id')).val()
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/save_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_content': text_content,
+      'id': $(this).attr('id')},
+      success : function(data) {
+        $('#text_input').html(data['text_input']);
+        $.ajax({
+          type: 'POST',
+          url: '/consumer/get_text_datatable/',
+          data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+          success : function(data) {
+           $('#text_datatable').html(data['text_datatable']);
+         }
+       })
+      }
+    })
+  })
+
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('textarea#textarea1').characterCounter();
+  });
+</script>
+
+
+<script>
+  $(document).ready(function() {
+    $('#text_data_table').DataTable(
+    {
+      "bLengthChange": false,
+      "pageLength": 5,
+
+    });
+  } );
+</script>
+
+
+<script>
+ $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+</script>

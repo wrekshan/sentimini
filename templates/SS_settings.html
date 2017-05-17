@@ -1,0 +1,217 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+  <div class="row">
+    <div class="input-field col s12">
+      <div class="card">
+        <div class="card-content small_spaces">
+          <div class="row">
+            <div class="col s12">
+              <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+
+              <!-- Phone -->
+              <div class="input-field col s12">
+                <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
+                <input id="phone_input" type="tel" class="validate">
+                <label for="phone_input">Telephone</label>
+              </div>
+
+              <!-- Carrier -->
+              <div class="input-field col s12">
+                <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
+                <div class="row">
+                 <select id="carrier_search">
+                   {% for carrier in working_carrier %}
+                   <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
+                   {% endfor %}
+                 </select>
+               </div>
+             </div>
+
+             <!-- TIMEZONE -->
+             <div class="input-field col s12">
+              <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+              <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Timezone">schedule</i>
+              <div class="row">
+               <select id="tz_search">
+                 <option value="Eastern Standard Time">Eastern Standard Time</option>
+                 <option value="Central Standard Time">Central Standard Time</option>
+                 <option value="Mountain Standard Time">Mountain Standard Time</option>
+                 <option value="Pacific Standard Time">Pacific Standard Time</option>
+                 {% for tz in working_tz %}
+                 <option value="{{tz}}">{{tz}}</option>
+                 {% endfor %}
+                <!-- {% for topic in topics %}
+                <option value="topic_{{topic.id}}">{{topic.topic_name}}</option>
+                {% endfor %} -->
+              </select>
+            </div>
+          </div>
+
+   
+      </div>
+      </div>
+
+
+       <form>{% csrf_token %}
+        <div class="card-action right-align">
+        <div id = "settings_message"></div>
+          <a id="save_settings_button" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
+          <!-- <a id="save_settings_button" class="disabled waves-effect waves-light btn"><i class="material-icons left">today</i>Schedule or review texts</a> -->
+        </div>
+      </form>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Structure -->
+  <div id="settings_modal" class="modal" style="max-height:70%;">
+    <div class="modal-content">
+      <h4>Contact Settings</h4>
+      <h5>Phone Number</h5>
+      <p>This has to be your phone number.  This is how Sentimini will contact you.</p>
+
+      <h5>Carrier</h5>
+      <p>Unfortunately this has to be correct for you to receive text messages.  There are a few ways to send text messages, but the only free way is to send an email to an address your carrier provides you.  As a result, the carrier information is needed to correctly address the text messages.</p>
+
+      <h5>Timezone</h5>
+      <p>We don't want to text you when you are asleep.  Therefore, it is necessary to know what timezone you are currently in.</p>
+
+
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+    </div>
+  </div>
+  </div>
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+<!-- LOAD OLD VALUES IF PRESENT -->
+{% if working_settings.phone_input %}
+<script type="text/javascript">
+  $('#phone_input').val("{{working_settings.phone_input}}")
+</script>
+{% endif %}
+
+
+
+
+{% if working_settings.carrier %}
+<script type="text/javascript">
+console.log("INIT CARRIER" + "{{working_settings.carrier}}")
+  $('#carrier_search').val("{{working_settings.carrier}}")
+</script>
+{% endif %}
+
+{% if working_settings.timezone %}
+<script type="text/javascript">
+console.log("INIT TZ " + "{{working_settings.timezone}}")
+  $('#tz_search').val("{{working_settings.timezone_search}}")
+</script>
+{% endif %}
+
+
+
+<script>
+  $("#carrier_search").select2({
+    tokenSeparators: [',', ' '],
+    placeholder: "Phone carrier",
+  })
+
+  $("#tz_search").select2({
+    tokenSeparators: [',', ' '],
+    placeholder: "Timezone",
+  })
+</script>
+
+<!-- LOAD OLD VALUES IF PRESENT -->
+<script>
+var save_settings_data = function(){
+   if ($("#carrier_search").val() !== null){
+    var carrier_search = $('#carrier_search').val()
+    console.log("CARRIER "+carrier_search)
+    var carrier_good = 1
+  } else {
+    var carrier_good = 0
+  }
+
+
+   if ($("#tz_search").val() !== null){
+    var tz_search = $('#tz_search').val()
+    console.log("TZ " + tz_search) 
+    var tz_good = 1
+  } else {
+    var tz_good = 0
+  }
+
+  if ($("#phone_input").val() !== null){
+    
+    var phone_good = 1
+  } else {
+    var phone_good = 0
+  }
+
+  if (phone_good == 1 && carrier_good == 1 && tz_good ==1){
+    // LOAD THE AJAX
+  $.ajax({
+    type: 'POST',
+    url: '/save_settings/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'id': "{{working_settings.id}}",
+    'phone_input': $('#phone_input').val(),
+    'carrier_search': carrier_search,
+    'tz_search': tz_search,
+    'email_checkbox': $('#email_checkbox').is(':checked'),
+    'text_checkbox': $('#text_checkbox').is(':checked'),
+    'research_check': $('#research_check').is(':checked'),
+    'pause_text_checkbox': $('#pause_text_checkbox').is(':checked'),
+
+  },
+  success : function(data) {
+    window.location.replace("/consumer/home/");
+  }
+  })
+
+  } else {
+    $('#settings_message').html("Please enter your phone number and select your carrier and timezone to continue.");
+
+  }
+
+
+
+  
+}
+</script>
+
+<script>
+  $('#save_settings_button').click(function() {
+    console.log("SAVE CLICKED")
+    save_settings_data()  
+  })
+
+</script>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

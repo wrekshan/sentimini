@@ -4,12 +4,13 @@ from django.core.urlresolvers import reverse
 from django.contrib import messages
 
 from datetime import datetime, timedelta, time, date
+import pytz
 
 from .forms import SignupFormWithoutAutofocus
 from allauth.account.views import SignupView
 
 import json
-import pytz
+
 from django.template.loader import render_to_string
 from random import random, triangular, randint, gauss
 
@@ -91,8 +92,10 @@ def pause_text(request):
 		possible_text = PossibleText.objects.all().filter(user=request.user).get(id=request.POST['id'])
 		if possible_text.active == True:
 			possible_text.active = False
+			response_data['pause_type'] = "paused"
 		else:
 			possible_text.active = True
+			response_data['pause_type'] = "started"
 
 		possible_text.save()
 	return HttpResponse(json.dumps(response_data),content_type="application/json")			
@@ -138,8 +141,6 @@ def feed_specific(request,id=None):
 
 
 def get_feed_specific(request):
-	
-
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 	
@@ -301,15 +302,16 @@ def save_settings(request):
 	response_data = {}
 	if 'id' in request.POST.keys():
 		working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
-
-		
 		working_settings.phone_input = request.POST['phone_input']
+		working_carrier = Carrier.objects.all().get(carrier=request.POST['carrier_search'])
+
+
 		
 		if 'tz_search' in request.POST.keys():
 			working_settings.timezone_search = request.POST['tz_search']
 
 		if 'carrier_search' in request.POST.keys():
-			working_settings.carrier = request.POST['carrier_search']	
+			working_settings.carrier = request.POST['carrier_search']
 
 		if request.POST['email_checkbox'] == 'true':
 			working_settings.send_email_check = True
@@ -343,7 +345,11 @@ def save_settings(request):
 			working_settings.timezone = 'America/Los_Angeles'
 		else:
 			working_settings.timezone = working_settings.timezone_search
+		
 		#set up the SMS address	
+		working_settings.sms_address = working_settings.phone_input + working_carrier.sms_address
+		working_settings.settings_complete = True
+		
 
 		working_settings.save()
 
@@ -351,7 +357,8 @@ def save_settings(request):
 
 			
 	
-
+def slow_redirect(request):
+	return HttpResponseRedirect('/consumer/about/')
 		
 
 def landing(request):
@@ -578,8 +585,6 @@ def save_new_text(request):
 	if 'iti' in request.POST.keys():
 		demo = request.POST['fuzzy_denomination']
 		iti = int(request.POST['iti'])
-
-
 
 		working_timing.fuzzy_denomination = demo
 		working_timing.iti_raw = iti

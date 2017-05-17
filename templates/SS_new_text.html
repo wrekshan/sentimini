@@ -1,0 +1,168 @@
+<div class="col s12">
+    <div class="card">
+      <div class="card-content small_spaces">
+
+<!-- <a href = "/consumer/test_signup">hey hey</a> -->
+
+<!-- TEXT -->
+<div class="row">
+  <div class="col s12">
+    <span class="card-title"><h4>{{text_message}}<a href="#new_text_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+
+    <!-- TEXT -->
+    <div class="row">
+      <form class="col s12">
+        <div class="input-field col s12">
+          <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="Text yourself antyhing you want.">chat</i>
+          <textarea id="textarea1" class="materialize-textarea" length="160" rows="1">{{working_text.text}}</textarea>
+          {% if working_text %}
+          <label class = "active" for="textarea1">Text content</label>
+          {% else %}
+          <label for="textarea1">Text content</label>
+          {% endif %}
+
+        </div>
+        
+      </form>
+    </div>
+
+    <!-- SAVE -->
+    <form>{% csrf_token %}
+    <div class="right-align">
+        <span id="timing_summary">{{timing_summary}}</span></br>
+        {% ifnotequal text_message "Edit Text" %}
+        <a id="text_input_to_options" class="disabled input_to_options waves-effect waves-light btn">Timing Options</a>
+        {% else %}
+        <a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
+        {% endifnotequal %}
+        <a id="save_text_button" class="disabled waves-effect waves-light btn">Save Text</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- NEW TEXT MODAL -->
+<!-- Modal Structure -->
+  <div id="new_text_modal" class="modal modal-fixed-footer" style="max-height:25%;">
+    <div class="modal-content">
+      <h4>Create a new text</h4>
+      <p>You'll have 160 characters to remind yourself of anything you want.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+    </div>
+  </div>
+
+
+
+
+<!-- BACK BUTTON FOR EDIT -->
+<script>
+$('.edit_text_to_input').click(function() {
+$.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_message': "Create New Text",},
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+     }
+   })
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+  })
+
+</script>
+
+<!-- SET UP FOR PAGE -->
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('textarea#textarea1').characterCounter();
+  });
+</script>
+
+{% if working_text.text %}
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#save_text_button').removeClass('disabled')
+  $('#text_input_to_options').removeClass('disabled')
+})
+</script>
+{% endif %}
+
+<!-- BUTTON CONTROL NEW TEXT-->
+<script type="text/javascript">
+  $('#textarea1').keyup(function(){
+    if (this.value.length < 1) {
+      $('#save_text_button').addClass('disabled')
+      $('#text_input_to_options').addClass('disabled')
+    } else {
+      console.log("MORE THAN 1")
+      $('#save_text_button').removeClass('disabled')
+      $('#text_input_to_options').removeClass('disabled')
+    }
+  })
+</script>
+
+<!-- BUTTON CONTROL EDIT TEXT-->
+
+<!-- EDIT TIMING SETTINGS -->
+<script type="text/javascript">
+  $('.input_to_options').click(function() {
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_input_to_options/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_content': $('#textarea1').val(),
+      'id': "{{working_text.id}}",
+      'timing_message': "Timing Options"},
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+       $('#text_datatable').html("");
+     }
+   })
+  })
+</script>
+
+<!-- SAVE TEXT DATA -->
+<script>
+  var save_text_data = function(){
+    var text_content = $('#textarea1').val()
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/save_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_content': text_content,
+      'id': '{{id}}'},
+      success : function(data) {
+        $('#text_input').html(data['text_input']);
+        $.ajax({
+          type: 'POST',
+          url: '/consumer/get_text_datatable/',
+          data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+          success : function(data) {
+           $('#text_datatable').html(data['text_datatable']);
+         }
+       })
+      }
+    })
+  }
+</script>
+
+<script>
+  $('#save_text_button').click(function() {
+    console.log("SAVE CLICKED SS")
+    save_text_data()  
+  })
+
+</script>
+

@@ -1,0 +1,347 @@
+{% load static %}
+
+<!-- TEXT -->
+<div class="col s12">
+    <div class="card">
+      <div class="card-content small_spaces">
+<div class="row">
+  <div class="col s12">
+
+    <div class="card-title">
+
+    <span class="card-title"><h4>{{timing_message}}<a href="#timing_modal"><i class="small material-icons">info_outline</i></h4></a></span>for text:  {{working_text.text}}
+
+    <!-- <h4>{{timing_message}}<i class="small material-icons">info_outline</i></h4> -->
+    
+
+    </div>
+    <hr>
+
+
+    <!-- HOUR -->
+    <div class="row">
+      <div class="input-field col s12 ">
+        <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i> -->
+        <h5>Hour Range</h5>
+        <p class="range-field">
+          <div type="range" id="specific_time_hours"></div>
+        </p>
+        <div class="row"></div>
+        Hour Range: <span id="time"></span>
+      </div>
+    </div>
+    <hr>
+
+    <!-- Number of repeats -->
+    <div class="row">
+      <div class="col s12 ">
+        <h5>Time Between Texts</h5> 
+      </div>
+      <div class="input-field col s3 ">
+        <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
+        
+        
+        <div class="row"></div>
+
+
+        <select id="fuzzy_denomination"  placeholder="" class="browser-default">
+        {% ifequal fuzzy_denomination "minutes" %}
+         <option value="minutes" selected="selected" >Minutes</option>
+         {% else %}
+         <option value="minutes">Minutes</option>
+         {% endifequal %}
+        
+         {% ifequal fuzzy_denomination "hours" %}
+         <option value="hours" selected="selected" >Hours</option>
+         {% else %}
+         <option value="hours">Hours</option>
+         {% endifequal %}
+
+        {% ifequal fuzzy_denomination "days" %}
+         <option value="days" selected="selected" >Days</option>
+         {% else %}
+         <option value="days">Days</option>
+         {% endifequal %}
+
+         {% ifequal fuzzy_denomination "weeks" %}
+         <option value="weeks" selected="selected" >Weeks</option>
+         {% else %}
+         <option value="weeks">Weeks</option>
+         {% endifequal %}
+
+         {% ifequal fuzzy_denomination "months" %}
+         <option value="months" selected="selected" >Months</option>
+         {% else %}
+         <option value="months">Months</option>
+         {% endifequal %}
+       </select>
+     </div>
+
+     <div class="input-field col s9 ">
+      <form action="#">
+        <p class="range-field">
+          <input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
+        </p>
+      </form>
+      <div id="ITI_mean_output"></div>
+      <form action="#">
+        <p class="range-field">
+          <input type="range" id="ITI_noise" min="0" max="1000" value = "{{working_timing.iti_noise}}"/>
+        </p>
+      </form>
+      <div id="ITI_noise_output"></div>
+    </div>
+
+  </div>
+
+
+  <!-- DECAY -->
+ <!--  <hr>
+  <div class="col s12 ">
+    <h5>Additional Options</h5>         
+    <form action="#">
+      <p>
+        <input type="checkbox" id="decay_check" checked />
+        <label for="decay_check">Decay</label>
+      </p>
+    </form>
+    <form action="#">
+      <p>
+        <input type="checkbox" id="private_check" />
+        <label for="private_check">Private</label>
+      </p>
+    </form>
+  </div> -->
+
+<div class="row"></div>
+  <div class="right-align">
+    <!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
+    <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore to default</a>
+    <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
+    <a id="options_save" class="save_timing waves-effect waves-light btn">Save Timing</a>
+    <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
+  </div>
+  <div id="message"></div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<!-- Modal Structure -->
+  <div id="timing_modal" class="modal modal-fixed-footer" style="max-height:25%;">
+    <div class="modal-content">
+      <h4>Timing Options</h4>
+      <p>The hour range is there so you don't get texts in the middle of the night.  You can edit your timezone in the settings.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+    </div>
+  </div>
+
+
+<script src={% static "js/nouislider.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+<script src={% static "js/picker.js" %}></script>
+<script src={% static "js/picker.date.js" %}></script>
+<script src={% static "js/editing_text_helpers.js" %}></script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+<!-- BUTTONS BACK-->
+<script type="text/javascript">
+$('.options_to_input').click(function() {
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/get_options_to_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': '{{id}}'},
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+     }
+   })
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+})
+</script>
+
+
+
+<script type="text/javascript">
+$('.save_timing').click(function() {
+
+  var fuzzy = true
+  var start_time = slideTime_start()
+  var end_time = slideTime_end()
+  var ITI_mean = $('#ITI_mean').val()
+  var ITI_noise = $('#ITI_noise').val()
+
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/save_timing/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': '{{id}}',
+      'hour_start': start_time,
+      'hour_end': end_time,
+      'hour_start_value': slider.noUiSlider.get()[0],
+      'hour_end_value': slider.noUiSlider.get()[1],
+      'iti': ITI_mean,
+      'iti_noise': ITI_noise,
+      'fuzzy_denomination': $('#fuzzy_denomination').val(),
+      'decay': $('#decay_check').is(':checked'),
+      'private': $('#private_check').is(':checked'),
+      'timing_message': "{{timing_message}}",
+    },
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+     }
+   })
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+        console.log("TIMING SAVED AND DT SHOULD LOAD!")
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+})
+</script>
+
+<!-- SAVE AS DEFAULTS-->
+<script type="text/javascript">
+$('.save_timing_default').click(function() {
+  var fuzzy = true
+  var start_time = slideTime_start()
+  var end_time = slideTime_end()
+  var ITI_mean = $('#ITI_mean').val()
+  var ITI_noise = $('#ITI_noise').val()
+
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/save_timing_default/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'hour_start': start_time,
+      'hour_end': end_time,
+      'hour_start_value': slider.noUiSlider.get()[0],
+      'hour_end_value': slider.noUiSlider.get()[1],
+      'iti': ITI_mean,
+      'iti_noise': ITI_noise,
+      'fuzzy_denomination': $('#fuzzy_denomination').val(),
+      'decay': $('#decay_check').is(':checked'),
+      'private': $('#private_check').is(':checked'),
+    },
+      
+      success : function(data) {
+       $('#message').html(data['message']);
+     }
+   })
+})
+</script>
+
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+</script>
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+  noUiSlider.create(slider, {
+   start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+   connect: true,
+   step: 1,
+   range: {
+     'min': 0,
+     'max': 1439
+   },
+ });
+
+
+  var connect = slider.querySelectorAll('.noUi-connect');
+  var classes = ['c-1-color'];
+
+  for ( var i = 0; i < connect.length; i++ ) {
+    connect[i].classList.add(classes[i]);
+  }
+
+  slider.noUiSlider.on('update', function(){
+
+    var startTime = slideTime_start()
+    var endTime = slideTime_end()
+    $("#time").text(startTime + ' - ' + endTime);
+    $("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
+
+  });
+</script>
+
+<!-- REPEAT CONTROL -->
+
+<script>
+  $('#fuzzy_denomination').change(function() {
+    console.log("TIME DEMO CHANGE")
+    console.log("VALUE " + $('#fuzzy_denomination').val())
+    if ($('#fuzzy_denomination').val()=="minutes"){
+      $("#ITI_mean").prop({min: 1, max: 600});
+      console.log("MINUTES!")
+    } 
+    if ($('#fuzzy_denomination').val()=="hours"){
+      $("#ITI_mean").prop({min: 1, max: 72});
+    } 
+    if ($('#fuzzy_denomination').val()=="days"){
+      $("#ITI_mean").prop({min: 1, max: 30});
+    } 
+    if ($('#fuzzy_denomination').val()=="weeks"){
+      $("#ITI_mean").prop({min: 1, max: 52});
+    } 
+    if ($('#fuzzy_denomination').val()=="months"){
+      $("#ITI_mean").prop({min: 1, max: 24});
+    } 
+    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+    $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+  })
+</script>
+
+
+<script type="text/javascript">
+  var update_histogram = function(){
+    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+    $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+  } 
+</script>
+
+
+
+<script>
+  $(document).ready ( function(){
+    update_histogram()
+  })
+</script>
+
+<script type="text/javascript">
+  $('#ITI_mean').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+
+  $('#ITI_noise').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+</script>
+

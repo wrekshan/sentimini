@@ -1,0 +1,66 @@
+<div class="col s12">
+  <div class="card">
+    <div class="card-content small_spaces">
+      <span class="card-title"><h4>Viewing data for: {{text_content}}</h4></span>
+      <table id="text_data_table" class="display" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Time Sent</th>
+            <th>Time Reply</th>
+            <th>Reply</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for text in working_texts %}
+          <tr>
+            <td>{{text.time_sent}}</td>
+            <td>{{text.time_response}}</td>
+            <td>{{text.response}} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="row"></div>
+
+  <div class="right-align">
+  <a id="view_data_to_input" class="view_data_to_input waves-effect waves-light btn">Back</a>
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#text_data_table').DataTable(
+    {
+      "bLengthChange": false,
+      "pageLength": 5,
+
+    });
+  } );
+</script>
+
+<script>
+$('.view_data_to_input').click(function() {
+$.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_message': "Create New Text",},
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+     }
+   })
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+  })
+
+</script>

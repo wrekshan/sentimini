@@ -1,4 +1,7 @@
-
+.modal-about {
+	font-size: 120%;
+    line-height: normal;
+}
 
 .sort:after {
   display:inline-block;
@@ -64,14 +67,15 @@
 .c-1-color { background: #2196f3; }
 
 
-header, main, footer {
+header, main {
       padding-left: 300px;
 }
 
-/*body {
+body {
 	background-color: #f5f5f5;
+	/*background-image: url("/static/images/bunch/trees.jpg");*/
 }
-*/
+
 html {
 	/*background-color: #eeeeee ;*/
 	/*background-color: #e9ebee ;*/
@@ -89,8 +93,8 @@ html {
 }
 
 #textarea1{
-  height: 10px;
-  min-height: 10px;
+  height: 12px;
+  min-height: 12px;
 }
 
 

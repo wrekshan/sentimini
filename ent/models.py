@@ -18,6 +18,8 @@ class Carrier(models.Model):
 class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
+	settings_complete = models.BooleanField(default=False)
+	phone_verified = models.BooleanField(default=False)
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	send_text_tmp = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
@@ -37,8 +39,6 @@ class UserSetting(models.Model):
 		return self.user.username
 	
 
-
-
 class Tag(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	tag = models.CharField(max_length=160,unique=True,null=True)
@@ -47,13 +47,14 @@ class Tag(models.Model):
 		return self.tag
 
 
-
 class Timing(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	intended_text = models.CharField(max_length=160,blank=True,null=True)
 	repeat_summary = models.CharField(max_length=2000,blank=True,null=True)
 	system_time  = models.BooleanField(default=False)
 	show_user  = models.BooleanField(default=False)
+	default_timing  = models.BooleanField(default=False)
+	private  = models.BooleanField(default=False)
 	timing = models.CharField(max_length=160,default='')
 	description = models.CharField(max_length=160,default='')
 
@@ -70,6 +71,10 @@ class Timing(models.Model):
 	iti  = models.IntegerField(blank=True,null=True)
 	iti_raw  = models.IntegerField(blank=True,null=True)
 	iti_noise  = models.IntegerField(blank=True,null=True)
+
+	fuzzy_denomination_start = models.CharField(max_length=160,default='')
+	iti_raw_start  = models.IntegerField(blank=True,null=True)
+	iti_noise_start  = models.IntegerField(blank=True,null=True)
 	
 	repeat  = models.BooleanField(default=False) 
 	repeat_in_window = models.IntegerField(blank=True,null=True)
@@ -83,8 +88,23 @@ class Timing(models.Model):
 	saturday  = models.BooleanField(default=True) 
 	sunday  = models.BooleanField(default=True) 
 
+	def timing_summary(self):
+		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
+		if self.fuzzy_denomination == "minutes":
+			iti_standard = (60 / self.iti_raw) * 24 * 7
+		if self.fuzzy_denomination == "hours":
+			iti_standard = (24 / self.iti_raw) * 7
+		if self.fuzzy_denomination == "days":
+			iti_standard = (7 / self.iti_raw)
+		if self.fuzzy_denomination == "weeks":
+			iti_standard = self.iti_raw
+		if self.fuzzy_denomination == "months":
+			iti_standard = (self.iti_raw / 4)
+
+		return str(round(iti_standard,2)) + " per week  (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")"
+
 	def __str__(self):
-		return self.timing
+		return str(self.id)
 
 	def dow_check(self)	:
 		dow_check = 0
@@ -160,6 +180,7 @@ class PossibleText(models.Model):
 	date_scheduled = models.DateTimeField(blank=True,null=True)
 	tag = models.ManyToManyField(Tag,blank=True)
 	active = models.BooleanField(default=True) 
+	tmp_save = models.BooleanField(default=True) 
 
 	intended_collection = models.CharField(max_length=160,blank=True,null=True)
 	intended_tags = models.CharField(max_length=600,blank=True,null=True)
@@ -167,30 +188,30 @@ class PossibleText(models.Model):
 	def __str__(self):
 		return self.text
 
-	def burden(self):
-		if self.timing.fuzzy==True:
-			return (960 / self.timing.iti) / 7
-		else:
-			if self.timing.repeat_in_window is not None:
-				num_out = int(0)
-				if self.timing.monday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.tuesday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.wednesday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.thursday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.friday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.saturday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
-				if self.timing.sunday == True:
-					num_out = num_out + int(self.timing.repeat_in_window)
+	# def burden(self):
+	# 	if self.timing.fuzzy==True:
+	# 		return (960 / self.timing.iti) / 7
+	# 	else:
+	# 		if self.timing.repeat_in_window is not None:
+	# 			num_out = int(0)
+	# 			if self.timing.monday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.tuesday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.wednesday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.thursday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.friday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.saturday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
+	# 			if self.timing.sunday == True:
+	# 				num_out = num_out + int(self.timing.repeat_in_window)
 
-				return (self.timing.repeat_in_window * num_out) / 30
-			else:
-				return 0
+	# 			return (self.timing.repeat_in_window * num_out) / 30
+	# 		else:
+	# 			return 0
 
 
 class ActualText(models.Model):

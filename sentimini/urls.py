@@ -18,7 +18,7 @@ from django.contrib import admin
 
 from django.views.generic import TemplateView
 
-from .views import upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
+from .views import slow_redirect, upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'accounts/signup', 'sentimini.views.signup_view'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^ent/', include('ent.urls',namespace="ent")),
+    url(r'^consumer/', include('consumer.urls',namespace="consumer")),
     url(r'^vis/', include('vis.urls',namespace="vis")),
 
     url(r'^test_page/$', test_page, name='test_page'),
@@ -43,7 +44,7 @@ urlpatterns = [
     url(r'^pause_text/$', pause_text, name='pause_text'),
     url(r'^delete_text/$', delete_text, name='delete_text'),
 
-    url(r'^$', landing, name='landing'),
+    url(r'^$', slow_redirect, name='slow_redirect'),
     url(r'^landing/$', landing, name='landing'),
 
     url(r'^settings/$', settings, name='settings'),

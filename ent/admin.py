@@ -107,6 +107,7 @@ class TimingModelAdmin(ImportExportModelAdmin):
 		"id",
 		"user",
 		"timing",
+		"default_timing",
 		"repeat",
 		"repeat_summary",
 		"system_time",
@@ -151,6 +152,7 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 	list_display = [
 		"id",
 		"active",
+		"tmp_save",
 		"user",
 		"text",
 		"date_created",

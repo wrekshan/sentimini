@@ -1,0 +1,88 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+<!-- <script src="http://listjs.com/assets/javascripts/list.min.js"></script> -->
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+<link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
+<script src={% static "js/materialize.min.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+
+
+<!-- CARD FOR NEW TEXTS AND TIMINGS-->
+<div class="row">
+  
+
+        <div id = "text_input"></div>
+
+</div>
+
+
+
+<!-- DATA TABLE -->
+{% if user.is_authenticated %}
+<div class="row">
+    <div id = "text_datatable"></div>
+</div>
+{% endif %}
+
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_message': "Create New Text",},
+      success : function(data) {
+       $('#text_input').html(data['text_input']);
+     }
+   })
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+       $('#text_datatable').html(data['text_datatable']);
+     }
+   })
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
+<script>
+  $('#save_settings_button').click(function() {
+    console.log("SAVE CLICKED")
+    // save_settings_data()  
+  })
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+{% endblock %}

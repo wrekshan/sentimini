@@ -158,7 +158,7 @@ STATICFILES_DIRS = (
 
 # ACTIVATION STUFF
 # auth and allauth settings
-LOGIN_REDIRECT_URL = '/app_home/'
+LOGIN_REDIRECT_URL = '/consumer/home/'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = (

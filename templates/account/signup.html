@@ -12,27 +12,13 @@
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
-<main>
-  <nav>
-    <div class="nav-wrapper z-depth-1">
-      <div class="row">
-        <div class="col l12 s12">
-          <a href="#" class="brand-logo">Sign up</a>
 
-          <a href="#" data-activates="slide-out" class="button-collapse"><i class="material-icons">menu</i></a>
-
-
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
+  
     <div class="row">
-      <div class="col s12 m6">
+      <div class="col s6">
         <div class="card">
           <div class="card-content">
-            <span class="card-title">{% trans "Sign Up" %}</span>
+            <span class="card-title"><h4>{% trans "Sign Up" %}</h4></span>
             <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 
             <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
@@ -47,29 +33,24 @@
         </div>
       </div>
 
-      <div class="col s12 m6 ">
+      <div class="col s6">
         <div class="card">
-          <div class="card-content">
-            <span class="card-title">Sentimini</span>
-            <p>Beta status</p>
+          <div class="card-content small_spaces">
+            <span class="card-title"><h4>Sentimini is in beta status</h4></span>
+          
+            At its current beta state, Sentimini cannot not assume responsibility over your privacy or data security.  As a result, please do not use it to collect sensitive information about yourself.
+            </br></br>
+            Additionally, Sentimini does not assume any responsibility over any costs for the text messaging.  Most current data plans have unlimited texts.
+            </br></br>
+            I hope you enjoy using Sentimini.  We are all good and have the ability to transform our lives, simply because we were born human.
+
+            <p>
+              
+            </p>
 
             
           </div>
         </div>
       </div>
-
-
-
-
-
     </div>
-
-
-
-
-
-
-  </div>
-</main>
-
 {% endblock %}

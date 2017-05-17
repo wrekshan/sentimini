@@ -29,11 +29,9 @@ from .models import PossibleText, ActualText, Collection, Tag, Timing
 
 
 
+
 def update_db_after_import(request):
 	print("update_db_after_import")
-	
-
-
 
 	# Set up the collection
 	working_collections = Collection.objects.all().filter(user=request.user)
@@ -674,7 +672,8 @@ def simulate(request):
 				atext.save()
 
 	#Fuzzy Timings
-	working_texts = PossibleText.objects.all().filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	# working_texts = PossibleText.objects.all().filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	working_texts = PossibleText.objects.all().filter(active=True).filter(timing__fuzzy=True)
 	for text in working_texts:
 		if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
 
