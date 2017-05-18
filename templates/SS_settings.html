@@ -14,6 +14,7 @@
             <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
 
             <!-- Phone -->
+            <h5>Phone Number</h5>
             <div class="input-field col s12">
               <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
               <input id="phone_input" type="tel" class="validate">
@@ -21,6 +22,7 @@
             </div>
 
             <!-- Carrier -->
+            <h5>Phone Carrier</h5>
             <div class="input-field col s12">
               <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
               <div class="row">
@@ -29,10 +31,12 @@
                  <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
                  {% endfor %}
                </select>
+
              </div>
            </div>
 
            <!-- TIMEZONE -->
+           <h5>Timezone</h5>
            <div class="input-field col s12">
             <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
             <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Timezone">schedule</i>

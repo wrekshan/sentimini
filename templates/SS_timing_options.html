@@ -37,11 +37,11 @@
       <div class="col s12 ">
         <h5>Time Between Texts</h5> 
       </div>
-      <div class="input-field col s3 ">
+      <div class="input-field col s12 l3 ">
         <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
         
         
-        <div class="row"></div>
+        
 
 
         <select id="fuzzy_denomination"  placeholder="" class="browser-default">
@@ -77,7 +77,7 @@
        </select>
      </div>
 
-     <div class="input-field col s9 ">
+     <div class="input-field col s12 l9 ">
       <form action="#">
         <p class="range-field">
           <input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
@@ -116,10 +116,11 @@
 <div class="row"></div>
   <div class="right-align">
     <!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
-    <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore to default</a>
+    <!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
+    <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
     <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
     <a id="options_save" class="save_timing waves-effect waves-light btn">Save Timing</a>
-    <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
+    
   </div>
   <div id="message"></div>
 </div>

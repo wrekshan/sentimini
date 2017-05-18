@@ -29,7 +29,7 @@
   <link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
 
   <!-- STARS -->
-  <script src="https://use.fontawesome.com/d86baeb400.js"></script>
+  <script src="https://use.fontawesome.com/9b758dc6c5.js"></script>
 </head>
 
 
@@ -37,6 +37,8 @@
     <div class="nav-wrapper">
     <div class="container">
       <a href="/consumer/home/" class="brand-logo">Sentimini!</a>
+
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="/consumer/about/">About</a></li>
         {% if user.is_authenticated %}
@@ -46,6 +48,20 @@
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
         {% endif %}
         
+      </ul>
+
+      <ul class="side-nav" id="mobile-demo">
+      <div class="row">
+      <i class=" center-align fa fa-globe fa-5x"></i>
+        <li><a href="/consumer/home/" class="brand-logo">Sentimini!</a></li>
+        </div>
+        <li><a href="/consumer/about/">About</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/consumer/settings">Settings</a></li>
+        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+        {% else %}
+        <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
+        {% endif %}
       </ul>
     </div>
     </div>
@@ -96,8 +112,9 @@
       </div>
     </div>
   </footer>
-
-
-
 </html>
+
+<script>
+$(".button-collapse").sideNav();
+</script>
 
