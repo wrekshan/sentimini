@@ -45,7 +45,7 @@
 			</div>
 
 			<div class = "col s6 center-align">
-				<h5>Set the frequency</h5>Do you want to receive the text every 3 hours?  Every 3 days?  Every weekday between 9am and noon?  You have control.
+				<h5>Set the timing</h5>Do you want to receive the text every 3 hours?  Every 3 days?  Every weekday between 9am and noon?  You have control.
 			</div>
 		</div>
 
@@ -54,7 +54,7 @@
 		<div class="center-align">
 
 			{% if user.is_authenticated %}
-			<a class="btn-large waves-effect waves-light" href="/consumer/home/" > Schedule a text</a>
+			<a class="btn-large waves-effect waves-light" href="/consumer/home/" > Create a text</a>
 
 			{% else %}
 			<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
