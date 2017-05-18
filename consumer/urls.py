@@ -7,6 +7,7 @@ urlpatterns = [
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),
 	url(r'^get_csv/$', get_csv, name='get_csv'),
+	url(r'^get_csv/(?P<id>[0-9]+)/$', get_csv, name='get_csv'),
 	url(r'^get_text_input/$', get_text_input, name='get_text_input'),
 	url(r'^get_text_datatable/$', get_text_datatable, name='get_text_datatable'),
 	url(r'^get_text_datatable_response/$', get_text_datatable_response, name='get_text_datatable_response'),

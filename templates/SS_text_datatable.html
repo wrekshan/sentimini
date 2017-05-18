@@ -20,11 +20,10 @@
           {% for text in working_texts %}
           <tr>
             <td>
-            {{text.text}} (
-            <a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
+            {{text.text}} <span>(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
             ,
-            <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>
-            )
+            <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>)
+            </span>
              </td>
             <td><a id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary}}</a></td>
             <td>
@@ -57,6 +56,11 @@
       {% endfor %}
     </tbody>
   </table>
+  <div class="right-align">
+  <div class="row"></div>
+  <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">Download data</div>
+  
+  </div>
 </div>
 </div>
 </div>
@@ -98,7 +102,11 @@
 
 
   
-
+<script>
+$('.download_csv').click(function() {
+  location.replace('/consumer/get_csv/');
+})
+</script>
 
 <!-- DELETE BUTTONS -->
 <script type="text/javascript">
@@ -204,7 +212,10 @@
     },
     success : function(data) {
       $('#text_input').html("");
-      $('#text_datatable').html(data['text_datatable_response']);
+      $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable_response']);}, 350);
+
+      
     }
   })
   })

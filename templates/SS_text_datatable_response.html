@@ -25,7 +25,7 @@
 
   <div class="right-align">
   <div id="save_message"></div>
-  <!-- <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">Download data</div> -->
+  <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">Download data</div>
   <a id="view_data_to_input" class="view_data_to_input waves-effect waves-light btn">Back</a>
   </div>
 </div>
@@ -45,11 +45,22 @@
 
 <script>
 $('.download_csv').click(function() {
-  location.replace('/consumer/get_csv/');
+  location.replace('/consumer/get_csv/'+ $(this).attr('id'));
+  
 
+// $.ajax({
+//       type: 'POST',
+//       url: '/consumer/get_csv/',
+//       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+//       'id': $(this).attr('id'),},
+//       success : function(data) {
+    
+//        // $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+//        //  setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+//      }
+//    })
 
-
-  })
+})
 
 </script>
 
@@ -61,7 +72,9 @@ $.ajax({
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'text_message': "Create New Text",},
       success : function(data) {
-       $('#text_input').html(data['text_input']);
+    
+       $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
      }
    })
 
@@ -70,7 +83,8 @@ $.ajax({
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-       $('#text_datatable').html(data['text_datatable']);
+       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 350);
      }
    })
   })

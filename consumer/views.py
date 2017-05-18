@@ -119,25 +119,36 @@ def get_text_datatable_response(request):
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
-def get_csv(request):
+def get_csv(request,id=None):
 	print("CSV ____======")
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
-	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.GET['id']))
-	working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
+	if id != None:
+		working_text = PossibleText.objects.all().filter(user=request.user).get(id=id)
+		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="sentimini_data_' + working_text.text + '.csv"'
+		writer = csv.writer(response)
 
-	response = HttpResponse(content_type='text/csv')
-	response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
-	writer = csv.writer(response)
+		headers = ["time_sent","time_response","response"]
+		writer.writerow(headers)
 
-	headers = ["time_sent","time_response","response"]
-	writer.writerow(headers)
+		for tmp in working_texts:
+			row = [tmp.time_sent,tmp.time_response,tmp.response]
+			writer.writerow(row)
+	else:
+		working_texts = ActualText.objects.all().filter(user=request.user)
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="sentimini_data_all.csv"'
+		writer = csv.writer(response)
 
-	for tmp in working_texts:
-		print("TXT")
-		row = [tmp.time_sent,tmp.time_response,tmp.response]
-		writer.writerow(row)
+		headers = ["text", "time_sent","time_response","response"]
+		writer.writerow(headers)
+
+		for tmp in working_texts:
+			row = [tmp.text,tmp.time_sent,tmp.time_response,tmp.response]
+			writer.writerow(row)
 
 	return response
 
