@@ -1,3 +1,6 @@
+
+
+
 <div class="col s12">
     <div class="card">
       <div class="card-content small_spaces">
@@ -65,7 +68,10 @@
 
 
 <!-- BACK BUTTON FOR EDIT -->
+
+
 <script>
+
 $('.edit_text_to_input').click(function() {
 $.ajax({
       type: 'POST',
@@ -73,7 +79,8 @@ $.ajax({
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'text_message': "Create New Text",},
       success : function(data) {
-       $('#text_input').html(data['text_input']);
+        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
      }
    })
 
@@ -82,7 +89,9 @@ $.ajax({
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-       $('#text_datatable').html(data['text_datatable']);
+        $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 350);
+       
      }
    })
   })
@@ -132,7 +141,9 @@ $(document).ready(function() {
       'id': "{{working_text.id}}",
       'timing_message': "Timing Options"},
       success : function(data) {
-       $('#text_input').html(data['text_input']);
+        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 350);      
+
        $('#text_datatable').html("");
      }
    })
@@ -151,13 +162,19 @@ $(document).ready(function() {
       'text_content': text_content,
       'id': '{{id}}'},
       success : function(data) {
-        $('#text_input').html(data['text_input']);
+        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300); 
+
+        
         $.ajax({
           type: 'POST',
           url: '/consumer/get_text_datatable/',
           data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
           success : function(data) {
-           $('#text_datatable').html(data['text_datatable']);
+           
+           $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300); 
+
          }
        })
       }

@@ -334,6 +334,7 @@ def save_timing(request):
 	main_context['working_text'] = working_text
 	main_context['id'] = working_text.id
 	main_context['timing_summary'] = working_text.timing.timing_summary
+	main_context['text_message'] = "Create New Text"
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	

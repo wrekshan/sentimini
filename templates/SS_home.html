@@ -23,10 +23,29 @@
 
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
-  
 
-        <div id = "text_input"></div>
+  <div id = "text_input">
 
+    <div class = "center-align">
+      <div class="row"></div>
+      <div id="preloader_new_text" class="preloader-wrapper big active ">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+</div>
 </div>
 
 
@@ -34,7 +53,24 @@
 <!-- DATA TABLE -->
 {% if user.is_authenticated %}
 <div class="row">
-    <div id = "text_datatable"></div>
+  <div id = "text_datatable">
+    <div class = "center-align">
+      <div class="row"></div>
+      <div id="preloader_new_text" class="preloader-wrapper big active ">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  </div>
 </div>
 {% endif %}
 
@@ -48,18 +84,18 @@
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'text_message': "Create New Text",},
       success : function(data) {
-       $('#text_input').html(data['text_input']);
-     }
-   })
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
+      }
+    })
 
     $.ajax({
       type: 'POST',
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-       $('#text_datatable').html(data['text_datatable']);
-     }
-   })
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 800);
+      }
+    })
   }
   if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C

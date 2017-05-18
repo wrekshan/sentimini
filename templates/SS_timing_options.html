@@ -166,7 +166,8 @@ $('.options_to_input').click(function() {
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'id': '{{id}}'},
       success : function(data) {
-       $('#text_input').html(data['text_input']);
+        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
      }
    })
   $.ajax({
@@ -174,7 +175,9 @@ $('.options_to_input').click(function() {
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-       $('#text_datatable').html(data['text_datatable']);
+        $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 350);
+       
      }
    })
 })
@@ -208,7 +211,10 @@ $('.save_timing').click(function() {
       'timing_message': "{{timing_message}}",
     },
       success : function(data) {
-       $('#text_input').html(data['text_input']);
+        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+
+       
      }
    })
   $.ajax({
@@ -217,7 +223,9 @@ $('.save_timing').click(function() {
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
         console.log("TIMING SAVED AND DT SHOULD LOAD!")
-       $('#text_datatable').html(data['text_datatable']);
+       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
+
      }
    })
 })
