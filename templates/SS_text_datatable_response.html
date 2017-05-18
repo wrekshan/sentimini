@@ -46,22 +46,7 @@
 <script>
 $('.download_csv').click(function() {
   location.replace('/consumer/get_csv/'+ $(this).attr('id'));
-  
-
-// $.ajax({
-//       type: 'POST',
-//       url: '/consumer/get_csv/',
-//       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-//       'id': $(this).attr('id'),},
-//       success : function(data) {
-    
-//        // $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-//        //  setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
-//      }
-//    })
-
 })
-
 </script>
 
 <script>
