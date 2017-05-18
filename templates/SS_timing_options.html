@@ -86,7 +86,7 @@
       <div id="ITI_mean_output"></div>
       <form action="#">
         <p class="range-field">
-          <input type="range" id="ITI_noise" min="0" max="1000" value = "{{working_timing.iti_noise}}"/>
+          <input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "{{working_timing.iti_noise}}"/>
         </p>
       </form>
       <div id="ITI_noise_output"></div>
@@ -148,6 +148,100 @@
 <script src={% static "js/picker.js" %}></script>
 <script src={% static "js/picker.date.js" %}></script>
 <script src={% static "js/editing_text_helpers.js" %}></script>
+
+<!-- SLIDERS -->
+<script type="text/javascript">
+  var rangeValues =
+{
+    "1": "Time between texts will be pretty much exact to what you select",
+    "2": "Time between texts will be close to what you select",
+    "3": "Time between texts will be variable",
+    "4": "Time between texts will be extremely variable"
+};
+
+
+</script>
+
+
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+</script>
+
+<script type="text/javascript">
+  var slider = document.getElementById('specific_time_hours');
+  noUiSlider.create(slider, {
+   start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+   connect: true,
+   step: 1,
+   range: {
+     'min': 0,
+     'max': 1439
+   },
+ });
+
+
+  var connect = slider.querySelectorAll('.noUi-connect');
+  var classes = ['c-1-color'];
+
+  for ( var i = 0; i < connect.length; i++ ) {
+    connect[i].classList.add(classes[i]);
+  }
+
+  slider.noUiSlider.on('update', function(){
+
+    var startTime = slideTime_start()
+    var endTime = slideTime_end()
+    $("#time").text(startTime + ' - ' + endTime);
+    $("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
+
+  });
+</script>
+
+
+
+<script type="text/javascript">
+  var update_histogram = function(){
+    // on page load, set the text of the label based the value of the range
+    
+    $('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+    // $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+  } 
+</script>
+
+
+
+<script>
+  $(document).ready ( function(){
+    update_histogram()
+  })
+</script>
+
+<script type="text/javascript">
+  $('#ITI_mean').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+
+  $('#ITI_noise').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
 
 <script type="text/javascript">
   $(document).ready(function(){
@@ -263,39 +357,6 @@ $('.save_timing_default').click(function() {
 </script>
 
 
-<script type="text/javascript">
-  var slider = document.getElementById('specific_time_hours');
-</script>
-
-<script type="text/javascript">
-  var slider = document.getElementById('specific_time_hours');
-  noUiSlider.create(slider, {
-   start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
-   connect: true,
-   step: 1,
-   range: {
-     'min': 0,
-     'max': 1439
-   },
- });
-
-
-  var connect = slider.querySelectorAll('.noUi-connect');
-  var classes = ['c-1-color'];
-
-  for ( var i = 0; i < connect.length; i++ ) {
-    connect[i].classList.add(classes[i]);
-  }
-
-  slider.noUiSlider.on('update', function(){
-
-    var startTime = slideTime_start()
-    var endTime = slideTime_end()
-    $("#time").text(startTime + ' - ' + endTime);
-    $("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
-
-  });
-</script>
 
 <!-- REPEAT CONTROL -->
 
@@ -325,32 +386,4 @@ $('.save_timing_default').click(function() {
 </script>
 
 
-<script type="text/javascript">
-  var update_histogram = function(){
-    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
-    $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
-  } 
-</script>
-
-
-
-<script>
-  $(document).ready ( function(){
-    update_histogram()
-  })
-</script>
-
-<script type="text/javascript">
-  $('#ITI_mean').on('change', function(){
-  // $('#new_text_histogram').empty()
-  // $('#histo_loading').show()
-  update_histogram()
-});
-
-  $('#ITI_noise').on('change', function(){
-  // $('#new_text_histogram').empty()
-  // $('#histo_loading').show()
-  update_histogram()
-});
-</script>
 

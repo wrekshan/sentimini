@@ -202,7 +202,7 @@ def get_timing_default(request):
 		working_timing.fuzzy = True
 		working_timing.fuzzy_denomination = "days"
 		working_timing.iti_raw = 3
-		working_timing.iti_noise = 500
+		working_timing.iti_noise = 2
 		working_timing.decay_check = True
 		working_timing.private_check = False
 		working_timing.hour_start_value = 540

@@ -72,7 +72,19 @@ def schedule_texts():
 			print("SCHEDULING NEW FUZZY TEXT")
 
 			# Get the timing info
-			ITI_noise_tmp = text.timing.iti_noise/100
+			# Hack to have discrete values in slider
+			noise_tmp = 100
+			if text.timing.iti_noise == 1:
+				noise_tmp = 100
+			if text.timing.iti_noise == 2:
+				noise_tmp = 400
+			if text.timing.iti_noise == 3:
+				noise_tmp = 600
+			if text.timing.iti_noise == 4:
+				noise_tmp = 800	
+			
+
+			ITI_noise_tmp = noise_tmp/100
 			ITI_mean = text.timing.iti
 			max_minutes = ITI_mean + (ITI_mean*ITI_noise_tmp)
 			min_minutes = ITI_mean - (ITI_mean*ITI_noise_tmp)
