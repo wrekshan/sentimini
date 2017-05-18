@@ -11,6 +11,8 @@ from allauth.account.forms import SignupForm
 from sentimini.views import pause_text
 from ent.models import ActualText, PossibleText, Timing, Carrier, UserSetting
 
+import csv
+
 def test_signup(request):
 	context = {}
 	# get_adapter()
@@ -109,6 +111,7 @@ def get_text_datatable_response(request):
 	
 	main_context['working_texts'] = working_texts
 	main_context['text_content'] = working_text.text
+	main_context['id'] = working_text.id
 
 
 	# get the summary information 
@@ -116,6 +119,32 @@ def get_text_datatable_response(request):
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
+def get_csv(request):
+	print("CSV ____======")
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.GET['id']))
+	working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="sentimini_responses_data.csv"'
+	writer = csv.writer(response)
+
+	headers = ["time_sent","time_response","response"]
+	writer.writerow(headers)
+
+	for tmp in working_texts:
+		print("TXT")
+		row = [tmp.time_sent,tmp.time_response,tmp.response]
+		writer.writerow(row)
+
+	return response
+
+	# response_data['save_message'] = ".csv downloaded!"
+	
+
+	# return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 
 

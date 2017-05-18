@@ -24,6 +24,8 @@
   <div class="row"></div>
 
   <div class="right-align">
+  <div id="save_message"></div>
+  <!-- <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">Download data</div> -->
   <a id="view_data_to_input" class="view_data_to_input waves-effect waves-light btn">Back</a>
   </div>
 </div>
@@ -39,6 +41,16 @@
 
     });
   } );
+</script>
+
+<script>
+$('.download_csv').click(function() {
+  location.replace('/consumer/get_csv/');
+
+
+
+  })
+
 </script>
 
 <script>
