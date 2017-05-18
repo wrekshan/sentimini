@@ -349,7 +349,8 @@ def save_settings(request):
 		#set up the SMS address	
 		working_settings.sms_address = working_settings.phone_input + working_carrier.sms_address
 		working_settings.settings_complete = True
-		
+		working_settings.send_text_check = True
+		working_settings.send_text = True
 
 		working_settings.save()
 
