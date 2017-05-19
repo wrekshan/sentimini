@@ -22,7 +22,7 @@
     <div class="row">
       <div class="input-field col s12 ">
         <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i> -->
-        <h5>Hour Range</h5>
+        <h5>Receive texts between these hours</h5>
         <p class="range-field">
           <div type="range" id="specific_time_hours"></div>
         </p>
@@ -33,17 +33,21 @@
     <hr>
 
     <!-- Number of repeats -->
-    <div class="row">
+    <div class="switch">
+            <label>
+              Specific
+              <input type="checkbox" id="timing_switch">
+              <span class="lever"></span>
+              Periodic
+            </label>
+          </div>
+    <div id = "timing_option_periodic" class="row">
       <div class="col s12 ">
-        <h5>Time Between Texts</h5> 
+        <h5>Periodic texts (average time between texts)</h5> 
       </div>
       <div class="input-field col s12 l3 ">
         <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
         
-        
-        
-
-
         <select id="fuzzy_denomination"  placeholder="" class="browser-default">
         {% ifequal fuzzy_denomination "minutes" %}
          <option value="minutes" selected="selected" >Minutes</option>
@@ -93,6 +97,64 @@
     </div>
 
   </div>
+
+
+
+
+
+ <div id = "timing_option_specific" class = "row">
+ 
+ 
+ <div class="col s12 ">
+ <h5>Specific number of texts per day</h5>      
+ </div>
+ <div class="input-field col s12 l3 ">
+  <select id="repeat_time" class="browser-default">
+    <option value="1" selected>1 time</option>
+    <option value="2">2 times</option>
+    <option value="3">3 times</option>
+    <option value="4">4 times</option>
+    <option value="5">5 times</option>
+    <option value="6">6 times</option>
+    <option value="7">7 times</option>
+    <option value="8">8 times</option>
+    <option value="9">9 times</option>
+    <option value="10">10 times</option>
+    <option value="11">11 times</option>
+    <option value="12">12 times</option>
+  </select>
+  </div>
+
+  <div class="col s12">
+  <h5>Every</h5>
+    <form action="#">
+      <p>
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
+        <label class="modal_check_label" for="Sunday">Sun</label>
+      
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
+        <label class="modal_check_label" for="Monday">Mon</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
+        <label class="modal_check_label" for="Tuesday">Tues</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
+        <label class="modal_check_label" for="Wednesday">Wed</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
+        <label class="modal_check_label" for="Thursday">Thus</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
+        <label class="modal_check_label" for="Friday">Fri</label>
+
+        <input class="modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
+        <label class="modal_check_label" for="Saturday">Sat</label>
+      </p>
+
+    </form>
+  </div>
+</div>  
+
 
 
   <!-- DECAY -->
@@ -162,7 +224,89 @@
 
 </script>
 
+<!-- LOADING THE VALUES OF THEM ALL -->
 
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal()
+    $("option[value='{{working_timing.repeat_in_window}}']").attr('selected','selected');
+  })
+</script>
+
+{% if working_timing.fuzzy %}
+<script type="text/javascript">
+  $('#timing_switch').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.monday %}
+<script type="text/javascript">
+  $('#Monday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.tuesday %}
+<script type="text/javascript">
+  $('#Tuesday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.wednesday %}
+<script type="text/javascript">
+  $('#Wednesday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.thursday %}
+<script type="text/javascript">
+  $('#Thursday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.friday %}
+<script type="text/javascript">
+  $('#Friday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.saturday %}
+<script type="text/javascript">
+  $('#Saturday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.sunday %}
+<script type="text/javascript">
+  $('#Sunday').prop('checked', true);
+</script>
+{% endif %}
+
+
+
+
+
+<script type="text/javascript">
+  $('#timing_switch').click(function() {
+    if ($('#timing_switch').is(':checked') == true) {
+      $('#timing_option_specific').hide()
+      $('#timing_option_periodic').show()
+    } else {
+      $('#timing_option_specific').show()
+      $('#timing_option_periodic').hide()
+    }
+  })
+</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    if ($('#timing_switch').is(':checked') == true) {
+      $('#timing_option_specific').hide()
+      $('#timing_option_periodic').show()
+    } else {
+      $('#timing_option_specific').show()
+      $('#timing_option_periodic').hide()
+    }
+  });
+</script>
 
 <script type="text/javascript">
   var slider = document.getElementById('specific_time_hours');
@@ -243,13 +387,6 @@
 
 
 
-<script type="text/javascript">
-  $(document).ready(function(){
-    $('.modal').modal(
-
-      )
-  })
-</script>
 
 <!-- BUTTONS BACK-->
 <script type="text/javascript">
@@ -282,11 +419,20 @@ $('.options_to_input').click(function() {
 <script type="text/javascript">
 $('.save_timing').click(function() {
 
-  var fuzzy = true
+  
   var start_time = slideTime_start()
   var end_time = slideTime_end()
   var ITI_mean = $('#ITI_mean').val()
   var ITI_noise = $('#ITI_noise').val()
+
+  var fuzzy = $('#timing_switch').is(':checked')
+  var num_repeats = $('#repeat_time').val()
+  var weekdays = [];
+  $('input[name=weekdays]:checked').each(function() {
+   weekdays.push($(this).val());
+ });
+
+  
 
   $.ajax({
       type: 'POST',
@@ -300,6 +446,9 @@ $('.save_timing').click(function() {
       'iti': ITI_mean,
       'iti_noise': ITI_noise,
       'fuzzy_denomination': $('#fuzzy_denomination').val(),
+      'fuzzy': fuzzy,
+      'num_repeats': num_repeats,
+      'weekdays': weekdays.join(','),
       'decay': $('#decay_check').is(':checked'),
       'private': $('#private_check').is(':checked'),
       'timing_message': "{{timing_message}}",
@@ -316,7 +465,6 @@ $('.save_timing').click(function() {
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-        console.log("TIMING SAVED AND DT SHOULD LOAD!")
        $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
 
@@ -328,11 +476,18 @@ $('.save_timing').click(function() {
 <!-- SAVE AS DEFAULTS-->
 <script type="text/javascript">
 $('.save_timing_default').click(function() {
-  var fuzzy = true
+  
   var start_time = slideTime_start()
   var end_time = slideTime_end()
   var ITI_mean = $('#ITI_mean').val()
   var ITI_noise = $('#ITI_noise').val()
+
+   var fuzzy = $('#timing_switch').is(':checked')
+  var num_repeats = $('#repeat_time').val()
+  var weekdays = [];
+  $('input[name=weekdays]:checked').each(function() {
+   weekdays.push($(this).val());
+ });
 
   $.ajax({
       type: 'POST',
@@ -345,6 +500,9 @@ $('.save_timing_default').click(function() {
       'iti': ITI_mean,
       'iti_noise': ITI_noise,
       'fuzzy_denomination': $('#fuzzy_denomination').val(),
+      'fuzzy': fuzzy,
+      'num_repeats': num_repeats,
+      'weekdays': weekdays.join(','),
       'decay': $('#decay_check').is(':checked'),
       'private': $('#private_check').is(':checked'),
     },
@@ -362,11 +520,8 @@ $('.save_timing_default').click(function() {
 
 <script>
   $('#fuzzy_denomination').change(function() {
-    console.log("TIME DEMO CHANGE")
-    console.log("VALUE " + $('#fuzzy_denomination').val())
     if ($('#fuzzy_denomination').val()=="minutes"){
       $("#ITI_mean").prop({min: 1, max: 600});
-      console.log("MINUTES!")
     } 
     if ($('#fuzzy_denomination').val()=="hours"){
       $("#ITI_mean").prop({min: 1, max: 72});

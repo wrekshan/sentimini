@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import home, settings, about, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, settings, about, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
@@ -9,6 +9,7 @@ urlpatterns = [
 	url(r'^get_csv/$', get_csv, name='get_csv'),
 	url(r'^get_csv/(?P<id>[0-9]+)/$', get_csv, name='get_csv'),
 	url(r'^get_text_input/$', get_text_input, name='get_text_input'),
+	url(r'^get_timing_option_input/$', get_timing_option_input, name='get_timing_option_input'),
 	url(r'^get_text_datatable/$', get_text_datatable, name='get_text_datatable'),
 	url(r'^get_text_datatable_response/$', get_text_datatable_response, name='get_text_datatable_response'),
 	url(r'^get_input_to_options/$', get_input_to_options, name='get_input_to_options'),

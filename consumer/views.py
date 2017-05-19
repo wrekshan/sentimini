@@ -192,14 +192,61 @@ def get_text_datatable(request):
 # This is to change the timing option
 # 1.  Should be able to return to whatever text was being edited
 # 2.  Should be able to load and change default timing options
+def get_timing_option_input(request):
+	main_context = {} 
+	response_data = {}
+
+	# GET THE DEFAULT TIMING OBJECT.  IF NOT THEN CREATE ONE
+	if 'id' in request.POST.keys():
+		if request.POST['id'] != None and request.POST['id'] != "":
+			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_timing = working_text.timing
+		else:
+			working_timing = get_timing_default(request)
+			
+
+	#SAVE THE TEXT TEMPORARY
+	if 'id' in request.POST.keys():
+		print("ID IN KEYS")
+		if request.POST['id'] != "None" and request.POST['id'] != "":
+			print("ID", request.POST['id'])
+			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		else:
+			working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
+	else:
+		working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))	
+
+	if 'text_content' in request.POST.keys():
+		main_context['text_content'] = request.POST['text_content']	
+		working_text.text = request.POST['text_content']
+	else:
+		main_context['text_content'] =working_text.text
+
+	
+	working_text.timing = working_timing
+	if request.POST['timing_message'] == "Timing Options":
+		working_text.tmp_save = True
+	working_text.save()
+
+	main_context['working_text'] = working_text
+	main_context['id'] = working_text.id
+	main_context['working_timing'] = working_timing
+	main_context['fuzzy_denomination'] = working_timing.fuzzy_denomination
+	main_context['timing_message'] = request.POST['timing_message']
+	print("HERE HERE HERE")
+
+	
+
+	# if fuzzy == True:
+	response_data["timing_option_input"] = render_to_string('SS_timing_options_periodic.html', main_context, request=request)
 
 
 def get_timing_default(request):
 	if Timing.objects.all().filter(user=request.user).filter(default_timing=True).count()>0:
 		working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
 	else:
-		working_timing = Timing(user=request.user,default_timing=True, fuzzy=True, repeat=True)
-		working_timing.fuzzy = True
+		working_timing = Timing(user=request.user,default_timing=True, repeat=True)
+		working_timing.fuzzy = False
 		working_timing.fuzzy_denomination = "days"
 		working_timing.iti_raw = 3
 		working_timing.iti_noise = 2
@@ -208,6 +255,7 @@ def get_timing_default(request):
 		working_timing.hour_start_value = 540
 		working_timing.hour_end_value = 1260
 		working_timing.date_start = datetime.now(pytz.utc)
+		working_timing.repeat_in_window = 1
 
 		iti = working_timing.iti_raw
 		demo = working_timing.fuzzy_denomination
@@ -272,6 +320,7 @@ def get_input_to_options(request):
 	main_context['timing_message'] = request.POST['timing_message']
 
 	response_data["text_input"] = render_to_string('SS_timing_options.html', main_context, request=request)
+
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 def get_options_to_input(request):
@@ -291,16 +340,8 @@ def get_options_to_input(request):
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
-def save_timing(request):
-	main_context = {} 
-	response_data = {}
 
-	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-	if working_text.timing.default_timing == True:
-		working_timing = Timing(user=request.user,default_timing=False, fuzzy=True, repeat=True, date_start=datetime.now(pytz.utc))
-	else:
-		working_timing = working_text.timing
-
+def save_timing_function(request,working_timing):
 	# SAVE THE VALUES
 	if 'hour_start' in request.POST.keys():
 		working_timing.hour_start = datetime.strptime(request.POST['hour_start'],'%I:%M %p')
@@ -331,9 +372,58 @@ def save_timing(request):
 
 	if 'iti_noise' in request.POST.keys():
 		working_timing.iti_noise = request.POST['iti_noise']
+
+	if 'weekdays' in request.POST.keys():
+		print("HERE")
+		print(request.POST['weekdays'])
+		working_timing.sunday=False
+		working_timing.monday=False
+		working_timing.tuesday=False
+		working_timing.wednesday=False
+		working_timing.thursday=False
+		working_timing.friday=False
+		working_timing.saturday=False
+
+		for weekday in request.POST['weekdays'].split(','):
+			if weekday == " Sunday":
+				working_timing.sunday=True
+			if weekday == " Monday":
+				working_timing.monday=True
+			if weekday == " Tuesday":
+				working_timing.tuesday=True
+			if weekday == " Wednesday":
+				working_timing.wednesday=True
+			if weekday == " Thursday":
+				working_timing.thursday=True
+			if weekday == " Friday":
+				working_timing.friday=True
+			if weekday == " Saturday":
+				working_timing.saturday=True
+				
+	if 'fuzzy' in request.POST.keys():
+		if request.POST['fuzzy'] == "true":
+			working_timing.fuzzy = True
+		else:
+			working_timing.fuzzy = False
+
+	if 'num_repeats' in request.POST.keys():
+		working_timing.repeat_in_window = request.POST['num_repeats']		
 		
 	working_timing.save()
+	return working_timing
 
+
+def save_timing(request):
+	main_context = {} 
+	response_data = {}
+
+	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+	if working_text.timing.default_timing == True:
+		working_timing = Timing(user=request.user,default_timing=False, fuzzy=True, repeat=True, date_start=datetime.now(pytz.utc))
+	else:
+		working_timing = working_text.timing
+
+	working_timing = save_timing_function(request,working_timing)
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 	working_text.timing = working_timing
 
@@ -397,37 +487,7 @@ def save_timing_default(request):
 	else:
 		working_timing = Timing(user=request.user,default_timing=True, fuzzy=True, repeat=True)
 
-	# SAVE THE VALUES
-	if 'hour_start' in request.POST.keys():
-		working_timing.hour_start = datetime.strptime(request.POST['hour_start'],'%I:%M %p')
-	if 'hour_end' in request.POST.keys():
-		working_timing.hour_end = datetime.strptime(request.POST['hour_end'],'%I:%M %p')
-	if 'hour_start_value' in request.POST.keys():
-		working_timing.hour_start_value = int(request.POST['hour_start_value'].split(".")[0])
-	if 'hour_end_value' in request.POST.keys():
-		working_timing.hour_end_value = int(request.POST['hour_end_value'].split(".")[0])
-
-	if 'iti' in request.POST.keys():
-		demo = request.POST['fuzzy_denomination']
-		iti = int(request.POST['iti'])
-
-		working_timing.fuzzy_denomination = demo
-		working_timing.iti_raw = iti
-
-		if demo == "minutes":
-			working_timing.iti = iti
-		elif demo == "hours":
-			working_timing.iti = iti * 60
-		elif demo == "days":
-			working_timing.iti = iti * 60 * 24 
-		elif demo == "weeks":
-			working_timing.iti = iti * 60 * 24 * 7
-		elif demo == "months":
-			working_timing.iti = iti * 60 * 24 * 7 *30
-
-	if 'iti_noise' in request.POST.keys():
-		working_timing.iti_noise = request.POST['iti_noise']
-		
+	working_timing = save_timing_function(request,working_timing)
 	working_timing.save()
 
 	response_data['message'] = "defaults saved!"
