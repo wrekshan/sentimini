@@ -16,9 +16,14 @@ i.icon-white {
     color: white;
 }
 
+.timing_text_title {
+	font-size: 100%;
+    line-height: normal;
+}
+
 .modal-about {
 	font-size: 120%;
-    line-height: normal;
+	line-height: 105%;
 }
 
 .sort:after {

@@ -224,7 +224,7 @@ def get_timing_option_input(request):
 
 	
 	working_text.timing = working_timing
-	if request.POST['timing_message'] == "Timing Options":
+	if request.POST['timing_message'] == "Timing":
 		working_text.tmp_save = True
 	working_text.save()
 
@@ -309,7 +309,7 @@ def get_input_to_options(request):
 
 	
 	working_text.timing = working_timing
-	if request.POST['timing_message'] == "Timing Options":
+	if request.POST['timing_message'] == "Timing":
 		working_text.tmp_save = True
 	working_text.save()
 

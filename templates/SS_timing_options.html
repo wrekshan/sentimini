@@ -9,12 +9,12 @@
 
     <div class="card-title">
 
-    <span class="card-title"><h4>{{timing_message}}<a href="#timing_modal"><i class="small material-icons">info_outline</i></h4></a></span>for text:  {{working_text.text}}
+    <span class="card-title"><h4>{{timing_message}}<a href="#timing_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+
 
     <!-- <h4>{{timing_message}}<i class="small material-icons">info_outline</i></h4> -->
-    
-
     </div>
+    <span class="timing_text_title">{{working_text.text}}</span>
     <hr>
 
 
@@ -22,7 +22,7 @@
     <div class="row">
       <div class="input-field col s12 ">
         <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i> -->
-        <h5>Receive texts between these hours</h5>
+        <h5>Send texts during</h5>
         <p class="range-field">
           <div type="range" id="specific_time_hours"></div>
         </p>
@@ -106,7 +106,7 @@
  
  
  <div class="col s12 ">
- <h5>Specific number of texts per day</h5>      
+ <h5>Number per day</h5>      
  </div>
  <div class="input-field col s12 l3 ">
   <select id="repeat_time" class="browser-default">
@@ -193,10 +193,16 @@
 
 
 <!-- Modal Structure -->
-  <div id="timing_modal" class="modal modal-fixed-footer" style="max-height:25%;">
-    <div class="modal-content">
-      <h4>Timing Options</h4>
-      <p>The hour range is there so you don't get texts in the middle of the night.  You can edit your timezone in the settings.</p>
+  <div id="timing_modal" class="modal modal-fixed-footer">
+    <div class="modal-content modal-about">
+      <h4>Hour Range</h4>
+      You can select the times that you recieve texts.  This is primarily used so that you avoid receiving text messages while you sleep!  However, you can use this to schedule texts you receive only in the morning or night or even at a specific time.
+      <div class="row"></div>
+      <h4>Specific timing</h4>
+      By using this option, you are signing up to receive a specific number of texts to be received at some time during the hour range you set.  For example, if the hour range was 9am to 12pm and the number of texts was set to 2, then you would receive two texts every morning.  You can additionally select which days of the week you receive texts.
+      <div class="row"></div>
+      <h4>Periodic timing</h4>
+      By using this option, you are signing up to receive this text every so ofter.  You can set it to receive this text every 3 hours, 3 days, or even 3 months.  The timing will not be exact because the idea is to provide somewhat random reminders.  You can specify how variable the time between texts will be.
     </div>
     <div class="modal-footer">
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
