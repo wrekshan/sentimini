@@ -328,9 +328,17 @@ def get_options_to_input(request):
 	response_data = {}
 
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-	main_context['working_text'] = working_text
+	default_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+	
 	main_context['id'] = working_text.id
-	main_context['timing_summary'] = working_text.timing.timing_summary
+	
+
+	if working_text.tmp_save == True:
+		main_context['working_text'] = working_text
+		main_context['timing_summary'] = working_text.timing.timing_summary
+	else:
+		main_context['timing_summary'] = default_timing.timing_summary
+
 	if 'text_message' in request.POST.keys():
 		main_context['text_message'] = request.POST['text_message']
 	else:

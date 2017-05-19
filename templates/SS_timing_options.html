@@ -542,7 +542,8 @@ $('.save_timing_default').click(function() {
       $("#ITI_mean").prop({min: 1, max: 24});
     } 
     $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
-    $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+    $('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+    
   })
 </script>
 
