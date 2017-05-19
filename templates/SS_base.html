@@ -85,8 +85,9 @@
       </div>
       <div class="col l6 s12">
 <h5 class="white-text"><a href="/consumer/about/" class="white-text">About</a></h5>
+{% if user.is_authenticated %}
 <h5 class="white-text"><a href="/consumer/settings/" class="white-text">Settings</a></h5>
-        
+{% endif %}        
       </div>
 
       
@@ -96,7 +97,7 @@
           <h5 class="white-text"><a href="{% url 'account_logout' %}" class="white-text">Sign out</a></h5>
           {% else %}
           <h5 class="white-text"><a href="{% url 'account_signup' %}" class="white-text">Sign up</a></h5>
-          <a href="{% url 'account_login' %}" class="white-text">Sign in</a>
+          <h5 class="white-text"><a href="{% url 'account_login' %}" class="white-text">Sign in</a></h5>
           {% endif %}
           <!-- <ul>
             <li><a class="white-text" href="#!">Link 1</a></li>
