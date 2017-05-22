@@ -1,0 +1,16 @@
+
+
+{% load socialaccount %}
+
+{% get_providers as socialaccount_providers %}
+
+
+{% for provider in socialaccount_providers %}
+
+  <a class="btn btn-block btn-social btn-facebook FB_BUTTON" href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+    <span class="fa fa-facebook FB_BUTTON"></span> Sign up or log in using Facebook
+  </a>
+
+
+{% endfor %}
+

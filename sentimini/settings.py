@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -160,6 +161,16 @@ STATICFILES_DIRS = (
 # auth and allauth settings
 LOGIN_REDIRECT_URL = '/consumer/home/'
 SITE_ID = 1
+
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email'],
+        'METHOD': 'js_sdk'  # instead of 'oauth2'
+    }
+}
+
+# ACCOUNT_EMAIL_REQUIRED=True
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

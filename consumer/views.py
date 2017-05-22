@@ -91,11 +91,16 @@ def settings(request):
 		else:
 			working_settings = UserSetting.objects.all().get(user=request.user)
 
+		
+
 		context={
 		'working_carrier': working_carrier,
 		'working_tz': working_tz,
 		'working_settings': working_settings,
 		}
+
+		if working_settings.settings_complete == False:
+			context['message'] = "Please complete the settings before you can schedule texts"
 
 		return render(request,"SS_settings.html",context)
 	else:
