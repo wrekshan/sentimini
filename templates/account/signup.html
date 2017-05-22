@@ -56,7 +56,10 @@
             </form>
           
             <div class="row"></div>
+            {% load account socialaccount %}  
+            <div class="socialaccount_ballot">
             {% include "fb_sign_up.html" with process="login" %}
+            </div>
           </div>
         </div>
       </div>
