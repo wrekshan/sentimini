@@ -8,6 +8,7 @@
 {% for provider in socialaccount_providers %}
 
 
+
 <div id="fb-root"></div>
 <script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
@@ -17,13 +18,11 @@
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 
-<div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="false"></div>
 
 
-<!-- 
-  <a class="btn btn-block btn-social btn-facebook FB_BUTTON z-depth-4" href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
-    <span class="fa fa-facebook FB_BUTTON"></span> Sign up or log in using Facebook
-  </a> -->
+  <a class="btn btn-block btn-social btn-facebook FB_BUTTON" href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+    <span class="fa fa-facebook FB_BUTTON"></span> Log in with Facebook
+  </a>
 
 
 {% endfor %}
