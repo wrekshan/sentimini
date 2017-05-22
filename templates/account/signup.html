@@ -35,28 +35,8 @@
    }(document, 'script', 'facebook-jssdk'));
 </script>
 
- <div class="row" id="sign_up">
-         <div class="col-md-6 ">
-    <h5>Sign up using facebook (suggested)</h5>
-   
-{% load account socialaccount %}  
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}{% endblocktrans %}</p>
-<div class="socialaccount_ballot">
-  
-    {% include "fb_login.html" with process="login" %}
-  
-</div>
-{% include "socialaccount/snippets/login_extra.html" %}
 
-{% endif %}
- <hr>
-<li>Only requests your email</li>
-<li>Quick and easy</li>
-<li>Verifies that you are a person</li>
-</br>
-    </div>
+
 
   
     <div class="row">
@@ -74,6 +54,9 @@
               {% endif %}
               <button type="submit" class="waves-effect waves-light btn z-depth-4 ">{% trans "Sign Up" %} &raquo;</button>
             </form>
+          
+            <div class="row"></div>
+            {% include "fb_login.html" with process="login" %}
           </div>
         </div>
       </div>
