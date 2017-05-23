@@ -48,7 +48,7 @@
         <li><a href="/consumer/about/">About</a></li>
         <!-- Dropdown Trigger -->
         {% if user.is_authenticated %}
-      <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Account<i class="material-icons right">arrow_drop_down</i></a></li>
+      <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
       {% else %}
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
         {% endif %}
