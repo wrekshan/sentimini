@@ -204,13 +204,19 @@ DATABASES = {
     }
 
 if LIVEHOST:
-    EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'sentimini@gmail.com'
-    EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
-    EMAIL_PORT = 587
+    # EMAIL_USE_TLS = True
+    # EMAIL_HOST = 'smtp.gmail.com'
+    # EMAIL_HOST_USER = 'sentimini@gmail.com'
+    # EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
+    # EMAIL_PORT = 587
 
-    use_gmail = 1
+    EMAIL_USE_TLS = True
+    EMAIL_HOST = 'smtp.zoho.com'
+    EMAIL_HOST_USER = 'system@sentimini.com'
+    EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
+    EMAIL_PORT = 465
+
+    use_gmail = 0
 
     ### THESE ARE THE NON-LOCAL STUFF
     DATABASES['default'] = dj_database_url.config()
