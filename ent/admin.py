@@ -97,7 +97,7 @@ class TimingResource(resources.ModelResource):
 		model = Timing
 		import_id_fields = ('intended_text',)
 		# fields = ('intended_text', 'hour_start', 'hour_end','fuzzy','fuzzy_denomination','iti','iti_noise','monday','tuesday','wednesday','thursday','friday','saturday','sunday')
-		fields = ('intended_text', 'hour_start', 'hour_end','fuzzy','fuzzy_denomination','iti_raw','iti_noise')
+		fields = ('intended_text', 'hour_start', 'hour_end', 'repeat_in_window', 'fuzzy','fuzzy_denomination','iti_raw','iti_noise')
 
 
 class TimingModelAdmin(ImportExportModelAdmin):
@@ -170,7 +170,7 @@ class CollectionResource(resources.ModelResource):
 	class Meta:
 		model = Collection
 		import_id_fields = ('collection_name',)
-		fields = ('collection', 'collection_name', 'intended_tags', 'description')
+		fields = ('collection', 'collection_name', 'intended_tags', 'author', 'description', 'long_description')
 
 
 class CollectionModelAdmin(ImportExportModelAdmin):

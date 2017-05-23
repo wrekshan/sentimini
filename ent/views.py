@@ -125,16 +125,18 @@ def add_to_collection(request):
 		for text in working_texts:
 			print("TEXT: ", text)
 			tmp = PossibleText.objects.all().get(id=int(text.split('_')[1]))
-			timing = Timing.objects.all().get(id=tmp.timing.id)
 
-			timing.pk=None
-			timing.user=request.user
-			timing.save()
+			if PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text).count()<1:
+				timing = Timing.objects.all().get(id=tmp.timing.id)
 
-			tmp.pk=None
-			tmp.timing=timing
-			tmp.user=request.user
-			tmp.save()
+				timing.pk=None
+				timing.user=request.user
+				timing.save()
+
+				tmp.pk=None
+				tmp.timing=timing
+				tmp.user=request.user
+				tmp.save()
 
 	print("TEXTS",request.POST['selected_texts'])
 

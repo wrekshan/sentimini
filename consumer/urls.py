@@ -7,8 +7,8 @@ urlpatterns = [
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),
 	url(r'^inspiration/$', inspiration, name='inspiration'),
+	url(r'^inspiration/(?P<id>[0-9]+)/$', inspiration, name='inspiration'),
 	url(r'^get_inspiration_display/$', get_inspiration_display, name='get_inspiration_display'),
-	
 	url(r'^get_csv/$', get_csv, name='get_csv'),
 	url(r'^get_csv/(?P<id>[0-9]+)/$', get_csv, name='get_csv'),
 	url(r'^get_text_input/$', get_text_input, name='get_text_input'),

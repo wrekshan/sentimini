@@ -55,9 +55,19 @@ def test_signup(request):
 
 
 # Create your views here.
-def inspiration(request):	
-	context = {}
-	return render(request,"SS_inspiration.html",context)
+def inspiration(request,id=None):	
+	if id == None:
+		context = {}
+		return render(request,"SS_inspiration.html",context)
+	else:
+		working_collection = Collection.objects.all().get(id=id)
+		
+		context = {
+		'working_collection': working_collection,
+		}
+		return render(request,"SS_inspiration_specific.html",context)
+
+
 
 def get_inspiration_display(request):
 	main_context = {} # to build out the specific html stuff

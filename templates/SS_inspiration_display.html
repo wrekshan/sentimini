@@ -7,13 +7,14 @@
 <script src={% static "js/select2.full.min.js" %}></script>
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
 
+{% if user.is_superuser %}
+      <a class="waves-effect waves-light btn" href="/ent/update_db_after_import/" > update_db_after_import</a>
+      
+      {% endif %}
 
-
-<div class="row">
+<!-- SEARCH BAR -->
+<!-- <div class="row">
   <div class="col s12">
-
-
-    <!-- SEARCH BAR -->
     <div class="row">
       <form class="col s12">
         <div class="input-field col s12">
@@ -30,15 +31,12 @@
                <option value="tag_{{tag.tag}}">{{tag}}</option>
                {% endfor %}
              </optgroup>
-            
-          <!-- {% for topic in topics %}
-          <option value="topic_{{topic.id}}">{{topic.topic_name}}</option>
-          {% endfor %} -->
+          
         </select>
       </div>
     </div>
   </form>
-</div>
+</div> -->
 
 
 
@@ -65,18 +63,26 @@
     <!-- </div> -->
    
 
-
-    <div class="col s12 m6">
+    
+    <div class="col s12 m12 l6">
     <div class="card">
+    <div class="card-image">
+        <img  src="/static/images/collection/{{value.collection.collection_name}}.jpg">
+        <span class="card-title">{{value.collection.collection}}</span>
+        <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
+      </div>
     <div class="card-content">
-    <span class="card-title">{{value.collection.collection}}</span>
+
+    
    <p>{{value.collection.description}}</p>
       </div>
-      <div class="card-action">
-          <a href="#">Read more and sign up</a>
+      <div class="card-action right-align">
+
+          <a class="waves-effect waves-light btn" href="/consumer/inspiration/{{value.collection.id}}/">Read more and sign up</a>
         </div>
       </div>
       </div>
+      
 
 
 

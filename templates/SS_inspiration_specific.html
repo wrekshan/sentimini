@@ -1,0 +1,130 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+
+
+
+<!-- <script src="http://listjs.com/assets/javascripts/list.min.js"></script> -->
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+
+
+
+<!-- CARD FOR NEW TEXTS AND TIMINGS-->
+<div class="row">
+<div class="card">
+<div class="card-image">
+        <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
+        <span class="card-title">{{working_collection.collection}}</span>
+        <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
+      </div>
+<div class="card-content">
+
+by: {{working_collection.author}}
+<p>{{working_collection.long_description|linebreaks}}</p>
+
+
+<table class="striped">
+          <thead>
+            <tr>
+              <th data-field="remove"></th>
+              <th data-field="id">Text</th>
+              <th data-field="name">Summary</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for text in working_collection.texts.all %}
+            <tr>
+              <td>
+                {% if user.is_authenticated %}
+                <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{text.id}}" checked>
+                <label for="{{working_collection.id}}_{{text.id}}" id="{{working_collection.id}}_{{text.id}}" class="">
+                  {% endif %}
+                </td>
+
+                <td>{{text.text}}</td>
+                <td>{{text.timing.timing_summary}}</td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="card-action right-align">
+            <a class="waves-effect waves-light btn" href="/consumer/inspiration/">Back</a>
+
+             <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> 
+             <span id="save_message"></span>
+             </div>
+
+
+</div>
+</div>
+</div>
+
+
+
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_inspiration_display/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
+      }
+    })
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+
+<script type="text/javascript">
+  $('.add-collection-btn').click(function(){
+    var collection_name = this.id
+
+    // GET THE SPEFIC OPTIONS
+    var selected_texts = [];
+    $("input:checkbox").each(function() {
+      if ($(this).attr('name')===collection_name){
+       selected_texts.push(this.id);
+      }     
+     });
+
+    console.log("SELECTED TEXTS " + selected_texts)
+    $.ajax({
+      type: 'POST',
+      url: '/ent/add_to_collection/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_name': collection_name,
+      'selected_texts': selected_texts.join(','),
+    },
+    success : function(data) {
+      $('#save_message').text("Text added!")
+      
+      },
+    
+ })
+    })
+  
+  
+</script>
+
+{% endblock %}
