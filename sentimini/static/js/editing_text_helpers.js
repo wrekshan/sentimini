@@ -31,6 +31,15 @@ function slideTime_start(event, ui){
         return startTime
 }
 
+function slideTime_start_reverse(text_time){
+    console.log("REVERSE!")
+    if (text_time.indexOf("am") >= 0){
+        console.log(text_time.split(" "))
+    }
+}
+
+
+
 function slideTime_end(event, ui){
     var val0 = slider.noUiSlider.get()[0],
         val1 = slider.noUiSlider.get()[1],

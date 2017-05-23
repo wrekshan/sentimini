@@ -9,7 +9,8 @@ from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
 from sentimini.views import pause_text
-from ent.models import ActualText, PossibleText, Timing, Carrier, UserSetting
+from ent.models import ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+from django.db.models import Q
 
 import csv
 
@@ -54,6 +55,71 @@ def test_signup(request):
 
 
 # Create your views here.
+def inspiration(request):	
+	context = {}
+	return render(request,"SS_inspiration.html",context)
+
+def get_inspiration_display(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	key = 1
+	collection_info = {}
+
+	working_filters = Q()
+
+	if 'collection_switch' in request.POST.keys():
+		if request.POST['collection_switch'] == "true":
+			print("COLLECTION TRUE")
+			working_filters.add(Q(user=request.user),Q.AND)
+			# working_collection = Collection.objects.all().filter(user=request.user)
+			main_context['collection_switch_check'] = "true"
+		else:
+			working_filters.add(Q(publish=True),Q.AND)
+			# working_collection = Collection.objects.all().filter(publish=True)
+
+	if 'collection_tags' in request.POST.keys():
+		working_tags = request.POST['collection_tags'].split(',')
+		main_context['searched_tags'] = request.POST['collection_tags']
+
+		for tag in working_tags:
+			print("TAG", tag)
+			print("TAG", str(tag).split("_")[0] )
+			if str(tag).split("_")[0] == "tag":
+				tmp = Tag.objects.all().filter(tag=str(tag).split("_")[1])
+				working_filters.add(Q(tag__in=tmp),Q.AND)
+			else:
+				print("NAME", tag.split("_"))
+				working_filters.add(Q(collection=str(tag).split("_")[1]),Q.AND)
+
+	working_collection = Collection.objects.all().filter(working_filters)
+
+	for collection in working_collection:
+		collection_list = {}
+		collection_list = {
+			"collection": collection,
+			# "heatmap": get_collection_heatmap(request=request,collection=collection)
+		}
+
+		collection_info[key] = collection_list
+		key = key + 1
+
+	collection_info = tuple(collection_info.items())
+	main_context['collection_info'] = collection_info
+
+	#These are for the search bar
+	main_context['collection_names'] = Collection.objects.all().filter(publish=True)
+	main_context['working_tags'] = Tag.objects.all().filter(collection__in=Collection.objects.all().filter(publish=True)).distinct()
+
+
+
+	response_data["inspiration_display"] = render_to_string('SS_inspiration_display.html', main_context, request=request)
+	
+	# else
+	return HttpResponse(json.dumps(response_data),content_type="application/json")	
+
+
+
 def about(request):	
 	context = {}
 	return render(request,"SS_about.html",context)

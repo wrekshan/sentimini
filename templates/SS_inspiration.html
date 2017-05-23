@@ -23,8 +23,7 @@
 
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
-
-  <div id = "text_input">
+  <div id = "inspiration_display">
     <div class = "center-align">
       <div class="row"></div>
       <div id="preloader_new_text" class="preloader-wrapper big active ">
@@ -43,30 +42,6 @@
 </div>
 
 
-
-<!-- DATA TABLE -->
-{% if user.is_authenticated %}
-<div class="row">
-  <div id = "text_datatable">
-    <div class = "center-align">
-      <div class="row"></div>
-      <div id="preloader_new_text" class="preloader-wrapper big active ">
-        <div class="spinner-layer spinner-blue-only">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div><div class="gap-patch">
-          <div class="circle"></div>
-        </div><div class="circle-clipper right">
-        <div class="circle"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-</div>
-</div>
-{% endif %}
 
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
@@ -74,20 +49,11 @@
     console.log("STARTING")
     $.ajax({
       type: 'POST',
-      url: '/consumer/get_text_input/',
+      url: '/consumer/get_inspiration_display/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_message': "Create New Text",},
+      },
       success : function(data) {
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
-      }
-    })
-
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_datatable/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-      success : function(data) {
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 800);
+        setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
       }
     })
   }
@@ -97,14 +63,6 @@
   else{
     window.attachEvent('onload',startClock); //IE
   }
-</script>
-
-
-<script>
-  $('#save_settings_button').click(function() {
-    console.log("SAVE CLICKED")
-    // save_settings_data()  
-  })
 </script>
 
 <script type="text/javascript">

@@ -1,5 +1,10 @@
 {% load static %}
 
+
+<script src={% static "js/jquery.timepicker.js" %}></script>
+<link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
+
+
 <!-- TEXT -->
 <div class="col s12">
     <div class="card">
@@ -26,8 +31,9 @@
         <p class="range-field">
           <div type="range" id="specific_time_hours"></div>
         </p>
-        <div class="row"></div>
-        Hour Range: <span id="time"></span>
+        
+        <span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align" /></span>
+        
       </div>
     </div>
     <hr>
@@ -319,6 +325,12 @@
 </script>
 
 <script type="text/javascript">
+  $('#startTime').timepicker();
+  $('#endTime').timepicker();
+  
+</script>
+
+<script type="text/javascript">
   var slider = document.getElementById('specific_time_hours');
   noUiSlider.create(slider, {
    start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
@@ -343,10 +355,49 @@
     var startTime = slideTime_start()
     var endTime = slideTime_end()
     $("#time").text(startTime + ' - ' + endTime);
+    
+    $('#startTime').timepicker('setTime', startTime);
+    $('#endTime').timepicker('setTime', endTime);
+    
     $("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
 
   });
 </script>
+
+<script type="text/javascript">
+function slideTime_reverse(text_time){
+    if (text_time.indexOf("am") >= 0){
+        var hour = text_time.split(":")[0]
+        var minute = text_time.split(":")[1]
+        minute = minute.split("am")[0]
+        return parseInt(parseInt(60*hour) + parseInt(minute))
+    } else {
+      
+      var hour = text_time.split(":")[0]
+      var minute = text_time.split(":")[1]
+      minute = minute.split("pm")[0]
+
+      return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
+    }
+}
+
+  $( "#endTime" ).click(function() {
+    $( "#endTime" ).change(function() {
+    var slider = document.getElementById('specific_time_hours');
+    slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+});
+  })
+
+  $( "#startTime" ).click(function() {
+    $( "#startTime" ).change(function() {
+    var slider = document.getElementById('specific_time_hours');
+    slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+});
+  })
+
+</script>
+
+
 
 
 

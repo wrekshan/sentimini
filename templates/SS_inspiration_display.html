@@ -1,0 +1,243 @@
+{% load static %}
+
+
+<script src="http://listjs.com/assets/javascripts/list.min.js"></script>
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+
+
+<div class="row">
+  <div class="col s12">
+
+
+    <!-- SEARCH BAR -->
+    <div class="row">
+      <form class="col s12">
+        <div class="input-field col s12">
+          <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">search</i>
+          <div class="row">
+           <select id="collection_tag_bar" multiple="multiple">
+            <optgroup label="Name">
+               {% for collection in collection_names %}
+               <option value="collection_{{collection.collection}}">{{collection.collection}}</option>
+               {% endfor %}
+             </optgroup>
+             <optgroup label="Tags">
+               {% for tag in working_tags %}
+               <option value="tag_{{tag.tag}}">{{tag}}</option>
+               {% endfor %}
+             </optgroup>
+            
+          <!-- {% for topic in topics %}
+          <option value="topic_{{topic.id}}">{{topic.topic_name}}</option>
+          {% endfor %} -->
+        </select>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+
+<div id="possible_text_list">
+
+  <ul class="list">
+    {% for key, value in collection_info %}
+
+ <!--    <div class="col s12">
+    <div class="card large white-text" style="background-image:url('/static/images/collection/dreams.jpg');background-size:100%;">
+    <div class="card-content">
+    <span class="card-title"><h3>{{value.collection.collection_name}}</h3></span>
+    <p>{{value.collection.description}}</p>
+    </div>
+    </div>
+    </div> -->
+
+   <!-- <div class = "card transparent z-depth-5" background = "/static/images/collection/{{value.collection.collection_name}}.jpg"> -->
+
+   <!-- <div class="card-inspiration card-title">{{value.collection.description}} -->
+   <!-- </div> -->
+   
+  
+    <!-- </div> -->
+   
+
+
+    <div class="col s12 m6">
+    <div class="card">
+    <div class="card-content">
+    <span class="card-title">{{value.collection.collection}}</span>
+   <p>{{value.collection.description}}</p>
+      </div>
+      <div class="card-action">
+          <a href="#">Read more and sign up</a>
+        </div>
+      </div>
+      </div>
+
+
+
+
+
+
+
+    <!-- OLD CARD -->
+    {% endfor %}
+  </ul>
+  <div class="col s10">
+    <ul class="pagination"></ul>
+  </div>
+</div>
+</div>
+
+
+
+<!-- FOR THE CHECKBOXES -->
+{% for key, value in collection_info %}
+{% for text in value.collection.texts.all %}
+<script type="text/javascript">
+  $('input[name={{value.collection.id}}_{{text.id}}]').click(function() {
+    $('#{{value.collection.id}}_all').removeAttr('checked');
+  });
+
+  $('#{{value.collection.id}}_all').click(function() {
+    $('input[name={{value.collection.id}}_{{text.id}}]').removeAttr('checked');  
+  });
+</script>
+{% endfor %}
+{% endfor %}
+
+
+<script type="text/javascript">
+  $('.add-collection-btn').click(function(){
+    var collection_name = this.id
+
+    // GET THE SPEFIC OPTIONS
+    var selected_texts = [];
+    $("input:checkbox").each(function() {
+      if ($(this).attr('name')===collection_name){
+       selected_texts.push(this.id);
+      }     
+     });
+
+    console.log("SELECTED TEXTS " + selected_texts)
+    $.ajax({
+      type: 'POST',
+      url: '/ent/add_to_collection/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_name': collection_name,
+      'selected_texts': selected_texts.join(','),
+    },
+    success : function(data) {
+      console.log("COLLECTION DISPLAY WORKED!")
+      $.ajax({
+      type: 'POST',
+      url: '/get_side/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'side_switch': $('#side_switch').is(':checked')
+      },
+    success : function(data) {
+     $('#side_content').html(data['SIDE']);
+   }
+ })
+    }
+  })
+  })
+    
+
+
+
+</script>
+
+
+<!-- THIS IS THE COLLAPISBLE -->
+<script type="text/javascript">
+ $(document).ready(function(){
+  $('.collapsible').collapsible();
+});
+
+</script>
+
+<!-- SELECT@ -->
+{% if searched_tags %}
+<script type="text/javascript">
+  $('#collection_tag_bar').val("{{searched_tags|safe}}")
+</script>
+{% endif %}
+
+
+
+<!-- SEARCH BAR -->
+<script>
+  $("#collection_tag_bar").select2({
+      // tags: true,
+    // tokenSeparators: [',', ' '],
+    placeholder: "Search for a text or tag...",
+  }).on('select2:unselecting', function() {
+    $(this).data('unselecting', true);
+  }).on('select2:opening', function(e) {
+    if ($(this).data('unselecting')) {
+      $(this).removeData('unselecting');
+      e.preventDefault();
+    }
+  });
+
+</script>
+
+<script type="text/javascript">
+// var options = {
+//   valueNames: [ 'text-text', 'text_id' ]
+// };
+
+// var userList = new List('possible_text_list', options);
+
+
+var monkeyList = new List('possible_text_list', {
+  valueNames: ['text-text', 'time_sent',''],
+  page: 10,
+  plugins: [ ListPagination({}) ] 
+});
+</script>
+
+
+<script type="text/javascript">
+  $('#collection_tag_bar').change(function(){
+    if ($("#collection_tag_bar").val() !== null){
+      var collection_tags = $('#collection_tag_bar').val().join(',')  
+    }
+
+    $.ajax({
+      type: 'POST',
+      url: '/ent/get_display_collection/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_switch': $('#collection_switch').is(':checked'),
+      'collection_tags': collection_tags,
+    },
+    success : function(data) {
+      console.log("COLLECTION DISPLAY WORKED!")
+      $('#MAIN').html(data['COLLECTION']);
+    }
+    })
+
+  })
+</script>
+
+
+<script type="text/javascript">
+  $('#collection_switch').change(function(){
+    $.ajax({
+      type: 'POST',
+      url: '/ent/get_display_collection/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_switch': $('#collection_switch').is(':checked')},
+
+      success : function(data) {
+        console.log("COLLECTION DISPLAY WORKED!")
+        $('#MAIN').html(data['COLLECTION']);
+      }
+    })
+  })
+</script>

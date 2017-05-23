@@ -77,6 +77,9 @@ def update_db_after_import(request):
 				timing.iti = int(timing.iti_raw) * 60 * 24 * 7
 			elif timing.fuzzy_denomination == 'months':
 				timing.iti = int(timing.iti_raw) * 60 * 24 * 7 * 4	
+		else:
+			if timing.repeat_in_window == None:
+				timing.repeat_in_window = 1
 				
 			timing.repeat_summary = "Repeating on average every " + str(timing.iti_raw) + " " + timing.fuzzy_denomination + " between " + str(timing.hour_start) + " and " + str(timing.hour_end)
 
@@ -86,34 +89,28 @@ def update_db_after_import(request):
 	working_texts = PossibleText.objects.all().filter(user=request.user)
 	for text in working_texts:
 		# Get the timing object
-		timing = Timing.objects.all().get(intended_text=text.text)
-		text.timing = timing
+		print("TEXT", text.text)
+		if text.intended_collection != None:
+			timing = Timing.objects.all().get(intended_text=text.text)
+			text.timing = timing
 
-		#add the tags
-		tags = text.intended_tags.split(',')
-		for tag in tags:
-			if tag !='':
-				if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
-					tmp = Tag(tag=tag,user=request.user)
-					tmp.save()
-				else:
-					tmp = Tag.objects.all().get(tag=tag)
-				text.tag.add(tmp)
+			#add the tags
+			tags = text.intended_tags.split(',')
+			for tag in tags:
+				if tag !='':
+					if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+						tmp = Tag(tag=tag,user=request.user)
+						tmp.save()
+					else:
+						tmp = Tag.objects.all().get(tag=tag)
+					text.tag.add(tmp)
 
-		#add the collections
-		collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
-		text.collection.add(collection)
+			#add the collections
+			collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
+			text.collection.add(collection)
 
-		text.save()
+			text.save()
 
-
-
-
-
-			 
-
-
-		
 	return redirect('feed')
 
 
