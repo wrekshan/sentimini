@@ -173,13 +173,13 @@ def check_email_for_new():
 		mail = imaplib.IMAP4_SSL('imap.gmail.com')
 	else:
 		mail = imaplib.IMAP4_SSL('imappro.zoho.com')
+
 	#### GMAIL
 	# mail = imaplib.IMAP4_SSL('imap.gmail.com')
 	# mail.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
 	# mail.list()
 
 	#### ZOHO
-	
 	mail.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
 	mail.list()
 
