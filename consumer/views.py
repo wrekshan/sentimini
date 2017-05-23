@@ -506,14 +506,26 @@ def save_timing(request):
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 	working_text.timing = working_timing
 
-	print("SAVE TIMING", request.POST.keys())
+	# print("SAVE TIMING", request.POST.keys())
 
-	working_text.tmp_save = False
-	working_text.save()
+	print(request.POST['save_type'])
 
-	main_context['working_text'] = working_text
-	main_context['id'] = working_text.id
-	main_context['timing_summary'] = working_text.timing.timing_summary
+	if request.POST['save_type'] == 'options_text_save':
+		print("SAVE TIMING AND TEXST")
+		working_text.tmp_save = False
+		working_text.save()
+
+	else:
+		print("SAVE TIMING ONLY")
+		working_text.tmp_save = True
+		working_text.save()
+
+		main_context['working_text'] = working_text
+		main_context['id'] = working_text.id
+		main_context['timing_summary'] = working_text.timing.timing_summary
+
+
+	
 	main_context['text_message'] = "Create New Text"
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)

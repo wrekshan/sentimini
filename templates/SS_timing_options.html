@@ -187,7 +187,8 @@
     <!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
     <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
     <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
-    <a id="options_save" class="save_timing waves-effect waves-light btn">Save Timing</a>
+    <a id="options_save" class="save_timing waves-effect waves-light btn">Save Only Timing</a>
+    <a id="options_text_save" class="save_timing waves-effect waves-light btn">Save Timing and Text</a>
     
   </div>
   <div id="message"></div>
@@ -489,6 +490,8 @@ $('.save_timing').click(function() {
    weekdays.push($(this).val());
  });
 
+
+
   
 
   $.ajax({
@@ -509,15 +512,13 @@ $('.save_timing').click(function() {
       'decay': $('#decay_check').is(':checked'),
       'private': $('#private_check').is(':checked'),
       'timing_message': "{{timing_message}}",
+      'save_type': $(this).attr('id'),
     },
       success : function(data) {
         $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
 
-       
-     }
-   })
-  $.ajax({
+        $.ajax({
       type: 'POST',
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
@@ -527,8 +528,15 @@ $('.save_timing').click(function() {
 
      }
    })
+
+       
+     }
+   })
+  
 })
 </script>
+
+
 
 <!-- SAVE AS DEFAULTS-->
 <script type="text/javascript">
