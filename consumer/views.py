@@ -411,6 +411,8 @@ def get_options_to_input(request):
 		main_context['timing_summary'] = default_timing.timing_summary
 
 	if 'text_message' in request.POST.keys():
+		main_context['working_text'] = working_text
+		main_context['timing_summary'] = working_text.timing.timing_summary
 		main_context['text_message'] = request.POST['text_message']
 	else:
 		main_context['text_message'] = "Create New Text"
