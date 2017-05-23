@@ -54,7 +54,13 @@ by: {{working_collection.author}}
             <div class="card-action right-align">
             <a class="waves-effect waves-light btn" href="/consumer/inspiration/">Back</a>
 
-             <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> 
+             
+             {% if user.is_authenticated %}
+              <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> 
+              {% else %}
+              <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+              {% endif %}
+
              <span id="save_message"></span>
              </div>
 
