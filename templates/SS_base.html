@@ -31,8 +31,12 @@
   <!-- STARS -->
   <script src="https://use.fontawesome.com/9b758dc6c5.js"></script>
 </head>
-
-
+<ul id="dropdown1" class="dropdown-content">
+  
+        <li><a href="/consumer/settings">Settings</a></li>
+        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+        
+</ul>
   <nav>
     <div class="nav-wrapper">
     <div class="container">
@@ -42,12 +46,13 @@
       <ul id="nav-mobile" class="right hide-on-med-and-down">
       <!-- <li><a href="/consumer/inspiration/">Inspiration</a></li> -->
         <li><a href="/consumer/about/">About</a></li>
+        <!-- Dropdown Trigger -->
         {% if user.is_authenticated %}
-        <li><a href="/consumer/settings">Settings</a></li>
-        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
-        {% else %}
+      <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Account<i class="material-icons right">arrow_drop_down</i></a></li>
+      {% else %}
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
         {% endif %}
+        
         
       </ul>
 
@@ -77,7 +82,7 @@
 </div>
 </body>
 <!-- FOOTER -->
-<footer class="page-footer blue darken-2">
+<footer class="page-footer blue darken-1">
   <div class="container">
     <div class="row">
       <div class="col l3 s12">
@@ -119,7 +124,11 @@
   </footer>
 </html>
 
-<script>
-$(".button-collapse").sideNav();
-</script>
 
+
+<script>
+$(document).ready(function(){
+$(".dropdown-button").dropdown()
+$(".button-collapse").sideNav();
+})
+</script>
