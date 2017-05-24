@@ -25,7 +25,7 @@ from django.db.models import Q
 
 # Create your views here.
 
-from .models import PossibleText, ActualText, Collection, Tag, Timing
+from .models import PossibleText, ActualText, Collection, Tag, Timing, UserSetting
 
 
 
@@ -549,19 +549,54 @@ def collection(request):
 
 #This is used in scheduling fuzzy texts.  Changes the date object to within the timewindow
 def time_window_check(text,possible_date):
-	if not pytz.utc.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) < possible_date <  pytz.utc.localize(datetime.combine(possible_date.date(),text.timing.hour_end)):
-		if possible_date < pytz.utc.localize(datetime.combine(possible_date.date(),text.timing.hour_start)):
-			window_diff = pytz.utc.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) - possible_date
+	working_settings = UserSetting.objects.all().get(user=text.user)
+	user_timezone = pytz.timezone(working_settings.timezone)
+	
+	# if not user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) < possible_date <  user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end)):
+	# 	if possible_date < user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)):
+	# 		window_diff = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) - possible_date
+	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=window_diff.seconds*2)
+	# 	else:
+	# 		#The next valid time
+	# 		tmp = possible_date + timedelta(hours=24) 
+
+	# 		time_to_start = user_timezone.localize(datetime.combine(tmp.date(),text.timing.hour_start)) - possible_date
+	# 		time_since_end = possible_date - user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
+
+	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_to_start.seconds)
+	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_since_end.seconds)
+
+	# return(possible_date)
+
+	# OLD AND I THINK LEADS TO BAD TIMING
+	starting_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start))
+	print("STARTING TIME SHOULD BE IN UTC", starting_time)
+	ending_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
+
+
+	if not starting_time < possible_date < ending_time:
+		if possible_date < starting_time:
+			print("LESS THAN START TIME")
+			window_diff = starting_time - possible_date
 			possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=window_diff.seconds*2)
 		else:
-			#The next valid time
-			tmp = possible_date + timedelta(hours=24) 
+			print("MORE THAN START TIME")
+			time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
+			scheduled_date = starting_time + timedelta(hours=24) 
+			seconds_to_add = randint(0,time_window.total_seconds())
 
-			time_to_start = pytz.utc.localize(datetime.combine(tmp.date(),text.timing.hour_start)) - possible_date
-			time_since_end = possible_date - pytz.utc.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
+			possible_date = scheduled_date + timedelta(0,seconds_to_add)
+			
 
-			possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_to_start.seconds)
-			possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_since_end.seconds)
+			# tmp = starting_time + timedelta(hours=24) 
+
+			# # time_to_start = tmp - possible_date
+			# time_since_end = possible_date - ending_time
+
+			# # print("time_to_start", time_to_start)
+			# print("time_since_end", time_since_end)
+			# # possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_to_start.seconds)
+			# possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_since_end.seconds)
 
 	return(possible_date)
 

@@ -38,7 +38,7 @@ def schedule_texts():
 
 				if text.date_scheduled is not None:
 					if pytz.utc.localize(datetime.now()) > text.date_scheduled + timedelta(1,0):
-						print("SCHEDULING NEW SPECIFIC TEXT")
+						# print("SCHEDULING NEW SPECIFIC TEXT")
 						time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
 						scheduled_date = datetime.combine(datetime.today(), text.timing.hour_start)
 						seconds_to_add = randint(0,time_window.total_seconds())
@@ -53,13 +53,19 @@ def schedule_texts():
 						text.save()
 				
 				else:
+					# print("SCHEDULING NEW SPECIFIC")
 					time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
+					# print("TIME WINOW", time_window)
 					scheduled_date = datetime.combine(datetime.today(), text.timing.hour_start)
+					# print("scheduled_date", scheduled_date)
 					seconds_to_add = randint(0,time_window.total_seconds())
+					# print("seconds_to_add", seconds_to_add)
 
 					atext = ActualText(user=text.user,text=text)
 					time_to_send_tmp = user_timezone.localize(scheduled_date + timedelta(0,seconds_to_add))
+					# print("time_to_send_tmp", time_to_send_tmp)
 					atext.time_to_send = time_to_send_tmp.astimezone(pytz.UTC)
+					# print("atext.time_to_send", atext.time_to_send)
 					atext.save()
 
 					text.date_scheduled = datetime.now(pytz.utc)
@@ -91,12 +97,24 @@ def schedule_texts():
 
 			# Add seconds
 			seconds_to_add = 60 * int(triangular(min_minutes, max_minutes, ITI_mean))
+
+			# THIS IS OLO, AND I THINK IT LEADS TO TEXTING AT NIGHTTIME
+			# possible_date = pytz.utc.localize(datetime.now()) + timedelta(0,seconds_to_add)
+
+			# THIS IS NEW AND THINK COULD BE BETTER
+			working_settings = UserSetting.objects.all().get(user=text.user)
+			user_timezone = pytz.timezone(working_settings.timezone)
 			possible_date = pytz.utc.localize(datetime.now()) + timedelta(0,seconds_to_add)
+
+			print("POSSIBLE DATE BEFORE", possible_date)
+
 
 			possible_date = time_window_check(text,possible_date)
 			date_check = date_check_fun(text,possible_date)
 
-			print("DATE CHECK", date_check)
+
+			possible_date = possible_date.astimezone(pytz.UTC)
+			# possible_date = pytz.utc.localize(possible_date)
 
 			if date_check == 1:
 				atext = ActualText(user=text.user,text=text,time_to_send=possible_date)
