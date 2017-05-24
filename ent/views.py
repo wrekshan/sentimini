@@ -552,22 +552,6 @@ def time_window_check(text,possible_date):
 	working_settings = UserSetting.objects.all().get(user=text.user)
 	user_timezone = pytz.timezone(working_settings.timezone)
 	
-	# if not user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) < possible_date <  user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end)):
-	# 	if possible_date < user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)):
-	# 		window_diff = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start)) - possible_date
-	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=window_diff.seconds*2)
-	# 	else:
-	# 		#The next valid time
-	# 		tmp = possible_date + timedelta(hours=24) 
-
-	# 		time_to_start = user_timezone.localize(datetime.combine(tmp.date(),text.timing.hour_start)) - possible_date
-	# 		time_since_end = possible_date - user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
-
-	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_to_start.seconds)
-	# 		possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_since_end.seconds)
-
-	# return(possible_date)
-
 	# OLD AND I THINK LEADS TO BAD TIMING
 	starting_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start))
 	print("STARTING TIME SHOULD BE IN UTC", starting_time)
@@ -583,21 +567,16 @@ def time_window_check(text,possible_date):
 			print("MORE THAN START TIME")
 			time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
 			scheduled_date = starting_time + timedelta(hours=24) 
-			seconds_to_add = randint(0,time_window.total_seconds())
+			if text.timing.iti > time_window.total_seconds():
+				seconds_to_add = randint(0,time_window.total_seconds())
+			else:
+				seconds_to_add = randint(0,(60*text.timing.iti))
+			
+				
+				
 
 			possible_date = scheduled_date + timedelta(0,seconds_to_add)
 			
-
-			# tmp = starting_time + timedelta(hours=24) 
-
-			# # time_to_start = tmp - possible_date
-			# time_since_end = possible_date - ending_time
-
-			# # print("time_to_start", time_to_start)
-			# print("time_since_end", time_since_end)
-			# # possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_to_start.seconds)
-			# possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=time_since_end.seconds)
-
 	return(possible_date)
 
 
