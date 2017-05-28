@@ -136,6 +136,7 @@ def add_to_collection(request):
 				tmp.pk=None
 				tmp.timing=timing
 				tmp.user=request.user
+				tmp.tmp_save=False
 				tmp.save()
 
 	print("TEXTS",request.POST['selected_texts'])
