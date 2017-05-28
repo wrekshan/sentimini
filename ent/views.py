@@ -469,17 +469,19 @@ def get_create_collection(request):
 	main_context['working_tags'] =  Tag.objects.all()
 
 	if 'id' in request.POST.keys():
-		if request.POST['id'] != "None":
-			main_context['editing_collection'] = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		print("ID HERE", request.POST['id'])
+		if request.POST['id'] != None:
+			if request.POST['id'] != '':
+				main_context['editing_collection'] = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 
 
-			tmp_tags = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id'])).tag
+				tmp_tags = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id'])).tag
 
-			tags = []
-			for tag in tmp_tags.all():
-				tags.append(tag.tag)
+				tags = []
+				for tag in tmp_tags.all():
+					tags.append(tag.tag)
 
-			main_context['tags'] = tags
+				main_context['tags'] = tags
 			
 
 	main_context['working_collection'] = Collection.objects.all()

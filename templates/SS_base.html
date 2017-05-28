@@ -46,6 +46,12 @@
 
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons icon-white">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
+      {% if user.is_superuser %}
+        <li><a href="/admin_panel/">Admin</a></li>
+      
+      
+      {% endif %}
+
       <li><a href="/consumer/inspiration/">Inspirations</a></li>
         <li><a href="/consumer/about/">About</a></li>
         <!-- Dropdown Trigger -->

@@ -53,6 +53,16 @@ def test_signup(request):
 	# print("test_signup pressed!")
 	return render(request,"SS_home.html",context)
 
+# create an inspiration
+def create_inspiration(request, id=None):
+	context={}
+	return render(request,"SS_create_inspiration.html",context)
+
+
+
+
+
+
 
 # Create your views here.
 def inspiration(request,id=None):	

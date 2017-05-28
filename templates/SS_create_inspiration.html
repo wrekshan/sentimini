@@ -1,0 +1,60 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+
+ 
+
+<div id = "MAIN">
+<div class="col s12 center-align">
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+    <div class="preloader-wrapper big active">
+      <div class="spinner-layer spinner-blue">
+        <div class="circle-clipper left">
+          <div class="circle"></div>
+        </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+          <div class="circle"></div>
+        </div>
+      </div>
+</div>
+</div>
+</div>
+
+
+
+
+<script type="text/javascript">
+function startClock(){
+  console.log("STARTING")
+
+  $.ajax({
+    type: 'POST',
+    url: '/ent/get_create_collection/',
+    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    'id': '{{id}}'},
+     success : function(data) {
+      console.log("COLLECTION DISPLAY WORKED!")
+             $('#MAIN').html(data['COLLECTION']);
+         }
+
+    })
+}
+if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+}
+else{
+    window.attachEvent('onload',startClock); //IE
+}
+</script>
+
+
+{% endblock %}

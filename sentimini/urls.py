@@ -18,10 +18,13 @@ from django.contrib import admin
 
 from django.views.generic import TemplateView
 
-from .views import slow_redirect, upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
+from .views import admin_panel, delete_unsent_texts, slow_redirect, upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^admin_panel/$', admin_panel, name='admin_panel'),
+    url(r'^delete_unsent_texts/$', delete_unsent_texts, name='delete_unsent_texts'),
+    
 
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
     url(r'accounts/signup', 'sentimini.views.signup_view'),

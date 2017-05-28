@@ -26,6 +26,23 @@ from django.db.models import Q
 
 from ent.models import PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting
 
+def admin_panel(request):
+	context = {
+		}			
+
+	return render(request,"admin_panel.html",context)
+
+def delete_unsent_texts(request):
+	response_data = {}
+	working_texts = ActualText.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None)
+
+	for text in working_texts:
+		td = text.time_to_send - datetime.now(pytz.utc)
+		if td.seconds/60 > 5:
+			text.delete()
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")					
+
 
 def upload_text_csv(request):
 	response_data = {}

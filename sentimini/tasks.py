@@ -28,7 +28,7 @@ from ent.views import time_window_check, date_check_fun
 def schedule_texts():
 	print("----- STARTING schedule_texts -----")
 	#Specific Timings
-	working_texts = PossibleText.objects.all().filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
 	for text in working_texts:
 		if text.timing.dow_check() == 1:
 			if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
@@ -72,7 +72,7 @@ def schedule_texts():
 					text.save()
 
 	#Fuzzy Timings
-	working_texts = PossibleText.objects.all().filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
 	for text in working_texts:
 		if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
 			print("SCHEDULING NEW FUZZY TEXT")

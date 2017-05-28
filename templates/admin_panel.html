@@ -1,0 +1,37 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+
+
+
+<!-- <script src="http://listjs.com/assets/javascripts/list.min.js"></script> -->
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
+
+
+<!-- CARD FOR NEW TEXTS AND TIMINGS-->
+<div class="row">
+  <div class="card">
+    <div class="card-content">
+      <h3>Admin Tools!</h3>
+      <div class="row">
+        You'll want to use this after you upload new collections, texts, and timings (generally do this all at once).  <a class="waves-effect waves-light btn" href="/ent/update_db_after_import/" > Update DB after import</a>
+      </div>
+
+      <div class="row">
+        You'll want to use this after sentimini stops texts and you want to restart it.  it will delete any old texts.<a class="waves-effect waves-light btn" href="/delete_unsent_texts/" > delete old non-sent texts</a>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
