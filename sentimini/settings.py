@@ -229,12 +229,12 @@ if LIVEHOST:
 else:
     ### LOCAL
     EMAIL_USE_TLS = True
-    EMAIL_HOST = 'smtp.gmail.com'
-    EMAIL_HOST_USER = 'emojinseidev@gmail.com'
+    EMAIL_HOST = 'smtp.zoho.com'
+    EMAIL_HOST_USER = 'system_dev@sentimini.com'
     EMAIL_HOST_PASSWORD = 'wr579351'
     EMAIL_PORT = 587
 
-    use_gmail = 1
+    use_gmail = 0
 
     DATABASES = {
         'default': {

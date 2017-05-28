@@ -24,7 +24,7 @@ from ent.views import time_window_check, date_check_fun
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
 #############################################
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=10))
 def schedule_texts():
 	print("----- STARTING schedule_texts -----")
 	#Specific Timings
@@ -137,7 +137,7 @@ def send_text(text):
 
 	if out_check < 1:
 		if tmp_user.send_email_check == True:
-			send_mail('',message_to_send,str('system@sentimini.com'), [text.user.email], fail_silently=False)
+			send_mail('',message_to_send,str(EMAIL_HOST_USER), [text.user.email], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -146,7 +146,7 @@ def send_text(text):
 			print("Sent 1 email")
 
 		if tmp_user.send_text_check == True:
-			send_mail('',message_to_send,str('system@sentimini.com'), [addressee], fail_silently=False)
+			send_mail('',message_to_send,str(EMAIL_HOST_USER), [addressee], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
