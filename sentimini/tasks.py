@@ -278,7 +278,7 @@ def process_new_mail():
 						default_timing = Timing.objects.all().filter(user=working_user.user).get(default_timing=True)
 
 						if PossibleText.objects.all().filter(user=working_user.user).filter(text=tp.email_content[4:]).count() < 1:
-							new_text = PossibleText(user=working_user.user,timing=default_timing,text=tp.email_content[4:],date_created=pytz.utc.localize(datetime.now()))
+							new_text = PossibleText(user=working_user.user,tmp_save=False,timing=default_timing,text=tp.email_content[4:],date_created=pytz.utc.localize(datetime.now()))
 							new_text.save()
 
 						new_text_conditional = 1
