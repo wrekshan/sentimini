@@ -10,8 +10,8 @@
       <table id="text_data_table" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
+            <th>Created</th>
             <th>Text</th>
-            <th>Date Created</th>
             <th>Summary</th>
             <th>Control</th>
           </tr>
@@ -20,13 +20,14 @@
         <tbody>
           {% for text in working_texts %}
           <tr>
+          <td>{{text.date_created|date:"d/m/y"}}</td>
             <td>
             {{text.text}} <span>(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
             ,
             <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>)
             </span>
              </td>
-             <td>{{text.date_created|date:"d/m/y"}}</td>
+             
 
             <td><a id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary}}</a></td>
             <td>
@@ -291,7 +292,7 @@ $('.download_csv').click(function() {
     {
       "bLengthChange": false,
       "pageLength": 5,
-      "order": [[ 1, "desc" ]],
+      "order": [[ 0, "desc" ]],
 
     });
   } );

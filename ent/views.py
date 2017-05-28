@@ -137,6 +137,7 @@ def add_to_collection(request):
 				tmp.timing=timing
 				tmp.user=request.user
 				tmp.tmp_save=False
+				tmp.date_created=datetime.now(pytz.utc)
 				tmp.save()
 
 	print("TEXTS",request.POST['selected_texts'])

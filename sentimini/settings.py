@@ -247,6 +247,6 @@ else:
         }
     }
     ALLOWED_HOSTS = ['*'] 
-    DEBUG = True
+    DEBUG = False
 
 
