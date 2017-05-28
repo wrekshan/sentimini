@@ -1,0 +1,56 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- FIRST PIC -->
+
+<div class="row">
+	<div class="col s8 offset-s2">
+		<div class="card">
+			<div class="card-content">
+				<span class="card-title"><h4>Text Commands<a href="#text_command_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+				<h5>stop</h5>
+				You can just text, "stop", to stop receiving all text messages.  
+				<h5>start</h5>
+				If you have previously texted "stop", you can text "start", to begin receiving messages again.
+				<h5>new:</h5>
+				You can create a new text to be sent by texting, "new:", followed by the text that you want to receive.  This will take your default timing.  You can change your default timing <a href="/consumer/home/">here</a>.
+				<div class="row"></div>
+				For example, if you want to receive the text, "Focus on your breath!", you can just text sentimini, "new: Focus on your breath!"
+
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Structure -->
+<div id="text_command_modal" class="modal modal-fixed-footer" >
+	<div class="modal-content modal-about">
+		<h4>Text Commands</h4>
+		Sentimini is designed to be provide as much benefit as possible.  The easiest way to do this is to make it really really easy to use.
+		<div class="row"></div>
+		As as a result, you can you can text Sentimini to control your experience.
+		<h4>Future Commands</h4>
+		Right now this is a pretty basic list.  More work will be done to add ways to change the timing of the texts and to pause the texts for a specific duration of time.
+		<div class="row"></div>
+		If you would like any addition commands, email william@sentimini.com with your request!
+
+
+
+
+	</div>
+	<div class="modal-footer">
+		<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.modal').modal(
+
+			)
+	})
+</script>
+
+{% endblock %}

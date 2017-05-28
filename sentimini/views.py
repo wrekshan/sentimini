@@ -320,10 +320,9 @@ def save_settings(request):
 	if 'id' in request.POST.keys():
 		working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
 		working_settings.phone_input = request.POST['phone_input']
+		working_settings.phone = request.POST['phone_input']
 		working_carrier = Carrier.objects.all().get(carrier=request.POST['carrier_search'])
 
-
-		
 		if 'tz_search' in request.POST.keys():
 			working_settings.timezone_search = request.POST['tz_search']
 
@@ -370,6 +369,19 @@ def save_settings(request):
 		working_settings.send_text = True
 
 		working_settings.save()
+
+		wtc = "Welcome to Sentimini!  If you didn't just sign up, then just text 'stop'.  Otherwise schedule some texts!"
+		if PossibleText.objects.all().filter(user=request.user).filter(text=wtc).count()<1:
+			welcome_text_p = PossibleText(user=request.user,text=wtc,active=False,tmp_save=True)
+			welcome_text_p.save()
+	
+
+
+		welcome_text_p = PossibleText.objects.all().filter(user=request.user).get(text=wtc)
+		print("welcome_text_p",welcome_text_p)
+		welcome_text_a = ActualText(user=request.user,text=welcome_text_p,time_to_send=datetime.now(pytz.utc))
+		welcome_text_a.save()
+		
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")				
 

@@ -24,7 +24,7 @@ from ent.views import time_window_check, date_check_fun
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
 #############################################
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=15))
 def schedule_texts():
 	print("----- STARTING schedule_texts -----")
 	#Specific Timings
@@ -106,7 +106,7 @@ def schedule_texts():
 			user_timezone = pytz.timezone(working_settings.timezone)
 			possible_date = pytz.utc.localize(datetime.now()) + timedelta(0,seconds_to_add)
 
-			print("POSSIBLE DATE BEFORE", possible_date)
+			# print("POSSIBLE DATE BEFORE", possible_date)
 
 
 			possible_date = time_window_check(text,possible_date)
@@ -133,7 +133,7 @@ def send_text(text):
 
 	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)
 	out_check = Outgoing.objects.all().filter(text=text).filter(date_sent__gte=past_ten_minutes).count()
-	print("OUTCHECK:", out_check)
+	# print("OUTCHECK:", out_check)
 
 	if out_check < 1:
 		if tmp_user.send_email_check == True:
@@ -165,9 +165,11 @@ def send_texts():
 	for text in user_texts:
 		# YOU WILL HAVE TO ADD SOME CHECKS INTO THIS
 		# user specific text (i.e. they texted "stop")
-		# time specific checks (i.e. sent more than 5 in the last 10 minutes, etc)
 
 		send_text(text)		
+		# time specific checks (i.e. sent more than 5 in the last 10 minutes, etc)
+
+		
 
 #############################################
 ######## GET THE REPLIES
@@ -183,7 +185,7 @@ def get_first_text_part(msg):
         return msg.get_payload()
 
 		
-@periodic_task(run_every=timedelta(seconds=2))
+@periodic_task(run_every=timedelta(seconds=8))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -236,13 +238,14 @@ def check_email_for_new():
 
 
 
-@periodic_task(run_every=timedelta(seconds=3))
+@periodic_task(run_every=timedelta(seconds=8))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
 	for tp in Toprocess:
 	
 		#need conditional
+		print("tp.email_user", tp.email_user)
 		if UserSetting.objects.all().filter(phone=tp.email_user).exists():
 			if UserSetting.objects.all().filter(phone=tp.email_user).count() == 1:
 				working_user = UserSetting.objects.all().get(phone=tp.email_user)	
@@ -250,15 +253,37 @@ def process_new_mail():
 				working_user = UserSetting.objects.all().filter(phone=tp.email_user).first()
 			
 			#check to see if the user wants to stop
-			print("CHECKING FOR STOP")
+			
 			############################################################
 			############### CHECK FOR RESPONSE AND DETERMINE WHAT IT IS
 			############################################################
+			print("tp.email_content ", tp.email_content )
 			if tp.email_content is not None: #this is new
 				working_text = ActualText.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True)
 				working_text = working_text.filter(time_sent__lte=tp.email_date)
-				
-				if working_text.count() > 0:
+				new_text_conditional = 0
+				print("TEXT CONTENT: ", tp.email_content.lower())
+				if len(str(tp.email_content.lower())) < 6:
+					if 'stop' in tp.email_content.lower():
+						working_user.text_request_stop = True
+						working_user.save()
+
+				if len(str(tp.email_content.lower())) < 6:
+					if 'start' in tp.email_content.lower():
+						working_user.text_request_stop = False
+						working_user.save()		
+
+				if len(str(tp.email_content.lower())) > 3:
+					if 'new:' in tp.email_content.lower()[:4]:
+						default_timing = Timing.objects.all().filter(user=working_user.user).get(default_timing=True)
+
+						if PossibleText.objects.all().filter(user=working_user.user).filter(text=tp.email_content[4:]).count() < 1:
+							new_text = PossibleText(user=working_user.user,timing=default_timing,text=tp.email_content[4:],date_created=pytz.utc.localize(datetime.now()))
+							new_text.save()
+
+						new_text_conditional = 1
+
+				if working_text.count() > 0 and new_text_conditional == 0:
 					working_text = working_text.latest('time_sent')
 
 					if working_text.response is None or working_text.response == "":
@@ -267,8 +292,6 @@ def process_new_mail():
 						working_text.response = tp.email_content
 						working_text.save()
 						
-
-		print("Email Processed")
 		tp.processed = 1
 		tp.save()
 		

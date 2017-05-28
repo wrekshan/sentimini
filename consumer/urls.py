@@ -1,11 +1,12 @@
 from django.conf.urls import url
 
-from .views import home, settings, about, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, settings, about, text_commands, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),
+	url(r'^text_commands/$', text_commands, name='text_commands'),
 	url(r'^inspiration/$', inspiration, name='inspiration'),
 	url(r'^inspiration/(?P<id>[0-9]+)/$', inspiration, name='inspiration'),
 	url(r'^create_inspiration/$', create_inspiration, name='create_inspiration'),

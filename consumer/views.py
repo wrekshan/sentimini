@@ -143,6 +143,10 @@ def get_inspiration_display(request):
 def about(request):	
 	context = {}
 	return render(request,"SS_about.html",context)
+
+def text_commands(request):	
+	context = {}
+	return render(request,"SS_text_commands.html",context)	
 			
 		
 
