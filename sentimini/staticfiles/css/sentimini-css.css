@@ -1,72 +1,214 @@
-.new_user_loc {
-	background-color: yellow;
+.card-inspiration{
+	 background: rgba(54, 25, 25, .5);
+}
+
+.FB_BUTTON{
+	background-color: #4267b2;
 }
 
 
-.nav_bar_second {
-	background-color: #e8e8e8;
-	padding-left:0px;
-	margin-left:0px;
-	padding-bottom:0px;
-	margin-bottom:20px;
-
+.preloader-background {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #eee;
+	
+	position: fixed;
+	z-index: 100;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;	
 }
 
-.nav_bar_first {
-	background-color: #e8e8e8;
-	padding-left:0px;
-	margin-left:0px;
-	padding-bottom:0px;
-	margin-bottom:20px;
-
+i.icon-white {
+    color: white;
 }
 
-.vert_margins {
-  padding-top:0px;
-  padding-bottom:0px;
+.timing_text_title {
+	font-size: 100%;
+    line-height: normal;
 }
 
-.row {
-  padding-top:0px;
-  padding-bottom:0px;
+.modal-about {
+	font-size: 120%;
+	line-height: 105%;
 }
 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:100);
-@import url(https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300);
+.sort:after {
+  display:inline-block;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  content:"";
+  position: relative;
+  top:-10px;
+  right:-5px;
+}
+.sort.asc:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid black;
+  content:"";
+  position: relative;
+  top:4px;
+  right:-5px;
+}
+.sort.desc:after {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid black;
+  content:"";
+  position: relative;
+  top:-4px;
+  right:-5px;
+}
 
+
+.fun_splash_background {
+  background-image: url("/static/images/bunch/glass.jpg");
+   
+        
+	background-size: auto 100%;
+	background-repeat: no-repeat;
+	
+}
+
+}
+.small_tabs {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+
+	font-size: 50%;
+}
+
+
+.c-1-color { background: #2196f3; }
+
+
+header, main {
+      padding-left: 300px;
+}
 
 body {
-  font-family: 'Open Sans Condensed', sans-serif;
-   font-weight: 100;
+	background-color: #e9ebee;
+	/*background-image: url("/static/images/bunch/trees.jpg");*/
 }
 
-.navbar-brand {
-	 font-size: 42px;
-	 padding-left:0px;
-	 margin-left:0px;
+html {
+	/*background-color: #eeeeee ;*/
+	/*background-color: #e9ebee ;*/
+	
+	/*background-color: #fafafa ;*/
+	background-color: #e9ebee ;
 }
 
-.navbar-brand-footer {
-	 font-size: 35px;
-	 padding-left:0px;
-	 margin-left:0px;
+/*.side_bar {
+	background-color: #e0e0e0;
+}*/
+
+.collapsible-body {
+		background-color: #EDEDED;
 }
 
-.navbar {
-  background: none;
-  color: #ffffff
-  padding-top:0px;
-  padding-bottom:0px;
-  margin-top:0px;
-  margin-bottom:0px;
-}
-
-mark {
-  font-size:130%;
-  font-weight: bold;
-  background-color: yellow;
+#textarea1{
+  height: 12px;
+  min-height: 12px;
 }
 
 
+.modal_check_label {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 20px;
+}
+
+.modal_check_box {
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
 
 
+
+
+.modal { 
+	height:6000px;
+
+	font-size: 80%;
+	line-height: 80%;
+}
+
+.side-top-links {
+	font-size: 70%;
+}
+
+.side-text-detail {
+	font-size: 95%;
+}
+
+.side-text-header {
+	height: .5rem;
+	line-height: 1rem;
+        padding: .5rem;
+        min-height: 1rem;
+        line-height: normal;
+}
+
+.collapsible-header {
+	height: .5rem;
+        line-height: .5rem;
+        padding: .5rem;
+        min-height: 1rem;
+        line-height: normal;
+    }
+
+
+
+
+
+
+
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
+  }
+}
+
+.collapsible-body{
+	line-height: 100%;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	padding-right: 0px;
+}
