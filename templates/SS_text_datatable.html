@@ -11,6 +11,7 @@
         <thead>
           <tr>
             <th>Text</th>
+            <th>Date Created</th>
             <th>Summary</th>
             <th>Control</th>
           </tr>
@@ -25,6 +26,8 @@
             <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>)
             </span>
              </td>
+             <td>{{text.date_created|date:"d/m/y"}}</td>
+
             <td><a id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary}}</a></td>
             <td>
           <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Increase frequency">trending_up</i>
@@ -288,6 +291,7 @@ $('.download_csv').click(function() {
     {
       "bLengthChange": false,
       "pageLength": 5,
+      "order": [[ 1, "desc" ]],
 
     });
   } );
