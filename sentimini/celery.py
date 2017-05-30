@@ -29,8 +29,7 @@ if LIVEHOST:
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
    
 	BROKER_TRANSPORT = 'redis'
-    CELERYD_MAX_TASKS_PER_CHILD = 100
-
+    
     # Below is trying to make livehouse like dev
     
 else:
@@ -45,6 +44,7 @@ else:
 # Optional configuration, see the application user guide.
 app.conf.update(
     CELERY_TASK_RESULT_EXPIRES=360,
+    CELERYD_MAX_TASKS_PER_CHILD = 100,
 )
 
 #Celery Stuff
