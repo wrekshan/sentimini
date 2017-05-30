@@ -38,7 +38,7 @@ else:
 
 # Optional configuration, see the application user guide.
 app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES=30,
+    CELERY_TASK_RESULT_EXPIRES=360,
 )
 
 #Celery Stuff
