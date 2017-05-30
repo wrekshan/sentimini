@@ -10,6 +10,11 @@
 	<meta property="og:type"          content="website" />
 	<meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
 	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
+	<script src={% static "js/plotly.js" %}></script>
+<!-- <script src="plotly-latest.min.js"></script> -->
+   <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+
 </head>
 
 
@@ -19,7 +24,7 @@
 	<div id="power_graph" class="col s12">
 		<div class="card">
 			<div class="card-content">
-				<h4>Graph</h4>
+				<div id="plot_histo"></div>
 			</div>
 		</div>
 	</div>
@@ -33,10 +38,18 @@
 <!-- MEASURES OR GROUPS -->
 <div class="row">
 
-	<div id="power_measure_1" class="col s12 m6">
+	<div id="power_measure_1" class="col s12 m5">
 	</div>
 
-	<div id="power_measure_2" class="col s12 m6">
+	<div id="power_relationship" class="col s12 m2">
+	<div class="card">
+	<div class="card-content">
+	relationship
+	</div>
+	</div>
+	</div>
+
+	<div id="power_measure_2" class="col s12 m5">
 	</div>
 
 </div>
@@ -128,7 +141,89 @@
   }
 </script>
 
+<!-- THIS IS FOR THE RANDOM NUMBERS -->
+<script type="text/javascript">
+	// returns a gaussian random function with the given mean and stdev.
+function gaussian(mean, stdev) {
+    var y2;
+    var use_last = false;
+    return function() {
+        var y1;
+        if(use_last) {
+           y1 = y2;
+           use_last = false;
+        }
+        else {
+            var x1, x2, w;
+            do {
+                 x1 = 2.0 * Math.random() - 1.0;
+                 x2 = 2.0 * Math.random() - 1.0;
+                 w  = x1 * x1 + x2 * x2;               
+            } while( w >= 1.0);
+            w = Math.sqrt((-2.0 * Math.log(w))/w);
+            y1 = x1 * w;
+            y2 = x2 * w;
+            use_last = true;
+       }
 
+       var retval = mean + stdev * y1;
+       if(retval > 0) 
+           return retval;
+       return -retval;
+   }
+}
+</script>
+
+
+
+
+<script type="text/javascript">
+function update_histo(measure1,measure2){
+	var x1 = [];
+	var x2 = [];
+	for(i=0; i<2000; i++) {
+	    x1[i]=measure1();
+	    x2[i]=measure2();
+	}
+		
+		
+	var trace1 = {
+	  x: x1,
+	  type: "histogram",
+	  opacity: 0.4,
+	  marker: {
+	     color: '#d32f2f',
+	  },
+	};
+	var trace2 = {
+	  x: x2,
+	  type: "histogram",
+	  opacity: 0.4,
+	  marker: {
+	     color: '#1976d2',
+	  },
+	};
+
+	var data = [trace1, trace2];
+	var layout = {barmode: "overlay"};
+	Plotly.newPlot("plot_histo", data, layout);
+
+}
+	
+</script>
+
+
+<script type="text/javascript">
+
+// make a standard gaussian variable.     
+var measure1 = gaussian(100, 15);
+var measure2 = gaussian(100, 15);
+
+update_histo(measure1,measure2)
+
+// make a bunch of standard variates
+
+</script>
 
 
 

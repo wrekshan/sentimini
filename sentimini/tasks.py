@@ -133,9 +133,10 @@ def send_text(text):
 
 	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)
 	out_check = Outgoing.objects.all().filter(text=text).filter(date_sent__gte=past_ten_minutes).count()
+	actual_check = ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__gte=past_ten_minutes).count()
 	# print("OUTCHECK:", out_check)
 
-	if out_check < 1:
+	if out_check < 1 and actual_check < 1:
 		if tmp_user.send_email_check == True:
 			send_mail('',message_to_send,str(EMAIL_HOST_USER), [text.user.email], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
