@@ -50,7 +50,7 @@ app.conf.update(
 
 #Celery Stuff
 # BROKER_URL = 'amqp://guest:guest@localhost:5672//'
-CELERY_IGNORE_RESULT = True
+# CELERY_IGNORE_RESULT = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
