@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'accounts/signup', 'sentimini.views.signup_view'),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^ent/', include('ent.urls',namespace="ent")),
+    url(r'^power/', include('power.urls',namespace="power")),
     url(r'^consumer/', include('consumer.urls',namespace="consumer")),
     url(r'^vis/', include('vis.urls',namespace="vis")),
 

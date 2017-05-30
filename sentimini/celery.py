@@ -38,11 +38,12 @@ else:
 
 # Optional configuration, see the application user guide.
 app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES=360,
+    CELERY_TASK_RESULT_EXPIRES=30,
 )
 
 #Celery Stuff
 # BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_IGNORE_RESULT = True
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

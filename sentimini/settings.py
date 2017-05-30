@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     #my apps
     'ent',
     'vis',
+    'power',
     
 ]
 

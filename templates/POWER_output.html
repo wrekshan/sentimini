@@ -1,0 +1,37 @@
+<div class="card">
+	<div class="card-content">
+		
+
+
+		
+
+		<ul class="tabs">
+			<li class="tab col s6"><a class="active" href="#power_formula">Formula</a></li>
+			<li class="tab col s6"><a href="#power_simulation">Simulation</a></li>
+		</ul>
+
+		<div id="power_formula" class="col s12">
+			<input style ="width: 60px;" id="output_num_obs" type="text" class="center-align" value="XX"/> of texts, <input style ="width: 60px;" id="output_num_obs_per_week" type="text" class="center-align" value="XX"/> per week, ready at <input style ="width: 120px;" id="output_date_ready" type="text" class="center-align" value="Day Month Year"/>.
+
+		<div class="row"></div>
+		<input style ="width: 60px;" id="power_alpha" type="text" class="center-align" value="95"/>% likely to observe a statistical significance of <input style ="width: 60px;" id="power_pvalue" type="text" class="center-align" value=".05"/> p-value.
+		</div>
+	    <div id="power_simulation" class="col s12">
+	    	<input style ="width: 60px;" id="output_num_obs" type="text" class="center-align" value="XX"/> of texts, <input style ="width: 60px;" id="output_num_obs_per_week" type="text" class="center-align" value="XX"/> per week, ready at <input style ="width: 120px;" id="output_date_ready" type="text" class="center-align" value="Day Month Year"/>.
+
+		<div class="row"></div>
+		<input style ="width: 60px;" id="power_alpha" type="text" class="center-align" value="95"/>% likely to observe a statistical significance of <input style ="width: 60px;" id="power_pvalue" type="text" class="center-align" value=".05"/> p-value.
+	    </div>
+	    <div class="row"></div>
+
+
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	
+  $(document).ready(function(){
+    $('ul.tabs').tabs();
+  });
+</script>

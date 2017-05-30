@@ -1,0 +1,135 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- FIRST PIC -->
+<head>
+	<title>Power | Sentimini</title>
+	<meta property="og:title"         content="Power | Sentimini | Statistical Power Analyses"/>
+	<meta property="og:url"           content="www.sentimini.com/power/" />
+	<meta property="og:type"          content="website" />
+	<meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+</head>
+
+
+{% if user.is_superuser %}
+<div class="row">
+	<!-- GRAPH AND OVERVIEW -->
+	<div id="power_graph" class="col s12">
+		<div class="card">
+			<div class="card-content">
+				<h4>Graph</h4>
+			</div>
+		</div>
+	</div>
+
+	<div id="power_overview_options" class="col s12">
+		
+	</div>
+
+</div>
+
+<!-- MEASURES OR GROUPS -->
+<div class="row">
+
+	<div id="power_measure_1" class="col s12 m6">
+	</div>
+
+	<div id="power_measure_2" class="col s12 m6">
+	</div>
+
+</div>
+
+<div class="row">
+
+	<div id="power_output" class="col s12 m12">
+		
+	</div>
+
+
+</div>
+
+
+
+
+
+{% else %}
+<div class="row">
+	<div class="col s12 m8 offset-m2">
+		<div class="card">
+			<div class="card-content">
+				<h4>Statistical Power Analyses</h4>
+				Sentimini is intended to be used to allow people to quantitatively explore their experience and worlds.  While just generating numbers is interesting and informative, it helps to be able to understand if statistically patterns can even be observed given certain assumptions.
+				<div class="row"></div>
+				As a result power analyses are being developed to allow:
+				<li>Individuals</li>
+				<li>Group comparisions</li>
+				<li>Others</li>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endif %}
+
+<!-- JS BELOW HERE -->
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/power/get_overview_options/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        $('#power_overview_options').html(data['power_overview_options']);
+      }
+    })
+
+    console.log("MEASURE")
+
+    $.ajax({
+      type: 'POST',
+      url: '/power/get_measure/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'measure_number': '1',},
+      success : function(data) {
+        $('#power_measure_1').html(data['measure_option']);
+      }
+    })
+
+    $.ajax({
+      type: 'POST',
+      url: '/power/get_measure/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'measure_number': '2',},
+      success : function(data) {
+        $('#power_measure_2').html(data['measure_option']);
+      }
+    })
+
+    $.ajax({
+      type: 'POST',
+      url: '/power/get_output/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        $('#power_output').html(data['power_output']);
+      }
+    })
+
+    
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
+
+
+
+{% endblock %}

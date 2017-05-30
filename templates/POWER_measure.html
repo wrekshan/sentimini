@@ -1,0 +1,41 @@
+<div class="card">
+	<div class="card-content">
+		<h5>Measure {{measure_number}}</h5>
+		<p>
+			<div class="input-field col s6">
+				<input id="measure_mean_{{measure_number}}" type="text" class="validate">
+				<label for="measure_mean_{{measure_number}}">Mean</label>
+			</div>
+		</p>
+
+		<p>
+			<div class="input-field col s6">
+				<input id="measure_std_{{measure_number}}" type="text" class="validate">
+				<label for="measure_std_{{measure_number}}">Standard Deviation</label>
+			</div>
+		</p>
+
+
+		<div id="measure_dist_{{measure_number}}" class="col s12">
+			<form action="#">
+				<p>
+					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_bi_{{measure_number}}" />
+					<label for="dist_bi_{{measure_number}}">Binomial</label>
+				</p>
+				<p>
+					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_gauss_{{measure_number}}" />
+					<label for="dist_gauss_{{measure_number}}">Gaussian</label>
+				</p>
+				<p>
+					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_other_{{measure_number}}"  />
+					<label for="dist_other_{{measure_number}}">Other</label>
+				</p>
+			</form>			
+		</div>
+
+		<div class="row"></div>
+
+
+
+	</div>
+</div>
