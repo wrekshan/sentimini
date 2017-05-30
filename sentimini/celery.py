@@ -10,6 +10,8 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sentimini.settings')
 from django.conf import settings
 import socket
 
+# from sentimini.tasks import schedule_texts, send_texts, check_email_for_new, process_new_mail
+
 #Grab this for later with the local vs web shit
 
 if socket.gethostname().startswith('myhost.local'):
@@ -48,10 +50,19 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-
+CELERY_ALWAYS_EAGER = False
 
 # CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 if __name__ == '__main__':
     app.start()
+
+# schedule_texts, send_texts, check_email_for_new, process_new_mail
+
+
+    # Calls test('world') every 30 seconds
+    # sender.add_periodic_task(30.0, test.s('world'), expires=10)
+
+    # Executes every Monday morning at 7:30 a.m.
+    
