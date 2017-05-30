@@ -72,7 +72,7 @@ from .celery import app
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
 #############################################
-@periodic_task(run_every=timedelta(seconds=12))
+@periodic_task(run_every=timedelta(seconds=4))
 # @task(name='schedule_texts')
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
@@ -206,7 +206,7 @@ def send_text(text):
 			print("Sent 1 text")
 
 	
-@periodic_task(run_every=timedelta(seconds=15))
+@periodic_task(run_every=timedelta(seconds=4))
 # @task(name="send_texts")
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
@@ -237,7 +237,7 @@ def get_first_text_part(msg):
         return msg.get_payload()
 
 		
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=4))
 # @task(name="check_email_for_new")
 def check_email_for_new():
 	#Set up the email 
@@ -291,7 +291,7 @@ def check_email_for_new():
 
 
 
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=4))
 # @task(name="process_new_mail")
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
