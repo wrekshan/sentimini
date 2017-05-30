@@ -23,19 +23,19 @@ else:
 
  
 if LIVEHOST:
-	# app = celery.Celery('sentimini',include=['sentimini.tasks'])
+	app = celery.Celery('sentimini',include=['sentimini.tasks'])
 
-	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                # CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+	app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
    
-	# BROKER_TRANSPORT = 'redis'
+	BROKER_TRANSPORT = 'redis'
+
+    BROKER_TRANSPORT_OPTIONS = {
+        "max_connections": 2,
+    }
 
     # Below is trying to make livehouse like dev
-    BROKER_URL = os.environ['REDIS_URL']
-    app = celery.Celery('sentimini',
-             broker='redis',
-             backend=os.environ['REDIS_URL'],
-             include=['sentimini.tasks'])
+    
 else:
     ### LOCAL
     BROKER_URL = 'amqp://guest:guest@localhost:5672//'
