@@ -33,22 +33,22 @@ from .celery import app
 
 app.conf.beat_schedule = {
     'add-every-30-seconds': {
-        'task': 'tasks.schedule_texts',
+        'task': 'schedule_texts',
         'schedule': timedelta(seconds=15),
         'args': (16, 16)
     },
     'add-every-30-seconds': {
-        'task': 'tasks.send_texts',
+        'task': 'send_texts',
         'schedule': timedelta(seconds=15),
         'args': (16, 16)
     },
     'add-every-30-seconds': {
-        'task': 'tasks.check_email_for_new',
+        'task': 'check_email_for_new',
         'schedule': timedelta(seconds=15),
         'args': (16, 16)
     },
     'add-every-30-seconds': {
-        'task': 'tasks.process_new_mail',
+        'task': 'process_new_mail',
         'schedule': timedelta(seconds=15),
 		'args': (16, 16)
     },
