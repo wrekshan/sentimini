@@ -30,7 +30,7 @@ if LIVEHOST:
    
 	BROKER_TRANSPORT = 'redis'
 
-    BROKER_TRANSPORT_OPTIONS = {"max_connections": 2,}
+    BROKER_TRANSPORT_OPTIONS = {"max_connections": 2}
 
     # Below is trying to make livehouse like dev
     
