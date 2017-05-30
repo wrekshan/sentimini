@@ -29,8 +29,7 @@ if LIVEHOST:
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
    
 	BROKER_TRANSPORT = 'redis'
-
-    BROKER_TRANSPORT_OPTIONS = {"max_connections": 2}
+    CELERYD_MAX_TASKS_PER_CHILD = 100
 
     # Below is trying to make livehouse like dev
     
