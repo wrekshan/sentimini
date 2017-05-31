@@ -40,7 +40,7 @@
 
 <ul id="dropdown1" class="dropdown-content">
   <li><a href="/consumer/text_commands/">Text Commands</a></li>
-  <!-- <li><a href="/consumer/beta/">Beta</a></li> -->
+  <li><a href="/consumer/beta/">Beta</a></li>
   <li><a href="/consumer/settings">Settings</a></li>
   <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
 
@@ -58,14 +58,14 @@
 
 
         {% endif %}
-
+        <li><a href="/consumer/home/">Texts</a></li>
         <li><a href="/consumer/inspiration/">Inspirations</a></li>
         <li><a href="/consumer/about/">About</a></li>
         
         
-        <!-- Dropdown Trigger -->
+        
         {% if user.is_authenticated %}
-        <li><a href="/consumer/beta/">Beta</a></li>
+        
         <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
         {% else %}
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
@@ -75,14 +75,17 @@
       </ul>
 
       <ul class="side-nav" id="mobile-demo">
-        <div class="row">
-          <i class=" center-align fa fa-globe fa-5x"></i>
-          <li><a href="/consumer/home/" class="brand-logo">Sentimini!</a></li>
-        </div>
+
+      
+        
+          <li><a href="/consumer/home/""><h3>Sentimini!</h3></a></li>
+        <li><div class="row"></div></li>
+        <li><a href="/consumer/home/">Texts</a></li>
         <li><a href="/consumer/inspiration/">Inspirations</a></li>
         <li><a href="/consumer/about/">About</a></li>
         <li><a href="/consumer/text_commands/">Text Commands</a></li>
         {% if user.is_authenticated %}
+        <li><a href="/consumer/beta/">Beta</a></li>
         <li><a href="/consumer/settings">Settings</a></li>
         <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
         {% else %}
@@ -154,8 +157,7 @@
       <div class="col l3 s12">
         <!-- <h5>Texting</h5> -->
         <ul>
-          <li><a href="/consumer/home/" class="white-text">Create and view texts</a></li>
-          
+          <li><a href="/consumer/home/" class="white-text">Texts</a></li>
           <li><a href="/consumer/inspiration/" class="white-text">Inspirations</a></li>
           <li><a href="/consumer/text_commands/" class="white-text">Text Commands</a></li>
         </ul>
