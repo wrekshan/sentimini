@@ -73,7 +73,8 @@ def setup_periodic_tasks(sender, **kwargs):
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
 #############################################
 # @periodic_task(run_every=timedelta(seconds=10))
-@task(name='schedule_texts')
+# @task(name='schedule_texts')
+@app.task
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -207,7 +208,8 @@ def send_text(text):
 
 	
 # @periodic_task(run_every=timedelta(seconds=10))
-@task(name="send_texts")
+# @task(name="send_texts")
+@app.task
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -238,7 +240,8 @@ def get_first_text_part(msg):
 
 		
 # @periodic_task(run_every=timedelta(seconds=10))
-@task(name="check_email_for_new")
+# @task(name="check_email_for_new")
+@app.task
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -292,7 +295,8 @@ def check_email_for_new():
 
 
 # @periodic_task(run_every=timedelta(seconds=10))
-@task(name="process_new_mail")
+# @task(name="process_new_mail")
+@app.task
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
