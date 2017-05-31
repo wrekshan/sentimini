@@ -28,7 +28,7 @@ if LIVEHOST:
 	app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
    
-	# BROKER_TRANSPORT = 'redis'
+	BROKER_TRANSPORT = 'redis'
     
     # Below is trying to make livehouse like dev
     
