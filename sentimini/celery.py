@@ -43,7 +43,7 @@ else:
 
 # Optional configuration, see the application user guide.
 app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES=360,
+    CELERY_TASK_RESULT_EXPIRES=3600,
     CELERYD_MAX_TASKS_PER_CHILD = 100,
     CELERY_REDIS_MAX_CONNECTIONS =1,
 )
@@ -55,7 +55,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
-CELERY_ALWAYS_EAGER = False
+# CELERY_ALWAYS_EAGER = False
 
 # CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 # CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
