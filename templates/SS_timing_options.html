@@ -369,17 +369,27 @@
 <script type="text/javascript">
 function slideTime_reverse(text_time){
     if (text_time.indexOf("am") >= 0){
-        var hour = text_time.split(":")[0]
+        var hour = parseInt(text_time.split(":")[0])
         var minute = text_time.split(":")[1]
         minute = minute.split("am")[0]
-        return parseInt(parseInt(60*hour) + parseInt(minute))
+        console.log("HOUR"+hour)
+        if (hour == 12){
+          return parseInt(parseInt(minute))  
+        } else {
+          return parseInt(parseInt(60*hour) + parseInt(minute))
+          
+        }
+        
     } else {
       
-      var hour = text_time.split(":")[0]
+      var hour = parseInt(text_time.split(":")[0])
       var minute = text_time.split(":")[1]
       minute = minute.split("pm")[0]
-
-      return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
+      if (hour == 12){
+        return parseInt(parseInt(12*60) + parseInt(minute))
+      } else {
+        return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
+      }
     }
 }
 
