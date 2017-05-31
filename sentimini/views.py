@@ -388,7 +388,10 @@ def save_settings(request):
 			
 	
 def slow_redirect(request):
-	return HttpResponseRedirect('/consumer/about/')
+	if request.user.is_authenticated():	
+		return HttpResponseRedirect('/consumer/home/')
+	else:
+		return HttpResponseRedirect('/consumer/about/')
 		
 
 def landing(request):
