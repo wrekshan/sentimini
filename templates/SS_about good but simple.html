@@ -1,0 +1,137 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- FIRST PIC -->
+<head>
+ <title>About | Sentimini</title>
+ <meta property="og:title"         content="About | Sentimini | Learn more"/>
+ <meta property="og:url"           content="www.sentimini.com/consumer/about/" />
+ <meta property="og:type"          content="website" />
+ <meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+ <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+</head>
+
+
+<div class="row ">
+	<div class="col s12 m4 l4 center-align">
+	
+		
+<div class="row"></div>
+	
+		<!-- <img src= "/static/images/sentimini_example.png" width="250" height="445"> -->
+		<!-- <img src= "/static/images/sentimini_example.png" style='width:100%;' border="0" alt="Null"> -->
+		
+		<div class="col hide-on-small-only">
+		
+		<img src= "/static/images/sentimini_example.png" style='width:100%;' border="0" alt="Null">
+		</div>
+		<div class="col hide-on-med-and-up">
+		<img src= "/static/images/sentimini_example.png" style='width:50%;' border="0" alt="Null">
+		</div>
+		
+
+	</div>
+	
+	<div class="col s12 m8 l8">
+		<!-- <div class="row center-align"> -->
+		<!-- <i class="center-align fa fa-globe large" aria-hidden="true"></i> -->
+		<!-- </div> -->
+		<div class="row"></div>
+		
+		Sentimini can help you explore this world by sending you texts at periodic times throughout your day.
+
+		<div class="row"></div>
+		You can schedule whatever text you want, at whatever time you want.  Sentimini will collect any replies you make and let you download them in simple spreadsheets. These are the ingredients for a light-weight, human-centric tool for mindfulness, behavior change, and research/health care.  
+		<div class="row"></div>
+		Sentimini is in beta, free to use, and signing up takes less than 2 minutes.  
+
+
+		<div class="row"></div>
+
+		<div class="row">
+			<div class = "col s6 center-align">
+				<h5>Create a text</h5>This could be a reminder to have better posture, that you love your family, to make a haiku, feel an emotion, or anything else.
+			</div>
+
+			<div class = "col s6 center-align">
+				<h5>Set the timing</h5>Do you want to receive the text every 3 hours?  Every 3 days?  Every weekday between 9am and noon?  You have control.
+			</div>
+		</div>
+
+
+
+		<div class="center-align">
+
+			{% if user.is_authenticated %}
+			<a class="btn-large waves-effect waves-light z-depth-4" href="/consumer/home/" > Create a text</a>
+			{% else %}
+			<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light z-depth-4">Sign Up</a>
+
+			<div class="row"></div>
+			<a href="{% url 'account_login' %}"">Already signed up, then sign in</a>
+
+			{% endif %}
+
+			<div class="row"></div>
+			<a class="" href="#who_modal">Who made this?</a>
+			<a class="" href="#why_modal">Why was this made?</a>
+		</div>
+
+	</div>
+</div>
+
+<!-- Modal Structure -->
+  <div id="who_modal" class="modal modal-fixed-footer">
+    <div class="modal-content modal-about">
+    <h4>Who made this?</h4>
+    It is sometimes strange to see a website made by an unknown person, so I wanted to tell you a bit about myself.  My name is William Rekshan.  I made Sentimini because I took a class on meditation and emotions, but I kept on forgetting to pay attention!  I looked around for an emotion tracker that would help me and I found none that were quite right.
+    <div class="row"></div>
+    So I made Sentimini.  I've personally used it for over a year.  I've found it truly amazing to be so caught up in my throughts only to receive a text encouraging me to just breathe, or that I will die, or that I actually do love the people in my life.
+    <div class="row"></div>
+    I've worked in psychology research for nearly 10 years!  Please see my <a href="https://www.linkedin.com/in/williamrekshan">LinkedIn</a> or <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=rekshan">published research papers</a> for an idea of who I am.  I've learned so much about statistics, this world, and what it means to be human through this work.  I just wanted to give back!
+    <div class="row"></div>
+    Please email me at william@sentimini.com if you have any questions or thoughts!  I'd love to speak with you!  I hope you enjoy!
+      
+      
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Thanks!</a>
+    </div>
+  </div>
+
+  <div id="why_modal" class="modal modal-fixed-footer">
+    <div class="modal-content small_spaces modal-about">
+    <h4>Why was this made?</h4>
+    
+    Sentimini was originally intended to be an emotion tracking app.  When I looked for emotion tracking apps, I never found really solved my problem....that I just kept on forgetting to pay attention to my emotions.  I really needed an app that would remind me at random times throughout the day.  
+    <div class="row"></div>
+    I've worked in neuroscience and psychology research for almost 10 years, with 4 of those as a statistician, so I knew immediately that this is a wonderful, less biased way of quantitatively exploring lived human experience.  In fact, there is already a lot of great work in this area:  <a href="https://www.trackyourhappiness.org/">track your happiness</a>,  <a href="http://www.mappiness.org.uk/">mappiness</a>, and much of <a href="http://www.uvm.edu/pdodds/files/papers/others/everything/kahneman2004a.pdf">Daniel Kahneman's</a> work.  While working to develop fMRI based neurofeedback to assist people experiencing chronic pain, I witnessed people transform their lives by being curious about their experiences (in this case mindfullness while experience pain).  
+    <div class="row"></div>
+    I wanted to be able to learn about others through research and offer tools to improve life that I would use myself.  So, I made Sentimini for myself.  I've used it to improve my own life.  I know what I want to do in life.  I know what I need to do to make myself happier.  I just need a small nudge to remember.  I hope that others will find it helpful.  I hope to be able to do open-source citizen science with it.  
+    <div class="row"></div>
+    Please email me at william@sentimini.com if you have any questions or thoughts!  I'd love to speak with you!  I hope you enjoy!
+    
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Thanks!</a>
+    </div>
+  </div>
+
+
+<script>
+ $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+  </script>
+
+<script>
+	$(document).ready(function(){
+		$('.parallax').parallax();
+		$(".button-collapse").sideNav();
+	});
+</script>
+
+
+{% endblock %}

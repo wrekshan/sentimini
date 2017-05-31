@@ -185,10 +185,15 @@
   <div class="right-align">
     <!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
     <!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
+    {% if user.is_authenticated %}
     <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
     <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
     <a id="options_save" class="save_timing waves-effect waves-light btn">Save Only Timing</a>
     <a id="options_text_save" class="save_timing waves-effect waves-light btn">Save Timing and Text</a>
+    {% else %}
+    <a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
+    <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
+    {% endif %}
     
   </div>
   <div id="message"></div>
@@ -334,8 +339,11 @@
 
 <script type="text/javascript">
   var slider = document.getElementById('specific_time_hours');
-  noUiSlider.create(slider, {
+  console.log("STRATING VALE"+"{{working_timing.hour_start_value}}")
+  if ("{{working_timing.hour_start_value}}"){
+    noUiSlider.create(slider, {
    start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+   
    connect: true,
    step: 1,
    range: {
@@ -343,6 +351,21 @@
      'max': 1439
    },
  });
+
+  } else {
+    noUiSlider.create(slider, {
+   
+   start: [540, 1260],
+   connect: true,
+   step: 1,
+   range: {
+     'min': 0,
+     'max': 1439
+   },
+ });
+
+  }
+  
 
 
   var connect = slider.querySelectorAll('.noUi-connect');

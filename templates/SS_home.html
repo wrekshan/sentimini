@@ -61,10 +61,14 @@
     </div>
   </div>
 </div>
-
-
 </div>
 </div>
+{% else %}
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
+<div class="row"></div>
 {% endif %}
 
 <!-- GET THE TEXT BOX -->
@@ -80,6 +84,22 @@
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
       }
     })
+
+
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+{% if user.is_authenticated %}
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+   
 
     $.ajax({
       type: 'POST',
@@ -97,6 +117,8 @@
     window.attachEvent('onload',startClock); //IE
   }
 </script>
+
+{% endif %}
 
 
 <script>

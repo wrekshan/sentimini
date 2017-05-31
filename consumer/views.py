@@ -125,6 +125,16 @@ def inspiration_indvidual_text(request):
 def inspiration(request,id=None):	
 	if id == None:
 		context = {}
+		if request.user.is_authenticated():	
+			if UserSetting.objects.all().filter(user=request.user).count() > 0:
+				working_settings = UserSetting.objects.all().get(user=request.user)
+				if working_settings.settings_complete == True:
+					return render(request,"SS_inspiration.html",context)
+				else:
+					return HttpResponseRedirect('/consumer/settings/')
+		else:
+			return render(request,"SS_inspiration.html",context)
+	
 		return render(request,"SS_inspiration.html",context)
 	else:
 		working_collection = Collection.objects.all().get(id=id)
@@ -241,6 +251,7 @@ def text_commands(request):
 
 # Create your views here.
 def home(request):
+	context = {}
 	if request.user.is_authenticated():	
 		if UserSetting.objects.all().filter(user=request.user).count() > 0:
 			working_settings = UserSetting.objects.all().get(user=request.user)
@@ -249,14 +260,16 @@ def home(request):
 				
 				context = {
 					'working_texts': working_texts,
-					}			
+					}
 				return render(request,"SS_home.html",context)
 			else:
 				return HttpResponseRedirect('/consumer/settings/')
 		else:
 			return HttpResponseRedirect('/consumer/settings/')
-	else:
-		return HttpResponseRedirect('/consumer/about/')
+
+	return render(request,"SS_home.html",context)
+	
+	
 			
 
 def settings(request):
@@ -290,12 +303,13 @@ def get_text_datatable_response(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
-	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-	working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
+	if request.user.is_authenticated():	
+		working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
 	
-	main_context['working_texts'] = working_texts
-	main_context['text_content'] = working_text.text
-	main_context['id'] = working_text.id
+		main_context['working_texts'] = working_texts
+		main_context['text_content'] = working_text.text
+		main_context['id'] = working_text.id
 
 
 	# get the summary information 
@@ -347,12 +361,13 @@ def get_csv(request,id=None):
 def get_text_input(request):
 	main_context = {} 
 	response_data = {}
-
-	working_timing = get_timing_default(request)
-	# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
-	main_context['timing_summary'] = working_timing.timing_summary
-	main_context['text_message'] = request.POST['text_message']
-	# main_context['timing_summary'] = working_timing.timing_summary
+	main_context['text_message'] = "Create New Text"
+	if request.user.is_authenticated():	
+		working_timing = get_timing_default(request)
+		# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+		main_context['timing_summary'] = working_timing.timing_summary
+		main_context['text_message'] = request.POST['text_message']
+		# main_context['timing_summary'] = working_timing.timing_summary
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
@@ -464,44 +479,47 @@ def get_timing_default(request):
 def get_input_to_options(request):
 	main_context = {} 
 	response_data = {}
+	main_context['timing_message'] = "Timing Options"
 
-	# GET THE DEFAULT TIMING OBJECT.  IF NOT THEN CREATE ONE
-	if 'id' in request.POST.keys():
-		if request.POST['id'] != None and request.POST['id'] != "":
-			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-			working_timing = working_text.timing
+	if request.user.is_authenticated():	
+
+		# GET THE DEFAULT TIMING OBJECT.  IF NOT THEN CREATE ONE
+		if 'id' in request.POST.keys():
+			if request.POST['id'] != None and request.POST['id'] != "":
+				working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+				working_timing = working_text.timing
+			else:
+				working_timing = get_timing_default(request)
+				
+
+		#SAVE THE TEXT TEMPORARY
+		if 'id' in request.POST.keys():
+			print("ID IN KEYS")
+			if request.POST['id'] != "None" and request.POST['id'] != "":
+				print("ID", request.POST['id'])
+				working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			else:
+				working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
 		else:
-			working_timing = get_timing_default(request)
-			
+			working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))	
 
-	#SAVE THE TEXT TEMPORARY
-	if 'id' in request.POST.keys():
-		print("ID IN KEYS")
-		if request.POST['id'] != "None" and request.POST['id'] != "":
-			print("ID", request.POST['id'])
-			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		if 'text_content' in request.POST.keys():
+			main_context['text_content'] = request.POST['text_content']	
+			working_text.text = request.POST['text_content']
 		else:
-			working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
-	else:
-		working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))	
+			main_context['text_content'] =working_text.text
 
-	if 'text_content' in request.POST.keys():
-		main_context['text_content'] = request.POST['text_content']	
-		working_text.text = request.POST['text_content']
-	else:
-		main_context['text_content'] =working_text.text
+		
+		working_text.timing = working_timing
+		if request.POST['timing_message'] == "Timing":
+			working_text.tmp_save = True
+		working_text.save()
 
-	
-	working_text.timing = working_timing
-	if request.POST['timing_message'] == "Timing":
-		working_text.tmp_save = True
-	working_text.save()
-
-	main_context['working_text'] = working_text
-	main_context['id'] = working_text.id
-	main_context['working_timing'] = working_timing
-	main_context['fuzzy_denomination'] = working_timing.fuzzy_denomination
-	main_context['timing_message'] = request.POST['timing_message']
+		main_context['working_text'] = working_text
+		main_context['id'] = working_text.id
+		main_context['working_timing'] = working_timing
+		main_context['fuzzy_denomination'] = working_timing.fuzzy_denomination
+		main_context['timing_message'] = request.POST['timing_message']
 
 	response_data["text_input"] = render_to_string('SS_timing_options.html', main_context, request=request)
 

@@ -10,17 +10,17 @@
       <table id="text_data_table" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Created</th>
+            <th>Date</th>
             <th>Text</th>
-            <th>Summary</th>
-            <th>Control</th>
+            <th>Timing</th>
+            <th></th>
           </tr>
         </thead>
 
         <tbody>
           {% for text in working_texts %}
           <tr>
-          <td>{{text.date_created|date:"d/m/y"}}</td>
+          <td><span style="word-wrap: break-word;">{{text.date_created|date:"d M Y"}}</span></td>
             <td>
             {{text.text}} <span>(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
             ,
