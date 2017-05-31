@@ -1,41 +1,77 @@
-<div class="card">
-	<div class="card-content">
-		<h5>Measure {{measure_number}}</h5>
-		<p>
-			<div class="input-field col s6">
-				<input id="measure_mean_{{measure_number}}" type="text" class="validate">
+<ul class="collapsible" data-collapsible="accordion">
+	<li>
+		<div class="collapsible-header active"><i class="material-icons">filter_drama</i>Measure {{measure_number}}</div>
+		<div class="collapsible-body">
+
+			<div class="input-field col s3">
+				<input id="measure_mean_{{measure_number}}" type="number" class="validate measure_info" value="5">
 				<label for="measure_mean_{{measure_number}}">Mean</label>
 			</div>
-		</p>
 
-		<p>
-			<div class="input-field col s6">
-				<input id="measure_std_{{measure_number}}" type="text" class="validate">
+			<div class="input-field col s3">
+				<input id="measure_min_{{measure_number}}" type="number" class="validate measure_info" value="0">
+				<label for="measure_min_{{measure_number}}">Min</label>
+			</div>
+
+			<div class="input-field col s3">
+				<input id="measure_max_{{measure_number}}" type="number" class="validate measure_info" value="10">
+				<label for="measure_max_{{measure_number}}">Max</label>
+			</div>
+
+			<div class="input-field col s3">
+				<input id="measure_std_{{measure_number}}" type="number" class="validate measure_info" value="3">
 				<label for="measure_std_{{measure_number}}">Standard Deviation</label>
 			</div>
-		</p>
 
 
-		<div id="measure_dist_{{measure_number}}" class="col s12">
-			<form action="#">
-				<p>
+
+			<div id="measure_dist_{{measure_number}}" class="col s12">
+				<form action="#">
+
 					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_bi_{{measure_number}}" />
 					<label for="dist_bi_{{measure_number}}">Binomial</label>
-				</p>
-				<p>
+
 					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_gauss_{{measure_number}}" />
 					<label for="dist_gauss_{{measure_number}}">Gaussian</label>
-				</p>
-				<p>
+
 					<input name="measure_dist_select_{{measure_number}}" type="radio" id="dist_other_{{measure_number}}"  />
 					<label for="dist_other_{{measure_number}}">Other</label>
-				</p>
-			</form>			
+
+				</form>			
+			</div>
+			<div class="row"></div>
 		</div>
+	</li>
+</ul>
 
-		<div class="row"></div>
 
 
 
-	</div>
-</div>
+
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.collapsible').collapsible();
+	});
+</script>
+
+
+
+
+<script type="text/javascript">
+	
+	$(document).ready(function() {
+		Materialize.updateTextFields();
+	});
+
+
+</script>
+<script type="text/javascript">
+
+	$( ".measure_info" ).change(function() {	
+		update_histo()
+	})	
+</script>
+
+
+

@@ -12,8 +12,9 @@
 	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
 
 	<script src={% static "js/plotly.js" %}></script>
-<!-- <script src="plotly-latest.min.js"></script> -->
-   <!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
+	<link rel="stylesheet" href={% static "css/materialize.css" %}>
+	<!-- <script src="plotly-latest.min.js"></script> -->
+	<!-- <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> -->
 
 </head>
 
@@ -28,43 +29,28 @@
 			</div>
 		</div>
 	</div>
-
-	<div id="power_overview_options" class="col s12">
-		
-	</div>
-
 </div>
+
+<!-- <div class="row">
+	<div class="col s12">
+		<div id="power_overview_options">
+		</div>
+	</div>
+</div> -->
 
 <!-- MEASURES OR GROUPS -->
 <div class="row">
 
-	<div id="power_measure_1" class="col s12 m5">
-	</div>
+	<div id="power_measure_1" class="col s12 m6"></div>
 
-	<div id="power_relationship" class="col s12 m2">
-	<div class="card">
-	<div class="card-content">
-	relationship
-	</div>
-	</div>
-	</div>
+	
 
-	<div id="power_measure_2" class="col s12 m5">
-	</div>
-
+	<div id="power_measure_2" class="col s12 m6"></div>
 </div>
 
 <div class="row">
-
-	<div id="power_output" class="col s12 m12">
-		
-	</div>
-
-
+	<div id="power_output" class="col s12 m12"></div>
 </div>
-
-
-
 
 
 {% else %}
@@ -89,119 +75,145 @@
 <!-- JS BELOW HERE -->
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
-  function startClock(){
-    console.log("STARTING")
-    $.ajax({
-      type: 'POST',
-      url: '/power/get_overview_options/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
-      success : function(data) {
-        $('#power_overview_options').html(data['power_overview_options']);
-      }
-    })
+	function startClock(){
+		console.log("STARTING")
+		$.ajax({
+			type: 'POST',
+			url: '/power/get_overview_options/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+			success : function(data) {
+				$('#power_overview_options').html(data['power_overview_options']);
+			}
+		})
 
-    console.log("MEASURE")
+		console.log("MEASURE")
 
-    $.ajax({
-      type: 'POST',
-      url: '/power/get_measure/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'measure_number': '1',},
-      success : function(data) {
-        $('#power_measure_1').html(data['measure_option']);
-      }
-    })
+		$.ajax({
+			type: 'POST',
+			url: '/power/get_measure/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'measure_number': '1',},
+			success : function(data) {
+				$('#power_measure_1').html(data['measure_option']);
+			}
+		})
 
-    $.ajax({
-      type: 'POST',
-      url: '/power/get_measure/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'measure_number': '2',},
-      success : function(data) {
-        $('#power_measure_2').html(data['measure_option']);
-      }
-    })
+		$.ajax({
+			type: 'POST',
+			url: '/power/get_measure/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'measure_number': '2',},
+			success : function(data) {
+				$('#power_measure_2').html(data['measure_option']);
+				update_histo();
+			}
+		})
 
-    $.ajax({
-      type: 'POST',
-      url: '/power/get_output/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
-      success : function(data) {
-        $('#power_output').html(data['power_output']);
-      }
-    })
+		$.ajax({
+			type: 'POST',
+			url: '/power/get_output/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+			success : function(data) {
+				$('#power_output').html(data['power_output']);
+			}
+		})
 
-    
-  }
-  if(window.addEventListener){
+
+	}
+	if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C
-  }
-  else{
+}
+else{
     window.attachEvent('onload',startClock); //IE
-  }
+}
 </script>
 
 <!-- THIS IS FOR THE RANDOM NUMBERS -->
 <script type="text/javascript">
-	// returns a gaussian random function with the given mean and stdev.
-function gaussian(mean, stdev) {
-    var y2;
-    var use_last = false;
-    return function() {
-        var y1;
-        if(use_last) {
-           y1 = y2;
-           use_last = false;
-        }
-        else {
-            var x1, x2, w;
-            do {
-                 x1 = 2.0 * Math.random() - 1.0;
-                 x2 = 2.0 * Math.random() - 1.0;
-                 w  = x1 * x1 + x2 * x2;               
-            } while( w >= 1.0);
-            w = Math.sqrt((-2.0 * Math.log(w))/w);
-            y1 = x1 * w;
-            y2 = x2 * w;
-            use_last = true;
-       }
+	function gaussian(mean, stdev) {
+		var y2;
+		var use_last = false;
+		return function() {
+			var y1;
+			if(use_last) {
+				y1 = y2;
+				use_last = false;
+			}
+			else {
+				var x1, x2, w;
+				do {
+					x1 = 2.0 * Math.random() - 1.0;
+					x2 = 2.0 * Math.random() - 1.0;
+					w  = x1 * x1 + x2 * x2;               
+				} while( w >= 1.0);
+				w = Math.sqrt((-2.0 * Math.log(w))/w);
+				y1 = x1 * w;
+				y2 = x2 * w;
+				use_last = true;
+			}
 
-       var retval = mean + stdev * y1;
-       if(retval > 0) 
-           return retval;
-       return -retval;
-   }
-}
+			var retval = mean + stdev * y1;
+			if(retval > 0) 
+				return retval;
+			return -retval;
+		}
+	}
 </script>
 
 
 
 
 <script type="text/javascript">
-function update_histo(measure1,measure2){
-	var x1 = [];
-	var x2 = [];
-	for(i=0; i<2000; i++) {
-	    x1[i]=measure1();
-	    x2[i]=measure2();
-	}
-		
-		
+	function update_histo(measure1,measure2){
+		console.log("UPDATE HIST")
+		var mean1 = parseInt($('#measure_mean_1').val())
+		var std1 = parseInt($('#measure_std_1').val())
+		var mean2 = parseInt($('#measure_mean_2').val())
+		var std2 = parseInt($('#measure_std_2').val())
+
+		var min1 = parseInt($('#measure_min_1').val())
+		var max1 = parseInt($('#measure_max_1').val())
+
+		var min2 = parseInt($('#measure_min_2').val())
+		var max2 = parseInt($('#measure_max_2').val())
+
+		var measure1 = gaussian(mean1, std1);
+		var measure2 = gaussian(mean2, std2);
+
+
+		var x1 = [];
+		var x2 = [];
+		for(i=0; i<2000; i++) {
+			tmp1 = measure1();
+			while (tmp1<min1 || tmp1>max1) {
+				tmp1 = measure1();
+			}
+
+			tmp2 = measure2();
+			while (tmp2<min2 || tmp2>max2) {
+				tmp2 = measure2();
+			}
+			x1[i]=Math.round(tmp1);
+			x2[i]=Math.round(tmp2);
+		}
+	// console.log("x1"+x1)
+
+
 	var trace1 = {
-	  x: x1,
-	  type: "histogram",
-	  opacity: 0.4,
-	  marker: {
-	     color: '#d32f2f',
-	  },
+		x: x1,
+		type: "histogram",
+		opacity: 0.4,
+		marker: {
+			color: '#d32f2f',
+		},
 	};
 	var trace2 = {
-	  x: x2,
-	  type: "histogram",
-	  opacity: 0.4,
-	  marker: {
-	     color: '#1976d2',
-	  },
+		x: x2,
+		type: "histogram",
+		opacity: 0.4,
+		marker: {
+			color: '#1976d2',
+		},
 	};
 
 	var data = [trace1, trace2];
@@ -209,22 +221,33 @@ function update_histo(measure1,measure2){
 	Plotly.newPlot("plot_histo", data, layout);
 
 }
-	
+
 </script>
+
 
 
 <script type="text/javascript">
 
-// make a standard gaussian variable.     
-var measure1 = gaussian(100, 15);
-var measure2 = gaussian(100, 15);
+	$( ".measure_info" ).change(function() {
+		console.log($('#measure_mean_1').val())
+		console.log("CHANGED MEASURE")
+		var mean1 = parseInt($('#measure_mean_1').val())
+		var std1 = parseInt($('#measure_std_1').val())
+		var mean2 = parseInt($('#measure_mean_2').val())
+		var std2 = parseInt($('#measure_std_2').val())
 
-update_histo(measure1,measure2)
+		console.log("MEAN1"+mean1)     
+		console.log("mean2"+mean2)     
+		console.log("std1"+std1)     
+		console.log("std2"+std2)         
 
-// make a bunch of standard variates
+		var measure1 = gaussian(mean1, std1);
+		var measure2 = gaussian(mean2, std2);
 
+	// update_histo(measure1,measure2)
+	console.log("FINISHEd chANGE")
+})	
 </script>
-
 
 
 {% endblock %}
