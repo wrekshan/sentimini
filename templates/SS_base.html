@@ -39,35 +39,35 @@
 
 
 <ul id="dropdown1" class="dropdown-content">
-        <li><a href="/consumer/text_commands/">Text Commands</a></li>
-        <!-- <li><a href="/consumer/beta/">Beta</a></li> -->
-        <li><a href="/consumer/settings">Settings</a></li>
-        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
-        
+  <li><a href="/consumer/text_commands/">Text Commands</a></li>
+  <!-- <li><a href="/consumer/beta/">Beta</a></li> -->
+  <li><a href="/consumer/settings">Settings</a></li>
+  <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+
 </ul>
-  <nav>
-    <div class="nav-wrapper">
+<nav>
+  <div class="nav-wrapper">
     <div class="container">
       <a href="/consumer/home/" class="brand-logo">Sentimini!</a>
 
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons icon-white">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-      {% if user.is_superuser %}
+        {% if user.is_superuser %}
         <li><a href="/admin_panel/">Admin</a></li>
         <li><a href="/power/home/">Power</a></li>
-      
-      
-      {% endif %}
 
-      <li><a href="/consumer/inspiration/">Inspirations</a></li>
+
+        {% endif %}
+
+        <li><a href="/consumer/inspiration/">Inspirations</a></li>
         <li><a href="/consumer/about/">About</a></li>
         
         
         <!-- Dropdown Trigger -->
         {% if user.is_authenticated %}
         <li><a href="/consumer/beta/">Beta</a></li>
-      <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
-      {% else %}
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
+        {% else %}
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
         {% endif %}
         
@@ -75,9 +75,9 @@
       </ul>
 
       <ul class="side-nav" id="mobile-demo">
-      <div class="row">
-      <i class=" center-align fa fa-globe fa-5x"></i>
-        <li><a href="/consumer/home/" class="brand-logo">Sentimini!</a></li>
+        <div class="row">
+          <i class=" center-align fa fa-globe fa-5x"></i>
+          <li><a href="/consumer/home/" class="brand-logo">Sentimini!</a></li>
         </div>
         <li><a href="/consumer/inspiration/">Inspirations</a></li>
         <li><a href="/consumer/about/">About</a></li>
@@ -91,73 +91,64 @@
         
       </ul>
     </div>
-    </div>
-  </nav>
+  </div>
+</nav>
 
 
 <body>
-<div class="container">
-{% block content %}
-{% endblock %}
-</div>
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
 </body>
 <!-- FOOTER -->
-<footer class="page-footer blue darken-1">
+<footer class="page-footer blue darken-1 white-text">
   <div class="container">
     <div class="row">
-      <div class="col l3 s12">
+      <div class="col l6 s12">
         <h5 class="white-text">Sentimini!</h5>
-        <p class="grey-text text-lighten-4">In beta.  Free tools to schedule texts and view replies.</p>
-
+        <span >In beta.  Free tools to schedule texts and view replies for mindfulness, behavior change, and learning about this amazing and beautiful world.</span>
       </div>
       <div class="col l3 s12">
-<h5 class="white-text"><a href="/consumer/about/" class="white-text">About</a></h5>
-{% if user.is_authenticated %}
-<h5 class="white-text"><a href="/consumer/beta/" class="white-text">Beta</a></h5>
-{% endif %}
-<h5 class="white-text"><a href="/consumer/text_commands/" class="white-text">Text Commands</a></h5>
-
+        <!-- <h5>Texting</h5> -->
+        <ul>
+          <li><a href="/consumer/home/" class="white-text">Create and view texts</a></li>
+          
+          <li><a href="/consumer/inspiration/" class="white-text">Inspirations</a></li>
+          <li><a href="/consumer/text_commands/" class="white-text">Text Commands</a></li>
+        </ul>
       </div>
-
       <div class="col l3 s12">
-      <h5 class="white-text"><a href="/consumer/inspiration/" class="white-text">Inspirations</a></h5>
-{% if user.is_authenticated %}
-<h5 class="white-text"><a href="/consumer/settings/" class="white-text">Settings</a></h5>
-{% endif %}        
-        </div>
-
-      
-
-        <div class="col l3 s12">
+        <!-- <h5>Account</h5> -->
+        <ul>
+        <li><a href="/consumer/about/" class="white-text">About</a></li>
           {% if user.is_authenticated %}
-          <h5 class="white-text"><a href="{% url 'account_logout' %}" class="white-text">Sign out</a></h5>
+          <li><a href="/consumer/settings/" class="white-text">Settings</a></li>
+          <li><a href="/consumer/beta/" class="white-text">Beta Feedback</a></li>
+          <li><a href="{% url 'account_logout' %}" class="white-text">Sign out</a></li>
           {% else %}
-          <h5 class="white-text"><a href="{% url 'account_signup' %}" class="white-text">Sign up</a></h5>
-          <h5 class="white-text"><a href="{% url 'account_login' %}" class="white-text">Sign in</a></h5>
+          <li><a href="{% url 'account_signup' %}" class="white-text">Sign up</a></li>
+          <li><a href="{% url 'account_login' %}" class="white-text">Sign in</a></li>
           {% endif %}
-          <!-- <ul>
-            <li><a class="white-text" href="#!">Link 1</a></li>
-            <li><a class="white-text" href="#!">Link 2</a></li>
-            <li><a class="white-text" href="#!">Link 3</a></li>
-            <li><a class="white-text" href="#!">Link 4</a></li>
-          </ul> -->
-        </div>
 
+        </ul>
       </div>
     </div>
-    <div class="footer-copyright">
-      <div class="container">
-        Sentimini! (c) 2017
-      </div>
+  </div>
+
+  <div class="footer-copyright">
+    <div class="container">
+      Sentimini! (c) 2017
     </div>
-  </footer>
+  </div>
+</footer>
 </html>
 
 
 
 <script>
-$(document).ready(function(){
-$(".dropdown-button").dropdown()
-$(".button-collapse").sideNav();
-})
+  $(document).ready(function(){
+    $(".dropdown-button").dropdown()
+    $(".button-collapse").sideNav();
+  })
 </script>
