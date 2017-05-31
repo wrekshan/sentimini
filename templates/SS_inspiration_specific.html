@@ -21,79 +21,99 @@
 
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
-<div class="card">
-<div class="card-image">
-        <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
-        <span class="card-title">{{working_collection.collection}}</span>
-        <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
-      </div>
-<div class="card-content">
+  <div class="card">
+    <div class="card-image">
+      <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
+      <span class="card-title">{{working_collection.collection}}</span>
+      <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
+    </div>
+    <div class="card-content">
 
-by: {{working_collection.author}}
-<p>{{working_collection.long_description|linebreaks}}</p>
+      by: {{working_collection.author}}
+      <p>{{working_collection.long_description|linebreaks}}</p>
 
 
-<table class="striped">
-          <thead>
-            <tr>
-              <th data-field="remove"></th>
-              <th data-field="id">Text</th>
-              <th data-field="name">Summary</th>
-            </tr>
-          </thead>
+      <table class="striped">
+        <thead>
+          <tr>
+            <th data-field="remove"></th>
+            <th data-field="id">Text</th>
+            <th data-field="name">Summary</th>
+          </tr>
+        </thead>
 
-          <tbody>
-            {% for text in working_collection.texts.all %}
-            <tr>
-              <td>
-                {% if user.is_authenticated %}
-                <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{text.id}}" checked>
-                <label for="{{working_collection.id}}_{{text.id}}" id="{{working_collection.id}}_{{text.id}}" class="">
+        <tbody>
+          {% for key, value in collection_info %}
+
+          <tr>
+            <td>
+                <!-- {% if user.is_authenticated %}
+                <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{value.text.id}}" checked>
+                <label for="{{working_collection.id}}_{{value.text.id}}" id="{{working_collection.id}}_{{value.text.id}}" class="">
+                  {% endif %} -->
+
+                  {% if user.is_authenticated %}
+
+                  {% if value.user > 0  %}
+                  <div style="background-color:#e4e4e4;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Remove
+                  </div>
+                  {% else %}
+
+                  <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Add
+
+                  </div>
                   {% endif %}
-                </td>
 
-                <td>{{text.text}}</td>
-                <td>{{text.timing.timing_summary}}</td>
+                  {% else %}
+                  <a style="background-color:#2196f3;" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a>
+                  <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
+                  {% endif %}
+
+
+
+                </td>
+                <td>{{value.text.text}}</td>
+                <td>{{value.text.timing.timing_summary}}</td>
               </tr>
               {% endfor %}
-              </tbody>
-            </table>
+            </tbody>
+          </table>
 
-            <div class="card-action right-align">
+          <div class="card-action right-align">
             <a class="waves-effect waves-light btn" href="/consumer/inspiration/">Back</a>
 
-             
-             {% if user.is_authenticated %}
-              <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add selected texts</div> 
-              {% else %}
-              <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
-              {% endif %}
 
-             <span id="save_message"></span>
-             </div>
+            {% if user.is_authenticated %}
+            <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
+            {% else %}
+            <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+            {% endif %}
 
-
-</div>
-</div>
-</div>
+            <span id="save_message"></span>
+          </div>
 
 
+        </div>
+      </div>
+    </div>
 
-<!-- GET THE TEXT BOX -->
-<script type="text/javascript">
-  function startClock(){
-    console.log("STARTING")
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/get_inspiration_display/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      },
-      success : function(data) {
-        setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
+
+
+    <!-- GET THE TEXT BOX -->
+    <script type="text/javascript">
+      function startClock(){
+        console.log("STARTING")
+        $.ajax({
+          type: 'POST',
+          url: '/consumer/get_inspiration_display/',
+          data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+        },
+        success : function(data) {
+          setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
+        }
+      })
       }
-    })
-  }
-  if(window.addEventListener){
+      if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C
   }
   else{
@@ -116,11 +136,10 @@ by: {{working_collection.author}}
 
     // GET THE SPEFIC OPTIONS
     var selected_texts = [];
-    $("input:checkbox").each(function() {
-      if ($(this).attr('name')===collection_name){
-       selected_texts.push(this.id);
-      }     
-     });
+    $(".add-text-inspiration-btn").each(function() {
+     selected_texts.push(this.id);
+
+   });
 
     console.log("SELECTED TEXTS " + selected_texts)
     $.ajax({
@@ -131,14 +150,41 @@ by: {{working_collection.author}}
       'selected_texts': selected_texts.join(','),
     },
     success : function(data) {
-      $('#save_message').text("Text added!")
+      // $('#save_message').text("Text added!")
+      $('.add-text-inspiration-btn').html("Remove")
+      $('.add-text-inspiration-btn').css('background-color', '#e4e4e4');
       
-      },
+    },
     
- })
-    })
-  
-  
+  })
+  })
 </script>
+
+<script type="text/javascript">
+  $('.add-text-inspiration-btn').click(function() {
+    var text_id_button = $(this).attr('id')
+    var text_id_button_id = $(this).attr('id').split("_")[1]
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/inspiration_indvidual_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'selected_texts': $(this).attr('id'),
+    },
+    success : function(data) {
+      if (data['save_type'] == "removed"){
+        $("#"+text_id_button).html('Add')
+        $("#"+text_id_button).css('background-color', '#2196f3');
+
+      } else {
+        $("#"+text_id_button).html('Remove')
+        $("#"+text_id_button).css('background-color', '#e4e4e4');
+      }
+      // console.log("SUCESS AJAX ~line 392")
+      // $('#model_content_for_switch').html(data['model_content_for_switch']);
+    }
+  })
+  })
+</script>
+
 
 {% endblock %}

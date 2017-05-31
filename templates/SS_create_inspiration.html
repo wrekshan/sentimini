@@ -4,55 +4,50 @@
 {% block content %}
 
 
-<div id = "MAIN">
-<div class="col s12 center-align">
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-<div class="row"></div>
-    <div class="preloader-wrapper big active">
-      <div class="spinner-layer spinner-blue">
-        <div class="circle-clipper left">
-          <div class="circle"></div>
-        </div><div class="gap-patch">
-          <div class="circle"></div>
-        </div><div class="circle-clipper right">
-          <div class="circle"></div>
+
+<div class="row">
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <h5>Inspiration Info</h5>
+        <div class="input-field col s12">
+          <input id="inspiration_name" type="text" class="validate">
+          <label for="inspiration_name">Name</label>
+        </div>
+        <div class="input-field col s12">
+          <input id="short_description" type="text" class="validate" length="70">
+          <label for="short_description">Short Description</label>
+        </div>
+        <div class="input-field col s12">
+          <textarea id="long_description" class="materialize-textarea" length="3000"></textarea>
+          <label for="long_description">Long Description</label>
+        </div>
+         <div class="card-action right-align">
+
+          <a class="waves-effect waves-light btn" href="/consumer/inspiration/{{value.collection.id}}/">Submit</a>
         </div>
       </div>
-</div>
-</div>
-</div>
+    </div>
+  </div>
 
+  <div class="col s6">
+    <div class="card">
+      <div class="card-content">
+        <h5>Selected Texts</h5>
+      </div>
+    </div>
+  </div>
 
+</div>
 
 
 <script type="text/javascript">
-function startClock(){
-  console.log("STARTING")
-
-  $.ajax({
-    type: 'POST',
-    url: '/ent/get_create_collection/',
-    data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-    'id': '{{id}}'},
-     success : function(data) {
-      console.log("COLLECTION DISPLAY WORKED!")
-             $('#MAIN').html(data['COLLECTION']);
-         }
-
-    })
-}
-if(window.addEventListener){
-    window.addEventListener('load',startClock,false); //W3C
-}
-else{
-    window.attachEvent('onload',startClock); //IE
-}
+  $(document).ready(function() {
+    $('#long_description').characterCounter();
+    $('#short_description').characterCounter();
+    $('#long_description').trigger('autoresize');
+    Materialize.updateTextFields();
+  });
 </script>
 
 

@@ -40,6 +40,7 @@
 
 <ul id="dropdown1" class="dropdown-content">
         <li><a href="/consumer/text_commands/">Text Commands</a></li>
+        <li><a href="/consumer/beta/">Beta</a></li>
         <li><a href="/consumer/settings">Settings</a></li>
         <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
         
@@ -53,12 +54,13 @@
       <ul id="nav-mobile" class="right hide-on-med-and-down">
       {% if user.is_superuser %}
         <li><a href="/admin_panel/">Admin</a></li>
+        <li><a href="/power/home/">Power</a></li>
       
       
       {% endif %}
 
       <li><a href="/consumer/inspiration/">Inspirations</a></li>
-      <li><a href="/power/home/">Power</a></li>
+      <li><a href="/consumer/beta/">Beta</a></li>
         <li><a href="/consumer/about/">About</a></li>
         
         <!-- Dropdown Trigger -->
@@ -109,6 +111,7 @@
       </div>
       <div class="col l3 s12">
 <h5 class="white-text"><a href="/consumer/about/" class="white-text">About</a></h5>
+<h5 class="white-text"><a href="/consumer/beta/" class="white-text">Beta</a></h5>
 <h5 class="white-text"><a href="/consumer/text_commands/" class="white-text">Text Commands</a></h5>
 
       </div>

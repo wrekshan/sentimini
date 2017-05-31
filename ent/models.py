@@ -14,6 +14,14 @@ class Carrier(models.Model):
 	def __str__(self):
 		return self.carrier
 
+class Beta(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	content = models.CharField(max_length=5000,default='',null=True)
+	date_created = models.DateTimeField(blank=True,null=True)
+	
+	def __str__(self):
+		return self.carrier		
+
 #This is the other main workhorse that keeps user preferences.  
 class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)

@@ -1,0 +1,93 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- FIRST PIC -->
+<head>
+	<title>Beta | Sentimini</title>
+	<meta property="og:title"         content="Beta | Sentimini | Provide Feedback"/>
+	<meta property="og:url"           content="www.sentimini.com/consumer/beta/" />
+	<meta property="og:type"          content="website" />
+	<meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+</head>
+
+
+<div class="row">
+	<div class="col s8 offset-s2">
+		<div class="card">
+			<div class="card-content">
+				<h5>Sentimini is in beta</h5>
+				Sentimini is intended to help you in your life.  Your feedback is truly needed for this to happen.  Please take a moment to offer your thoughts and experience.  You can always email at william@sentimini.com.
+
+
+				<div class="row">
+					<form class="col s12">
+						<div class="row">
+							<div class="input-field col s12">
+								<textarea id="beta_content" class="materialize-textarea" length="5000"></textarea>
+								<label for="beta_content">Feedback</label>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="right-align">
+					<div id="beta_feedback_submit" class="right-align waves-effect waves-light btn" >Submit</div> 
+				</div>
+				<div id="beta_message"></div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+	$('#beta_feedback_submit').click(function() {
+    
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/submit_beta/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'beta_content': $('#beta_content').val(),
+    },
+    success : function(data) {
+      // console.log("SUCESS AJAX ~line 392")
+      $('#beta_message').html(data['message']);
+      $('#beta_content').val('')
+      $('#beta_content').trigger('autoresize');
+		Materialize.updateTextFields();
+    }
+  })
+  })
+
+
+
+</script>
+
+
+<script>
+	$(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+    $('#beta_content').characterCounter();
+
+    $('#beta_content').trigger('autoresize');
+     Materialize.updateTextFields();
+});
+</script>
+
+<script>
+	$(document).ready(function(){
+		$('.parallax').parallax();
+		$(".button-collapse").sideNav();
+	});
+</script>
+
+
+{% endblock %}

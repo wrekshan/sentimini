@@ -121,6 +121,7 @@ def add_to_collection(request):
 
 	if 'selected_texts' in request.POST.keys():
 		working_texts = request.POST['selected_texts'].split(',')
+		print("WORKING TEXT", working_texts)
 
 		for text in working_texts:
 			print("TEXT: ", text)

@@ -9,7 +9,7 @@ from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
 from sentimini.views import pause_text
-from ent.models import ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+from ent.models import Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
 from django.db.models import Q
 
 import csv
@@ -58,9 +58,66 @@ def create_inspiration(request, id=None):
 	context={}
 	return render(request,"SS_create_inspiration.html",context)
 
+def get_create_inspiration(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	main_context['working_tags'] =  Tag.objects.all()
+
+	if 'id' in request.POST.keys():
+		print("ID HERE", request.POST['id'])
+		if request.POST['id'] != None:
+			if request.POST['id'] != '':
+				main_context['editing_collection'] = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+
+
+				tmp_tags = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id'])).tag
+
+				tags = []
+				for tag in tmp_tags.all():
+					tags.append(tag.tag)
+
+				main_context['tags'] = tags
+			
+
+	main_context['working_collection'] = Collection.objects.all()
+	main_context['all_possible_texts'] = PossibleText.objects.all().filter(user=request.user).exclude(text__exact='')
+
+	response_data["COLLECTION"] = render_to_string('SS_create_inspiration_content.html', main_context, request=request)
+	
+	# else
+	return HttpResponse(json.dumps(response_data),content_type="application/json")		
 
 
 
+def inspiration_indvidual_text(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	request.POST['selected_texts']
+
+	tmp = PossibleText.objects.all().get(id=int(request.POST['selected_texts'].split('_')[1]))
+	if PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text).count()<1:
+		timing = Timing.objects.all().get(id=tmp.timing.id)
+
+		timing.pk=None
+		timing.user=request.user
+		timing.save()
+
+		tmp.pk=None
+		tmp.timing=timing
+		tmp.user=request.user
+		tmp.tmp_save=False
+		tmp.date_created=datetime.now(pytz.utc)
+		tmp.save()
+
+	else:
+		possible_texts = PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text)
+		for text in possible_texts:
+			text.delete()
+		response_data['save_type']="removed"
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
 
@@ -71,10 +128,30 @@ def inspiration(request,id=None):
 		return render(request,"SS_inspiration.html",context)
 	else:
 		working_collection = Collection.objects.all().get(id=id)
-		
+		key = 1
+		collection_info = {}
+		for text in working_collection.texts.all():
+			if request.user.is_authenticated():	
+				collection_list = {
+					'text': text,
+					'user': PossibleText.objects.all().filter(user=request.user).filter(text=text).count(),
+				}
+			else:
+				collection_list = {
+					'text': text,
+					'user': 0,
+				}
+			
+			
+			collection_info[key]= collection_list
+			key = key + 1
+
+		collection_info = tuple(collection_info.items())
 		context = {
 		'working_collection': working_collection,
+		'collection_info': collection_info,
 		}
+	
 		return render(request,"SS_inspiration_specific.html",context)
 
 
@@ -87,6 +164,7 @@ def get_inspiration_display(request):
 	collection_info = {}
 
 	working_filters = Q()
+	working_filters.add(Q(publish=True),Q.AND)
 
 	if 'collection_switch' in request.POST.keys():
 		if request.POST['collection_switch'] == "true":
@@ -138,7 +216,18 @@ def get_inspiration_display(request):
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
+def submit_beta(request):	
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+	working_beta = Beta(user=request.user,content=request.POST['beta_content'],date_created=pytz.utc.localize(datetime.now()))
+	working_beta.save()
+	response_data["message"] = "Feedback Submitted!  Thank you for your help!"
 
+	return HttpResponse(json.dumps(response_data),content_type="application/json")	
+
+def beta(request):	
+	context = {}
+	return render(request,"SS_beta.html",context)	
 
 def about(request):	
 	context = {}
