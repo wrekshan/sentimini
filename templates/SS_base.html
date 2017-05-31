@@ -76,8 +76,6 @@
 
       <ul class="side-nav" id="mobile-demo">
 
-      
-        
           <li><a href="/consumer/home/""><h3>Sentimini!</h3></a></li>
         <li><div class="row"></div></li>
         <li><a href="/consumer/home/">Texts</a></li>
@@ -188,7 +186,13 @@
 </footer>
 </html>
 
+<script>
 
+  $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+  </script>
 
 <script>
   $(document).ready(function(){
