@@ -210,7 +210,7 @@ if LIVEHOST:
     # EMAIL_HOST_USER = 'sentimini@gmail.com'
     # EMAIL_HOST_PASSWORD = os.environ['GMAIL_KEY']
     # EMAIL_PORT = 587
-
+    DEFAULT_FROM_EMAIL = 'system@sentimini.com'
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.zoho.com'
     EMAIL_HOST_USER = 'system@sentimini.com'
@@ -228,6 +228,7 @@ if LIVEHOST:
     ALLOWED_HOSTS = ['sentimini.com','www.sentimini.com'] 
     DEBUG = False
 else:
+    DEFAULT_FROM_EMAIL = 'system_dev@sentimini.com'
     ### LOCAL
     EMAIL_USE_TLS = True
     EMAIL_HOST = 'smtp.zoho.com'

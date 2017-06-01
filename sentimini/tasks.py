@@ -152,10 +152,6 @@ def schedule_texts():
 			possible_date = date_today + timedelta(0,seconds_to_add)
 			possible_date = possible_date.astimezone(pytz.UTC)
 					
-			
-			# print("POSSIBLE DATE BEFORE", possible_date)
-
-
 			possible_date = time_window_check(text,possible_date)
 			date_check = date_check_fun(text,possible_date)
 
