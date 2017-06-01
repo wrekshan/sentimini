@@ -724,7 +724,7 @@ def simulate(request):
 
 	# filter(date_end__gt=pytz.utc.localize(datetime.now()))
 	print("COUNT", working_texts.count())
-	return redirect('feed')
+	return redirect('admin_panel')
 
 
 

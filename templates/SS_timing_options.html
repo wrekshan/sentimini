@@ -416,18 +416,18 @@ function slideTime_reverse(text_time){
     }
 }
 
-  $( "#endTime" ).click(function() {
-    $( "#endTime" ).change(function() {
+  $( "#endTime" ).change(function() {
+    // $( "#endTime" ).change(function() {
     var slider = document.getElementById('specific_time_hours');
     slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
-});
+// });
   })
 
-  $( "#startTime" ).click(function() {
-    $( "#startTime" ).change(function() {
+  $( "#startTime" ).change(function() {
+    // $( "#startTime" ).change(function() {
     var slider = document.getElementById('specific_time_hours');
     slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
-});
+// });
   })
 
 </script>

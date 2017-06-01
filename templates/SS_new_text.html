@@ -112,6 +112,8 @@ $.ajax({
 <script type="text/javascript">
   $(document).ready(function() {
     $('textarea#textarea1').characterCounter();
+    $('#textarea1').trigger('autoresize');
+     Materialize.updateTextFields();
   });
 </script>
 
