@@ -34,7 +34,7 @@ from .celery import app
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=4),
         'args': ()
     },
     'send': {
@@ -83,33 +83,32 @@ def schedule_texts():
 				if text.date_scheduled is not None:
 					if pytz.utc.localize(datetime.now()) > text.date_scheduled + timedelta(1,0):
 						# print("SCHEDULING NEW SPECIFIC TEXT")
-						time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
-						scheduled_date = datetime.combine(datetime.today(), text.timing.hour_start)
+						date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+						time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+						scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+						scheduled_date = scheduled_date.astimezone(pytz.UTC)
 						seconds_to_add = randint(0,time_window.total_seconds())
 
-						time_to_send_tmp = user_timezone.localize(scheduled_date + timedelta(0,seconds_to_add))
 						
 						atext = ActualText(user=text.user,text=text)
-						atext.time_to_send = time_to_send_tmp.astimezone(pytz.UTC)
+						atext.time_to_send = scheduled_date + timedelta(0,seconds_to_add)
 						atext.save()
 
 						text.date_scheduled = datetime.now(pytz.utc)
 						text.save()
 				
 				else:
-					# print("SCHEDULING NEW SPECIFIC")
-					time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
-					# print("TIME WINOW", time_window)
-					scheduled_date = datetime.combine(datetime.today(), text.timing.hour_start)
-					# print("scheduled_date", scheduled_date)
+					print("NOT SCHEULDED")
+					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+					
+					scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+					scheduled_date = scheduled_date.astimezone(pytz.UTC)
 					seconds_to_add = randint(0,time_window.total_seconds())
-					# print("seconds_to_add", seconds_to_add)
 
 					atext = ActualText(user=text.user,text=text)
-					time_to_send_tmp = user_timezone.localize(scheduled_date + timedelta(0,seconds_to_add))
-					# print("time_to_send_tmp", time_to_send_tmp)
-					atext.time_to_send = time_to_send_tmp.astimezone(pytz.UTC)
-					# print("atext.time_to_send", atext.time_to_send)
+					atext.time_to_send = scheduled_date + timedelta(0,seconds_to_add)
 					atext.save()
 
 					text.date_scheduled = datetime.now(pytz.utc)
