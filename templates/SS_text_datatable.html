@@ -20,7 +20,9 @@
         <tbody>
           {% for text in working_texts %}
           <tr>
-          <td><span style="word-wrap: break-word;">{{text.date_created|date:"d M Y"}}</span></td>
+          
+
+          <td><span style="display: none;">{{text.date_created|date:"Ymd"}}</span><span style="word-wrap: break-word;">{{text.date_created|date:"d M Y"}}</span></td>
             <td>
             {{text.text}} <span>(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
             ,
