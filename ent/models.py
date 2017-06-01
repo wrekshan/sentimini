@@ -98,6 +98,11 @@ class Timing(models.Model):
 
 	def timing_summary(self):
 		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
+		if self.hour_start == self.hour_end:
+			hours_between = str(self.hour_start.strftime("%-I:%M%p"))
+		else:
+			hours_between = str(self.hour_start.strftime("%-I:%M%p")) +  " - " + str(self.hour_end.strftime("%-I:%M%p"))
+			
 		if self.fuzzy == True:
 			if self.fuzzy_denomination == "minutes":
 				iti_standard = (60 / self.iti_raw) * 24 * 7
@@ -109,7 +114,7 @@ class Timing(models.Model):
 				iti_standard = self.iti_raw
 			if self.fuzzy_denomination == "months":
 				iti_standard = (self.iti_raw / 4)
-			return str(round(iti_standard,2)) + " per week (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")\n" + str(self.hour_start.strftime("%-I:%M%p")) +  " and " + str(self.hour_end.strftime("%-I:%M%p"))
+			return str(round(iti_standard,2)) + " per week (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")\n" + hours_between
 		else:
 			num_out = int(0)
 			weekdays = []
@@ -149,7 +154,7 @@ class Timing(models.Model):
 				if self.sunday == True & self.saturday == True:
 					tmp = "weekends"
 			
-			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ") \n" + str(self.hour_start.strftime("%-I:%M%p")) +  " and " + str(self.hour_end.strftime("%-I:%M%p"))
+			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ") \n" + hours_between
 
 
 	def __str__(self):
