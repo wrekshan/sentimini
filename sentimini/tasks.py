@@ -141,14 +141,18 @@ def schedule_texts():
 			# Add seconds
 			seconds_to_add = 60 * int(triangular(min_minutes, max_minutes, ITI_mean))
 
-			# THIS IS OLO, AND I THINK IT LEADS TO TEXTING AT NIGHTTIME
-			# possible_date = pytz.utc.localize(datetime.now()) + timedelta(0,seconds_to_add)
-
-			# THIS IS NEW AND THINK COULD BE BETTER
+			
+			#Get user timezone
 			working_settings = UserSetting.objects.all().get(user=text.user)
 			user_timezone = pytz.timezone(working_settings.timezone)
-			possible_date = pytz.utc.localize(datetime.now()) + timedelta(0,seconds_to_add)
+			
 
+			#Get today's date and end in UTC
+			date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+			possible_date = date_today + timedelta(0,seconds_to_add)
+			possible_date = possible_date.astimezone(pytz.UTC)
+					
+			
 			# print("POSSIBLE DATE BEFORE", possible_date)
 
 

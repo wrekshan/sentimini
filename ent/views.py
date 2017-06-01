@@ -557,10 +557,27 @@ def time_window_check(text,possible_date):
 	working_settings = UserSetting.objects.all().get(user=text.user)
 	user_timezone = pytz.timezone(working_settings.timezone)
 	
+	# date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+	# time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+	# scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+	# This is new a should work
+	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+
+	starting_time = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+	starting_time = starting_time.astimezone(pytz.UTC)
+
+	ending_time = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end))
+	ending_time = ending_time.astimezone(pytz.UTC)
+
+
 	# OLD AND I THINK LEADS TO BAD TIMING
-	starting_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start))
-	print("STARTING TIME SHOULD BE IN UTC", starting_time)
-	ending_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
+	# starting_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start))
+	# ending_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
+
+	print("starting_time",starting_time)
+	print("possible_date",possible_date)
+	print("ending_time",ending_time)
 
 
 	if not starting_time < possible_date < ending_time:
@@ -570,15 +587,15 @@ def time_window_check(text,possible_date):
 			possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=window_diff.seconds*2)
 		else:
 			print("MORE THAN START TIME")
-			time_window = user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_end)) - user_timezone.localize(datetime.combine(datetime.today(), text.timing.hour_start))
+			date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+
+			time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
 			scheduled_date = starting_time + timedelta(hours=24) 
 			if text.timing.iti > time_window.total_seconds():
 				seconds_to_add = randint(0,time_window.total_seconds())
 			else:
 				seconds_to_add = randint(0,(60*text.timing.iti))
 			
-				
-				
 
 			possible_date = scheduled_date + timedelta(0,seconds_to_add)
 			
