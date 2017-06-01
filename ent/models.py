@@ -109,7 +109,7 @@ class Timing(models.Model):
 				iti_standard = self.iti_raw
 			if self.fuzzy_denomination == "months":
 				iti_standard = (self.iti_raw / 4)
-			return str(round(iti_standard,2)) + " per week (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")"
+			return str(round(iti_standard,2)) + " per week (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")\n" + str(self.hour_start.strftime("%-I:%M%p")) +  " and " + str(self.hour_end.strftime("%-I:%M%p"))
 		else:
 			num_out = int(0)
 			weekdays = []
@@ -149,7 +149,7 @@ class Timing(models.Model):
 				if self.sunday == True & self.saturday == True:
 					tmp = "weekends"
 			
-			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ")"
+			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ") \n" + str(self.hour_start.strftime("%-I:%M%p")) +  " and " + str(self.hour_end.strftime("%-I:%M%p"))
 
 
 	def __str__(self):
