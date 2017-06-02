@@ -471,7 +471,8 @@ def get_timing_option_input(request):
 
 def get_timing_default(request):
 	if Timing.objects.all().filter(user=request.user).filter(default_timing=True).count()>0:
-		working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+		# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+		working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
 	else:
 		working_timing = Timing(user=request.user,default_timing=True, repeat=True)
 		working_timing.fuzzy = False
