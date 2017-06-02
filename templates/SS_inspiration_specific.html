@@ -55,17 +55,17 @@
                   {% if user.is_authenticated %}
 
                   {% if value.user > 0  %}
-                  <div style="background-color:#e4e4e4;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Remove
+                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span> <i class="material-icons" >delete</i> </span>
                   </div>
                   {% else %}
 
-                  <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Add
+                  <div id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn">Add
 
                   </div>
                   {% endif %}
 
                   {% else %}
-                  <a style="background-color:#2196f3;" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a>
+                  <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" >Add</a>
                   <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
                   {% endif %}
 
@@ -173,11 +173,11 @@
     success : function(data) {
       if (data['save_type'] == "removed"){
         $("#"+text_id_button).html('Add')
-        $("#"+text_id_button).css('background-color', '#2196f3');
+        // $("#"+text_id_button).css('background-color', '#2196f3');
 
       } else {
-        $("#"+text_id_button).html('Remove')
-        $("#"+text_id_button).css('background-color', '#e4e4e4');
+        $("#"+text_id_button).html('<span> <i class="material-icons" >delete</i> </span>')
+        // $("#"+text_id_button).css('background-color', '#e4e4e4');
       }
       // console.log("SUCESS AJAX ~line 392")
       // $('#model_content_for_switch').html(data['model_content_for_switch']);
