@@ -1,6 +1,6 @@
 <div class="col s12">
   <div class="card">
-    <div class="card-content small_spaces ">
+    <div class="card-content">
 
 
 
@@ -8,8 +8,7 @@
       <!-- <a href = "/consumer/test_signup">hey hey</a> -->
 
       <!-- TEXT -->
-      <div class="row">
-        <div class="col s12">
+      
           <span class="card-title"><h4>Quick Suggestions</h4></span>
           <table class="striped">
             <thead>
@@ -33,17 +32,17 @@
                   {% if user.is_authenticated %}
 
                   {% if value.user > 0  %}
-                  <div style="background-color:#e4e4e4;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Remove
+                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span> <i class="material-icons" >delete</i> </span>
                   </div>
                   {% else %}
 
-                  <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip add-text-inspiration-btn">Add
+                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn">Add
 
                   </div>
                   {% endif %}
 
                   {% else %}
-                  <a style="background-color:#2196f3;" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a>
+                  <a  href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a>
                   <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
                   {% endif %}
 
@@ -56,15 +55,14 @@
               {% endfor %}
             </tbody>
           </table>
-          <div class="row"></div>
+          <div class="row">
           <div class="right-align">
           <a href="/consumer/inspiration/">See more ways to use Sentimini</a>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  </div>
+  
 
 
   <script type="text/javascript">
@@ -80,11 +78,11 @@
       success : function(data) {
         if (data['save_type'] == "removed"){
           $("#"+text_id_button).html('Add')
-          $("#"+text_id_button).css('background-color', '#2196f3');
+          // $("#"+text_id_button).css('background-color', '#e4e4e4');
 
         } else {
-          $("#"+text_id_button).html('Remove')
-          $("#"+text_id_button).css('background-color', '#e4e4e4');
+          $("#"+text_id_button).html('<span> <i class="material-icons" >delete</i> </span>')
+          // $("#"+text_id_button).css('background-color', '#ef9a9a');
         }
         $.ajax({
           type: 'POST',
