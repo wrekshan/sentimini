@@ -108,6 +108,7 @@ def inspiration_indvidual_text(request):
 		tmp.timing=timing
 		tmp.user=request.user
 		tmp.tmp_save=False
+		tmp.quick_suggestion=False
 		tmp.date_created=datetime.now(pytz.utc)
 		tmp.save()
 
