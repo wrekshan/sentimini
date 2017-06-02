@@ -20,6 +20,28 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 
 
+<!-- QUICK SUGGESTIONS-->
+<div class="row">
+
+  <div id = "quick_suggestions">
+    <div class = "center-align">
+      <div class="row"></div>
+      <div id="preloader_new_text" class="preloader-wrapper big active ">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+        <div class="circle"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
 
@@ -77,6 +99,29 @@ Sentimini is a light weight tool for mindfulness, behavior change, and research.
 {% endif %}
 
 <!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_quick_suggestions/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+      }
+    })
+
+
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
 <script type="text/javascript">
   function startClock(){
     console.log("STARTING")

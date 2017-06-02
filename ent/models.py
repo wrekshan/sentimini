@@ -70,8 +70,8 @@ class Timing(models.Model):
 	date_end = models.DateField(blank=True,null=True)
 	date_start_value = models.CharField(max_length=160,default='')
 	date_end_value = models.CharField(max_length=160,default='')
-	hour_start = models.TimeField(default=datetime(2016,1,30,22,00))
-	hour_end = models.TimeField(default=datetime(2016,1,30,22,00))
+	hour_start = models.TimeField(default=datetime(2016,1,30,9,00))
+	hour_end = models.TimeField(default=datetime(2016,1,30,21,00))
 	hour_start_value  = models.IntegerField(blank=True,null=True)
 	hour_end_value  = models.IntegerField(blank=True,null=True)
 	fuzzy  = models.BooleanField(default=False) 
@@ -237,6 +237,7 @@ class PossibleText(models.Model):
 	tag = models.ManyToManyField(Tag,blank=True)
 	active = models.BooleanField(default=True) 
 	tmp_save = models.BooleanField(default=True) 
+	quick_suggestion = models.BooleanField(default=False) 
 
 	intended_collection = models.CharField(max_length=160,blank=True,null=True)
 	intended_tags = models.CharField(max_length=600,blank=True,null=True)

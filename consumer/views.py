@@ -383,7 +383,36 @@ def get_text_datatable(request):
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
+def get_quick_suggestions(request):
+	main_context = {} 
+	response_data = {}
 
+	working_texts = PossibleText.objects.all().filter(quick_suggestion=True)
+
+	key = 1
+	collection_info = {}
+	for text in working_texts:
+		if request.user.is_authenticated():	
+			collection_list = {
+				'text': text,
+				'user': PossibleText.objects.all().filter(user=request.user).filter(text=text).count(),
+			}
+		else:
+			collection_list = {
+				'text': text,
+				'user': 0,
+			}
+		
+		
+		collection_info[key]= collection_list
+		key = key + 1
+
+	collection_info = tuple(collection_info.items())
+	
+	main_context['working_texts'] = collection_info
+	
+	response_data["quick_suggestions"] = render_to_string('SS_quick_suggestions.html', main_context, request=request)
+	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
 

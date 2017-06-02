@@ -1,12 +1,13 @@
 from django.conf.urls import url
 
-from .views import home, settings, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, settings, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),
 	url(r'^beta/$', beta, name='beta'),
+	url(r'^get_quick_suggestions/$', get_quick_suggestions, name='get_quick_suggestions'),
 	url(r'^submit_beta/$', submit_beta, name='submit_beta'),
 	url(r'^text_commands/$', text_commands, name='text_commands'),
 	url(r'^inspiration/$', inspiration, name='inspiration'),
