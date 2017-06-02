@@ -101,6 +101,7 @@ def inspiration_indvidual_text(request):
 		timing = Timing.objects.all().get(id=tmp.timing.id)
 
 		timing.pk=None
+		timing.intended_text_input=""
 		timing.user=request.user
 		tmp.default_timing=False
 		timing.save()

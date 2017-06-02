@@ -152,6 +152,7 @@ def add_to_collection(request):
 				timing = Timing.objects.all().get(id=tmp.timing.id)
 
 				timing.pk=None
+				timing.intended_text_input=""
 				timing.user=request.user
 				timing.save()
 

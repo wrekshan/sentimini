@@ -61,6 +61,7 @@ class Tag(models.Model):
 class Timing(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	intended_text = models.CharField(max_length=160,blank=True,null=True)
+	intended_text_input = models.CharField(max_length=160,default='')
 	repeat_summary = models.CharField(max_length=2000,blank=True,null=True)
 	system_time  = models.BooleanField(default=False)
 	show_user  = models.BooleanField(default=False)
