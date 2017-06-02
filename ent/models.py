@@ -235,6 +235,7 @@ class PossibleText(models.Model):
 	collection = models.ManyToManyField(Collection,default=1, related_name='texts',blank=True)
 	timing = models.ForeignKey(Timing,null=True)
 	text = models.CharField(max_length=160,default='')
+	input_text = models.CharField(max_length=160,default='')
 	date_created = models.DateTimeField(blank=True,null=True)
 	date_scheduled = models.DateTimeField(blank=True,null=True)
 	tag = models.ManyToManyField(Tag,blank=True)

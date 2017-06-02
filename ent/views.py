@@ -89,10 +89,11 @@ def update_db_after_import(request):
 	# Set up the texts
 	working_texts = PossibleText.objects.all().filter(user=request.user)
 	for text in working_texts:
+		text.text = text.input_text
 		# Get the timing object
 		print("TEXT", text.text)
 		if text.intended_collection != None:
-			timing = Timing.objects.all().get(intended_text=text.text)
+			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
 
 			#add the tags
@@ -107,7 +108,8 @@ def update_db_after_import(request):
 					text.tag.add(tmp)
 
 			#add the collections
-			if text.intended_collection != None:
+			print("INTENDED COLLECTION", text.intended_collection)
+			if text.intended_collection != "":
 				collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
 				text.collection.add(collection)
 

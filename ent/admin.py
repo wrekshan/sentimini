@@ -171,8 +171,8 @@ admin.site.register(Timing,TimingModelAdmin)
 class PossibleTextResource(resources.ModelResource):
 	class Meta:
 		model = PossibleText
-		import_id_fields = ('text',)
-		fields = ('text', 'intended_collection', 'quick_suggestion','intended_tags')
+		import_id_fields = ('input_text',)
+		fields = ('input_text', 'intended_collection', 'quick_suggestion','intended_tags')
 
 
 class PossibleTextModelAdmin(ImportExportModelAdmin):
@@ -184,6 +184,7 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 		"tmp_save",
 		"quick_suggestion",
 		"user",
+		"input_text",
 		"text",
 		"date_created",
 	]
