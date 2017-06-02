@@ -222,7 +222,7 @@ $(window).resize(function() {
       type: 'POST',
       url: '/consumer/get_text_input/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_message': "Create New Text",},
+      'text_message': "New Text",},
       success : function(data) {
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
       }

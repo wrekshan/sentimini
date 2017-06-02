@@ -9,7 +9,7 @@ from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
 from sentimini.views import pause_text
-from ent.models import Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+from ent.models import QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
 from django.db.models import Q
 
 import csv
@@ -94,7 +94,7 @@ def inspiration_indvidual_text(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
-	request.POST['selected_texts']
+	
 
 	tmp = PossibleText.objects.all().get(id=int(request.POST['selected_texts'].split('_')[1]))
 	if PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text).count()<1:
@@ -113,6 +113,10 @@ def inspiration_indvidual_text(request):
 		tmp.quick_suggestion=False
 		tmp.date_created=datetime.now(pytz.utc)
 		tmp.save()
+
+		if 'quick_suggestion' in request.POST.keys():
+			qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=tmp,added=True)
+			qs.save()
 
 	else:
 		possible_texts = PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text)
@@ -364,7 +368,7 @@ def get_csv(request,id=None):
 def get_text_input(request):
 	main_context = {} 
 	response_data = {}
-	main_context['text_message'] = "Create New Text"
+	main_context['text_message'] = "New Text"
 	if request.user.is_authenticated():	
 		working_timing = get_timing_default(request)
 		# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
@@ -393,28 +397,59 @@ def get_quick_suggestions(request):
 
 	object_id_list = []
 	working_texts = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
+	rejected_list = QuickSuggestion.objects.all().filter(user=request.user).filter(rejected=True)
+
 	for text in working_texts:
 		object_id_list.append(text.text)
+	for text in rejected_list:
+		object_id_list.append(text.text)
+		
+
 
 	if 'suggestion_1' in request.POST.keys():
-		print("SUG1",request.POST['suggestion_1'])
 		if request.POST['suggestion_1'] == "yes":
-			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
-			'suggestion_number': 1,}
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
+			
+			tmp_context = {'working_text': quick_text,
+			'suggestion_number': 1,
+			}
+
+			if quick_text != None:
+				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+				if 'rejected' in request.POST.keys():
+					qs.rejected=True
+				qs.save()
+
 			response_data["suggestion_1"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 	
 	if 'suggestion_2' in request.POST.keys():
-		print("SUG2",request.POST['suggestion_2'])
 		if request.POST['suggestion_2'] == "yes":
-			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
+
+			tmp_context = {'working_text': quick_text,
 			'suggestion_number': 2,}
+
+			if quick_text != None:
+				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+				if 'rejected' in request.POST.keys():
+					qs.rejected=True
+				qs.save()
+
 			response_data["suggestion_2"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 
 	if 'suggestion_3' in request.POST.keys():
-		print("SUG3",request.POST['suggestion_3'])
 		if request.POST['suggestion_3'] == "yes":
-			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
+			
+			tmp_context = {'working_text': quick_text,
 			'suggestion_number': 3,}
+
+			if quick_text != None:
+				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+				if 'rejected' in request.POST.keys():
+					qs.rejected=True
+				qs.save()
+
 			response_data["suggestion_3"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)		
 
 	
@@ -583,7 +618,7 @@ def get_options_to_input(request):
 		main_context['timing_summary'] = working_text.timing.timing_summary
 		main_context['text_message'] = request.POST['text_message']
 	else:
-		main_context['text_message'] = "Create New Text"
+		main_context['text_message'] = "New Text"
 
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
@@ -696,7 +731,7 @@ def save_timing(request):
 
 
 	
-	main_context['text_message'] = "Create New Text"
+	main_context['text_message'] = "New Text"
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
@@ -732,7 +767,7 @@ def save_text(request):
 	if 'text_message' in request.POST.keys():
 		main_context['text_message'] = request.POST['text_message']
 	else:
-		main_context['text_message'] = "Create New Text"
+		main_context['text_message'] = "New Text"
 
 	#If there are default options then get t
 

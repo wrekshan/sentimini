@@ -4,10 +4,26 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
 #This is the other main workhorse that keeps user preferences.  
+class QuickSuggestionModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"text",
+		"date",
+		"added",
+		"rejected",
+		
+	]
+	list_display_links = ["date"]
+	list_filter = ["user"]
+	class Meta:
+		model = QuickSuggestion
+
+admin.site.register(QuickSuggestion,QuickSuggestionModelAdmin)
+
 class BetaModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
@@ -156,7 +172,7 @@ class PossibleTextResource(resources.ModelResource):
 	class Meta:
 		model = PossibleText
 		import_id_fields = ('text',)
-		fields = ('intended_collection', 'text', 'intended_tags')
+		fields = ('text', 'intended_collection', 'quick_suggestion','intended_tags')
 
 
 class PossibleTextModelAdmin(ImportExportModelAdmin):
@@ -166,6 +182,7 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 		"id",
 		"active",
 		"tmp_save",
+		"quick_suggestion",
 		"user",
 		"text",
 		"date_created",

@@ -36,15 +36,16 @@ def update_db_after_import(request):
 	# Set up the collection
 	working_collections = Collection.objects.all().filter(user=request.user)
 	for collection in working_collections:
-		tags = collection.intended_tags.split(',')
-		for tag in tags:
-			if tag !='':
-				if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
-					tmp = Tag(tag=tag,user=request.user)
-					tmp.save()
-				else:
-					tmp = Tag.objects.all().get(tag=tag)
-				collection.tag.add(tmp)
+		if collection.intended_tags is not None:
+			tags = collection.intended_tags.split(',')
+			for tag in tags:
+				if tag !='':
+					if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+						tmp = Tag(tag=tag,user=request.user)
+						tmp.save()
+					else:
+						tmp = Tag.objects.all().get(tag=tag)
+					collection.tag.add(tmp)
 
 		collection.publish=True
 		collection.save()
@@ -106,8 +107,26 @@ def update_db_after_import(request):
 					text.tag.add(tmp)
 
 			#add the collections
-			collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
-			text.collection.add(collection)
+			if text.intended_collection != None:
+				collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
+				text.collection.add(collection)
+
+			text.save()
+		else:
+			timing = Timing.objects.all().get(intended_text=text.text)
+			text.timing = timing
+
+			#add the tags
+			if text.intended_tags != None:
+				tags = text.intended_tags.split(',')
+				for tag in tags:
+					if tag !='':
+						if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+							tmp = Tag(tag=tag,user=request.user)
+							tmp.save()
+						else:
+							tmp = Tag.objects.all().get(tag=tag)
+						text.tag.add(tmp)
 
 			text.save()
 

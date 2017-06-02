@@ -47,6 +47,7 @@
         'suggestion_1': suggestion_needed_1,
         'suggestion_2': suggestion_needed_2,
         'suggestion_3': suggestion_needed_3,
+        'rejected': 'yes',
       },
         success : function(data) {
           console.log("SUCCESS AJAX")
@@ -98,6 +99,7 @@
       url: '/consumer/inspiration_indvidual_text/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'selected_texts': $(this).attr('id'),
+      'quick_suggestion': "yes",
     },
     success : function(data) {
       $.ajax({
