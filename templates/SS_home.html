@@ -22,27 +22,64 @@
 
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
-<div class="col s12 m3">
+  <div class="col s12 m3">
 
     <div class="hide-on-med-and-up">
-    <div class="row"></div>
-        <div class="chip waves-effect waves-teal btn-flat" id ="suggestion-display">Show Suggestions</div>
-        </div>
+      <div class="row"></div>
+      <div class="chip waves-effect waves-teal btn-flat" id ="suggestion-display">Show Suggestions</div>
+    </div>
     <div id = "quick_suggestions">
-      <div class = "center-align">
-        <div class="row"></div>
-        <div id="preloader_new_text" class="preloader-wrapper big active ">
-          <div class="spinner-layer spinner-blue-only">
-            <div class="circle-clipper left">
+
+      <ul class="collection">
+
+        <li class="collection-item" id = "suggestion_1"><div class = "center-align">
+          <div class="row"></div>
+          <div id="preloader_new_text" class="preloader-wrapper big active ">
+            <div class="spinner-layer spinner-blue-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
               <div class="circle"></div>
-            </div><div class="gap-patch">
+            </div><div class="circle-clipper right">
             <div class="circle"></div>
-          </div><div class="circle-clipper right">
-          <div class="circle"></div>
+          </div>
         </div>
+      </div>
+    </div></li>
+    <li class="collection-item" id = "suggestion_2"><div class = "center-align">
+      <div class="row"></div>
+      <div id="preloader_new_text" class="preloader-wrapper big active ">
+        <div class="spinner-layer spinner-blue-only">
+          <div class="circle-clipper left">
+            <div class="circle"></div>
+          </div><div class="gap-patch">
+          <div class="circle"></div>
+        </div><div class="circle-clipper right">
+        <div class="circle"></div>
       </div>
     </div>
   </div>
+</div></li>
+<li class="collection-item" id = "suggestion_3"><div class = "center-align">
+  <div class="row"></div>
+  <div id="preloader_new_text" class="preloader-wrapper big active ">
+    <div class="spinner-layer spinner-blue-only">
+      <div class="circle-clipper left">
+        <div class="circle"></div>
+      </div><div class="gap-patch">
+      <div class="circle"></div>
+    </div><div class="circle-clipper right">
+    <div class="circle"></div>
+  </div>
+</div>
+</div>
+</div></li>
+
+</li>
+
+</ul>
+<a href="/consumer/inspiration/">See more ways to use Sentimini</a>
+
 </div>
 </div>
 
@@ -82,7 +119,7 @@
 </div>
 {% else %}
 <div class="row">
-  <div class="col s12 m9">
+  <div class="col s12 m12">
     <div class="card">
       <div class="card-content">
         Sentimini is a light weight tool for mindfulness, behavior change, and research.  You can easily schedule text messages and collect any replies you make.  It is currently in beta and free to sign up.  
@@ -110,13 +147,7 @@ $(window).resize(function() {
   if ($(window).width() > 600) {
     $('#quick_suggestions').show()
     // $('#suggestion-display-display').text("Hide Suggestions")
-  }  else {
-    $('#quick_suggestions').hide()
-    $('#suggestion-display').text("Show Suggestions")
-  }
-
-  
-
+  } 
 });
 
 
@@ -144,18 +175,30 @@ $(window).resize(function() {
 
 
 
+
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
   function startClock(){
     console.log("STARTING")
+    if ($(window).width()<600){
+      $('#quick_suggestions').hide()
+      $('#suggestion-display-display').text("Show Suggestions")
+
+    }
     $.ajax({
       type: 'POST',
       url: '/consumer/get_quick_suggestions/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
-      success : function(data) {
-        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
-      }
-    })
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'suggestion_1': "yes",
+      'suggestion_2': "yes",
+      'suggestion_3': "yes",
+    },
+    success : function(data) {
+      setTimeout(function() {$('#suggestion_1').html(data['suggestion_1']);}, 600);
+      setTimeout(function() {$('#suggestion_2').html(data['suggestion_2']);}, 600);
+      setTimeout(function() {$('#suggestion_3').html(data['suggestion_3']);}, 600);
+    }
+  })
     if ($(window).width() < 601) {
       console.log("START HIDE")
       $('#quick_suggestions').hide()

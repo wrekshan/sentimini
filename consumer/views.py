@@ -102,12 +102,14 @@ def inspiration_indvidual_text(request):
 
 		timing.pk=None
 		timing.user=request.user
+		tmp.default_timing=False
 		timing.save()
 
 		tmp.pk=None
 		tmp.timing=timing
 		tmp.user=request.user
 		tmp.tmp_save=False
+
 		tmp.quick_suggestion=False
 		tmp.date_created=datetime.now(pytz.utc)
 		tmp.save()
@@ -388,31 +390,34 @@ def get_quick_suggestions(request):
 	main_context = {} 
 	response_data = {}
 
-	working_texts = PossibleText.objects.all().filter(quick_suggestion=True)
 
-	key = 1
-	collection_info = {}
+	object_id_list = []
+	working_texts = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
 	for text in working_texts:
-		if request.user.is_authenticated():	
-			collection_list = {
-				'text': text,
-				'user': PossibleText.objects.all().filter(user=request.user).filter(text=text).count(),
-			}
-		else:
-			collection_list = {
-				'text': text,
-				'user': 0,
-			}
-		
-		
-		collection_info[key]= collection_list
-		key = key + 1
+		object_id_list.append(text.text)
 
-	collection_info = tuple(collection_info.items())
+	if 'suggestion_1' in request.POST.keys():
+		print("SUG1",request.POST['suggestion_1'])
+		if request.POST['suggestion_1'] == "yes":
+			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
+			'suggestion_number': 1,}
+			response_data["suggestion_1"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 	
-	main_context['working_texts'] = collection_info
+	if 'suggestion_2' in request.POST.keys():
+		print("SUG2",request.POST['suggestion_2'])
+		if request.POST['suggestion_2'] == "yes":
+			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
+			'suggestion_number': 2,}
+			response_data["suggestion_2"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
+
+	if 'suggestion_3' in request.POST.keys():
+		print("SUG3",request.POST['suggestion_3'])
+		if request.POST['suggestion_3'] == "yes":
+			tmp_context = {'working_text': PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first(),
+			'suggestion_number': 3,}
+			response_data["suggestion_3"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)		
+
 	
-	response_data["quick_suggestions"] = render_to_string('SS_quick_suggestions.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
@@ -562,7 +567,7 @@ def get_options_to_input(request):
 
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 	working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
-	# default_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+	default_timing = Timing.objects.all().filter(user=request.user).get(id=working_timing.id)
 	
 	main_context['id'] = working_text.id
 	
