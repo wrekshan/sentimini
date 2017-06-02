@@ -10,7 +10,8 @@
 
     
     {% else %}
-    <a  name="{{suggestion_number}}" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a>
+    <!-- <a  name="{{suggestion_number}}" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a> -->
+    <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i class="small material-icons">loop</i></div>
     <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
     {% endif %}
  
@@ -26,9 +27,12 @@
   $('.loop-{{suggestion_number}}').click(function() {
     
     var sug_name = $('.add-text-inspiration-btn-{{suggestion_number}}').attr('name')
+    var sug_name = $(this).attr('name')
     var suggestion_needed_1 = "no"
     var suggestion_needed_2 = "no"
     var suggestion_needed_3 = "no"
+
+    // console.log(sug_name)
     
     if ($(this).attr('name')==1){
       suggestion_needed_1 = "yes"

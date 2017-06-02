@@ -116,8 +116,9 @@ def inspiration_indvidual_text(request):
 		tmp.save()
 
 		if 'quick_suggestion' in request.POST.keys():
-			qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=tmp,added=True)
-			qs.save()
+			if request.user.is_authenticated():	
+				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=tmp,added=True)
+				qs.save()
 
 	else:
 		possible_texts = PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text)
@@ -397,13 +398,14 @@ def get_quick_suggestions(request):
 
 
 	object_id_list = []
-	working_texts = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
-	rejected_list = QuickSuggestion.objects.all().filter(user=request.user).filter(rejected=True)
+	if request.user.is_authenticated():	
+		working_texts = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
+		rejected_list = QuickSuggestion.objects.all().filter(user=request.user).filter(rejected=True)
 
-	for text in working_texts:
-		object_id_list.append(text.text)
-	for text in rejected_list:
-		object_id_list.append(text.text)
+		for text in working_texts:
+			object_id_list.append(text.text)
+		for text in rejected_list:
+			object_id_list.append(text.text)
 		
 
 
@@ -416,10 +418,11 @@ def get_quick_suggestions(request):
 			}
 
 			if quick_text != None:
-				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-				if 'rejected' in request.POST.keys():
-					qs.rejected=True
-				qs.save()
+				if request.user.is_authenticated():	
+					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+					if 'rejected' in request.POST.keys():
+						qs.rejected=True
+					qs.save()
 
 			response_data["suggestion_1"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 	
@@ -431,10 +434,11 @@ def get_quick_suggestions(request):
 			'suggestion_number': 2,}
 
 			if quick_text != None:
-				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-				if 'rejected' in request.POST.keys():
-					qs.rejected=True
-				qs.save()
+				if request.user.is_authenticated():	
+					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+					if 'rejected' in request.POST.keys():
+						qs.rejected=True
+					qs.save()
 
 			response_data["suggestion_2"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 
@@ -446,10 +450,11 @@ def get_quick_suggestions(request):
 			'suggestion_number': 3,}
 
 			if quick_text != None:
-				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-				if 'rejected' in request.POST.keys():
-					qs.rejected=True
-				qs.save()
+				if request.user.is_authenticated():	
+					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+					if 'rejected' in request.POST.keys():
+						qs.rejected=True
+					qs.save()
 
 			response_data["suggestion_3"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)		
 
