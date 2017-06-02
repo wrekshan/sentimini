@@ -195,6 +195,7 @@ $('.download_csv').click(function() {
     },
     success : function(data) {
       $('#text_input').html("");
+      $('#quick_suggestions').html("");
       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_datatable').html(data['text_input']);}, 300);      
 
@@ -218,6 +219,7 @@ $('.download_csv').click(function() {
     },
     success : function(data) {
       $('#text_input').html("");
+      $('#quick_suggestions').html("");
       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_datatable').html(data['text_datatable_response']);}, 350);
 
@@ -241,6 +243,7 @@ $('.download_csv').click(function() {
       'timing_message': "Edit Timing"},
       success : function(data) {
         $('#text_input').html("");
+        $('#quick_suggestions').html("");
         $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_datatable').html(data['text_input']);}, 350); 
 

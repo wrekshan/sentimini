@@ -503,6 +503,14 @@ $('.options_to_input').click(function() {
        
      }
    })
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/get_quick_suggestions/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+      }
+    })
 })
 </script>
 
@@ -562,6 +570,14 @@ $('.save_timing').click(function() {
 
      }
    })
+        $.ajax({
+      type: 'POST',
+      url: '/consumer/get_quick_suggestions/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+      }
+    })
 
        
      }

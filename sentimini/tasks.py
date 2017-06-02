@@ -106,9 +106,21 @@ def schedule_texts():
 					scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
 					scheduled_date = scheduled_date.astimezone(pytz.UTC)
 					seconds_to_add = randint(0,time_window.total_seconds())
+					
 
 					atext = ActualText(user=text.user,text=text)
-					atext.time_to_send = scheduled_date + timedelta(0,seconds_to_add)
+					if datetime.now(pytz.utc) > user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)).astimezone(pytz.UTC):
+						atext.time_to_send = scheduled_date + timedelta(0,(86400+seconds_to_add))
+					elif datetime.now(pytz.utc) > scheduled_date and datetime.now(pytz.utc) < user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)).astimezone(pytz.UTC):
+						time_window = datetime.now(pytz.utc) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start)).astimezone(pytz.UTC)
+						seconds_to_add = randint(0,int(time_window.total_seconds()))
+						atext.time_to_send = scheduled_date + timedelta(0,(seconds_to_add))
+					else:
+						atext.time_to_send = scheduled_date + timedelta(0,(seconds_to_add))
+
+
+					
+					
 					atext.save()
 
 					text.date_scheduled = datetime.now(pytz.utc)

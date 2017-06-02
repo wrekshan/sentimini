@@ -157,6 +157,7 @@ $(document).ready(function() {
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 350);      
 
        $('#text_datatable').html("");
+       $('#quick_suggestions').html("");
      }
    })
   })
@@ -189,6 +190,14 @@ $(document).ready(function() {
 
          }
        })
+        $.ajax({
+      type: 'POST',
+      url: '/consumer/get_quick_suggestions/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+      success : function(data) {
+        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+      }
+    })
       }
     })
   }

@@ -20,7 +20,7 @@ class Beta(models.Model):
 	date_created = models.DateTimeField(blank=True,null=True)
 	
 	def __str__(self):
-		return self.carrier		
+		return self.content		
 
 #This is the other main workhorse that keeps user preferences.  
 class UserSetting(models.Model):
