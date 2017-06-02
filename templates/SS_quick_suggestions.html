@@ -1,33 +1,9 @@
-<div class="col s12">
-  <div class="card">
-    <div class="card-content">
-
-
-
-
-      <!-- <a href = "/consumer/test_signup">hey hey</a> -->
-
-      <!-- TEXT -->
-      
-          <span class="card-title"><h4>Quick Suggestions</h4></span>
-          <table class="striped">
-            <thead>
-              <tr>
-                <th data-field="remove"></th>
-                <th data-field="id">Text</th>
-                <th data-field="name">Summary</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for key, value in working_texts %}
-
-              <tr>
-                <td>
-                <!-- {% if user.is_authenticated %}
-                <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{value.text.id}}" checked>
-                <label for="{{working_collection.id}}_{{value.text.id}}" id="{{working_collection.id}}_{{value.text.id}}" class="">
-                  {% endif %} -->
+ <ul class="collection">
+    {% for key, value in working_texts %}
+<li class="collection-item">
+<b>{{value.text.text}}</b>
+<hr>
+                <span style="font-size:80%;">{{value.text.timing.timing_summary|linebreaks}}</span>
 
                   {% if user.is_authenticated %}
 
@@ -36,7 +12,7 @@
                   </div>
                   {% else %}
 
-                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn">Add
+                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn" width=100%>Receive text
 
                   </div>
                   {% endif %}
@@ -48,21 +24,18 @@
 
 
 
-                </td>
-                <td>{{value.text.text}}</td>
-                <td>{{value.text.timing.timing_summary|linebreaks}}</td>
-              </tr>
+                
+                
+              </li>
               {% endfor %}
-            </tbody>
-          </table>
-          <div class="row">
-          <div class="right-align">
-          <a href="/consumer/inspiration/">See more ways to use Sentimini</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  
+
+
+
+
+      
+    </ul>
+    <a href="/consumer/inspiration/">See more ways to use Sentimini</a>
+
 
 
   <script type="text/javascript">

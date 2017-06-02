@@ -12,7 +12,7 @@
  <meta property="og:description"   content="Create and edit texts.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
  <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
 </head>
- 
+
 
 
 
@@ -22,29 +22,26 @@
 
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
-
-  <div id = "quick_suggestions">
-    <div class = "center-align">
-      <div class="row"></div>
-      <div id="preloader_new_text" class="preloader-wrapper big active ">
-        <div class="spinner-layer spinner-blue-only">
-          <div class="circle-clipper left">
+  <div class="col s3">
+    <div id = "quick_suggestions">
+      <div class = "center-align">
+        <div class="row"></div>
+        <div id="preloader_new_text" class="preloader-wrapper big active ">
+          <div class="spinner-layer spinner-blue-only">
+            <div class="circle-clipper left">
+              <div class="circle"></div>
+            </div><div class="gap-patch">
             <div class="circle"></div>
-          </div><div class="gap-patch">
+          </div><div class="circle-clipper right">
           <div class="circle"></div>
-        </div><div class="circle-clipper right">
-        <div class="circle"></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 </div>
-</div>
 
-
-<!-- CARD FOR NEW TEXTS AND TIMINGS-->
-<div class="row">
-
+<div class="col s9">
   <div id = "text_input">
     <div class = "center-align">
       <div class="row"></div>
@@ -61,25 +58,18 @@
   </div>
 </div>
 </div>
-</div>
-
-
-
-<!-- DATA TABLE -->
 {% if user.is_authenticated %}
-<div class="row">
-  <div id = "text_datatable">
-    <div class = "center-align">
-      <div class="row"></div>
-      <div id="preloader_new_text" class="preloader-wrapper big active ">
-        <div class="spinner-layer spinner-blue-only">
-          <div class="circle-clipper left">
-            <div class="circle"></div>
-          </div><div class="gap-patch">
+<div id = "text_datatable">
+  <div class = "center-align">
+    <div class="row"></div>
+    <div id="preloader_new_text" class="preloader-wrapper big active ">
+      <div class="spinner-layer spinner-blue-only">
+        <div class="circle-clipper left">
           <div class="circle"></div>
-        </div><div class="circle-clipper right">
+        </div><div class="gap-patch">
         <div class="circle"></div>
-      </div>
+      </div><div class="circle-clipper right">
+      <div class="circle"></div>
     </div>
   </div>
 </div>
@@ -87,16 +77,26 @@
 </div>
 {% else %}
 <div class="row">
-<div class="col s12">
-<div class="card">
-<div class="card-content">
-Sentimini is a light weight tool for mindfulness, behavior change, and research.  You can easily schedule text messages and collect any replies you make.  It is currently in beta and free to sign up.  
-</div>
-</div>
-</div>
+  <div class="col s12">
+    <div class="card">
+      <div class="card-content">
+        Sentimini is a light weight tool for mindfulness, behavior change, and research.  You can easily schedule text messages and collect any replies you make.  It is currently in beta and free to sign up.  
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endif %}
+</div>
+
+</div>
+
+
+
+
+
+
+
 
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
