@@ -54,6 +54,7 @@ def update_db_after_import(request):
 	working_timing = Timing.objects.all().filter(user=request.user)
 	for timing in working_timing:
 		print("ID", timing.id)
+		timing.intended_text = timing.intended_text_input
 		timing.repeat = True
 
 		if timing.hour_start is not None:
