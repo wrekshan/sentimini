@@ -561,7 +561,8 @@ def get_options_to_input(request):
 	response_data = {}
 
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-	default_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
+	working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
+	# default_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
 	
 	main_context['id'] = working_text.id
 	

@@ -22,7 +22,12 @@
 
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
-  <div class="col s3">
+<div class="col s12 m3">
+
+    <div class="hide-on-med-and-up">
+    <div class="row"></div>
+        <div class="chip waves-effect waves-teal btn-flat" id ="suggestion-display">Show Suggestions</div>
+        </div>
     <div id = "quick_suggestions">
       <div class = "center-align">
         <div class="row"></div>
@@ -41,7 +46,7 @@
 </div>
 </div>
 
-<div class="col s9">
+<div class="col s12 m9">
   <div id = "text_input">
     <div class = "center-align">
       <div class="row"></div>
@@ -77,7 +82,7 @@
 </div>
 {% else %}
 <div class="row">
-  <div class="col s12">
+  <div class="col s12 m9">
     <div class="card">
       <div class="card-content">
         Sentimini is a light weight tool for mindfulness, behavior change, and research.  You can easily schedule text messages and collect any replies you make.  It is currently in beta and free to sign up.  
@@ -94,6 +99,47 @@
 
 
 
+<script type="text/javascript">
+//get dimensions 
+var height = $(window).height();
+var width = $(window).width();
+//refresh on resize
+$(window).resize(function() {
+
+
+  if ($(window).width() > 600) {
+    $('#quick_suggestions').show()
+    // $('#suggestion-display-display').text("Hide Suggestions")
+  }  else {
+    $('#quick_suggestions').hide()
+    $('#suggestion-display').text("Show Suggestions")
+  }
+
+  
+
+});
+
+
+// 
+</script>
+
+
+<script>
+  $('#suggestion-display').click(function(){
+    console.log("SHOW CLICKED")
+    console.log($('#suggestion-display').text())
+    if ($('#suggestion-display').text() == "Show Suggestions")
+    {
+      $('#quick_suggestions').show()
+      $('#suggestion-display').text("Hide Suggestions")
+
+    } else {
+      $('#quick_suggestions').hide()
+      $('#suggestion-display').text("Show Suggestions")
+
+    }
+  })
+</script>
 
 
 
@@ -110,6 +156,10 @@
         setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
       }
     })
+    if ($(window).width() < 601) {
+      console.log("START HIDE")
+      $('#quick_suggestions').hide()
+    }
 
 
   }
@@ -149,7 +199,7 @@
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
   function startClock(){
-   
+
 
     $.ajax({
       type: 'POST',
