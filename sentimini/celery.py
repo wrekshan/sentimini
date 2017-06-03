@@ -23,6 +23,7 @@ else:
 
  
 if LIVEHOST:
+    print("NOT LOCAL HOST")
 	# app = celery.Celery('sentimini',include=['sentimini.tasks'])
 	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
  #                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
@@ -45,6 +46,7 @@ if LIVEHOST:
     # Below is trying to make livehouse like dev
     
 else:
+    print("LOCAL HOST")
     # ### LOCAL
     # BROKER_URL = 'amqp://ojkuzlap:AyU-QGhN7CRAmqh-mFmcCyXjrgIvSqZk@orangutan.rmq.cloudamqp.com/ojkuzlap'
     # BROKER_POOL_LIMIT = 1 # Will decrease connection usage

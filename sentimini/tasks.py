@@ -34,22 +34,22 @@ from .celery import app
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
         'args': ()
     },
     'send': {
         'task': 'send_texts',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
         'args': ()
     },
     'check': {
         'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
         'args': ()
     },
     'process': {
         'task': 'process_new_mail',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(seconds=30),
 		'args': ()
     },
 }    
