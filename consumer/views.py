@@ -762,6 +762,8 @@ def save_timing(request):
 		print("SAVE TIMING AND TEXST")
 		working_text.tmp_save = False
 		working_text.save()
+		working_timing = get_timing_default(request)
+		main_context['timing_summary'] = working_timing.timing_summary
 
 	else:
 		print("SAVE TIMING ONLY")
@@ -811,6 +813,9 @@ def save_text(request):
 		main_context['text_message'] = request.POST['text_message']
 	else:
 		main_context['text_message'] = "New Text"
+
+	working_timing = get_timing_default(request)
+	main_context['timing_summary'] = working_timing.timing_summary
 
 	#If there are default options then get t
 
