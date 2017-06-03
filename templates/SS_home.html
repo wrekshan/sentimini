@@ -159,7 +159,8 @@
       <p>
       Hit <i class="fa fa-plus fa-2x" aria-hidden="true"></i> to add a text.  Use <i class="small material-icons">loop</i> for different suggestions.  You can always add your own text or edit any timings.  Use <i class="fa fa-info-circle fa-2x" aria-hidden="true"></i> buttons for more help.
       <div class="row"></div>
-      Click or tap anywhere to continue.
+      Tap the <i class="fa fa-plus fa-2x" aria-hidden="true"></i> to continue.
+
       </p>
       
     </div>
@@ -256,9 +257,12 @@ $(window).resize(function() {
     console.log("STARTING")
     if ($(window).width()<600){
       $('#quick_suggestions').hide()
-      $('#suggestion-display-display').text("Show Suggestions")
+      $('#suggestion-display').text("Show Suggestions")
 
     }
+
+    var save_suggestions = "yes"
+
     $.ajax({
       type: 'POST',
       url: '/consumer/get_quick_suggestions/',
@@ -266,21 +270,23 @@ $(window).resize(function() {
       'suggestion_1': "yes",
       'suggestion_2': "yes",
       'suggestion_3': "yes",
+      'save_suggestions': save_suggestions,
     },
     success : function(data) {
       setTimeout(function() {$('#suggestion_1').html(data['suggestion_1']);}, 600);
       setTimeout(function() {$('#suggestion_2').html(data['suggestion_2']);}, 600);
       setTimeout(function() {$('#suggestion_3').html(data['suggestion_3']);}, 600);
 
-      // if ("{{working_settings.new_user_step}}"==0){
+      if ("{{working_settings.new_user_step}}"=="0"){
       setTimeout(function() {$('#add_suggestion_hightlight_1_trigger').tapTarget('open');}, 1200);
+      $('#suggestion-display').text("Hide Suggestions")
       $('#quick_suggestions').show()
       $.ajax({
       type: 'POST',
       url: '/consumer/change_nus/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}', },
       })
-    // }
+    }
   }
 })
     if ($(window).width() < 601) {

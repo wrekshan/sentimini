@@ -431,10 +431,11 @@ def get_quick_suggestions(request):
 
 			if quick_text != None:
 				if request.user.is_authenticated():	
-					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-					if 'rejected' in request.POST.keys():
-						qs.rejected=True
-					qs.save()
+					if request.POST['save_suggestions'] == "yes":
+						qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+						if 'rejected' in request.POST.keys():
+							qs.rejected=True
+						qs.save()
 
 			response_data["suggestion_1"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 	
@@ -447,10 +448,11 @@ def get_quick_suggestions(request):
 
 			if quick_text != None:
 				if request.user.is_authenticated():	
-					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-					if 'rejected' in request.POST.keys():
-						qs.rejected=True
-					qs.save()
+					if request.POST['save_suggestions'] == "yes":
+						qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+						if 'rejected' in request.POST.keys():
+							qs.rejected=True
+						qs.save()
 
 			response_data["suggestion_2"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)
 
@@ -463,10 +465,11 @@ def get_quick_suggestions(request):
 
 			if quick_text != None:
 				if request.user.is_authenticated():	
-					qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
-					if 'rejected' in request.POST.keys():
-						qs.rejected=True
-					qs.save()
+					if request.POST['save_suggestions'] == "yes":
+						qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=quick_text)
+						if 'rejected' in request.POST.keys():
+							qs.rejected=True
+						qs.save()
 
 			response_data["suggestion_3"] = render_to_string('SS_quick_suggestions.html', tmp_context, request=request)		
 

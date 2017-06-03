@@ -55,10 +55,15 @@
   <div id="new_text_modal" class="modal modal-fixed-footer" >
     <div class="modal-content modal-about">
       <h4>Create a new text</h4>
-      You'll have 160 characters to remind yourself of anything you want.
+      You'll have 160 characters to remind yourself of anything you want.  You can always add a suggestion or view <a href="/consumer/inspiration/">inspirations</a> if you need some ideas.
+      <div class="row"></div>
+      <h4>Timings</h4>
+      You can control the timing of this text if you hit the "timing" button.  You can schedule the texts for specific times or random times between specific hours or on specific days.
       <div class="row"></div>
       <h4>Responses</h4>
       Keep in mind that Sentimini will collect any responses that you make, so you could keep a gratitude journal, emotion tracker, medication tracker, spontaneous poem journal, or anything you want.  
+      <div class="row"></div>
+      You can access your data by hitting the "data" button in the "Scheduled Texts" table.
     <div class="row"></div>
     Sentimini allows you to send texts at randomized times, which is a good method to quantitatively explore your experience.  You can download the data by using the table below.  
 
@@ -191,14 +196,14 @@ $(document).ready(function() {
 
          }
        })
-        $.ajax({
-      type: 'POST',
-      url: '/consumer/get_quick_suggestions/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
-      success : function(data) {
-        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
-      }
-    })
+    //     $.ajax({
+    //   type: 'POST',
+    //   url: '/consumer/get_quick_suggestions/',
+    //   data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+    //   success : function(data) {
+    //     setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+    //   }
+    // })
       }
     })
   }
