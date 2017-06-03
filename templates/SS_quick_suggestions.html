@@ -4,8 +4,9 @@
     <span style="font-size:80%;">{{working_text.timing.timing_summary|linebreaks}}</span>
 
     {% if user.is_authenticated %}
-    <div  name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn-{{suggestion_number}}" width=100%><i class="small material-icons">queue</i></div>
-    <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i class="small material-icons">loop</i></div>
+    <div  name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn-{{suggestion_number}}" width=100% ><i id="add_suggestion_hightlight_{{suggestion_number}}" class="small material-icons">queue</i></div>
+
+    <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="small material-icons">loop</i></div>
 
 
     

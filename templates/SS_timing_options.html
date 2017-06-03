@@ -189,7 +189,7 @@
     <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
     <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
     <a id="options_save" class="save_timing waves-effect waves-light btn">Save Only Timing</a>
-    <a id="options_text_save" class="save_timing waves-effect waves-light btn">Save Timing and Text</a>
+    <a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save Timing and Text</a>
     {% else %}
     <a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
     <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
@@ -242,6 +242,28 @@
 </script>
 
 <!-- LOADING THE VALUES OF THEM ALL -->
+{% if working_text.text %}
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#options_text_save').removeClass('disabled')
+})
+</script>
+{% endif %}
+
+<!-- BUTTON CONTROL NEW TEXT-->
+<script type="text/javascript">
+  $('#textarea1').keyup(function(){
+    if (this.value.length < 1) {
+      $('#options_text_save').addClass('disabled')
+      // $('#text_input_to_options').addClass('disabled')
+    } else {
+      console.log("MORE THAN 1")
+      $('#options_text_save').removeClass('disabled')
+      // $('#text_input_to_options').removeClass('disabled')
+    }
+  })
+</script>
+
 
 <script type="text/javascript">
   $(document).ready(function(){

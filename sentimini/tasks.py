@@ -34,7 +34,7 @@ from .celery import app
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': timedelta(seconds=4),
+        'schedule': timedelta(seconds=10),
         'args': ()
     },
     'send': {

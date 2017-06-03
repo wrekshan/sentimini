@@ -14,6 +14,9 @@ from django.db.models import Q
 
 import csv
 
+
+
+
 def test_signup(request):
 	context = {}
 	# get_adapter()
@@ -269,6 +272,7 @@ def home(request):
 				
 				context = {
 					'working_texts': working_texts,
+					'working_settings': working_settings,
 					}
 				return render(request,"SS_home.html",context)
 			else:

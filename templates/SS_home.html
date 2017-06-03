@@ -23,7 +23,10 @@
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
   <div class="col s12 m3">
-
+  <a  id="highlight_button" class="waves-effect waves-light btn block" style=" width: 100%;">Help</a>
+  <span id="NUS_tracker" hidden>0</span>
+  <span id="NUS_switch" hidden>0</span>
+  
     <div class="hide-on-med-and-up">
       <div class="row"></div>
       <div class="chip waves-effect waves-teal btn-flat" id ="suggestion-display">Show Suggestions</div>
@@ -84,6 +87,8 @@
 </div>
 
 <div class="col s12 m9">
+
+ 
   <div id = "text_input">
     <div class = "center-align">
       <div class="row"></div>
@@ -133,6 +138,145 @@
 
 </div>
 
+<!-- Element Showed -->
+  
+
+
+
+  <!-- Tap Target Structure -->
+<!--   <div id="new_text_highlight_trigger" class="tap-target" data-activates="new_text_highlight">
+    <div class="tap-target-content">
+      <h5>New Text</h5>
+      <p>You can add new texts here!  Anything you want!</p>
+    </div>
+  </div> -->
+
+
+
+  <div id="add_suggestion_hightlight_1_trigger" class="tap-target" data-activates="add_suggestion_hightlight_1">
+    <div class="tap-target-content">
+      <h5>Schedule a text</h5>
+      <p>You can hit this button to schedule the suggested text.  You can always edit the text or timing after it is scheduled.
+      <div class="row"></div>
+      Click or tap anywhere to continue.
+      </p>
+    </div>
+  </div>
+
+  <div id="scheduled_text_hightlight_trigger" class="tap-target" data-activates="scheduled_text_highlight">
+    <div id="scheduled_text_hightlight_content" class="tap-target-content center-align">
+      <h5>Scheduled text</h5>
+      This table will show you all of your scheduled texts.  You can pause, delete, or edit each one.
+      <div class="row"></div>
+      Click or tap anywhere to continue.
+      </div>
+    </div>
+  </div>
+
+  <div id="new_text_highlight_trigger" class="tap-target" data-activates="new_text_highlight">
+    <div class="tap-target-content center-align">
+      <h5>New text</h5>
+      You can always add your own text here.
+      <div class="row"></div>
+      Click or tap anywhere to continue.
+      </div>
+    </div>
+  </div>
+
+   <div id="timing_highlight_trigger" class="tap-target" data-activates="text_input_to_options">
+    <div class="tap-target-content center-align">
+      <h5>Timing</h5>
+      You can edit the timing of the text.
+      <div class="row"></div>
+      Click or tap anywhere to continue.
+      </div>
+    </div>
+  </div>
+
+  <div id="help_highlight_trigger" class="tap-target" data-activates="help_highlight">
+    <div class="tap-target-content center-align">
+      <h5>Help</h5>
+      If you are ever lost or stuck, hit one of these buttons.  It will provide all the necessary information.
+      <div class="row"></div>
+      Click or tap anywhere to continue.
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+
+
+$('#highlight_button').click(function(){
+  
+    $('#add_suggestion_hightlight_1_trigger').tapTarget('open');
+    // $('#NUS_switch').html("1")
+    // $('#NUS_tracker').html("1")
+})
+
+
+ jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+                                                $(window).scrollTop()) + "px");
+    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+                                                $(window).scrollLeft()) + "px");
+    return this;
+}
+
+
+$(document).click(function(){
+
+  if ($('.tap-target-wrapper').attr('class')=="tap-target-wrapper open" && $('#NUS_switch').html()=="0"){
+    $('#NUS_switch').html("1")
+    $('#NUS_tracker').html("1")
+  } else if ($('.tap-target-wrapper').attr('class')=="tap-target-wrapper open" && $('#NUS_switch').html()=="1"){
+    $('#NUS_switch').html("2")
+    // $('#NUS_tracker').html("1")
+  }
+
+  console.log("------------------------------------")
+  console.log("CLICK CLASS" + $('.tap-target-wrapper').attr('class'))
+  console.log("CLICK SWITCH" + $('#NUS_switch').html())
+  console.log("CLICK Tracker" + $('#NUS_tracker').html())
+  if ($('#NUS_switch').html()=="2"){
+      if ($('#NUS_tracker').html()=="1"){
+        $('#scheduled_text_hightlight_trigger').tapTarget('open');
+        $('#scheduled_text_highlight').center();
+        // $('#scheduled_text_highlight')[0].scrollIntoView( true );
+        $('#NUS_tracker').html("2")
+      } else if ($('#NUS_tracker').html()=="2"){
+        $('#new_text_highlight_trigger').tapTarget('open');
+        $('#new_text_highlight').center();
+        // $('#new_text_highlight')[0].scrollIntoView( true );
+        $('#NUS_tracker').html("3")
+      } else if ($('#NUS_tracker').html()=="3"){
+        $('#timing_highlight_trigger').tapTarget('open');
+        $('#timing_highlight').center();
+        // $('#timing_highlight')[0].scrollIntoView( true );
+        $('#NUS_tracker').html("4")
+      } else if ($('#NUS_tracker').html()=="4"){
+        $('#help_highlight_trigger').tapTarget('open');
+        $('#help_highlight').center();
+        // $('#help_highlight')[0].scrollIntoView( true );
+        $('#NUS_tracker').html("0")
+        $('#NUS_switch').html("0")
+      }
+    }
+  })
+
+
+</script>
+
+
+<script type="text/javascript">
+  
+</script>
 
 
 

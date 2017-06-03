@@ -30,6 +30,7 @@ class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
 	settings_complete = models.BooleanField(default=False)
+	new_user_step  = models.IntegerField(default=0)
 	phone_verified = models.BooleanField(default=False)
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	send_text_tmp = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
