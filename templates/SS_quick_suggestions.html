@@ -4,16 +4,18 @@
     <span style="font-size:80%;">{{working_text.timing.timing_summary|linebreaks}}</span>
 
     {% if user.is_authenticated %}
-    <div  name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn-{{suggestion_number}}" width=100% ><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></div>
+    <div  name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn-{{suggestion_number}}" width=100% ><span><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i>  </span></div>
 
     
 
-    <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="small material-icons">loop</i></div>
+    <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
 
 
     
     {% else %}
     <!-- <a  name="{{suggestion_number}}" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a> -->
+     <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100% ><span><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i>  </span></div>
+
     <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i class="small material-icons">loop</i></div>
     <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
     {% endif %}
@@ -91,6 +93,8 @@
     var suggestion_needed_1 = "no"
     var suggestion_needed_2 = "no"
     var suggestion_needed_3 = "no"
+
+    var save_suggestions = "yes"
     
     if ($(this).attr('name')==1){
       suggestion_needed_1 = "yes"
@@ -118,6 +122,7 @@
         'suggestion_1': suggestion_needed_1,
         'suggestion_2': suggestion_needed_2,
         'suggestion_3': suggestion_needed_3,
+        'save_suggestions': save_suggestions, 
       },
         success : function(data) {
           console.log("SUCCESS AJAX")

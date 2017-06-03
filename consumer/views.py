@@ -270,6 +270,27 @@ def text_commands(request):
 		
 
 # Create your views here.
+
+def guided_tour(request):
+	context = {}
+	if request.user.is_authenticated():	
+		if UserSetting.objects.all().filter(user=request.user).count() > 0:
+			working_settings = UserSetting.objects.all().get(user=request.user)
+			if working_settings.settings_complete == True:
+				working_texts = PossibleText.objects.all().filter(user=request.user)
+				
+				context = {
+					'working_texts': working_texts,
+					'working_settings': working_settings,
+					}
+				return render(request,"SS_home.html",context)
+			else:
+				return HttpResponseRedirect('/consumer/settings/')
+		else:
+			return HttpResponseRedirect('/consumer/settings/')
+
+	return render(request,"SS_home.html",context)
+
 def home(request):
 	context = {}
 	if request.user.is_authenticated():	
@@ -397,9 +418,10 @@ def get_text_input(request):
 def get_text_datatable(request):
 	main_context = {} 
 	response_data = {}
-
-	main_context['working_texts'] = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
+	if request.user.is_authenticated():	
+		main_context['working_texts'] = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
 	
+	print("GETTING DATA TABLE -------- ")
 	response_data["text_datatable"] = render_to_string('SS_text_datatable.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 

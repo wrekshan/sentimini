@@ -27,12 +27,12 @@
     <div class="row">
       <div class="input-field col s12 ">
         <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i> -->
-        <h5>Send texts during</h5>
+        <h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
         <p class="range-field">
           <div type="range" id="specific_time_hours"></div>
         </p>
         
-        <span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align" /></span>
+         <span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align" /></span>
         
       </div>
     </div>
@@ -112,7 +112,7 @@
  
  
  <div class="col s12 ">
- <h5>Number per day</h5>      
+ <h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
  </div>
  <div class="input-field col s12 l3 ">
   <select id="repeat_time" class="browser-default">
@@ -187,11 +187,12 @@
     <!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
     {% if user.is_authenticated %}
     <a id="options_back" class="options_to_input waves-effect waves-light btn">Back</a>
-    <a id="options_default_save" class="save_timing_default waves-effect waves-light btn">Set as default</a>
-    <a id="options_save" class="save_timing waves-effect waves-light btn">Save Only Timing</a>
+    <a id="options_default_save" class="save_timing_default waves-effect waves-light btn"><i id="options_default_highlight" class="fa fa-cogs fa-2x" aria-hidden="true"></i> Set default</a>
+    <a id="options_save" class="save_timing waves-effect waves-light btn">Save Timing</a>
     <a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save Timing and Text</a>
     {% else %}
     <a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
+    <a id="options_default_save" class="save_timing_default waves-effect waves-light btn disabled"><i id="options_default_highlight" class="fa fa-cogs fa-2x" aria-hidden="true"></i> Set default</a>
     <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
     {% endif %}
     
