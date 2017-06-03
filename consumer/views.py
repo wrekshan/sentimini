@@ -14,7 +14,15 @@ from django.db.models import Q
 
 import csv
 
+def change_nus(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
 
+	working_settings = UserSetting.objects.all().get(user=request.user)
+	working_settings.new_user_step = 1
+	working_settings.save()
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")		
 
 
 def test_signup(request):
