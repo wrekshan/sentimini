@@ -38,8 +38,8 @@ if LIVEHOST:
     CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
     
     app = celery.Celery('sentimini',
-             broker='amqp://',
-             backend='amqp://',
+             # broker='amqp://',
+             # backend='amqp://',
              include=['sentimini.tasks'])
     
     # Below is trying to make livehouse like dev
