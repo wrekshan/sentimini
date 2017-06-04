@@ -69,6 +69,8 @@ from .celery import app
 
 # @app.task
 
+task_seconds_between = 15
+
 def schedule_specific_text(text,working_settings,user_timezone, time_window,day):
 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
 
@@ -94,7 +96,7 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 
 
 # @task(name='schedule_texts')
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -163,7 +165,7 @@ def schedule_texts():
 	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
 	for text in working_texts:
 		if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
-			print("SCHEDULING NEW FUZZY TEXT")
+			# print("SCHEDULING NEW FUZZY TEXT")
 
 			# Get the timing info
 			# Hack to have discrete values in slider
@@ -233,7 +235,7 @@ def send_text(text):
 
 			outgoing_tmp = Outgoing(text=text,date_sent=datetime.now(pytz.utc))
 			outgoing_tmp.save()
-			print("Sent 1 email")
+			# print("Sent 1 email")
 
 		if tmp_user.send_text_check == True:
 			send_mail('',message_to_send,str(EMAIL_HOST_USER), [addressee], fail_silently=False)
@@ -249,9 +251,9 @@ def send_text(text):
 
 # @app.task
 # @task(name="send_texts")
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def send_texts():
-	print("TASK 2 - STARTING send_texts ")
+	# print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
 	#filter out the ones that haven't been sent out yet AND the ones that are suppose to be sent out now
 	user_texts = ActualText.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None)
@@ -283,10 +285,10 @@ def get_first_text_part(msg):
 
 # @app.task
 # @task(name="check_email_for_new")
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def check_email_for_new():
 	#Set up the email 
-	print("TASK 3 - RECIEVE MAIL")
+	# print("TASK 3 - RECIEVE MAIL")
 	if use_gmail == 1:
 		mail = imaplib.IMAP4_SSL('imap.gmail.com')
 	else:
@@ -311,7 +313,7 @@ def check_email_for_new():
 
 	#Go through each new email and figure out what it corresponds to
 	for id in id_list:
-		print("DOWNLOADING MESSAGES")
+		# print("DOWNLOADING MESSAGES")
 		print(id)
 		result, data = mail.fetch(id, "(RFC822)") # fetch the email body (RFC822) for the given ID
 		
@@ -327,10 +329,10 @@ def check_email_for_new():
 			email_content = get_first_text_part(email_message)
 
 			Incoming(email_user=email_user,email_date=email_date,email_message=email_message,email_content=email_content).save()
-			print("NEW INCOMING SAVED")
+			# print("NEW INCOMING SAVED")
 			mail.store(id, '+FLAGS', '\\Deleted') # flage this for deletion
 	mail.expunge() #delete them
-	print("BOX CLEANED")
+	# print("BOX CLEANED")
 
 
 
@@ -340,9 +342,9 @@ def check_email_for_new():
 
 # @app.task
 # @task(name="process_new_mail")
-@periodic_task(run_every=timedelta(seconds=10))
+@periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def process_new_mail():
-	print("TASK 4 - PROCESS MAIL")
+	# print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
 	for tp in Toprocess:
 	
@@ -359,12 +361,12 @@ def process_new_mail():
 			############################################################
 			############### CHECK FOR RESPONSE AND DETERMINE WHAT IT IS
 			############################################################
-			print("tp.email_content ", tp.email_content )
+			# print("tp.email_content ", tp.email_content )
 			if tp.email_content is not None: #this is new
 				working_text = ActualText.objects.all().filter(user=working_user.user).exclude(time_sent__isnull=True)
 				working_text = working_text.filter(time_sent__lte=tp.email_date)
 				new_text_conditional = 0
-				print("TEXT CONTENT: ", tp.email_content.lower())
+				# print("TEXT CONTENT: ", tp.email_content.lower())
 				if len(str(tp.email_content.lower())) < 6:
 					if 'stop' in tp.email_content.lower():
 						working_user.text_request_stop = True
@@ -389,7 +391,7 @@ def process_new_mail():
 					working_text = working_text.latest('time_sent')
 
 					if working_text.response is None or working_text.response == "":
-						print("first consolidate conditional")
+						# print("first consolidate conditional")
 						working_text.time_response = tp.email_date
 						working_text.response = tp.email_content
 						working_text.save()
