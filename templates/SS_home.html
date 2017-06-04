@@ -290,7 +290,7 @@ $('#highlight_button').click(function(){
   var url      = window.location.href;  
 
   var timing_keeper = 500
-  var load_delay = 1200
+  var load_delay = 300
   var delay_between = 666
   var number_of_seconds = 5500
 
@@ -364,8 +364,8 @@ setTimeout(function() {$('#text_input').html('<div class = "center-align"><div c
   timing_keeper = timing_keeper + load_delay
 
 
-  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('open');}, timing_keeper + 100);
-  timing_keeper = timing_keeper + number_of_seconds + 100
+  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('open');}, timing_keeper + load_delay);
+  timing_keeper = timing_keeper + number_of_seconds + load_delay
   setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + delay_between
 
