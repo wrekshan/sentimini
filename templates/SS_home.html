@@ -290,9 +290,9 @@ $('#highlight_button').click(function(){
   var url      = window.location.href;  
 
   var timing_keeper = 500
-  var load_delay = 666
+  var load_delay = 1200
   var delay_between = 666
-  var number_of_seconds = 6000
+  var number_of_seconds = 5500
 
   // MAKE SURE THE RIGTH PAGES ARE UP
   $.ajax({
@@ -344,6 +344,7 @@ setTimeout(function() {$('#quick_suggestions').hide();}, timing_keeper-10);
   setTimeout(function() {$('#timing_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + delay_between
 
+setTimeout(function() {$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');}, timing_keeper);
 
   setTimeout(function() {
   $.ajax({
@@ -354,7 +355,7 @@ setTimeout(function() {$('#quick_suggestions').hide();}, timing_keeper-10);
       'id': "{{working_text.id}}",
       'timing_message': "Timing Options"},
       success : function(data) {
-        $('#text_input').html(data['text_input'])
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, load_delay);
        
      }
    })
@@ -363,8 +364,8 @@ setTimeout(function() {$('#quick_suggestions').hide();}, timing_keeper-10);
   timing_keeper = timing_keeper + load_delay
 
 
-  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('open');}, timing_keeper);
-  timing_keeper = timing_keeper + number_of_seconds
+  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('open');}, timing_keeper + 100);
+  timing_keeper = timing_keeper + number_of_seconds + 100
   setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + delay_between
 
@@ -382,6 +383,10 @@ timing_keeper = timing_keeper + number_of_seconds
   timing_keeper = timing_keeper + delay_between
 
 
+  setTimeout(function() {$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>');}, timing_keeper);
+  
+
+
 setTimeout(function() {
   $.ajax({
       type: 'POST',
@@ -389,7 +394,7 @@ setTimeout(function() {
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'text_message': "New Text",},
       success : function(data) {
-        $('#text_input').html(data['text_input']);
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, load_delay);
       }
     })
 ;}, timing_keeper);
@@ -400,7 +405,7 @@ timing_keeper = timing_keeper + load_delay
 
 setTimeout(function() {$('#download_csv_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
 timing_keeper = timing_keeper + load_delay
-setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('open');}, timing_keeper);
+setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('open');}, timing_keeper );
 timing_keeper = timing_keeper + number_of_seconds
   setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + load_delay
@@ -413,7 +418,7 @@ timing_keeper = timing_keeper + number_of_seconds
   timing_keeper = timing_keeper + load_delay
 
   if (pathname.indexOf("guided_tour") >= 0){
-    setTimeout(function() {window.location.replace("/consumer/about/");}, timing_keeper);
+    setTimeout(function() {window.location.replace("/accounts/signup/");}, timing_keeper);
   }
 
 })

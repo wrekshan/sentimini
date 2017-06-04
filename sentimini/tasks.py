@@ -31,28 +31,28 @@ from .celery import app
 #     sender.add_periodic_task(10.0, check_email_for_new, name='add every 10')
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
-app.conf.beat_schedule = {
-    'schedule': {
-        'task': 'schedule_texts',
-        'schedule': timedelta(seconds=20),
-        'args': ()
-    },
-    'send': {
-        'task': 'send_texts',
-        'schedule': timedelta(seconds=20),
-        'args': ()
-    },
-    'check': {
-        'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=20),
-        'args': ()
-    },
-    'process': {
-        'task': 'process_new_mail',
-        'schedule': timedelta(seconds=20),
-		'args': ()
-    },
-}    
+# app.conf.beat_schedule = {
+#     'schedule': {
+#         'task': 'schedule_texts',
+#         'schedule': timedelta(seconds=20),
+#         'args': ()
+#     },
+#     'send': {
+#         'task': 'send_texts',
+#         'schedule': timedelta(seconds=20),
+#         'args': ()
+#     },
+#     'check': {
+#         'task': 'check_email_for_new',
+#         'schedule': timedelta(seconds=20),
+#         'args': ()
+#     },
+#     'process': {
+#         'task': 'process_new_mail',
+#         'schedule': timedelta(seconds=20),
+# 		'args': ()
+#     },
+# }    
 
 
 # @app.on_after_configure.connect
@@ -93,7 +93,8 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 	text.save()
 
 
-@task(name='schedule_texts')
+# @task(name='schedule_texts')
+@periodic_task(run_every=timedelta(seconds=10))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -247,7 +248,8 @@ def send_text(text):
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-@task(name="send_texts")
+# @task(name="send_texts")
+@periodic_task(run_every=timedelta(seconds=10))
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -280,7 +282,8 @@ def get_first_text_part(msg):
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-@task(name="check_email_for_new")
+# @task(name="check_email_for_new")
+@periodic_task(run_every=timedelta(seconds=10))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -336,7 +339,8 @@ def check_email_for_new():
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-@task(name="process_new_mail")
+# @task(name="process_new_mail")
+@periodic_task(run_every=timedelta(seconds=10))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
