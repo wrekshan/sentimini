@@ -31,28 +31,28 @@ from .celery import app
 #     sender.add_periodic_task(10.0, check_email_for_new, name='add every 10')
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
-# app.conf.beat_schedule = {
-#     'schedule': {
-#         'task': 'schedule_texts',
-#         'schedule': timedelta(seconds=20),
-#         'args': ()
-#     },
-#     'send': {
-#         'task': 'send_texts',
-#         'schedule': timedelta(seconds=20),
-#         'args': ()
-#     },
-#     'check': {
-#         'task': 'check_email_for_new',
-#         'schedule': timedelta(seconds=20),
-#         'args': ()
-#     },
-#     'process': {
-#         'task': 'process_new_mail',
-#         'schedule': timedelta(seconds=20),
-# 		'args': ()
-#     },
-# }    
+app.conf.beat_schedule = {
+    'schedule': {
+        'task': 'schedule_texts',
+        'schedule': timedelta(seconds=20),
+        'args': ()
+    },
+    'send': {
+        'task': 'send_texts',
+        'schedule': timedelta(seconds=20),
+        'args': ()
+    },
+    'check': {
+        'task': 'check_email_for_new',
+        'schedule': timedelta(seconds=20),
+        'args': ()
+    },
+    'process': {
+        'task': 'process_new_mail',
+        'schedule': timedelta(seconds=20),
+		'args': ()
+    },
+}    
 
 
 # @app.on_after_configure.connect
