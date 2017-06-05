@@ -255,6 +255,31 @@ def submit_beta(request):
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
+def submit_quotation(request):	
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+	working_quotation = Quotation(user=request.user,content=request.POST['quotation_content'],source=request.POST['quotation_source'],date_created=pytz.utc.localize(datetime.now()))
+	working_beta.save()
+	response_data["message"] = "Quotation Submitted!  Thank you for your help!"
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")		
+
+def quotation(request):	
+	context = {}
+	
+	content_place = "What is a great quotation that inspires you?"
+	source_place = "Who wrote this?  Where did you find it?"
+
+
+
+	context['quotation_content_place'] = content_place
+	context['quotation_source_place'] = source_place
+
+
+
+
+	return render(request,"SS_quotation.html",context)
+
 def beta(request):	
 	context = {}
 	return render(request,"SS_beta.html",context)	

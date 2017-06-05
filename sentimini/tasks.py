@@ -238,7 +238,7 @@ def send_text(text):
 			# print("Sent 1 email")
 
 		if tmp_user.send_text_check == True:
-			send_mail('',message_to_send, str("Sentimini <"+EMAIL_HOST_USER+">"), [addressee], fail_silently=False)
+			send_mail('',message_to_send, str(EMAIL_HOST_USER), [addressee], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 

@@ -4,7 +4,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
 #This is the other main workhorse that keeps user preferences.  
@@ -23,6 +23,21 @@ class QuickSuggestionModelAdmin(admin.ModelAdmin):
 		model = QuickSuggestion
 
 admin.site.register(QuickSuggestion,QuickSuggestionModelAdmin)
+
+class QuotationModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"content",
+		"source",
+		
+	]
+	list_display_links = ["content"]
+	list_filter = ["content"]
+	class Meta:
+		model = Quotation
+
+admin.site.register(Quotation,QuotationModelAdmin)
+
 
 class BetaModelAdmin(admin.ModelAdmin):
 	list_display = [

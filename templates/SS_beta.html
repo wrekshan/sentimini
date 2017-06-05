@@ -10,6 +10,8 @@
 	<meta property="og:type"          content="website" />
 	<meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
 	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
+
 </head>
 
 
@@ -26,7 +28,9 @@
 					<form class="col s12">
 						<div class="row">
 							<div class="input-field col s12">
-								<textarea id="beta_content" class="materialize-textarea" length="5000"></textarea>
+							<!-- <i class="fa fa-thumbs-o-up prefix" aria-hidden="true"></i> -->
+							 <i class="material-icons prefix">input</i>
+								<textarea id="beta_content" class="materialize-textarea" data-length="5000"></textarea>
 								<label for="beta_content">Feedback</label>
 							</div>
 						</div>
@@ -76,7 +80,9 @@
 	$(document).ready(function(){
     // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
-    $('#beta_content').characterCounter();
+    // $('#beta_content').characterCounter();
+
+    $('textarea#beta_content').characterCounter();
 
     $('#beta_content').trigger('autoresize');
      Materialize.updateTextFields();

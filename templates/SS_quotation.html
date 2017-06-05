@@ -1,0 +1,113 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% block content %}
+
+<!-- FIRST PIC -->
+<head>
+	<title>Quotations | Sentimini</title>
+	<meta property="og:title"         content="Quotations | Sentimini | Share inspirations"/>
+	<meta property="og:url"           content="www.sentimini.com/consumer/beta/" />
+	<meta property="og:type"          content="website" />
+	<meta property="og:description"   content="Learn more about Sentimini.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
+	<script src={% static "js/materialize.min.js" %}></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href={% static "css/materialize.css" %}>
+</head>
+
+
+<div class="row">
+	<div class="col s8 offset-s2">
+		<div class="card">
+			<div class="card-content">
+				<h4>Amazing quotations!</h4>
+				Submit a quotation that inspires you!  Sentimini is designed to help you in your life.  Quotations are often very insipring.  So, please submit your favorite quotations here.  These will be used to generate suggested texts.  
+				<div class="row"></div>
+
+
+				<div class="row">
+					<form class="col s12">
+						<div class="row">
+							<div class="input-field col s12">
+							<i class="fa fa-quote-right prefix" aria-hidden="true"></i>
+								<textarea placeholder="{{quotation_content_place}}" id="quotation_content" class="materialize-textarea" data-length="5000"></textarea>
+								<label for="quotation_content">Quotation</label>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="row">
+					<form class="col s12">
+						<div class="row">
+							<div class="input-field col s12">
+							<i class="fa fa-book prefix" aria-hidden="true"></i>
+								<textarea placeholder="{{quotation_source_place}}" id="quotation_source" class="materialize-textarea" length="5000"></textarea>
+								<label for="quotation_source">Source</label>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="right-align">
+					<div id="quotation_submit" class="right-align waves-effect waves-light btn" >Submit</div> 
+				</div>
+				<div id="quotation_message"></div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+<script type="text/javascript">
+	$('#quotation_submit').click(function() {
+    
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/submit_quotation/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'quotation_content': $('#quotation_content').val(),
+      'quotation_source': $('#quotation_source').val(),
+    },
+    success : function(data) {
+      // console.log("SUCESS AJAX ~line 392")
+      $('#quotation_message').html(data['message']);
+      $('#quotation_content').val('')
+      $('#quotation_source').val('')
+      $('#quotation_content').trigger('autoresize');
+      $('#quotation_source').trigger('autoresize');
+		Materialize.updateTextFields();
+    }
+  })
+  })
+
+
+
+</script>
+
+
+<script>
+	$(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+    $('#quotation_content').characterCounter();
+
+    $('#quotation_content').trigger('autoresize');
+     Materialize.updateTextFields();
+});
+</script>
+
+<script>
+	$(document).ready(function(){
+		$('.parallax').parallax();
+		$(".button-collapse").sideNav();
+	});
+</script>
+
+
+{% endblock %}

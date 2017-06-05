@@ -25,6 +25,15 @@ class Beta(models.Model):
 	def __str__(self):
 		return self.content		
 
+class Quotation(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	content = models.CharField(max_length=5000,default='',null=True)
+	source = models.CharField(max_length=5000,default='',null=True)
+	date_created = models.DateTimeField(blank=True,null=True)
+	
+	def __str__(self):
+		return self.content				
+
 #This is the other main workhorse that keeps user preferences.  
 class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)

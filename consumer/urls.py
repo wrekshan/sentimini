@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import home, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, quotation, submit_quotation, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, inspiration, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
@@ -8,6 +8,8 @@ urlpatterns = [
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),
 	url(r'^beta/$', beta, name='beta'),
+	url(r'^quotation/$', quotation, name='quotation'),
+	url(r'^submit_quotation/$', submit_quotation, name='submit_quotation'),
 	url(r'^get_quick_suggestions/$', get_quick_suggestions, name='get_quick_suggestions'),
 	url(r'^change_nus/$', change_nus, name='change_nus'),
 	url(r'^submit_beta/$', submit_beta, name='submit_beta'),
