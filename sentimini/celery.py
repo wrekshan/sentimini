@@ -63,6 +63,13 @@ else:
 
     BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 
+    BROKER_POOL_LIMIT = 1 # Will decrease connection usage
+    BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
+    BROKER_CONNECTION_TIMEOUT = 30 # May require a long timeout due to Linux DNS timeouts etc
+    CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it creates thousands of queues
+    CELERY_SEND_EVENTS = False # Will not create celeryev.* queues
+    CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
+
     app = celery.Celery('sentimini',
              broker='amqp://',
              backend='amqp://',
