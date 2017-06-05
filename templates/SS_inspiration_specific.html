@@ -67,7 +67,7 @@
                   {% endif %}
 
                   {% else %}
-                  <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" >Add</a>
+                  <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
                   <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
                   {% endif %}
 
@@ -174,7 +174,7 @@
     },
     success : function(data) {
       if (data['save_type'] == "removed"){
-        $("#"+text_id_button).html('Add')
+        $("#"+text_id_button).html('<i class="fa fa-plus" aria-hidden="true"></i>')
         // $("#"+text_id_button).css('background-color', '#2196f3');
 
       } else {
