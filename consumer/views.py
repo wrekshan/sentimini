@@ -270,7 +270,7 @@ def submit_quotation(request):
 def quotation(request):	
 	context = {}
 	
-	content_place = "What is a great quotation that inspires you?"
+	content_place = "What is a great quote that inspires you?"
 	source_place = "Who wrote this?  Where did you find it?"
 
 
