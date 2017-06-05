@@ -9,7 +9,7 @@ from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
 from sentimini.views import pause_text
-from ent.models import QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+from ent.models import Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
 from django.db.models import Q
 
 import csv
@@ -259,7 +259,7 @@ def submit_quotation(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 	working_quotation = Quotation(user=request.user,content=request.POST['quotation_content'],source=request.POST['quotation_source'],date_created=pytz.utc.localize(datetime.now()))
-	working_beta.save()
+	working_quotation.save()
 	response_data["message"] = "Quotation Submitted!  Thank you for your help!"
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")		
