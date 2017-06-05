@@ -598,18 +598,18 @@ def time_window_check(text,possible_date):
 	# starting_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_start))
 	# ending_time = user_timezone.localize(datetime.combine(possible_date.date(),text.timing.hour_end))
 
-	print("starting_time",starting_time)
-	print("possible_date",possible_date)
-	print("ending_time",ending_time)
+	# print("starting_time",starting_time)
+	# print("possible_date",possible_date)
+	# print("ending_time",ending_time)
 
 
 	if not starting_time < possible_date < ending_time:
 		if possible_date < starting_time:
-			print("LESS THAN START TIME")
+			# print("LESS THAN START TIME")
 			window_diff = starting_time - possible_date
 			possible_date = possible_date + timedelta(hours=0,minutes=0,seconds=window_diff.seconds*2)
 		else:
-			print("MORE THAN START TIME")
+			# print("MORE THAN START TIME")
 			date_today = datetime.now(pytz.utc).astimezone(user_timezone)
 
 			time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))

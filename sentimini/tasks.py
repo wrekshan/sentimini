@@ -69,7 +69,7 @@ from .celery import app
 
 # @app.task
 
-task_seconds_between = 15
+task_seconds_between = 5
 
 def schedule_specific_text(text,working_settings,user_timezone, time_window,day):
 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
@@ -229,7 +229,7 @@ def send_text(text):
 
 	if out_check < 1 and actual_check < 1:
 		if tmp_user.send_email_check == True:
-			send_mail('',message_to_send,str(EMAIL_HOST_USER), [text.user.email], fail_silently=False)
+			send_mail('',message_to_send, str(EMAIL_HOST_USER), [text.user.email], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -238,7 +238,7 @@ def send_text(text):
 			# print("Sent 1 email")
 
 		if tmp_user.send_text_check == True:
-			send_mail('',message_to_send,str(EMAIL_HOST_USER), [addressee], fail_silently=False)
+			send_mail('',message_to_send, str("Sentimini <"+EMAIL_HOST_USER+">"), [addressee], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
 
@@ -262,7 +262,12 @@ def send_texts():
 		# YOU WILL HAVE TO ADD SOME CHECKS INTO THIS
 		# user specific text (i.e. they texted "stop")
 
-		send_text(text)		
+		# This is to remove any old texts that are backed up.
+		td = datetime.now(pytz.utc) - text.time_to_send.astimezone(pytz.UTC)
+		if td.seconds/60 > 5:
+			text.delete()
+		else:
+			send_text(text)		
 		# time specific checks (i.e. sent more than 5 in the last 10 minutes, etc)
 
 		
@@ -349,7 +354,7 @@ def process_new_mail():
 	for tp in Toprocess:
 	
 		#need conditional
-		print("tp.email_user", tp.email_user)
+		# print("tp.email_user", tp.email_user)
 		if UserSetting.objects.all().filter(phone=tp.email_user).exists():
 			if UserSetting.objects.all().filter(phone=tp.email_user).count() == 1:
 				working_user = UserSetting.objects.all().get(phone=tp.email_user)	
