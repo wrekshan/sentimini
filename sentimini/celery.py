@@ -28,8 +28,8 @@ if LIVEHOST:
 	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
  #                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
 	# BROKER_TRANSPORT = 'redis'
-
     
+    CELERY_IMPORTS=("tasks")
     BROKER_URL = os.environ['CLOUDAMQP_URL']
     BROKER_POOL_LIMIT = 1 # Will decrease connection usage
     BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
