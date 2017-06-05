@@ -95,8 +95,8 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name='schedule_texts')
-@task()
+@task(name='schedule_texts')
+# @task()
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -253,8 +253,8 @@ def send_text(text):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="send_texts")
-@task()
+@task(name="send_texts")
+# @task()
 def send_texts():
 	# print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -295,8 +295,8 @@ def get_first_text_part(msg):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="check_email_for_new")
-@task()
+@task(name="check_email_for_new")
+# @task()
 def check_email_for_new():
 	#Set up the email 
 	# print("TASK 3 - RECIEVE MAIL")
@@ -355,8 +355,8 @@ def check_email_for_new():
 # @task(name="process_new_mail")
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="process_new_mail")
-@task()
+@task(name="process_new_mail")
+# @task()
 def process_new_mail():
 	# print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
