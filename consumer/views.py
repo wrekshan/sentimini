@@ -258,7 +258,10 @@ def submit_beta(request):
 def submit_quotation(request):	
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
-	working_quotation = Quotation(user=request.user,content=request.POST['quotation_content'],source=request.POST['quotation_source'],date_created=pytz.utc.localize(datetime.now()))
+	if request.user.is_authenticated():	
+		working_quotation = Quotation(user=request.user,content=request.POST['quotation_content'],source=request.POST['quotation_source'],date_created=pytz.utc.localize(datetime.now()))
+	else:
+		working_quotation = Quotation(email=request.POST['quotation_email'],content=request.POST['quotation_content'],source=request.POST['quotation_source'],date_created=pytz.utc.localize(datetime.now()))
 	working_quotation.save()
 	response_data["message"] = "Quotation Submitted!  Thank you for your help!"
 

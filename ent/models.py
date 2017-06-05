@@ -26,9 +26,10 @@ class Beta(models.Model):
 		return self.content		
 
 class Quotation(models.Model):
-	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1,blank=True)
 	content = models.CharField(max_length=5000,default='',null=True)
 	source = models.CharField(max_length=5000,default='',null=True)
+	email = models.CharField(max_length=5000,default='',null=True)
 	date_created = models.DateTimeField(blank=True,null=True)
 	
 	def __str__(self):
