@@ -69,7 +69,7 @@ app.conf.beat_schedule = {
 
 # @app.task
 
-task_seconds_between = 5
+# task_seconds_between = 20
 
 def schedule_specific_text(text,working_settings,user_timezone, time_window,day):
 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
@@ -95,8 +95,8 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 	text.save()
 
 
-# @task(name='schedule_texts')
-@periodic_task(run_every=timedelta(seconds=task_seconds_between))
+@task(name='schedule_texts')
+# @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -250,8 +250,8 @@ def send_text(text):
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-# @task(name="send_texts")
-@periodic_task(run_every=timedelta(seconds=task_seconds_between))
+@task(name="send_texts")
+# @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def send_texts():
 	# print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -289,8 +289,8 @@ def get_first_text_part(msg):
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-# @task(name="check_email_for_new")
-@periodic_task(run_every=timedelta(seconds=task_seconds_between))
+@task(name="check_email_for_new")
+# @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def check_email_for_new():
 	#Set up the email 
 	# print("TASK 3 - RECIEVE MAIL")
@@ -346,8 +346,8 @@ def check_email_for_new():
 # @periodic_task(run_every=timedelta(seconds=10))
 
 # @app.task
-# @task(name="process_new_mail")
-@periodic_task(run_every=timedelta(seconds=task_seconds_between))
+@task(name="process_new_mail")
+# @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 def process_new_mail():
 	# print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
