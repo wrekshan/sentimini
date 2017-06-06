@@ -172,10 +172,12 @@
     <div class="tap-target-content ">
       <h5>Add suggested texts</h5>
       <p>
-      Quickly add texts from here.  These are just meant to be suggestions.  Your experience is your own.
+      You can add any of these texts.  They are just meant as suggestions
       </p>
       <p>
-      This tour will cycle through the features of this site.  You don't have to click anything.
+      This tour will cycle through the features of this site.
+      </br>
+        You don't have to click anything.
       </p>
       
     </div>
@@ -188,10 +190,7 @@
       You can review all of your scheduled texts here.
       </p>
       <p>
-      Search for them or sort them by date, text, or number of texts per week.  
-      </p>
-      <p>
-      This is where you will edit any of the texts or timings and find any of your replies.
+      You can edit, pause, or delete any of the texts.
       </p>
       
     </div>
@@ -211,7 +210,7 @@
     <div class="tap-target-content center-align">
       <h5>Edit timings</h5>
       <p>
-      You can edit the timing of any text.
+      You can edit the timing of the text.
       </p>
     </div>
   </div>
@@ -246,10 +245,12 @@
     <div class="tap-target-content center-align">
       <h5>Save timings as default</h5>
       <p>
-      If you like a timing, you can use this as a default.  
+      If you like a timing, you can set it as a default.  
       </p>
       <p>
-      FYI:  you can add a text with the default timing from your phone.  Just text, "new:" and whatever text you want.  
+      FYI:  you can add a text with the default timing from your phone.
+      </br>
+      Just text, "new:" and whatever text you want.  
       </p>
     </div>
   </div>
@@ -274,7 +275,7 @@
     <div class="tap-target-content center-align">
       <h5>Find help</h5>
       <p>
-      If you are ever lost or stuck, hit one of these buttons.  It will provide all the necessary information.
+      If you are ever lost or stuck, hit one of these buttons.</br>It will provide all the necessary information.
       <div class="row"></div>
       That's it for the tour.  Enjoy!
       </p>
@@ -294,9 +295,10 @@ $('#highlight_button').click(function(){
   var url      = window.location.href;  
 
   var timing_keeper = 500
-  var load_delay = 300
+  var load_delay = 333
   var delay_between = 666
-  var number_of_seconds = 5500
+  var number_of_seconds = 5555
+  var scroll_delay = 888
 
   // MAKE SURE THE RIGTH PAGES ARE UP
   $.ajax({
@@ -407,15 +409,21 @@ timing_keeper = timing_keeper + load_delay
 
 
 
-setTimeout(function() {$('#download_csv_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
-timing_keeper = timing_keeper + load_delay
+// setTimeout(function() {$('#download_csv_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
+
+setTimeout(function() {$('html, body').animate({scrollTop: $("#download_csv_highlight").offset().top}, scroll_delay);}, timing_keeper);
+
+
+
+timing_keeper = timing_keeper + load_delay + scroll_delay
 setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('open');}, timing_keeper );
 timing_keeper = timing_keeper + number_of_seconds
   setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + load_delay
 
-setTimeout(function() {$('#help_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
-timing_keeper = timing_keeper + load_delay
+setTimeout(function() {$('html, body').animate({scrollTop: $("#brand_logo").offset().top}, scroll_delay);}, timing_keeper);
+
+timing_keeper = timing_keeper + load_delay + scroll_delay
 setTimeout(function() {$('#help_highlight_trigger').tapTarget('open');}, timing_keeper);
 timing_keeper = timing_keeper + number_of_seconds
   setTimeout(function() {$('#help_highlight_trigger').tapTarget('close');}, timing_keeper);
