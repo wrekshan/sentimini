@@ -33,6 +33,12 @@ from .models import PossibleText, ActualText, Collection, Tag, Timing, UserSetti
 def update_db_after_import(request):
 	print("update_db_after_import")
 
+	#clear away the input text from the people who signed up
+	working_texts = PossibleText.objects.all().exclude(user=request.user)
+	for text in working_texts:
+		text.input_text = ''
+		text.save(	)
+
 	# Set up the collection
 	working_collections = Collection.objects.all().filter(user=request.user)
 	for collection in working_collections:
