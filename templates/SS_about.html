@@ -100,13 +100,17 @@
 					</div>
 					<div class="row center">
 						{% if user.is_authenticated %}
-						<a class="btn-large waves-effect waves-light" href="/ent/add_new_text/" > Schedule a text</a>
+						<a class="btn-large waves-effect waves-light" href="/consumer/home/" > Schedule a text</a>
 
 						{% else %}
 						<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
 
 						<div class="row"></div>
-						<a href="{% url 'account_login' %}"">Already signed up, then sign in</a>
+						<!-- <a href="{% url 'account_login' %}"">Already signed up, then sign in</a> -->
+						<!-- <div class="row"></div> -->
+						<span class="header col s12">Signing up is free and should take less than 1 minute.</span>
+						<div class="row"></div>
+						<span>Already signed up, then <a href="{% url 'account_login' %}"">sign in</a></span>
 
 						{% endif %}
 					</div>

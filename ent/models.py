@@ -111,6 +111,69 @@ class Timing(models.Model):
 	saturday  = models.BooleanField(default=True) 
 	sunday  = models.BooleanField(default=True) 
 
+	def timing_summary_range(self):
+		if self.hour_start == self.hour_end:
+			hours_between = str(self.hour_start.strftime("%-I:%M%p"))
+		else:
+			hours_between = str(self.hour_start.strftime("%-I:%M%p")) +  " - " + str(self.hour_end.strftime("%-I:%M%p"))
+
+		return str(hours_between)
+
+	def timing_summary_burden(self):
+		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
+		if self.fuzzy == True:
+			if self.fuzzy_denomination == "minutes":
+				iti_standard = (60 / self.iti_raw) * 24 * 7
+			if self.fuzzy_denomination == "hours":
+				iti_standard = (24 / self.iti_raw) * 7
+			if self.fuzzy_denomination == "days":
+				iti_standard = (7 / self.iti_raw)
+			if self.fuzzy_denomination == "weeks":
+				iti_standard = self.iti_raw
+			if self.fuzzy_denomination == "months":
+				iti_standard = (self.iti_raw / 4)
+			return str(round(iti_standard,2)) + " per week (every " + str(self.iti_raw) + " " + self.fuzzy_denomination + ")"
+		else:
+			num_out = int(0)
+			weekdays = []
+			if self.monday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Monday")
+			if self.tuesday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Tuesday")
+			if self.wednesday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Wednesday")
+			if self.thursday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Thursday")
+			if self.friday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Friday")
+			if self.saturday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Saturday")
+			if self.sunday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Sunday")
+
+
+			tmp = str(weekdays)
+			tmp = str.replace(tmp,'[','')
+			tmp = str.replace(tmp,']','')
+			tmp = str.replace(tmp,'\'','')
+			if len(weekdays) == 7:
+				tmp = "all days"
+			elif len(weekdays) == 5:
+				if self.sunday == False & self.saturday == False:
+					tmp = "weekdays"
+			elif len(weekdays) == 2:
+				if self.sunday == True & self.saturday == True:
+					tmp = "weekends"
+			
+			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ")"
+
 	def timing_summary(self):
 		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
 		if self.hour_start == self.hour_end:

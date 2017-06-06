@@ -4,9 +4,11 @@
     <span style="font-size:80%;">{{working_text.timing.timing_summary|linebreaks}}</span>
 
     {% if user.is_authenticated %}
-    <div  name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn-{{suggestion_number}}" width=100% ><span><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i>  </span></div>
+    <!-- <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100% href="#quick_suggestion-add-{{suggestion_number}}"><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></div> -->
 
-    
+    <a href="#quick_suggestion-add-{{suggestion_number}}" class = "waves-effect waves-blue btn-flat chip" width=100%><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a>
+
+    <!-- <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100%><a href="#quick_suggestion-add-{{suggestion_number}}"><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a></div> -->
 
     <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
 
@@ -14,7 +16,9 @@
     
     {% else %}
     <!-- <a  name="{{suggestion_number}}" href="{% url 'account_signup' %}" class = "waves-effect waves-teal btn-flat chip" >Add</a> -->
-     <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100% ><span><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i>  </span></div>
+    <a href="#quick_suggestion-signup-{{suggestion_number}}" class = "waves-effect waves-blue btn-flat chip" width=100%><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a>
+
+     <!-- <div  name="{{suggestion_number}}"  class = "waves-effect waves-blue btn-flat chip" width=100% ><span><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i>  </span></div> -->
 
     <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
     <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
@@ -27,6 +31,39 @@
  <a href="/consumer/inspiration/" class = "waves-effect waves-teal btn-flat chip" >See inspirations</a>
  {% endif %}
 
+
+  <!-- Modal Structure -->
+  <div id="quick_suggestion-add-{{suggestion_number}}" class="modal modal-fixed-footer" style="max-height:50%;">
+    <div class="modal-content">
+      <h3>Confirm to add text</h3>
+      <p>Text: <b>{{working_text.text}}</b></p>
+      
+      <p>You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
+
+      <p>You can always edit the the text or timings in the scheduled text panel.</p>
+
+    </div>
+    <div class="modal-footer">
+    <a name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-inspiration-btn-{{suggestion_number}} blue darken-2">Confirm</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+      
+    </div>
+  </div>
+
+  <!-- Modal Structure -->
+  <div id="quick_suggestion-signup-{{suggestion_number}}" class="modal modal-fixed-footer" style="max-height:50%;">
+    <div class="modal-content">
+      <h3>Please <a href="{% url 'account_signup' %}">sign up</a> or <a href="{% url 'account_login' %}"">sign in</a> to add text</h3>
+      
+      <p>Feel free to keep browsing!  We're glad you are here!</p>
+
+    </div>
+    <div class="modal-footer">
+    <a href="{% url 'account_signup' %}" class="modal-action modal-close waves-effect btn-flat blue darken-2">Sign up</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Keep browsing</a>
+      
+    </div>
+  </div>
 
 <script type="text/javascript">
   $('.loop-{{suggestion_number}}').click(function() {
