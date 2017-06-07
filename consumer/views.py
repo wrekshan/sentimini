@@ -447,7 +447,9 @@ def get_text_datatable(request):
 	main_context = {} 
 	response_data = {}
 	if request.user.is_authenticated():	
+		working_settings = UserSetting.objects.all().get(user=request.user)
 		main_context['working_texts'] = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
+		main_context['user_timezone'] = working_settings.timezone
 	
 	print("GETTING DATA TABLE -------- ")
 	response_data["text_datatable"] = render_to_string('SS_text_datatable.html', main_context, request=request)
