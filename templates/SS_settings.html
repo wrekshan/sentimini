@@ -17,102 +17,123 @@
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
 
 <div class="row">
+<div class="col s12 m4">
     <div class="card">
-      <div class="card-content small_spaces">
-        <div class="row">
-          <div class="col s12">
-            <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
-            {{message}}
+      <div class="card-content">
+        
+        Your <b>phone number</b> is needed to be able to text you.  This has to be a US based number, with the area code.
+        <div class="row"></div>
+        Your <b>carrier</b> is needed to send you free texts.  Sentimini actually sends an email to your carrier, who sends you the text message.  
+        <div class="row"></div>
+        You <b>timezone</b> is needed so Sentimini can send you texts are the correct time.
+        <div class="row"></div>
+        You should receive a text message to welcome you to Sentimini in less than 2 minutes.
+      </div>
+    </div>
+  </div>
 
-            <!-- Phone -->
-            <h5>Phone Number</h5>
-            <div class="input-field col s12">
-              <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
-              <input id="phone_input" type="tel" class="validate">
-              <label for="phone_input">Telephone</label>
-            </div>
+  <div class="col s12 m8">
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+          {{message}}
 
-            <!-- Carrier -->
-            <h5>Phone Carrier</h5>
-            <div class="input-field col s12">
-              <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
-              <div class="row">
-               <select id="carrier_search">
-                 {% for carrier in working_carrier %}
-                 <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
-                 {% endfor %}
-               </select>
+          <!-- Phone -->
+          <h5>Phone Number</h5>
+          <div class="input-field col s11 offset-s1">
+            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
+            <input id="phone_input" type="tel" class="validate">
+            <label for="phone_input">Telephone</label>
+          </div>
 
-             </div>
-           </div>
-
-           <!-- TIMEZONE -->
-           <h5>Timezone</h5>
-           <div class="input-field col s12">
-            <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Timezone">schedule</i>
+          <!-- Carrier -->
+          <h5>Phone Carrier</h5>
+          <div class="input-field col s11 offset-s1">
+            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
             <div class="row">
-             <select id="tz_search">
-               <option value="Eastern Standard Time">Eastern Standard Time</option>
-               <option value="Central Standard Time">Central Standard Time</option>
-               <option value="Mountain Standard Time">Mountain Standard Time</option>
-               <option value="Pacific Standard Time">Pacific Standard Time</option>
-               {% for tz in working_tz %}
-               <option value="{{tz}}">{{tz}}</option>
+             <select id="carrier_search">
+               {% for carrier in working_carrier %}
+               <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
                {% endfor %}
+             </select>
+           </div>
+         </div>
+
+         <!-- TIMEZONE -->
+         <h5>Timezone</h5>
+         <div class="input-field col s11 offset-s1">
+          <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+          <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Timezone">schedule</i>
+          <div class="row">
+           <select id="tz_search">
+             <option value="Eastern Standard Time">Eastern Standard Time</option>
+             <option value="Central Standard Time">Central Standard Time</option>
+             <option value="Mountain Standard Time">Mountain Standard Time</option>
+             <option value="Pacific Standard Time">Pacific Standard Time</option>
+             {% for tz in working_tz %}
+             <option value="{{tz}}">{{tz}}</option>
+             {% endfor %}
                 <!-- {% for topic in topics %}
                 <option value="topic_{{topic.id}}">{{topic.topic_name}}</option>
                 {% endfor %} -->
               </select>
             </div>
           </div>
+          </div>
+<div class="row"></div>
+<div class="row"></div>
 
-
-        </div>
-      </div>
-
-
-      <form>{% csrf_token %}
         <div class="card-action right-align">
           <div id = "settings_message"></div>
-          <a id="reject_settings_button" class="settings-save-btn waves-effect waves-light chip black-text"><!-- <i class="material-icons left">today</i> -->No thanks, I'm just checking out the site</a>
+          <a id="skip_settings_trigger" class="waves-effect waves-light btn" href="#skip_settings">Skip</a>
           <a id="settings_modal_trigger" class="waves-effect waves-light btn" href="#confirm_settings">Save</a>
-          <!-- <a id="save_settings_button" class="disabled waves-effect waves-light btn"><i class="material-icons left">today</i>Schedule or review texts</a> -->
         </div>
-      </form>
-
-
-    </div>
-  </div>
-</div>
-
-
-  <!-- Modal Structure -->
-  <div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:50%;">
-    <div class="modal-content">
-      <h5>Confirm settings</h5>
-      <p>
-      <b>Telephone: </b><span id="phone_confirm"></span>
-      </p>
-      <p>
-      <b>Carrier: </b><span id="carrier_confirm"></span>
-      </p>
-      <p>
-      <b>Timezone: </b><span id="tz_confirm"></span>
-      </p>
-
-      <p>
-      If these are correct, pleace click confirm.  If not, please click edit to edit the settings.
-      </p>
-
-    </div>
-    <div class="modal-footer">
-    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Save</a>
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
       
     </div>
   </div>
+  
 
+</div>
+
+<!-- Modal Structure -->
+<div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div class="modal-content">
+    <h5>Confirm settings</h5>
+    <p>
+      <b>Telephone: </b><span id="phone_confirm"></span>
+    </p>
+    <p>
+      <b>Carrier: </b><span id="carrier_confirm"></span>
+    </p>
+    <p>
+      <b>Timezone: </b><span id="tz_confirm"></span>
+    </p>
+
+    <p>
+      If these are correct, pleace click confirm.  If not, please click edit to edit the settings.
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Save</a>
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="skip_settings" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div class="modal-content">
+    <h5>Are you sure?</h5>
+    <p>
+      You won't be able to receive any text messages until these settings are completed.  
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <a id="reject_settings_button" class="settings-save-btn waves-effect waves-light">Skip</a>
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
+  </div>
+</div>
 
 
 
@@ -192,31 +213,31 @@
 <script>
   var save_settings_data = function(x){
     console.log("SAVE TYPE", x)
-   if ($("#carrier_search").val() !== null){
-    var carrier_search = $('#carrier_search').val()
-    console.log("CARRIER "+carrier_search)
-    var carrier_good = 1
-  } else {
-    var carrier_good = 0
-  }
+    if ($("#carrier_search").val() !== null){
+      var carrier_search = $('#carrier_search').val()
+      console.log("CARRIER "+carrier_search)
+      var carrier_good = 1
+    } else {
+      var carrier_good = 0
+    }
 
 
-  if ($("#tz_search").val() !== null){
-    var tz_search = $('#tz_search').val()
-    console.log("TZ " + tz_search) 
-    var tz_good = 1
-  } else {
-    var tz_good = 0
-  }
+    if ($("#tz_search").val() !== null){
+      var tz_search = $('#tz_search').val()
+      console.log("TZ " + tz_search) 
+      var tz_good = 1
+    } else {
+      var tz_good = 0
+    }
 
-  if ($("#phone_input").val() !== null){
+    if ($("#phone_input").val() !== null){
 
-    var phone_good = 1
-  } else {
-    var phone_good = 0
-  }
+      var phone_good = 1
+    } else {
+      var phone_good = 0
+    }
 
-  if ((phone_good == 1 && carrier_good == 1 && tz_good ==1) || (x=="reject_settings_button")){
+    if ((phone_good == 1 && carrier_good == 1 && tz_good ==1) || (x=="reject_settings_button")){
     // LOAD THE AJAX
     $.ajax({
       type: 'POST',
@@ -251,9 +272,9 @@
 <script type="text/javascript">
   $('#settings_modal_trigger').click(function(){
     console.log("TZ" + $("#tz_search").val())
-$('#carrier_confirm').text($("#carrier_search").val())
-$('#tz_confirm').text($("#tz_search").val())
-  $('#phone_confirm').text($("#phone_input").val())
+    $('#carrier_confirm').text($("#carrier_search").val())
+    $('#tz_confirm').text($("#tz_search").val())
+    $('#phone_confirm').text($("#phone_input").val())
 
   })
 </script>
@@ -269,8 +290,8 @@ $('#tz_confirm').text($("#tz_search").val())
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-85360122-1', 'auto');
