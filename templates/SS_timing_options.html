@@ -501,6 +501,7 @@ function slideTime_reverse(text_time){
 
 
 
+
 <!-- BUTTONS BACK-->
 <script type="text/javascript">
 $('.options_to_input').click(function() {
@@ -553,9 +554,15 @@ $('.save_timing').click(function() {
    weekdays.push($(this).val());
  });
 
+  var fuzzy_denomination = $('#fuzzy_denomination').val()
+  var decay_check = $('#decay_check').is(':checked')
+  var private_check = $('#private_check').is(':checked')
+  var save_type = $(this).attr('id')
 
+  $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 
-  
+  $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
 
   $.ajax({
       type: 'POST',
@@ -568,17 +575,17 @@ $('.save_timing').click(function() {
       'hour_end_value': slider.noUiSlider.get()[1],
       'iti': ITI_mean,
       'iti_noise': ITI_noise,
-      'fuzzy_denomination': $('#fuzzy_denomination').val(),
+      'fuzzy_denomination': fuzzy_denomination,
       'fuzzy': fuzzy,
       'num_repeats': num_repeats,
       'weekdays': weekdays.join(','),
-      'decay': $('#decay_check').is(':checked'),
-      'private': $('#private_check').is(':checked'),
+      'decay': decay_check,
+      'private': private_check,
       'timing_message': "{{timing_message}}",
-      'save_type': $(this).attr('id'),
+      'save_type': save_type,
     },
       success : function(data) {
-        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+        
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
 
         $.ajax({
@@ -586,7 +593,7 @@ $('.save_timing').click(function() {
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
-       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+       
         setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
 
      }
@@ -657,16 +664,16 @@ $('.save_timing_default').click(function() {
 <script>
   $('#fuzzy_denomination').change(function() {
     if ($('#fuzzy_denomination').val()=="minutes"){
-      $("#ITI_mean").prop({min: 1, max: 600});
+      $("#ITI_mean").prop({min: 20, max: 120});
     } 
     if ($('#fuzzy_denomination').val()=="hours"){
       $("#ITI_mean").prop({min: 1, max: 72});
     } 
     if ($('#fuzzy_denomination').val()=="days"){
-      $("#ITI_mean").prop({min: 1, max: 30});
+      $("#ITI_mean").prop({min: 1, max: 60});
     } 
     if ($('#fuzzy_denomination').val()=="weeks"){
-      $("#ITI_mean").prop({min: 1, max: 52});
+      $("#ITI_mean").prop({min: 1, max: 104});
     } 
     if ($('#fuzzy_denomination').val()=="months"){
       $("#ITI_mean").prop({min: 1, max: 24});
