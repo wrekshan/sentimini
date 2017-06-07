@@ -4,6 +4,7 @@ import pytz
 from datetime import datetime, time
 from decimal import *
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.template.defaultfilters import slugify
 
 ########## NEW AND TO KEEP 
 #This just stores the email addresss, the @blah.com, to email texts to person
@@ -304,6 +305,14 @@ class Collection(models.Model):
 
 	def __str__(self):
 		return self.collection
+
+	def slug(self):
+		return slugify(str(self.collection_name + ' ' +str(self.description)))	
+
+
+
+
+
 
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)

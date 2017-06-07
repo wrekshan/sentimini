@@ -14,8 +14,8 @@
         <tbody>
           {% for text in working_texts %}
           <tr>
-            <td>{{text.time_sent}}</td>
-            <td>{{text.time_response}}</td>
+            <td><span style="display: none;">{{text.time_sent|date:"YmdGis"}}</span>{{text.time_sent}}</td>
+            <td><span style="display: none;">{{text.time_response|date:"YmdGis"}}</span>{{text.time_response}}</td>
             <td>{{text.response}} </td>
       </tr>
       {% endfor %}

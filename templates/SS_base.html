@@ -13,7 +13,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <link rel="icon" href="{% static "images/favicon-heart.ico" %}">
+  <link rel="icon" href="{% static "images/raven.ico" %}">
   
 
   <!-- <script src={% static "js/plotly.js" %}></script> -->
@@ -48,10 +48,12 @@
 <nav>
   <div class="nav-wrapper">
     <div class="container">
+      <!-- <a id="brand_logo" href="/" class="brand-logo"><object  data="/static/images/raven_wide.svg" type="image/svg+xml"></object></a> -->
       <a id="brand_logo" href="/" class="brand-logo">Sentimini!</a>
+      
 
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons icon-white">menu</i></a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <ul id="nav-mobile" class="right hide-on-med-and-down valign-wrapper">
         {% if user.is_superuser %}
         <li><a href="/admin_panel/">Admin</a></li>
         <li><a href="/power/home/">Power</a></li>
