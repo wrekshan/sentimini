@@ -23,9 +23,9 @@
           {% for text in working_texts %}
           <tr>
           
-
-          <td class="hide-on-small-only" ><span style="display: none;">{{text.date_created|date:"YmdGis"}}</span><span style="word-wrap: break-word; font-size:80%">{{text.date_created|date:"d M Y"}}</span></td>
-          <td><span style="display: none;">{{text.last_sent|date:"YmdGis"}}</span><span style="word-wrap: break-word; font-size:80%">{{text.last_sent|date:"d M Y"}}</span></td>
+<!-- <span style="display: none;">{{text.date_created|date:"YmdGis"}}</span> -->
+          <td class="hide-on-small-only" ><span style="display: none;">{{text.date_created|date}}</span><span style="word-wrap: break-word; font-size:80%">{{text.date_created|date:"d M Y"}}</span></td>
+          <td><span style="display: none;">{{text.last_sent|date}}</span><span style="word-wrap: break-word; font-size:80%">{{text.last_sent|date:"h:i A d M Y"}}</span></td>
           
 
 
@@ -306,8 +306,8 @@ $('.download_csv').click(function() {
     $('#text_data_table').DataTable(
     {
       "bLengthChange": false,
-      "pageLength": 5,
-      "order": [[ 0, "desc" ]],
+      "pageLength": 10,
+      "order": [[ 1, "desc" ]],
 
     });
   } );

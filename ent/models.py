@@ -339,9 +339,19 @@ class PossibleText(models.Model):
 	def last_sent(self):
 		if ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).count()>0:
 			tmp = ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).order_by("time_sent").last()
-			return(tmp.time_sent)	
+			tmper = UserSetting.objects.all().get(user=self.user)
+			user_timezone = pytz.timezone(tmper.timezone)
+			return(tmp.time_sent.astimezone(user_timezone))
 		else:
 			return("None")
+
+	def date_created_local(self):
+		tmper = UserSetting.objects.all().get(user=self.user)
+		user_timezone = pytz.timezone(tmper.timezone)
+		return(self.date_created.astimezone(user_timezone))
+		# scheduled_date = scheduled_date.astimezone(pytz.UTC)
+
+
 
 	# def burden(self):
 	# 	if self.timing.fuzzy==True:
