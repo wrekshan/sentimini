@@ -4,16 +4,18 @@
     <div class="card-content small_spaces">
       
 
-<span class="card-title" ><h4><i id="scheduled_text_highlight" class="fa fa-calendar" aria-hidden="true"></i> Scheduled Texts<a href="#datatable_modal"> <i style="font-size:75%;" class="fa fa-info-circle" aria-hidden="true"></i></h4></a></span>
+<span class="card-title" ><h4><i id="scheduled_text_highlight" class="fa fa-calendar" aria-hidden="true"></i> Your Texts<a href="#datatable_modal"> <i style="font-size:75%;" class="fa fa-info-circle" aria-hidden="true"></i></h4></a></span>
 
 
       <table id="text_data_table" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Text</th>
-            <th>Timing</th>
-            <th></th>
+            <th class="hide-on-small-only" style="font-size:80%;">Date Start</th>
+            <th style="font-size:80%;">Date Last</th>
+            <!-- <th class="hide-on-small-only" style="font-size:80%;"># Sent</th> -->
+            <th style="font-size:80%;">Text</th>
+            <th style="font-size:80%;">Timing</th>
+            <th style="font-size:60%;"></th>
           </tr>
         </thead>
 
@@ -22,16 +24,23 @@
           <tr>
           
 
-          <td><span style="display: none;">{{text.date_created|date:"YmdGis"}}</span><span style="word-wrap: break-word;">{{text.date_created|date:"d M Y"}}</span></td>
+          <td class="hide-on-small-only" ><span style="display: none;">{{text.last_sent|date:"YmdGis"}}</span><span style="word-wrap: break-word; font-size:80%">{{text.last_sent|date:"d M Y"}}</span></td>
+          <td><span style="display: none;">{{text.last_sent|date:"YmdGis"}}</span><span style="word-wrap: break-word; font-size:80%">{{text.last_sent|date:"d M Y"}}</span></td>
+          
+
+
+          <!-- <td class="hide-on-small-only"><span style="font-size:80%;">{{text.number_sent}}</span></td> -->
             <td>
-            {{text.text}} <span>(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
+            <span style="font-size:80%;">{{text.text}}</span> 
+
+            <span style="font-size:80%;">(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>
             ,
             <a id = "{{text.id}}" class="text_datatable_response waves-effect waves-light">data</a>)
             </span>
              </td>
              
 
-            <td><a  style="font-size:80%;" id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary|linebreaks}}</a></td>
+            <td><a style="font-size:80%;" id = "{{text.id}}" class="timing_edit waves-effect waves-light"}">{{text.timing.timing_summary|linebreaks}}</a></td>
             <td>
           <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Increase frequency">trending_up</i>
           <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Decrease frequency">trending_down</i> -->

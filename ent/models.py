@@ -333,6 +333,16 @@ class PossibleText(models.Model):
 	def __str__(self):
 		return self.text
 
+	def number_sent(self):
+		return(ActualText.objects.all().filter(user=self.user).filter(text=self).count())
+
+	def last_sent(self):
+		if ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).count()>0:
+			tmp = ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).order_by("time_sent").first()
+			return(tmp.time_sent)	
+		else:
+			return("None")
+
 	# def burden(self):
 	# 	if self.timing.fuzzy==True:
 	# 		return (960 / self.timing.iti) / 7
