@@ -378,7 +378,7 @@ def get_text_datatable_response(request):
 		main_context['user_timezone'] = working_settings.timezone
 
 		working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
+		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text).filter(time_sent__isnull=False)
 	
 		main_context['working_texts'] = working_texts
 		main_context['text_content'] = working_text.text
