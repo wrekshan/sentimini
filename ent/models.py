@@ -338,7 +338,7 @@ class PossibleText(models.Model):
 
 	def last_sent(self):
 		if ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).count()>0:
-			tmp = ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).order_by("time_sent").first()
+			tmp = ActualText.objects.all().filter(user=self.user).filter(text=self).filter(time_sent__isnull=False).order_by("time_sent").last()
 			return(tmp.time_sent)	
 		else:
 			return("None")
