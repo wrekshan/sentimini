@@ -263,14 +263,16 @@ def send_texts():
 	
 	for text in user_texts:
 		# YOU WILL HAVE TO ADD SOME CHECKS INTO THIS
-		# user specific text (i.e. they texted "stop")
+		working_settings = UserSetting.objects.all().get(user=text.user)
+		if working_settings.text_request_stop == False:
+			# user specific text (i.e. they texted "stop")
 
-		# This is to remove any old texts that are backed up.
-		td = datetime.now(pytz.utc) - text.time_to_send.astimezone(pytz.UTC)
-		if td.seconds/60 > 5:
-			text.delete()
-		else:
-			send_text(text)		
+			# This is to remove any old texts that are backed up.
+			td = datetime.now(pytz.utc) - text.time_to_send.astimezone(pytz.UTC)
+			if td.seconds/60 > 5:
+				text.delete()
+			else:
+				send_text(text)		
 		# time specific checks (i.e. sent more than 5 in the last 10 minutes, etc)
 
 		
