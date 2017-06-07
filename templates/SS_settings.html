@@ -16,9 +16,7 @@
 <script src={% static "js/select2.full.min.js" %}></script>
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
 
-
 <div class="row">
-  <div class="input-field col s12">
     <div class="card">
       <div class="card-content small_spaces">
         <div class="row">
@@ -78,7 +76,7 @@
         <div class="card-action right-align">
           <div id = "settings_message"></div>
           <a id="reject_settings_button" class="settings-save-btn waves-effect waves-light chip black-text"><!-- <i class="material-icons left">today</i> -->No thanks, I'm just checking out the site</a>
-          <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
+          <a id="settings_modal_trigger" class="waves-effect waves-light btn" href="#confirm_settings">Save</a>
           <!-- <a id="save_settings_button" class="disabled waves-effect waves-light btn"><i class="material-icons left">today</i>Schedule or review texts</a> -->
         </div>
       </form>
@@ -87,6 +85,35 @@
     </div>
   </div>
 </div>
+
+
+  <!-- Modal Structure -->
+  <div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:50%;">
+    <div class="modal-content">
+      <h5>Confirm settings</h5>
+      <p>
+      <b>Telephone: </b><span id="phone_confirm"></span>
+      </p>
+      <p>
+      <b>Carrier: </b><span id="carrier_confirm"></span>
+      </p>
+      <p>
+      <b>Timezone: </b><span id="tz_confirm"></span>
+      </p>
+
+      <p>
+      If these are correct, pleace click confirm.  If not, please click edit to edit the settings.
+      </p>
+
+    </div>
+    <div class="modal-footer">
+    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Save</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
+      
+    </div>
+  </div>
+
+
 
 
 <!-- Modal Structure -->
@@ -109,6 +136,11 @@
   </div>
 </div>
 </div>
+
+
+
+
+
 
 <script type="text/javascript">
   $(document).ready(function(){
@@ -215,6 +247,15 @@
 
   
 }
+</script>
+<script type="text/javascript">
+  $('#settings_modal_trigger').click(function(){
+    console.log("TZ" + $("#tz_search").val())
+$('#carrier_confirm').text($("#carrier_search").val())
+$('#tz_confirm').text($("#tz_search").val())
+  $('#phone_confirm').text($("#phone_input").val())
+
+  })
 </script>
 
 <script>
