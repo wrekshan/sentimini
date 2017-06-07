@@ -142,7 +142,7 @@ def inspiration_indvidual_text(request):
 
 
 # Create your views here.
-def inspiration(request,id=None,slug=None):	
+def program(request,id=None,slug=None):	
 	if id == None:
 		context = {}
 		if request.user.is_authenticated():	
