@@ -77,7 +77,8 @@
       <form>{% csrf_token %}
         <div class="card-action right-align">
           <div id = "settings_message"></div>
-          <a id="save_settings_button" class="waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
+          <a id="reject_settings_button" class="settings-save-btn waves-effect waves-light chip black-text"><!-- <i class="material-icons left">today</i> -->No thanks, I'm just checking out the site</a>
+          <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn"><!-- <i class="material-icons left">today</i> -->Save</a>
           <!-- <a id="save_settings_button" class="disabled waves-effect waves-light btn"><i class="material-icons left">today</i>Schedule or review texts</a> -->
         </div>
       </form>
@@ -104,7 +105,7 @@
 
   </div>
   <div class="modal-footer">
-    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+    <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Got it</a>
   </div>
 </div>
 </div>
@@ -157,7 +158,8 @@
 
 <!-- LOAD OLD VALUES IF PRESENT -->
 <script>
-  var save_settings_data = function(){
+  var save_settings_data = function(x){
+    console.log("SAVE TYPE", x)
    if ($("#carrier_search").val() !== null){
     var carrier_search = $('#carrier_search').val()
     console.log("CARRIER "+carrier_search)
@@ -182,7 +184,7 @@
     var phone_good = 0
   }
 
-  if (phone_good == 1 && carrier_good == 1 && tz_good ==1){
+  if ((phone_good == 1 && carrier_good == 1 && tz_good ==1) || (x=="reject_settings_button")){
     // LOAD THE AJAX
     $.ajax({
       type: 'POST',
@@ -196,6 +198,7 @@
       'text_checkbox': $('#text_checkbox').is(':checked'),
       'research_check': $('#research_check').is(':checked'),
       'pause_text_checkbox': $('#pause_text_checkbox').is(':checked'),
+      'save_type': x,
 
     },
     success : function(data) {
@@ -215,9 +218,8 @@
 </script>
 
 <script>
-  $('#save_settings_button').click(function() {
-    console.log("SAVE CLICKED")
-    save_settings_data()  
+  $('.settings-save-btn').click(function() {
+    save_settings_data($(this).attr("id"))
   })
 
 </script>

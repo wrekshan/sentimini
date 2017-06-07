@@ -317,70 +317,82 @@ def settings(request):
 
 def save_settings(request):
 	response_data = {}
+	# print("SAVE SETTINGS")
 	if 'id' in request.POST.keys():
-		working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
-		working_settings.phone_input = request.POST['phone_input']
-		working_settings.phone = request.POST['phone_input']
-		working_carrier = Carrier.objects.all().get(carrier=request.POST['carrier_search'])
+		if request.POST['save_type'] == "save_settings_button":
+			working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
+			working_settings.phone_input = request.POST['phone_input']
+			working_settings.phone = request.POST['phone_input']
+			working_carrier = Carrier.objects.all().get(carrier=request.POST['carrier_search'])
 
-		if 'tz_search' in request.POST.keys():
-			working_settings.timezone_search = request.POST['tz_search']
+			if 'tz_search' in request.POST.keys():
+				working_settings.timezone_search = request.POST['tz_search']
 
-		if 'carrier_search' in request.POST.keys():
-			working_settings.carrier = request.POST['carrier_search']
+			if 'carrier_search' in request.POST.keys():
+				working_settings.carrier = request.POST['carrier_search']
 
-		if request.POST['email_checkbox'] == 'true':
-			working_settings.send_email_check = True
-		else:
-			working_settings.send_email_check = False
+			if request.POST['email_checkbox'] == 'true':
+				working_settings.send_email_check = True
+			else:
+				working_settings.send_email_check = False
 
-		if request.POST['text_checkbox'] == 'true':
+			if request.POST['text_checkbox'] == 'true':
+				working_settings.send_text_check = True
+			else:
+				working_settings.send_text_check = False	
+
+			if request.POST['research_check'] == 'true':
+				working_settings.research_check = True
+			else:
+				working_settings.research_check = False		
+
+			if request.POST['pause_text_checkbox'] == 'true':
+				working_settings.pause_text_checkbox = True
+			else:
+				working_settings.pause_text_checkbox = False	
+
+			##### DO THE PROCESS
+			#set up the timezone
+			if 'Eastern Standard Time' in request.POST['tz_search']:
+				working_settings.timezone = 'America/New_York'
+			elif 'Central Standard Time' in request.POST['tz_search']:
+				working_settings.timezone = 'America/Chicago'
+			elif 'Mountain Standard Time' in request.POST['tz_search']:
+				working_settings.timezone = 'America/Denver'
+			elif 'Pacific Standard Time' in request.POST['tz_search']:
+				working_settings.timezone = 'America/Los_Angeles'
+			else:
+				working_settings.timezone = working_settings.timezone_search
+			
+			#set up the SMS address	
+			working_settings.sms_address = working_settings.phone_input + working_carrier.sms_address
+			working_settings.settings_complete = True
 			working_settings.send_text_check = True
-		else:
-			working_settings.send_text_check = False	
+			working_settings.send_text = True
+			working_settings.text_request_stop = False
 
-		if request.POST['research_check'] == 'true':
-			working_settings.research_check = True
-		else:
-			working_settings.research_check = False		
+			working_settings.save()
 
-		if request.POST['pause_text_checkbox'] == 'true':
-			working_settings.pause_text_checkbox = True
-		else:
-			working_settings.pause_text_checkbox = False	
-
-		##### DO THE PROCESS
-		#set up the timezone
-		if 'Eastern Standard Time' in request.POST['tz_search']:
-			working_settings.timezone = 'America/New_York'
-		elif 'Central Standard Time' in request.POST['tz_search']:
-			working_settings.timezone = 'America/Chicago'
-		elif 'Mountain Standard Time' in request.POST['tz_search']:
-			working_settings.timezone = 'America/Denver'
-		elif 'Pacific Standard Time' in request.POST['tz_search']:
-			working_settings.timezone = 'America/Los_Angeles'
-		else:
-			working_settings.timezone = working_settings.timezone_search
+			wtc = "Welcome to Sentimini!  If you didn't just sign up, then just text 'stop'.  Otherwise schedule some texts!"
+			if PossibleText.objects.all().filter(user=request.user).filter(text=wtc).count()<1:
+				welcome_text_p = PossibleText(user=request.user,text=wtc,active=False,tmp_save=True)
+				welcome_text_p.save()
 		
-		#set up the SMS address	
-		working_settings.sms_address = working_settings.phone_input + working_carrier.sms_address
-		working_settings.settings_complete = True
-		working_settings.send_text_check = True
-		working_settings.send_text = True
-
-		working_settings.save()
-
-		wtc = "Welcome to Sentimini!  If you didn't just sign up, then just text 'stop'.  Otherwise schedule some texts!"
-		if PossibleText.objects.all().filter(user=request.user).filter(text=wtc).count()<1:
-			welcome_text_p = PossibleText(user=request.user,text=wtc,active=False,tmp_save=True)
-			welcome_text_p.save()
-	
 
 
-		welcome_text_p = PossibleText.objects.all().filter(user=request.user).get(text=wtc)
-		print("welcome_text_p",welcome_text_p)
-		welcome_text_a = ActualText(user=request.user,text=welcome_text_p,time_to_send=datetime.now(pytz.utc))
-		welcome_text_a.save()
+			welcome_text_p = PossibleText.objects.all().filter(user=request.user).get(text=wtc)
+			print("welcome_text_p",welcome_text_p)
+			welcome_text_a = ActualText(user=request.user,text=welcome_text_p,time_to_send=datetime.now(pytz.utc))
+			welcome_text_a.save()
+
+		else:
+			print("REJECT SETTINGS")
+			working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
+			working_settings.set = True
+			working_settings.send_text_check = False
+			working_settings.send_text = False
+			working_settings.text_request_stop = True
+			working_settings.save()
 		
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")				
