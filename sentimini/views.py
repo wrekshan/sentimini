@@ -388,7 +388,7 @@ def save_settings(request):
 		else:
 			print("REJECT SETTINGS")
 			working_settings = UserSetting.objects.all().get(id=int(request.POST['id']))
-			working_settings.set = True
+			working_settings.settings_complete = True
 			working_settings.send_text_check = False
 			working_settings.send_text = False
 			working_settings.text_request_stop = True
