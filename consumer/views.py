@@ -374,6 +374,9 @@ def get_text_datatable_response(request):
 	response_data = {} # to send back to the template
 
 	if request.user.is_authenticated():	
+		working_settings = UserSetting.objects.all().get(user=request.user)
+		main_context['user_timezone'] = working_settings.timezone
+		
 		working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
 	
@@ -448,8 +451,9 @@ def get_text_datatable(request):
 	response_data = {}
 	if request.user.is_authenticated():	
 		working_settings = UserSetting.objects.all().get(user=request.user)
-		main_context['working_texts'] = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
 		main_context['user_timezone'] = working_settings.timezone
+		main_context['working_texts'] = PossibleText.objects.all().filter(user=request.user).filter(tmp_save=False)
+
 	
 	print("GETTING DATA TABLE -------- ")
 	response_data["text_datatable"] = render_to_string('SS_text_datatable.html', main_context, request=request)
