@@ -376,7 +376,7 @@ def get_text_datatable_response(request):
 	if request.user.is_authenticated():	
 		working_settings = UserSetting.objects.all().get(user=request.user)
 		main_context['user_timezone'] = working_settings.timezone
-		
+
 		working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text)
 	
@@ -590,7 +590,7 @@ def get_timing_option_input(request):
 def get_timing_default(request):
 	if Timing.objects.all().filter(user=request.user).filter(default_timing=True).count()>0:
 		# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
-		working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
+		working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True).last()
 	else:
 		working_timing = Timing(user=request.user,default_timing=True, repeat=True)
 		working_timing.fuzzy = False
