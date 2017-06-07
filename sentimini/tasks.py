@@ -303,7 +303,7 @@ def check_email_for_new():
 	if use_gmail == 1:
 		mail = imaplib.IMAP4_SSL('imap.gmail.com')
 	else:
-		mail = imaplib.IMAP4_SSL('imappro.zoho.com')
+		mail = imaplib.IMAP4_SSL('imappro.zoho.com',993)
 
 	#### GMAIL
 	# mail = imaplib.IMAP4_SSL('imap.gmail.com')
