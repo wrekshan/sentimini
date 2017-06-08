@@ -482,7 +482,7 @@ def get_quick_suggestions(request):
 			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
 			
 			tmp_context = {'working_text': quick_text,
-			'suggestion_number': 1,
+			'suggestion_number': "1",
 			}
 
 			if quick_text != None:
@@ -500,7 +500,7 @@ def get_quick_suggestions(request):
 			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
 
 			tmp_context = {'working_text': quick_text,
-			'suggestion_number': 2,}
+			'suggestion_number': "2",}
 
 			if quick_text != None:
 				if request.user.is_authenticated():	
@@ -517,7 +517,7 @@ def get_quick_suggestions(request):
 			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
 			
 			tmp_context = {'working_text': quick_text,
-			'suggestion_number': 3,}
+			'suggestion_number': "3",}
 
 			if quick_text != None:
 				if request.user.is_authenticated():	
