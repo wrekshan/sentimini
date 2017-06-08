@@ -1,201 +1,351 @@
+{% load static %}
+{% load staticfiles %}
+<script src={% static "js/jquery.timepicker.js" %}></script>
+<link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
+
+<div class="card">
+	<div class="card-content">
+		<!-- TEXT -->
+		<div class="row">
+			<div class="col s12">
+				<span class="card-title">
+					<h4>{{text_message}}<a href="#new_text_modal"> <i id="help_highlight" style="font-size:75%;" class="fa fa-info-circle" aria-hidden="true"></i></a></h4>
+				</span>
+			</div>
+
+			<form class="col s12">
+				<div class="input-field col s12">
+					<i id = "new_text_highlight" class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
+					<textarea id="textarea1" class="materialize-textarea" data-length="160" rows="1">{{working_text.text}}</textarea>
+					{% if working_text %}
+					<label class = "active" for="textarea1">What do you want to tell yourself?</label>
+					{% else %}
+					<label for="textarea1">What do you want to tell yourself?</label>
+					{% endif %}
+				</div>
+			</form>
+		</div>
+
+		<!-- SAVE -->
+		<div class="right-align">
+			<span id="timing_summary">{{timing_summary}}</span></br>
+			<div id="text_save_buttons">
+				{% csrf_token %}
+				{% ifequal text_message "Edit Text" %}
+				<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
+				{% endifequal %}
+				<a id="show_options_top" class="show_options waves-effect waves-light btn">Show Options</a>
+				{% if user.is_authenticated %}
+				<a id="save_text_button" class="disabled waves-effect waves-light btn">Save</a>
+				{% else %}
+				<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
+				{% endif %}
+			</div>
+		</div>
+
+		<div id="advanced_options">
+			<div id = "alternate_forms">
+			</div>
+			<div id="timing_options">
+				<!-- HOUR -->
+				<hr>
+				<div class="col s12">
+				<h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
+				</div>
+				<div class="input-field col s11 offset-s1 ">
+					<p class="timing_option_input range-field"><div class="timing_option_input" type="range" id="specific_time_hours"></div></p>
+					<span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align timing_option_input" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align timing_option_input" /></span>
+				</div>
+
+				<!-- Number of repeats -->
+				<hr>
+				
+				<div class="switch">
+					<label>Specific<input class= "timing_option_input" type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label>
+				</div>
+
+				<div id = "timing_option_periodic" class="row">
+					<div class="col s12 ">
+						<h5>Periodic texts (average time between texts)</h5> 
+					</div>
+					<div class="input-field col s11 offset-s1 l3 ">
+						<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
+
+						<select id="fuzzy_denomination"  placeholder="" class="timing_option_input browser-default">
+							{% ifequal fuzzy_denomination "minutes" %}
+							<option value="minutes" selected="selected" >Minutes</option>
+							{% else %}
+							<option value="minutes">Minutes</option>
+							{% endifequal %}
+
+							{% ifequal fuzzy_denomination "hours" %}
+							<option value="hours" selected="selected" >Hours</option>
+							{% else %}
+							<option value="hours">Hours</option>
+							{% endifequal %}
+
+							{% ifequal fuzzy_denomination "days" %}
+							<option value="days" selected="selected" >Days</option>
+							{% else %}
+							<option value="days">Days</option>
+							{% endifequal %}
+
+							{% ifequal fuzzy_denomination "weeks" %}
+							<option value="weeks" selected="selected" >Weeks</option>
+							{% else %}
+							<option value="weeks">Weeks</option>
+							{% endifequal %}
+
+							{% ifequal fuzzy_denomination "months" %}
+							<option value="months" selected="selected" >Months</option>
+							{% else %}
+							<option value="months">Months</option>
+							{% endifequal %}
+						</select>
+					</div>
+
+					<div class="input-field col s11 offset-s1 l9 ">
+						<form action="#">
+							<p class="timing_option_input range-field">
+								<input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
+							</p>
+						</form>
+						<div id="ITI_mean_output"></div>
+						<form action="#">
+							<p class="timing_option_input range-field">
+								<input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "{{working_timing.iti_noise}}"/>
+							</p>
+						</form>
+						<div id="ITI_noise_output"></div>
+					</div>
+				</div>
 
 
+				<div id = "timing_option_specific" class = "row">
 
 
-    <div class="card">
-      <div class="card-content small_spaces ">
+					<div class="input-field col s12 ">
+						<h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
+					</div>
+					<div class="input-field col s11 offset-s1 l3 offset-l1 ">
+						<select id="repeat_time" class="timing_option_input browser-default">
+							<option value="1" selected>1 time</option>
+							<option value="2">2 times</option>
+							<option value="3">3 times</option>
+							<option value="4">4 times</option>
+							<option value="5">5 times</option>
+							<option value="6">6 times</option>
+							<option value="7">7 times</option>
+							<option value="8">8 times</option>
+							<option value="9">9 times</option>
+							<option value="10">10 times</option>
+							<option value="11">11 times</option>
+							<option value="12">12 times</option>
+						</select>
+					</div>
 
-<!-- <a href = "/consumer/test_signup">hey hey</a> -->
 
-<!-- TEXT -->
-<div class="row">
-  <div class="col s12">
-    <span class="card-title">
-    <h4><i id = "new_text_highlight" class="fa fa-commenting-o" aria-hidden="true"></i> {{text_message}}<a href="#new_text_modal"> <i id="help_highlight" style="font-size:75%;" class="fa fa-info-circle" aria-hidden="true"></i></h4></a></span>
+					<div class="col s12">
+						<h5>Every</h5>
+					</div>
+					<div class="col s11 offset-s1"
+						<form action="#">
+							<p>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
+								<label class="modal_check_label" for="Sunday">Sun</label>
 
-    <!-- TEXT -->
-    <div class="row">
-      <form class="col s12">
-        <div class="input-field col s12">
-          <textarea id="textarea1" class="materialize-textarea" data-length="160" rows="1">{{working_text.text}}</textarea>
-          {% if working_text %}
-          <label class = "active" for="textarea1">What do you want to tell yourself?</label>
-          {% else %}
-          <label for="textarea1">What do you want to tell yourself?</label>
-          {% endif %}
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
+								<label class="modal_check_label" for="Monday">Mon</label>
 
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
+								<label class="modal_check_label" for="Tuesday">Tues</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
+								<label class="modal_check_label" for="Wednesday">Wed</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
+								<label class="timing_option_input modal_check_label" for="Thursday">Thus</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
+								<label class="timing_option_input modal_check_label" for="Friday">Fri</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
+								<label class="timing_option_input modal_check_label" for="Saturday">Sat</label>
+							</p>
+
+						</form>
+
+					</div>
+				</div>  
+			</div>
+
+			<div class="right-align">
+				<!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
+				<!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
+				<div id="timing_save_buttons" class="row">
+					<a id="options_default_save" class="save_timing_default waves-effect waves-light"><i id="options_default_highlight" class="fa fa-cogs" aria-hidden="true"></i> Set timing as default</a>
+				</div>
+				<div class="row">
+					{% if user.is_authenticated %}
+					{% ifequal text_message "Edit Text" %}
+					<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
+					{% endifequal %}
+
+					<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
+
+					<a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save</a>
+					{% else %}
+					<a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
+					<a id="options_default_save" class="save_timing_default waves-effect waves-light btn disabled"><i id="options_default_highlight" class="fa fa-cogs fa-2x" aria-hidden="true"></i> Set default</a>
+					<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
+					{% endif %}
+				</div>
+
+
+				<div id="message"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+  <!-- NEW TEXT MODAL -->
+        <!-- Modal Structure -->
+        <div id="new_text_modal" class="modal modal-fixed-footer" >
+          <div class="modal-content modal-about">
+            <h4>Create a new text</h4>
+            You'll have 160 characters to remind yourself of anything you want.  You can always add a suggestion or view <a href="/consumer/program/">programs</a> if you need some ideas.
+            <div class="row"></div>
+            <h4>Timings</h4>
+            You can control the timing of this text if you hit the "timing" button.  You can schedule the texts for specific times or random times between specific hours or on specific days.
+            <div class="row"></div>
+            <h4>Responses</h4>
+            Keep in mind that Sentimini will collect any responses that you make, so you could keep a gratitude journal, emotion tracker, medication tracker, spontaneous poem journal, or anything you want.  
+            <div class="row"></div>
+            You can access your data by hitting the "data" button in the "Scheduled Texts" table.
+            <div class="row"></div>
+            Sentimini allows you to send texts at randomized times, which is a good method to quantitatively explore your experience.  You can download the data by using the table below.  
+
+
+          </div>
+          <div class="modal-footer">
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+          </div>
         </div>
-        
-      </form>
-    </div>
 
-    <!-- SAVE -->
-    <form>{% csrf_token %}
-    <div class="right-align">
-    
-        <span id="timing_summary">{{timing_summary}}</span></br>
-        {% ifnotequal text_message "Edit Text" %}
-        <a id="text_input_to_options" class="input_to_options waves-effect waves-light btn">Timing</a>
-        {% else %}
-        <a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
-        {% endifnotequal %}
-        {% if user.is_authenticated %}
-        <a id="save_text_button" class="disabled waves-effect waves-light btn">Save Text</a>
-        {% else %}
-        <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
-        {% endif %}
-      </div>
-    </form>
-  </div>
+<script src={% static "js/nouislider.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+<script src={% static "js/picker.js" %}></script>
+<script src={% static "js/picker.date.js" %}></script>
+<script src={% static "js/editing_text_helpers.js" %}></script>
 
-
-
-<!-- NEW TEXT MODAL -->
-<!-- Modal Structure -->
-  <div id="new_text_modal" class="modal modal-fixed-footer" >
-    <div class="modal-content modal-about">
-      <h4>Create a new text</h4>
-      You'll have 160 characters to remind yourself of anything you want.  You can always add a suggestion or view <a href="/consumer/program/">programs</a> if you need some ideas.
-      <div class="row"></div>
-      <h4>Timings</h4>
-      You can control the timing of this text if you hit the "timing" button.  You can schedule the texts for specific times or random times between specific hours or on specific days.
-      <div class="row"></div>
-      <h4>Responses</h4>
-      Keep in mind that Sentimini will collect any responses that you make, so you could keep a gratitude journal, emotion tracker, medication tracker, spontaneous poem journal, or anything you want.  
-      <div class="row"></div>
-      You can access your data by hitting the "data" button in the "Scheduled Texts" table.
-    <div class="row"></div>
-    Sentimini allows you to send texts at randomized times, which is a good method to quantitatively explore your experience.  You can download the data by using the table below.  
-
-
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
-    </div>
-  </div>
-
-
-
-
-<!-- BACK BUTTON FOR EDIT -->
-<script>
-
-  $(document).ready(function(){
-    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
-    $('.modal').modal();
-  });
-  </script>
-
-<script>
-
-$('.edit_text_to_input').click(function() {
-$.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_input/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_message': "New Text",},
-      success : function(data) {
-        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
-     }
-   })
-
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_datatable/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-      success : function(data) {
-        $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 350);
-       
-     }
-   })
-  })
-
-</script>
-
-<!-- SET UP FOR PAGE -->
+<!-- SLIDERS -->
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('textarea#textarea1').characterCounter();
-    $('#textarea1').trigger('autoresize');
-     Materialize.updateTextFields();
-  });
+	var rangeValues =
+	{
+		"1": "Time between texts will be pretty much exact to what you select",
+		"2": "Time between texts will be close to what you select",
+		"3": "Time between texts will be variable",
+		"4": "Time between texts will be extremely variable"
+	};
+
+
 </script>
 
+<!-- LOADING THE VALUES OF THEM ALL -->
 {% if working_text.text %}
 <script type="text/javascript">
-$(document).ready(function() {
-  $('#save_text_button').removeClass('disabled')
-  $('#text_input_to_options').removeClass('disabled')
-})
+	$(document).ready(function() {
+		$('#options_text_save').removeClass('disabled')
+	})
 </script>
 {% endif %}
 
 <!-- BUTTON CONTROL NEW TEXT-->
 <script type="text/javascript">
-  $('#textarea1').keyup(function(){
-    if (this.value.length < 1) {
-      $('#save_text_button').addClass('disabled')
+	$('#textarea1').keyup(function(){
+		if (this.value.length < 1) {
+			$('#options_text_save').addClass('disabled')
       // $('#text_input_to_options').addClass('disabled')
-    } else {
-      console.log("MORE THAN 1")
-      $('#save_text_button').removeClass('disabled')
+  } else {
+  	console.log("MORE THAN 1")
+  	$('#options_text_save').removeClass('disabled')
       // $('#text_input_to_options').removeClass('disabled')
-    }
-  })
+  }
+})
 </script>
 
-<!-- BUTTON CONTROL EDIT TEXT-->
 
-<!-- EDIT TIMING SETTINGS -->
+{% if working_text.text %}
 <script type="text/javascript">
-  $('.input_to_options').click(function() {
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/get_input_to_options/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_content': $('#textarea1').val(),
-      'id': "{{working_text.id}}",
-      'timing_message': "Timing Options"},
-      success : function(data) {
-        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 350);      
+	$(document).ready(function() {
+		$('#save_text_button').removeClass('disabled')
+		$('#text_input_to_options').removeClass('disabled')
+	})
+</script>
+{% endif %}
+<script>
 
-       $('#text_datatable').html("");
-       // $('#quick_suggestions').html("");
-     }
-   })
-  })
+	$(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+});
+</script>
+<script>
+	$('#save_text_button').click(function() {
+		console.log("SAVE CLICKED SS")
+		save_text_data()  
+	})
+
 </script>
 
-<!-- SAVE TEXT DATA -->
+
 <script>
-  var save_text_data = function(){
-    var text_content = $('#textarea1').val()
 
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/save_text/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_content': text_content,
-      'id': '{{id}}'},
-      success : function(data) {
-        $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300); 
+	$('.edit_text_to_input').click(function() {
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/get_text_input/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'text_message': "New Text",},
+			success : function(data) {
+				$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+				setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
+			}
+		})
 
-        
-        $.ajax({
-          type: 'POST',
-          url: '/consumer/get_text_datatable/',
-          data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-          success : function(data) {
-           
-           $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300); 
 
-         }
-       })
+	})
+
+</script>
+
+
+<script>
+	var save_text_data = function(){
+		var text_content = $('#textarea1').val()
+
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/save_text/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'text_content': text_content,
+			'id': '{{id}}'},
+			success : function(data) {
+				$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+				setTimeout(function() {$('#text_input').html(data['text_input']);}, 300); 
+
+
+				$.ajax({
+					type: 'POST',
+					url: '/consumer/get_text_datatable/',
+					data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+					success : function(data) {
+
+						$('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+						setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300); 
+
+					}
+				})
     //     $.ajax({
     //   type: 'POST',
     //   url: '/consumer/get_quick_suggestions/',
@@ -204,16 +354,478 @@ $(document).ready(function() {
     //     setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
     //   }
     // })
-      }
-    })
-  }
+}
+})
+	}
 </script>
+
+<!-- BUTTON CONTROL NEW TEXT-->
+<script type="text/javascript">
+	$('#textarea1').keyup(function(){
+		if (this.value.length < 1) {
+			$('#save_text_button').addClass('disabled')
+      // $('#text_input_to_options').addClass('disabled')
+  } else {
+  	console.log("MORE THAN 1")
+  	$('#save_text_button').removeClass('disabled')
+      // $('#text_input_to_options').removeClass('disabled')
+  }
+})
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('.modal').modal()
+		$("option[value='{{working_timing.repeat_in_window}}']").attr('selected','selected');
+		$('#advanced_options').hide()
+	})
+</script>
+
+{% if working_timing.fuzzy %}
+<script type="text/javascript">
+	$('#timing_switch').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.monday %}
+<script type="text/javascript">
+	$('#Monday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.tuesday %}
+<script type="text/javascript">
+	$('#Tuesday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.wednesday %}
+<script type="text/javascript">
+	$('#Wednesday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.thursday %}
+<script type="text/javascript">
+	$('#Thursday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.friday %}
+<script type="text/javascript">
+	$('#Friday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.saturday %}
+<script type="text/javascript">
+	$('#Saturday').prop('checked', true);
+</script>
+{% endif %}
+
+{% if working_timing.sunday %}
+<script type="text/javascript">
+	$('#Sunday').prop('checked', true);
+</script>
+{% endif %}
+
+
+
+
+
+<script type="text/javascript">
+	$('#timing_switch').click(function() {
+		if ($('#timing_switch').is(':checked') == true) {
+			$('#timing_option_specific').hide()
+			$('#timing_option_periodic').show()
+		} else {
+			$('#timing_option_specific').show()
+			$('#timing_option_periodic').hide()
+		}
+	})
+</script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		if ($('#timing_switch').is(':checked') == true) {
+			$('#timing_option_specific').hide()
+			$('#timing_option_periodic').show()
+		} else {
+			$('#timing_option_specific').show()
+			$('#timing_option_periodic').hide()
+		}
+	});
+</script>
+
+<script type="text/javascript">
+	var slider = document.getElementById('specific_time_hours');
+</script>
+
+<script type="text/javascript">
+	$('#startTime').timepicker();
+	$('#endTime').timepicker();
+
+</script>
+
+<script type="text/javascript">
+	$('.show_options').click(function() {
+		console.log("SHOW CLICK")
+		console.log($(this).text())
+		if ($(this).text()=="Show Options"){
+			$('#advanced_options').show()
+			$('.show_options').text("Hide Options")
+			$('#text_save_buttons').hide()
+		} else {
+			$('#advanced_options').hide()
+			$('.show_options').text("Show Options")
+			$('#text_save_buttons').show()
+
+		}
+	})
+	
+</script>
+
+
+<script type="text/javascript">
+
+
+
+
+	var timing_summary_update = function(){
+		var start_time = slideTime_start()
+		var end_time = slideTime_end()
+		var ITI_mean = $('#ITI_mean').val()
+		var ITI_noise = $('#ITI_noise').val()
+
+		var fuzzy = $('#timing_switch').is(':checked')
+		var num_repeats = $('#repeat_time').val()
+		var weekdays = [];
+		$('input[name=weekdays]:checked').each(function() {
+			weekdays.push($(this).val());
+		});
+
+		var fuzzy_denomination = $('#fuzzy_denomination').val()
+
+
+		if (fuzzy==true){
+			if (fuzzy_denomination=="minutes"){
+				var iti_standard = (60/ITI_mean) * 24 *7
+			} else if (fuzzy_denomination=="hours"){
+				var iti_standard = (24/ITI_mean)  *7
+			} else if (fuzzy_denomination =="days"){
+				var iti_standard = (7/ITI_mean)
+			} else if (fuzzy_denomination=="weeks"){
+				var iti_standard = ITI_mean
+			} else {
+				var iti_standard = ITI_mean/4
+			}
+			var timing_text = iti_standard.toFixed(1) + " per week (every " + ITI_mean + " " + fuzzy_denomination +")<br>Sent between " + start_time + " - " + end_time 
+		} else {
+			console.log("WEEKDAYS"+weekdays)
+			if (weekdays.length == 7){
+				var short_desc = "all days"
+			} else {
+				var short_desc = weekdays
+			}
+
+			var iti_standard = num_repeats * weekdays.length
+			var timing_text = iti_standard + " per week (" + num_repeats + " on " + short_desc + ")<br>Sent between " + start_time + " - " + end_time
+		}
+		$('#timing_summary').html(timing_text)
+	}
+</script>
+
+<script type="text/javascript">
+	var slider = document.getElementById('specific_time_hours');
+	console.log("STRATING VALE"+"{{working_timing.hour_start_value}}")
+	if ("{{working_timing.hour_start_value}}"){
+		noUiSlider.create(slider, {
+			start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+
+			connect: true,
+			step: 1,
+			range: {
+				'min': 0,
+				'max': 1439
+			},
+		});
+
+	} else {
+		noUiSlider.create(slider, {
+
+			start: [540, 1260],
+			connect: true,
+			step: 1,
+			range: {
+				'min': 0,
+				'max': 1439
+			},
+		});
+
+	}
+
+
+
+	var connect = slider.querySelectorAll('.noUi-connect');
+	var classes = ['c-1-color'];
+
+	for ( var i = 0; i < connect.length; i++ ) {
+		connect[i].classList.add(classes[i]);
+	}
+
+	slider.noUiSlider.on('update', function(){
+
+		var startTime = slideTime_start()
+		var endTime = slideTime_end()
+		$("#time").text(startTime + ' - ' + endTime);
+
+		$('#startTime').timepicker('setTime', startTime);
+		$('#endTime').timepicker('setTime', endTime);
+
+		$("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
+		timing_summary_update()
+
+	});
+</script>
+
+<script type="text/javascript">
+	function slideTime_reverse(text_time){
+		if (text_time.indexOf("am") >= 0){
+			var hour = parseInt(text_time.split(":")[0])
+			var minute = text_time.split(":")[1]
+			minute = minute.split("am")[0]
+			console.log("HOUR"+hour)
+			if (hour == 12){
+				return parseInt(parseInt(minute))  
+			} else {
+				return parseInt(parseInt(60*hour) + parseInt(minute))
+
+			}
+
+		} else {
+
+			var hour = parseInt(text_time.split(":")[0])
+			var minute = text_time.split(":")[1]
+			minute = minute.split("pm")[0]
+			if (hour == 12){
+				return parseInt(parseInt(12*60) + parseInt(minute))
+			} else {
+				return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
+			}
+		}
+	}
+
+	$( "#endTime" ).change(function() {
+    // $( "#endTime" ).change(function() {
+    	var slider = document.getElementById('specific_time_hours');
+    	slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+
+// });
+})
+
+	$( "#startTime" ).change(function() {
+    // $( "#startTime" ).change(function() {
+    	var slider = document.getElementById('specific_time_hours');
+    	slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+// });
+})
+
+</script>
+
+
+
+<script type="text/javascript">
+	$('.timing_option_input').change(function(){
+		console.log("TIMING CHANGED")
+		timing_summary_update()
+	})
+
+
+</script>
+
+
+
+
+<script type="text/javascript">
+	var update_histogram = function(){
+    // on page load, set the text of the label based the value of the range
+    
+    $('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+    // $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+} 
+</script>
+
+
 
 <script>
-  $('#save_text_button').click(function() {
-    console.log("SAVE CLICKED SS")
-    save_text_data()  
-  })
-
+	$(document).ready ( function(){
+		update_histogram()
+	})
 </script>
+
+<script type="text/javascript">
+	$('#ITI_mean').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+
+	$('#ITI_noise').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+</script>
+
+
+
+<script type="text/javascript">
+	$('.save_timing').click(function() {
+
+
+		var start_time = slideTime_start()
+		var end_time = slideTime_end()
+		var ITI_mean = $('#ITI_mean').val()
+		var ITI_noise = $('#ITI_noise').val()
+
+		var fuzzy = $('#timing_switch').is(':checked')
+		var num_repeats = $('#repeat_time').val()
+		var weekdays = [];
+		$('input[name=weekdays]:checked').each(function() {
+			weekdays.push($(this).val());
+		});
+
+		var fuzzy_denomination = $('#fuzzy_denomination').val()
+		var decay_check = $('#decay_check').is(':checked')
+		var private_check = $('#private_check').is(':checked')
+		var save_type = $(this).attr('id')
+		var text_content = $('#textarea1').val()
+
+		$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
+		$('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
+
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/save_timing/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'id': '{{id}}',
+			'hour_start': start_time,
+			'text_content': text_content,
+			'hour_end': end_time,
+			'hour_start_value': slider.noUiSlider.get()[0],
+			'hour_end_value': slider.noUiSlider.get()[1],
+			'iti': ITI_mean,
+			'iti_noise': ITI_noise,
+			'fuzzy_denomination': fuzzy_denomination,
+			'fuzzy': fuzzy,
+			'num_repeats': num_repeats,
+			'weekdays': weekdays.join(','),
+			'decay': decay_check,
+			'private': private_check,
+			'timing_message': "{{timing_message}}",
+			'save_type': save_type,
+		},
+		success : function(data) {
+
+			setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+
+			$.ajax({
+				type: 'POST',
+				url: '/consumer/get_text_datatable/',
+				data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				success : function(data) {
+
+					setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
+
+				}
+			})
+			$.ajax({
+				type: 'POST',
+				url: '/consumer/get_quick_suggestions/',
+				data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+				success : function(data) {
+					setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+				}
+			})
+
+
+		}
+	})
+
+	})
+</script>
+
+
+
+<!-- SAVE AS DEFAULTS-->
+<script type="text/javascript">
+	$('.save_timing_default').click(function() {
+
+		var start_time = slideTime_start()
+		var end_time = slideTime_end()
+		var ITI_mean = $('#ITI_mean').val()
+		var ITI_noise = $('#ITI_noise').val()
+
+		var fuzzy = $('#timing_switch').is(':checked')
+		var num_repeats = $('#repeat_time').val()
+		var weekdays = [];
+		$('input[name=weekdays]:checked').each(function() {
+			weekdays.push($(this).val());
+		});
+
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/save_timing_default/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'hour_start': start_time,
+			'hour_end': end_time,
+			'hour_start_value': slider.noUiSlider.get()[0],
+			'hour_end_value': slider.noUiSlider.get()[1],
+			'iti': ITI_mean,
+			'iti_noise': ITI_noise,
+			'fuzzy_denomination': $('#fuzzy_denomination').val(),
+			'fuzzy': fuzzy,
+			'num_repeats': num_repeats,
+			'weekdays': weekdays.join(','),
+			'decay': $('#decay_check').is(':checked'),
+			'private': $('#private_check').is(':checked'),
+		},
+
+		success : function(data) {
+			$('#message').html(data['message']);
+		}
+	})
+	})
+</script>
+
+
+
+<!-- REPEAT CONTROL -->
+
+<script>
+	$('#fuzzy_denomination').change(function() {
+		if ($('#fuzzy_denomination').val()=="minutes"){
+			$("#ITI_mean").prop({min: 20, max: 120});
+		} 
+		if ($('#fuzzy_denomination').val()=="hours"){
+			$("#ITI_mean").prop({min: 1, max: 72});
+		} 
+		if ($('#fuzzy_denomination').val()=="days"){
+			$("#ITI_mean").prop({min: 1, max: 60});
+		} 
+		if ($('#fuzzy_denomination').val()=="weeks"){
+			$("#ITI_mean").prop({min: 1, max: 104});
+		} 
+		if ($('#fuzzy_denomination').val()=="months"){
+			$("#ITI_mean").prop({min: 1, max: 24});
+		} 
+		$('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+		$('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+
+	})
+</script>
+
+
 

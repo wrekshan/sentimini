@@ -439,6 +439,7 @@ def get_text_input(request):
 		working_timing = get_timing_default(request)
 		# working_timing = Timing.objects.all().filter(user=request.user).get(default_timing=True)
 		main_context['timing_summary'] = working_timing.timing_summary
+		main_context['working_timing'] = working_timing
 		main_context['text_message'] = request.POST['text_message']
 		# main_context['timing_summary'] = working_timing.timing_summary
 
@@ -686,13 +687,13 @@ def get_options_to_input(request):
 
 	if working_text.tmp_save == True:
 		main_context['working_text'] = working_text
-		main_context['timing_summary'] = working_text.timing.timing_summary
+		main_context['working_timing'] = working_text.timing
 	else:
 		main_context['timing_summary'] = default_timing.timing_summary
 
 	if 'text_message' in request.POST.keys():
 		main_context['working_text'] = working_text
-		main_context['timing_summary'] = working_text.timing.timing_summary
+		main_context['working_timing'] = working_text.timing
 		main_context['text_message'] = request.POST['text_message']
 	else:
 		main_context['text_message'] = "New Text"
@@ -778,14 +779,25 @@ def save_timing(request):
 	main_context = {} 
 	response_data = {}
 
-	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-	if working_text.timing.default_timing == True:
+	if 'id' in request.POST.keys():
+		print("ID", request.POST['id'])
+		print("CONDITIONS", request.POST['id']=="")
+		if request.POST['id'] != "None" and request.POST['id'] != "" and request.POST['id'] is not None:
+			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		else:
+			working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
+	else:
+		working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
+
+	#See if there is a timing associated with it, if not assign the default
+	if working_text.timing == None:
 		working_timing = Timing(user=request.user,default_timing=False, fuzzy=True, repeat=True, date_start=datetime.now(pytz.utc))
+		working_text.timing = working_timing
 	else:
 		working_timing = working_text.timing
 
+	working_text.text = request.POST['text_content']
 	working_timing = save_timing_function(request,working_timing)
-	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 	working_text.timing = working_timing
 
 	# print("SAVE TIMING", request.POST.keys())
@@ -797,7 +809,7 @@ def save_timing(request):
 		working_text.tmp_save = False
 		working_text.save()
 		working_timing = get_timing_default(request)
-		main_context['timing_summary'] = working_timing.timing_summary
+		main_context['working_timing'] = working_timing
 
 	else:
 		print("SAVE TIMING ONLY")
@@ -806,7 +818,7 @@ def save_timing(request):
 
 		main_context['working_text'] = working_text
 		main_context['id'] = working_text.id
-		main_context['timing_summary'] = working_text.timing.timing_summary
+		main_context['working_timing'] = working_text.timing
 
 
 	
@@ -849,7 +861,8 @@ def save_text(request):
 		main_context['text_message'] = "New Text"
 
 	working_timing = get_timing_default(request)
-	main_context['timing_summary'] = working_timing.timing_summary
+	# main_context['timing_summary'] = working_timing.timing_summary
+	main_context['working_timing'] = working_timing
 
 	#If there are default options then get t
 

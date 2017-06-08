@@ -5,114 +5,86 @@
 <link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
 
 
-<!-- TEXT -->
 
-    <div class="card">
-      <div class="card-content small_spaces">
+<!-- HOUR -->
+<hr>
+<div class="input-field col s12 ">
+  <h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
+  <p class="range-field"><div type="range" id="specific_time_hours"></div></p>
+  <span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align" /></span>
+</div>
 
+<hr>
 
+<!-- Number of repeats -->
+<div class="switch">
+  <label>Specific<input type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label>
+</div>
+<div id = "timing_option_periodic" class="row">
+  <div class="col s12 ">
+    <h5>Periodic texts (average time between texts)</h5> 
+  </div>
+  <div class="input-field col s12 l3 ">
+    <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
 
-    <div class="card-title">
+    <select id="fuzzy_denomination"  placeholder="" class="browser-default">
+      {% ifequal fuzzy_denomination "minutes" %}
+      <option value="minutes" selected="selected" >Minutes</option>
+      {% else %}
+      <option value="minutes">Minutes</option>
+      {% endifequal %}
 
-    <span class="card-title"><h4>{{timing_message}}<a href="#timing_modal"><i class="small material-icons">info_outline</i></h4></a></span>
+      {% ifequal fuzzy_denomination "hours" %}
+      <option value="hours" selected="selected" >Hours</option>
+      {% else %}
+      <option value="hours">Hours</option>
+      {% endifequal %}
 
+      {% ifequal fuzzy_denomination "days" %}
+      <option value="days" selected="selected" >Days</option>
+      {% else %}
+      <option value="days">Days</option>
+      {% endifequal %}
 
-    <!-- <h4>{{timing_message}}<i class="small material-icons">info_outline</i></h4> -->
-    </div>
-    <span class="timing_text_title">{{working_text.text}}</span>
-    <hr>
+      {% ifequal fuzzy_denomination "weeks" %}
+      <option value="weeks" selected="selected" >Weeks</option>
+      {% else %}
+      <option value="weeks">Weeks</option>
+      {% endifequal %}
 
-
-    <!-- HOUR -->
-    <div class="row">
-      <div class="input-field col s12 ">
-        <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">schedule</i> -->
-        <h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
-        <p class="range-field">
-          <div type="range" id="specific_time_hours"></div>
-        </p>
-        
-         <span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align" /></span>
-        
-      </div>
-    </div>
-    <hr>
-
-    <!-- Number of repeats -->
-    <div class="switch">
-            <label>
-              Specific
-              <input type="checkbox" id="timing_switch">
-              <span class="lever"></span>
-              Periodic
-            </label>
-          </div>
-    <div id = "timing_option_periodic" class="row">
-      <div class="col s12 ">
-        <h5>Periodic texts (average time between texts)</h5> 
-      </div>
-      <div class="input-field col s12 l3 ">
-        <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
-        
-        <select id="fuzzy_denomination"  placeholder="" class="browser-default">
-        {% ifequal fuzzy_denomination "minutes" %}
-         <option value="minutes" selected="selected" >Minutes</option>
-         {% else %}
-         <option value="minutes">Minutes</option>
-         {% endifequal %}
-        
-         {% ifequal fuzzy_denomination "hours" %}
-         <option value="hours" selected="selected" >Hours</option>
-         {% else %}
-         <option value="hours">Hours</option>
-         {% endifequal %}
-
-        {% ifequal fuzzy_denomination "days" %}
-         <option value="days" selected="selected" >Days</option>
-         {% else %}
-         <option value="days">Days</option>
-         {% endifequal %}
-
-         {% ifequal fuzzy_denomination "weeks" %}
-         <option value="weeks" selected="selected" >Weeks</option>
-         {% else %}
-         <option value="weeks">Weeks</option>
-         {% endifequal %}
-
-         {% ifequal fuzzy_denomination "months" %}
-         <option value="months" selected="selected" >Months</option>
-         {% else %}
-         <option value="months">Months</option>
-         {% endifequal %}
-       </select>
-     </div>
-
-     <div class="input-field col s12 l9 ">
-      <form action="#">
-        <p class="range-field">
-          <input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
-        </p>
-      </form>
-      <div id="ITI_mean_output"></div>
-      <form action="#">
-        <p class="range-field">
-          <input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "{{working_timing.iti_noise}}"/>
-        </p>
-      </form>
-      <div id="ITI_noise_output"></div>
-    </div>
-
+      {% ifequal fuzzy_denomination "months" %}
+      <option value="months" selected="selected" >Months</option>
+      {% else %}
+      <option value="months">Months</option>
+      {% endifequal %}
+    </select>
   </div>
 
+  <div class="input-field col s12 l9 ">
+    <form action="#">
+      <p class="range-field">
+        <input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
+      </p>
+    </form>
+    <div id="ITI_mean_output"></div>
+    <form action="#">
+      <p class="range-field">
+        <input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "{{working_timing.iti_noise}}"/>
+      </p>
+    </form>
+    <div id="ITI_noise_output"></div>
+  </div>
+</div>
 
 
 
 
- <div id = "timing_option_specific" class = "row">
- 
- 
+
+<div id = "timing_option_specific" class = "row">
+
+
  <div class="col s12 ">
- <h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
+   <h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
  </div>
  <div class="input-field col s12 l3 ">
   <select id="repeat_time" class="browser-default">
@@ -129,41 +101,41 @@
     <option value="11">11 times</option>
     <option value="12">12 times</option>
   </select>
-  </div>
+</div>
 
-  <div class="col s12">
+<div class="col s12">
   <h5>Every</h5>
-    <form action="#">
-      <p>
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
-        <label class="modal_check_label" for="Sunday">Sun</label>
+  <form action="#">
+    <p>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
+      <label class="modal_check_label" for="Sunday">Sun</label>
       
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
-        <label class="modal_check_label" for="Monday">Mon</label>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
+      <label class="modal_check_label" for="Monday">Mon</label>
 
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
-        <label class="modal_check_label" for="Tuesday">Tues</label>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
+      <label class="modal_check_label" for="Tuesday">Tues</label>
 
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
-        <label class="modal_check_label" for="Wednesday">Wed</label>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
+      <label class="modal_check_label" for="Wednesday">Wed</label>
 
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
-        <label class="modal_check_label" for="Thursday">Thus</label>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
+      <label class="modal_check_label" for="Thursday">Thus</label>
 
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
-        <label class="modal_check_label" for="Friday">Fri</label>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
+      <label class="modal_check_label" for="Friday">Fri</label>
 
-        <input class="modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
-        <label class="modal_check_label" for="Saturday">Sat</label>
-      </p>
+      <input class="modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
+      <label class="modal_check_label" for="Saturday">Sat</label>
+    </p>
 
-    </form>
-  </div>
+  </form>
+</div>
 </div>  
 
 
 
-  <!-- DECAY -->
+<!-- DECAY -->
  <!--  <hr>
   <div class="col s12 ">
     <h5>Additional Options</h5>         
@@ -181,7 +153,7 @@
     </form>
   </div> -->
 
-<div class="row"></div>
+  <div class="row"></div>
   <div class="right-align">
     <!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
     <!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
@@ -196,66 +168,66 @@
     <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
     {% endif %}
     
-  </div>
-  <div id="message"></div>
-</div>
+
+    <div id="message"></div>
 
 
 
 
-<!-- Modal Structure -->
-  <div id="timing_modal" class="modal modal-fixed-footer">
-    <div class="modal-content modal-about">
-      <h4>Hour Range</h4>
-      You can select the times that you recieve texts.  This is primarily used so that you avoid receiving text messages while you sleep!  However, you can use this to schedule texts you receive only in the morning or night or even at a specific time.  You can use the slider or directly edit the times displayed to set the hour range.
 
-      <div class="row"></div>
-      <h4>Specific timing</h4>
-      By using this option, you are signing up to receive a specific number of texts to be received at some time during the hour range you set.  For example, if the hour range was 9am to 12pm and the number of texts was set to 2, then you would receive two texts every morning.  You can additionally select which days of the week you receive texts.
-      <div class="row"></div>
-      <h4>Periodic timing</h4>
-      By using this option, you are signing up to receive this text every so ofter.  You can set it to receive this text every 3 hours, 3 days, or even 3 months.  The timing will not be exact because the idea is to provide somewhat random reminders.  You can specify how variable the time between texts will be.
+    <!-- Modal Structure -->
+    <div id="timing_modal" class="modal modal-fixed-footer">
+      <div class="modal-content modal-about">
+        <h4>Hour Range</h4>
+        You can select the times that you recieve texts.  This is primarily used so that you avoid receiving text messages while you sleep!  However, you can use this to schedule texts you receive only in the morning or night or even at a specific time.  You can use the slider or directly edit the times displayed to set the hour range.
+
+        <div class="row"></div>
+        <h4>Specific timing</h4>
+        By using this option, you are signing up to receive a specific number of texts to be received at some time during the hour range you set.  For example, if the hour range was 9am to 12pm and the number of texts was set to 2, then you would receive two texts every morning.  You can additionally select which days of the week you receive texts.
+        <div class="row"></div>
+        <h4>Periodic timing</h4>
+        By using this option, you are signing up to receive this text every so ofter.  You can set it to receive this text every 3 hours, 3 days, or even 3 months.  The timing will not be exact because the idea is to provide somewhat random reminders.  You can specify how variable the time between texts will be.
+      </div>
+      <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+      </div>
     </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
-    </div>
-  </div>
 
 
-<script src={% static "js/nouislider.js" %}></script>
-<script src={% static "js/select2.full.min.js" %}></script>
-<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
-<script src={% static "js/picker.js" %}></script>
-<script src={% static "js/picker.date.js" %}></script>
-<script src={% static "js/editing_text_helpers.js" %}></script>
+    <script src={% static "js/nouislider.js" %}></script>
+    <script src={% static "js/select2.full.min.js" %}></script>
+    <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+    <script src={% static "js/picker.js" %}></script>
+    <script src={% static "js/picker.date.js" %}></script>
+    <script src={% static "js/editing_text_helpers.js" %}></script>
 
-<!-- SLIDERS -->
-<script type="text/javascript">
-  var rangeValues =
-{
-    "1": "Time between texts will be pretty much exact to what you select",
-    "2": "Time between texts will be close to what you select",
-    "3": "Time between texts will be variable",
-    "4": "Time between texts will be extremely variable"
-};
+    <!-- SLIDERS -->
+    <script type="text/javascript">
+      var rangeValues =
+      {
+        "1": "Time between texts will be pretty much exact to what you select",
+        "2": "Time between texts will be close to what you select",
+        "3": "Time between texts will be variable",
+        "4": "Time between texts will be extremely variable"
+      };
 
 
-</script>
+    </script>
 
-<!-- LOADING THE VALUES OF THEM ALL -->
-{% if working_text.text %}
-<script type="text/javascript">
-$(document).ready(function() {
-  $('#options_text_save').removeClass('disabled')
-})
-</script>
-{% endif %}
+    <!-- LOADING THE VALUES OF THEM ALL -->
+    {% if working_text.text %}
+    <script type="text/javascript">
+      $(document).ready(function() {
+        $('#options_text_save').removeClass('disabled')
+      })
+    </script>
+    {% endif %}
 
-<!-- BUTTON CONTROL NEW TEXT-->
-<script type="text/javascript">
-  $('#textarea1').keyup(function(){
-    if (this.value.length < 1) {
-      $('#options_text_save').addClass('disabled')
+    <!-- BUTTON CONTROL NEW TEXT-->
+    <script type="text/javascript">
+      $('#textarea1').keyup(function(){
+        if (this.value.length < 1) {
+          $('#options_text_save').addClass('disabled')
       // $('#text_input_to_options').addClass('disabled')
     } else {
       console.log("MORE THAN 1")
@@ -363,27 +335,27 @@ $(document).ready(function() {
   console.log("STRATING VALE"+"{{working_timing.hour_start_value}}")
   if ("{{working_timing.hour_start_value}}"){
     noUiSlider.create(slider, {
-   start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
-   
-   connect: true,
-   step: 1,
-   range: {
-     'min': 0,
-     'max': 1439
-   },
- });
+     start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+
+     connect: true,
+     step: 1,
+     range: {
+       'min': 0,
+       'max': 1439
+     },
+   });
 
   } else {
     noUiSlider.create(slider, {
-   
-   start: [540, 1260],
-   connect: true,
-   step: 1,
-   range: {
-     'min': 0,
-     'max': 1439
-   },
- });
+
+     start: [540, 1260],
+     connect: true,
+     step: 1,
+     range: {
+       'min': 0,
+       'max': 1439
+     },
+   });
 
   }
   
@@ -411,21 +383,21 @@ $(document).ready(function() {
 </script>
 
 <script type="text/javascript">
-function slideTime_reverse(text_time){
+  function slideTime_reverse(text_time){
     if (text_time.indexOf("am") >= 0){
-        var hour = parseInt(text_time.split(":")[0])
-        var minute = text_time.split(":")[1]
-        minute = minute.split("am")[0]
-        console.log("HOUR"+hour)
-        if (hour == 12){
-          return parseInt(parseInt(minute))  
-        } else {
-          return parseInt(parseInt(60*hour) + parseInt(minute))
-          
-        }
-        
+      var hour = parseInt(text_time.split(":")[0])
+      var minute = text_time.split(":")[1]
+      minute = minute.split("am")[0]
+      console.log("HOUR"+hour)
+      if (hour == 12){
+        return parseInt(parseInt(minute))  
+      } else {
+        return parseInt(parseInt(60*hour) + parseInt(minute))
+
+      }
+
     } else {
-      
+
       var hour = parseInt(text_time.split(":")[0])
       var minute = text_time.split(":")[1]
       minute = minute.split("pm")[0]
@@ -435,21 +407,21 @@ function slideTime_reverse(text_time){
         return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
       }
     }
-}
+  }
 
   $( "#endTime" ).change(function() {
     // $( "#endTime" ).change(function() {
-    var slider = document.getElementById('specific_time_hours');
-    slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+      var slider = document.getElementById('specific_time_hours');
+      slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
 // });
-  })
+})
 
   $( "#startTime" ).change(function() {
     // $( "#startTime" ).change(function() {
-    var slider = document.getElementById('specific_time_hours');
-    slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+      var slider = document.getElementById('specific_time_hours');
+      slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
 // });
-  })
+})
 
 </script>
 
@@ -504,8 +476,8 @@ function slideTime_reverse(text_time){
 
 <!-- BUTTONS BACK-->
 <script type="text/javascript">
-$('.options_to_input').click(function() {
-  $.ajax({
+  $('.options_to_input').click(function() {
+    $.ajax({
       type: 'POST',
       url: '/consumer/get_options_to_input/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -513,19 +485,19 @@ $('.options_to_input').click(function() {
       success : function(data) {
         $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
-     }
-   })
-  $.ajax({
+      }
+    })
+    $.ajax({
       type: 'POST',
       url: '/consumer/get_text_datatable/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
       success : function(data) {
         $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
         setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 350);
-       
-     }
-   })
-  $.ajax({
+
+      }
+    })
+    $.ajax({
       type: 'POST',
       url: '/consumer/get_quick_suggestions/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
@@ -533,38 +505,38 @@ $('.options_to_input').click(function() {
         setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
       }
     })
-})
+  })
 </script>
 
 
 
 <script type="text/javascript">
-$('.save_timing').click(function() {
-
-  
-  var start_time = slideTime_start()
-  var end_time = slideTime_end()
-  var ITI_mean = $('#ITI_mean').val()
-  var ITI_noise = $('#ITI_noise').val()
-
-  var fuzzy = $('#timing_switch').is(':checked')
-  var num_repeats = $('#repeat_time').val()
-  var weekdays = [];
-  $('input[name=weekdays]:checked').each(function() {
-   weekdays.push($(this).val());
- });
-
-  var fuzzy_denomination = $('#fuzzy_denomination').val()
-  var decay_check = $('#decay_check').is(':checked')
-  var private_check = $('#private_check').is(':checked')
-  var save_type = $(this).attr('id')
-
-  $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-
-  $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+  $('.save_timing').click(function() {
 
 
-  $.ajax({
+    var start_time = slideTime_start()
+    var end_time = slideTime_end()
+    var ITI_mean = $('#ITI_mean').val()
+    var ITI_noise = $('#ITI_noise').val()
+
+    var fuzzy = $('#timing_switch').is(':checked')
+    var num_repeats = $('#repeat_time').val()
+    var weekdays = [];
+    $('input[name=weekdays]:checked').each(function() {
+     weekdays.push($(this).val());
+   });
+
+    var fuzzy_denomination = $('#fuzzy_denomination').val()
+    var decay_check = $('#decay_check').is(':checked')
+    var private_check = $('#private_check').is(':checked')
+    var save_type = $(this).attr('id')
+
+    $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
+    $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
+
+    $.ajax({
       type: 'POST',
       url: '/consumer/save_timing/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -584,55 +556,55 @@ $('.save_timing').click(function() {
       'timing_message': "{{timing_message}}",
       'save_type': save_type,
     },
-      success : function(data) {
-        
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+    success : function(data) {
 
-        $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_datatable/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-      success : function(data) {
-       
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
+      setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
 
-     }
-   })
-        $.ajax({
-      type: 'POST',
-      url: '/consumer/get_quick_suggestions/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
-      success : function(data) {
-        setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
-      }
-    })
+      $.ajax({
+        type: 'POST',
+        url: '/consumer/get_text_datatable/',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success : function(data) {
 
-       
-     }
-   })
-  
-})
+          setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300);
+
+        }
+      })
+      $.ajax({
+        type: 'POST',
+        url: '/consumer/get_quick_suggestions/',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',},
+        success : function(data) {
+          setTimeout(function() {$('#quick_suggestions').html(data['quick_suggestions']);}, 600);
+        }
+      })
+
+
+    }
+  })
+
+  })
 </script>
 
 
 
 <!-- SAVE AS DEFAULTS-->
 <script type="text/javascript">
-$('.save_timing_default').click(function() {
-  
-  var start_time = slideTime_start()
-  var end_time = slideTime_end()
-  var ITI_mean = $('#ITI_mean').val()
-  var ITI_noise = $('#ITI_noise').val()
+  $('.save_timing_default').click(function() {
 
-   var fuzzy = $('#timing_switch').is(':checked')
-  var num_repeats = $('#repeat_time').val()
-  var weekdays = [];
-  $('input[name=weekdays]:checked').each(function() {
-   weekdays.push($(this).val());
- });
+    var start_time = slideTime_start()
+    var end_time = slideTime_end()
+    var ITI_mean = $('#ITI_mean').val()
+    var ITI_noise = $('#ITI_noise').val()
 
-  $.ajax({
+    var fuzzy = $('#timing_switch').is(':checked')
+    var num_repeats = $('#repeat_time').val()
+    var weekdays = [];
+    $('input[name=weekdays]:checked').each(function() {
+     weekdays.push($(this).val());
+   });
+
+    $.ajax({
       type: 'POST',
       url: '/consumer/save_timing_default/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -649,12 +621,12 @@ $('.save_timing_default').click(function() {
       'decay': $('#decay_check').is(':checked'),
       'private': $('#private_check').is(':checked'),
     },
-      
-      success : function(data) {
-       $('#message').html(data['message']);
-     }
-   })
-})
+
+    success : function(data) {
+     $('#message').html(data['message']);
+   }
+ })
+  })
 </script>
 
 

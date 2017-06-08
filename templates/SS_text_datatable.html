@@ -27,12 +27,12 @@
           
 <!-- <span style="display: none;">{{text.date_created|date:"YmdGis"}}</span> -->
           <td class="hide-on-small-only">
-          <span style="display: none;">{{text.date_created|date}}</span>
+          <span style="display: none;">{{text.date_created|date:"YmdGis"}}}</span>
           <span style="word-wrap: break-word; font-size:80%">{{text.date_created|date:"d M Y"}}</span>
           </td>
           
           <td>
-          <span style="display: none;">{{text.last_sent|date}}</span>
+          <span style="display: none;">{{text.last_sent|date:"YmdGis"}}}</span>
           <span style="word-wrap: break-word; font-size:80%">{{text.last_sent|date:"h:iA d M Y"}}</span>
           </td>
           
@@ -71,7 +71,7 @@
             <!-- <a class="waves-effect waves-light btn" href="#modal1">Modal</a> -->
 
 
-          <a class="modal-trigger waves-effect waves-teal btn-flat chip" href="#modal_delete_texts_{{text.id}}">
+          <a class="modal-trigger waves-effect waves-red btn-flat chip" href="#modal_delete_texts_{{text.id}}">
             <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Delete">delete</i>
           </a>
 
@@ -206,6 +206,9 @@ $('.download_csv').click(function() {
 <!-- TEXT EDIT -->
 <script type="text/javascript">
   $('.text_edit').click(function() {
+    $('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+
+
     $.ajax({
       type: 'POST',
       url: '/consumer/get_options_to_input/',
@@ -214,10 +217,7 @@ $('.download_csv').click(function() {
       'text_message': "Edit Text",
     },
     success : function(data) {
-      $('#text_input').html("");
-      // $('#quick_suggestions').html("");
-      $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_datatable').html(data['text_input']);}, 300);      
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
 
       
       
