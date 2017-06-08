@@ -310,7 +310,9 @@ class Collection(models.Model):
 		return slugify(str(self.collection_name + ' ' +str(self.description)))	
 
 
-
+class AlternateText(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	alt_text = models.CharField(max_length=160,default='')
 
 
 
@@ -318,6 +320,7 @@ class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	collection = models.ManyToManyField(Collection,default=1, related_name='texts',blank=True)
 	timing = models.ForeignKey(Timing,null=True)
+	alternate = models.ForeignKey(AlternateText,null=True)
 	text = models.CharField(max_length=160,default='')
 	input_text = models.CharField(max_length=160,default='')
 	date_created = models.DateTimeField(blank=True,null=True)

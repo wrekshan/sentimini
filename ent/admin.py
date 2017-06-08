@@ -4,10 +4,24 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
 #This is the other main workhorse that keeps user preferences.  
+class AlternateTextModelAdmin(admin.ModelAdmin):
+	list_display = [
+		"user",
+		"alt_text",
+		
+		
+	]
+	list_display_links = ["alt_text"]
+	list_filter = ["user"]
+	class Meta:
+		model = AlternateText
+
+admin.site.register(AlternateText,AlternateTextModelAdmin)
+
 class QuickSuggestionModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
