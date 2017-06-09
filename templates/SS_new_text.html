@@ -3,8 +3,8 @@
 <script src={% static "js/jquery.timepicker.js" %}></script>
 <link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
 <script src={% static "js/materialize.min.js" %}></script>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href={% static "css/materialize.css" %}>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
 
 
 <div class="card">
@@ -52,36 +52,66 @@
 
 
 		<div id="advanced_options">
-			<div id = "alternate_forms">
-		<!-- 	<hr>
-			<div class="col s12">
-			<h5> Alternate texts</h5>
+			
+			<!-- <hr>
 
-			<div class="input-field col s12">
-			<i id = "new_text_highlight" class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
-			<textarea  id="textarea_alt" class="alt-text materialize-textarea" data-length="160" rows="1"></textarea>
-			<label for="textarea_alt">Alt text</label>
-			<div class="right-align">
-			<a id="add_alt_text" class="alt_text waves-effect waves-light chip">Add alternative text</a>
+			
+			<h5> Alternate texts</h5>
+			
+			<div id = "alternate_form">
+				{% if alternative_texts %}
+				{% for atext in alternative_texts %}
+				<div class="col s12" id="alt_{{forloop.counter}}">
+				
+
+					<div class="input-field col s12">
+						<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
+						<textarea id="textarea_{{forloop.counter}}" class="alternate_texts materialize-textarea" data-length="160">{{atext.alt_text}}</textarea>
+						<label class = "active" for="textarea_{{forloop.counter}}">Alternative text</label>	
+					</div>
+
+					<div class="right-align">
+						<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{forloop.counter}}" width=100% id="remove_alt_{{forloop.counter}}"><i name="remove_alt_{{forloop.counter}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
+					</div>
+				</div>
+
+				<span id="alt_counter" style="display: none;"" >{{forloop.counter|add:"1"}}</span>
+				
+				
+
+				{% endfor %}
+				{% else %}
+				<span id="alt_counter" style="display: none;"" >1</span>
+
+				{% endif %}
+				
+
+				
+				
+				
+
+
 			</div>
-			</div>
-			</div> -->
-	
-			</div>
+
+			<a id="add_alt_text" class="alt_text waves-effect waves-light chip">Add alternative text</a> -->
+
+
+
+			
 			<div id="timing_options">
 				<!-- HOUR -->
 				<hr>
 				<div class="col s12">
 					<h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
 				</div>
-				<div class="input-field col s11 offset-s1 ">
+				<div class="input-field col s12  ">
 					<p class="timing_option_input range-field"><div class="timing_option_input" type="range" id="specific_time_hours"></div></p>
 					<span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align timing_option_input" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align timing_option_input" /></span>
 				</div>
 
 				<!-- Number of repeats -->
 				<hr>
-				
+
 				<div class="switch">
 					<label>Specific<input class= "timing_option_input" type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label>
 				</div>
@@ -90,7 +120,7 @@
 					<div class="col s12 ">
 						<h5>Periodic texts (average time between texts)</h5> 
 					</div>
-					<div class="input-field col s11 offset-s1 l3 ">
+					<div class="input-field col s12 l3 ">
 						<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
 
 						<select id="fuzzy_denomination"  placeholder="" class="timing_option_input browser-default">
@@ -126,7 +156,7 @@
 						</select>
 					</div>
 
-					<div class="input-field col s11 offset-s1 l9 ">
+					<div class="input-field col s12 l9 ">
 						<form action="#">
 							<p class="timing_option_input range-field">
 								<input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
@@ -149,7 +179,7 @@
 					<div class="input-field col s12 ">
 						<h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
 					</div>
-					<div class="input-field col s11 offset-s1 l3 offset-l1 ">
+					<div class="input-field col s12 l3 ">
 						<select id="repeat_time" class="timing_option_input browser-default">
 							<option value="1" selected>1 time</option>
 							<option value="2">2 times</option>
@@ -170,7 +200,7 @@
 					<div class="col s12">
 						<h5>Every</h5>
 					</div>
-					<div class="col s11 offset-s1"
+					<div class="col s12"
 					<form action="#">
 						<p>
 							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
@@ -261,6 +291,55 @@
 <script src={% static "js/picker.date.js" %}></script>
 <script src={% static "js/editing_text_helpers.js" %}></script>
 
+
+
+
+
+<script type="text/javascript">
+	$('#add_alt_text').click(function(){
+		var tmp = $('#alt_counter').text()
+		tmp = parseInt(tmp) + parseInt(1);
+
+
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/get_alternate/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'counter': tmp,},
+			success : function(data) {
+				
+				$('#alternate_form').append(data['alternate_form']);
+				$('#alt_counter').text(tmp);
+			}
+		})
+
+	})
+</script>
+
+<!-- 
+<script type="text/javascript">
+	$('.remove-alt').click(function(){
+		console.log($(this).id.split(_)[2])
+		console.log("CLICK!")
+		$('#alt_{{counter}}').html('')
+	})
+</script> -->
+
+
+<script type="text/javascript">
+	$('.remove-alt').click(function(){
+		console.log("REMOVE ALT CLICKED")
+		console.log($(this))
+		console.log($(this).attr('id'))
+		console.log($(this).attr('name'))
+		console.log($(this).name)
+		// console.log($(this).id.split("_")[2])
+		// $('#alt_COUNTER').html('')
+	})
+</script>
+
+
+
 <!-- SLIDERS -->
 <script type="text/javascript">
 	var rangeValues =
@@ -323,15 +402,15 @@
 </script>
 
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('textarea#textarea1').characterCounter();
-    $('#textarea1').trigger('autoresize');
-    Materialize.updateTextFields();
-	
-	$('textarea#textarea_alt').characterCounter();
-    $('#textarea_alt').trigger('autoresize');
-    Materialize.updateTextFields();
-  });
+	$(document).ready(function() {
+		$('textarea#textarea1').characterCounter();
+		$('#textarea1').trigger('autoresize');
+		Materialize.updateTextFields();
+
+		$('textarea#textarea_alt').characterCounter();
+		$('#textarea_alt').trigger('autoresize');
+		Materialize.updateTextFields();
+	});
 </script>
 
 
@@ -513,6 +592,7 @@
 			$('#advanced_options').hide()
 			$('.show_options').text("Show Options")
 			$('#text_save_buttons').show()
+			$('html, body').animate({scrollTop: $("#brand_logo").offset().top}, 333);
 
 		}
 	})
@@ -736,6 +816,14 @@
 		var save_type = $(this).attr('id')
 		var text_content = $('#textarea1').val()
 
+		var alt_texts = [];
+		$('.alternate_texts').each(function() {
+			alt_texts.push($(this).val());
+		});
+
+
+
+
 		$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 
 		$('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
@@ -761,10 +849,12 @@
 			'private': private_check,
 			'timing_message': "{{timing_message}}",
 			'save_type': save_type,
+			'alt_texts': alt_texts.join('***'),
 		},
 		success : function(data) {
 
 			setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+			$('html, body').animate({scrollTop: $("#brand_logo").offset().top}, 333);
 
 			$.ajax({
 				type: 'POST',

@@ -310,17 +310,19 @@ class Collection(models.Model):
 		return slugify(str(self.collection_name + ' ' +str(self.description)))	
 
 
+
 class AlternateText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	alt_text = models.CharField(max_length=160,default='')
-
+	def __str__(self):
+		return self.alt_text
 
 
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	collection = models.ManyToManyField(Collection,default=1, related_name='texts',blank=True)
 	timing = models.ForeignKey(Timing,null=True)
-	alternate = models.ForeignKey(AlternateText,null=True)
+	alt_text = models.ManyToManyField(AlternateText,blank=True)
 	text = models.CharField(max_length=160,default='')
 	input_text = models.CharField(max_length=160,default='')
 	date_created = models.DateTimeField(blank=True,null=True)
@@ -350,6 +352,9 @@ class PossibleText(models.Model):
 			return(tmp.time_sent)
 		else:
 			return("None")
+
+
+
 
 	# def date_created_local(self):
 	# 	tmper = UserSetting.objects.all().get(user=self.user)

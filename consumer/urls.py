@@ -1,9 +1,10 @@
 from django.conf.urls import url
 
-from .views import home, quotation, submit_quotation, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, program, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, get_alternate, quotation, submit_quotation, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, program, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
+	url(r'^get_alternate/$', get_alternate, name='get_alternate'),
 	url(r'^guided_tour/$', guided_tour, name='guided_tour'),
 	url(r'^settings/$', settings, name='settings'),
 	url(r'^about/$', about, name='about'),

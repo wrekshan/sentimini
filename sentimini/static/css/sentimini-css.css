@@ -1,3 +1,7 @@
+textarea.empty {
+  height: 30px
+}
+
 .card-inspiration{
 	 background: rgba(54, 25, 25, .5);
 }

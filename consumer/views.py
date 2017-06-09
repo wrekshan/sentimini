@@ -9,10 +9,23 @@ from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
 from sentimini.views import pause_text
-from ent.models import Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+from ent.models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
 from django.db.models import Q
 
 import csv
+
+def get_alternate(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	if "counter" in request.POST.keys():
+		main_context['counter'] = request.POST['counter']
+
+
+	response_data['alternate_form'] = render_to_string('SS_alternate.html', main_context, request=request)
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")		
+
 
 def change_nus(request):
 	main_context = {} # to build out the specific html stuff
@@ -674,11 +687,16 @@ def get_input_to_options(request):
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
+
+#for some reason this is how to get the edit thing
 def get_options_to_input(request):
 	main_context = {} 
 	response_data = {}
 
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+	
+	for atext in working_text.alt_text.all():
+		print("ALT TEXTS", atext.alt_text)
 	working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
 	default_timing = Timing.objects.all().filter(user=request.user).get(id=working_timing.id)
 	
@@ -697,6 +715,8 @@ def get_options_to_input(request):
 		main_context['text_message'] = request.POST['text_message']
 	else:
 		main_context['text_message'] = "New Text"
+
+	main_context['alternative_texts'] = working_text.alt_text.all()
 
 
 	response_data["text_input"] = render_to_string('SS_new_text.html', main_context, request=request)
@@ -788,6 +808,18 @@ def save_timing(request):
 			working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
 	else:
 		working_text = PossibleText(user=request.user,date_created=datetime.now(pytz.utc))
+
+	working_text.save()
+
+
+
+
+	if 'alt_texts' in request.POST.keys():
+		for alt_text in request.POST['alt_texts'].split('***'):
+			if alt_text != "":
+				atext = AlternateText(user=request.user,alt_text=alt_text)
+				atext.save()
+				working_text.alt_text.add(atext)
 
 	#See if there is a timing associated with it, if not assign the default
 	if working_text.timing == None:
