@@ -41,21 +41,23 @@
 
 
   <!-- Modal Structure -->
-  <div id="quick_suggestion-add-{{suggestion_number}}" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div id="quick_suggestion-add-{{suggestion_number}}" class="modal modal-fixed-footer" style="max-height:80%;">
     <div class="modal-content">
       <h3>Confirm to add text</h3>
-      <p>Text: <b>{{working_text.text}}</b></p>
+      <p class="flow-text">Text: <b>{{working_text.text}}</b></p>
        {% if working_text.alt_text.all %}
        Alternate texts:</br>
+       <p class="flow-text">
                   {% for alt_text in working_text.alt_text.all %}
                     <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
                     </br>
                 {% endfor %}
+                </p>
                 {% endif %}
       
-      <p>You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
+      <p class="flow-text">You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
 
-      <p>You can always edit the the text or timings in the scheduled text panel.</p>
+      <p class="flow-text">You can always edit the the text or timings in the scheduled text panel.</p>
 
     </div>
     <div class="modal-footer">
