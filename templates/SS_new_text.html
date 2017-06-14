@@ -1,10 +1,16 @@
 {% load static %}
 {% load staticfiles %}
-<script src={% static "js/jquery.timepicker.js" %}></script>
+<script src={% static "js/jquery.timepicker.js" %} async></script>
 <link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
-<script src={% static "js/materialize.min.js" %}></script>
+<!-- <script src={% static "js/materialize.min.js" %} async></script> -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<link rel="stylesheet" href={% static "css/materialize.css" %}>
+<!-- <link rel="stylesheet" href={% static "css/materialize.css" %}> -->
+<script src={% static "js/nouislider.js" %} async></script>
+<script src={% static "js/select2.full.min.js" %} async></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+<script src={% static "js/picker.js" %} async></script>
+<script src={% static "js/picker.date.js" %} async></script>
+<script src={% static "js/editing_text_helpers.js" %} ></script>
 
 
 <div class="card">
@@ -12,15 +18,18 @@
 		<!-- TEXT -->
 		<div class="row">
 			<div class="col s12">
+			
 				<span class="card-title">
-					<h4>{{text_message}}<a href="#new_text_modal"> <i id="help_highlight" style="font-size:75%;" class="fa fa-info-circle" aria-hidden="true"></i></a></h4>
+					<h4>{{text_message}} <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Create a new text here.  You can also sign up for the suggested texts or programs'> </i> --></h4>
+
+					
 				</span>
 			</div>
 
 			<form class="col s12">
 				<div class="input-field col s12">
 					<i id = "new_text_highlight" class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
-					<textarea id="textarea1" class="materialize-textarea" data-length="160">{{working_text.text}}</textarea>
+					<textarea  style="height:10px; min-height: 10px;" id="textarea1" class="materialize-textarea" data-length="160">{{working_text.text}}</textarea>
 					{% if working_text %}
 					<label class = "active" for="textarea1">What do you want to tell yourself?</label>
 					{% else %}
@@ -53,25 +62,27 @@
 
 		<div id="advanced_options">
 			
-			<!-- <hr>
+			<hr>
 
 			
-			<h5> Alternate texts</h5>
+			<h5> Alternate texts <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'You can add different versions of this text here.  When the message is sent, one of these forms will be randomly selected.</br></br>NOTE: Only the alternative forms of the texts will be sent.  The first line by "New Text" will be considered the title, but not an actual texts.' data-html="true"></i></h5>
+			<span id="alt_text_title_message"></span>
 			
 			<div id = "alternate_form">
 				{% if alternative_texts %}
 				{% for atext in alternative_texts %}
-				<div class="col s12" id="alt_{{forloop.counter}}">
+				<div  id="alt_{{forloop.counter}}">
 				
 
-					<div class="input-field col s12">
+					<div class="input-field col s11">
 						<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
-						<textarea id="textarea_{{forloop.counter}}" class="alternate_texts materialize-textarea" data-length="160">{{atext.alt_text}}</textarea>
+						<textarea  name = {{atext.id}} style="height:12px; min-height: 12px;" id="textarea_{{forloop.counter}}" class="alternate_texts materialize-textarea" data-length="160">{{atext.alt_text}}</textarea>
 						<label class = "active" for="textarea_{{forloop.counter}}">Alternative text</label>	
 					</div>
-
+					<div class="col s1">
 					<div class="right-align">
 						<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{forloop.counter}}" width=100% id="remove_alt_{{forloop.counter}}"><i name="remove_alt_{{forloop.counter}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
+					</div>
 					</div>
 				</div>
 
@@ -81,7 +92,7 @@
 
 				{% endfor %}
 				{% else %}
-				<span id="alt_counter" style="display: none;"" >1</span>
+				<span id="alt_counter" style="display: none;"" >0</span>
 
 				{% endif %}
 				
@@ -93,7 +104,7 @@
 
 			</div>
 
-			<a id="add_alt_text" class="alt_text waves-effect waves-light chip">Add alternative text</a> -->
+			<a id="add_alt_text" class="alt_text waves-effect waves-light chip">Add alternative text</a>
 
 
 
@@ -102,53 +113,54 @@
 				<!-- HOUR -->
 				<hr>
 				<div class="col s12">
-					<h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts during</h5>
+					<h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts between <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'The text will be sent only within this time.  If the time is a range, the it sent at a random time in the range.'></i> --></h5> 
 				</div>
 				<div class="input-field col s12  ">
 					<p class="timing_option_input range-field"><div class="timing_option_input" type="range" id="specific_time_hours"></div></p>
-					<span> Hour Range: </span><input style ="width: 60px;" id="startTime" type="text" class="time center-align timing_option_input" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align timing_option_input" /></span>
+					<input style ="width: 60px;" id="startTime" type="text" class="time center-align timing_option_input" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align timing_option_input" /></span>
 				</div>
 
 				<!-- Number of repeats -->
 				<hr>
 
 				<div class="switch">
-					<label>Specific<input class= "timing_option_input" type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label>
+					<label>Specific<input class= "timing_option_input" type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label> <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Specific: Schedule texts for any given day.  Periodic: Schedule texts every so often'></i>
 				</div>
 
 				<div id = "timing_option_periodic" class="row">
 					<div class="col s12 ">
-						<h5>Periodic texts (average time between texts)</h5> 
+						<h5>Periodic texts</h5> 
 					</div>
 					<div class="input-field col s12 l3 ">
 						<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
 
+
 						<select id="fuzzy_denomination"  placeholder="" class="timing_option_input browser-default">
-							{% ifequal fuzzy_denomination "minutes" %}
+							{% ifequal working_timing.fuzzy_denomination "minutes" %}
 							<option value="minutes" selected="selected" >Minutes</option>
 							{% else %}
 							<option value="minutes">Minutes</option>
 							{% endifequal %}
 
-							{% ifequal fuzzy_denomination "hours" %}
+							{% ifequal working_timing.fuzzy_denomination "hours" %}
 							<option value="hours" selected="selected" >Hours</option>
 							{% else %}
 							<option value="hours">Hours</option>
 							{% endifequal %}
 
-							{% ifequal fuzzy_denomination "days" %}
+							{% ifequal working_timing.fuzzy_denomination "days" %}
 							<option value="days" selected="selected" >Days</option>
 							{% else %}
 							<option value="days">Days</option>
 							{% endifequal %}
 
-							{% ifequal fuzzy_denomination "weeks" %}
+							{% ifequal working_timing.fuzzy_denomination "weeks" %}
 							<option value="weeks" selected="selected" >Weeks</option>
 							{% else %}
 							<option value="weeks">Weeks</option>
 							{% endifequal %}
 
-							{% ifequal fuzzy_denomination "months" %}
+							{% ifequal working_timing.fuzzy_denomination "months" %}
 							<option value="months" selected="selected" >Months</option>
 							{% else %}
 							<option value="months">Months</option>
@@ -162,13 +174,13 @@
 								<input type="range" id="ITI_mean" min="1" max="72" value = "{{working_timing.iti_raw}}">
 							</p>
 						</form>
-						<div id="ITI_mean_output"></div>
+						<span id="ITI_mean_output"></span> <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'This is the AVERAGE time between texts.'></i>
 						<form action="#">
 							<p class="timing_option_input range-field">
 								<input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "{{working_timing.iti_noise}}"/>
 							</p>
 						</form>
-						<div id="ITI_noise_output"></div>
+						<span id="ITI_noise_output"></span><i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-html="true" data-tooltip= 'This is the variability.  1=pretty much exact.  4=highly variable.</br></br>If the average time between texts is 3 hours and the variability is low, then you will receive the text pretty much every 3 hours (plus or minus a couple of minutes).</br></br>If the variability is high, then you could receive a text and then 1 hour later get a text, then 4 hours later get a text, then 3 hours later get a text.  On average you will receive the text every 3 hours, but it will be unpredictable.'></i>
 					</div>
 				</div>
 
@@ -177,28 +189,22 @@
 
 
 					<div class="input-field col s12 ">
-						<h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Number per day</h5>      
+						<h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Texts of per day <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'This is the number of texts to be sent in the time range.  How many repetitions per day do you want?'></i> --></h5>      
 					</div>
 					<div class="input-field col s12 l3 ">
 						<select id="repeat_time" class="timing_option_input browser-default">
-							<option value="1" selected>1 time</option>
-							<option value="2">2 times</option>
-							<option value="3">3 times</option>
-							<option value="4">4 times</option>
-							<option value="5">5 times</option>
-							<option value="6">6 times</option>
-							<option value="7">7 times</option>
-							<option value="8">8 times</option>
-							<option value="9">9 times</option>
-							<option value="10">10 times</option>
-							<option value="11">11 times</option>
-							<option value="12">12 times</option>
+							<option value="1" selected>1 text</option>
+							<option value="2">2 texts</option>
+							<option value="3">3 texts</option>
+							<option value="4">4 texts</option>
+							<option value="5">5 texts</option>
+							<option value="6">6 texts</option>
 						</select>
 					</div>
 
 
 					<div class="col s12">
-						<h5>Every</h5>
+						<h5>Every <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'You can select the day of the week you want the text to be sent on.'></i> --></h5>
 					</div>
 					<div class="col s12"
 					<form action="#">
@@ -235,7 +241,7 @@
 			<!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
 			<!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
 			<div id="timing_save_buttons" class="row">
-				<a id="options_default_save" class="save_timing_default waves-effect waves-light"><i id="options_default_highlight" class="fa fa-cogs" aria-hidden="true"></i> Set timing as default</a>
+				<a id="options_default_save" class="save_timing_default waves-effect waves-light"><i id="options_default_highlight" class="fa fa-cogs" aria-hidden="true"></i> Set timing as default</a> <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Any new texts will use these settings as a default.  If you text "new:" and your text then it will use the default settings.'></i> -->
 			</div>
 			<div class="row">
 				{% if user.is_authenticated %}
@@ -262,6 +268,23 @@
 
 <!-- NEW TEXT MODAL -->
 <!-- Modal Structure -->
+
+
+
+<div id="alternate_modal" class="modal modal-fixed-footer" >
+	<div class="modal-content modal-about">
+		<h4>Alternate Texts</h4>
+		You can add alternate versions of the text.  If you decide to use this option, then when the text is sent the one of the versions is randomly selected.  
+		<div class="row"></div>
+		This is just another way that you can control your experience.
+		<div class="row"></div>
+	</div>
+	<div class="modal-footer">
+		<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Got it</a>
+	</div>
+</div>
+
+
 <div id="new_text_modal" class="modal modal-fixed-footer" >
 	<div class="modal-content modal-about">
 		<h4>Create a new text</h4>
@@ -284,12 +307,7 @@
 	</div>
 </div>
 
-<script src={% static "js/nouislider.js" %}></script>
-<script src={% static "js/select2.full.min.js" %}></script>
-<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
-<script src={% static "js/picker.js" %}></script>
-<script src={% static "js/picker.date.js" %}></script>
-<script src={% static "js/editing_text_helpers.js" %}></script>
+
 
 
 
@@ -310,6 +328,7 @@
 				
 				$('#alternate_form').append(data['alternate_form']);
 				$('#alt_counter').text(tmp);
+				$('#alt_text_title_message').text("Only the alternate text will be sent.  The text in the 'New Text' box should be considered a title.  It will not be sent to you.")
 			}
 		})
 
@@ -326,15 +345,23 @@
 </script> -->
 
 
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('textarea#textarea_{{counter}}').characterCounter();
+		$('#textarea_{{counter}}').trigger('autoresize');
+		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
+		$('.tooltipped').tooltip({delay: 50});
+
+	});
+</script>
+
+
+
 <script type="text/javascript">
 	$('.remove-alt').click(function(){
-		console.log("REMOVE ALT CLICKED")
-		console.log($(this))
-		console.log($(this).attr('id'))
-		console.log($(this).attr('name'))
-		console.log($(this).name)
-		// console.log($(this).id.split("_")[2])
-		// $('#alt_COUNTER').html('')
+		$('#alt_'+$(this).attr('id').split("_")[2]).empty()
 	})
 </script>
 
@@ -369,9 +396,7 @@
 			$('#options_text_save').addClass('disabled')
       // $('#text_input_to_options').addClass('disabled')
   } else {
-  	console.log("MORE THAN 1")
   	$('#options_text_save').removeClass('disabled')
-  	
       // $('#text_input_to_options').removeClass('disabled')
   }
 })
@@ -406,10 +431,13 @@
 		$('textarea#textarea1').characterCounter();
 		$('#textarea1').trigger('autoresize');
 		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
 
 		$('textarea#textarea_alt').characterCounter();
 		$('#textarea_alt').trigger('autoresize');
+		$('.materialize-textarea').trigger('autoresize')
 		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
 	});
 </script>
 
@@ -425,6 +453,9 @@
 			success : function(data) {
 				$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 				setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
+				setTimeout(function() {	Materialize.updateTextFields();}, 305);      
+				setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);      
+			
 			}
 		})
 
@@ -447,6 +478,8 @@
 			success : function(data) {
 				$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 				setTimeout(function() {$('#text_input').html(data['text_input']);}, 300); 
+				setTimeout(function() {	Materialize.updateTextFields();}, 305);     
+				setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);       
 
 
 				$.ajax({
@@ -480,7 +513,7 @@
 			$('#save_text_button').addClass('disabled')
       // $('#text_input_to_options').addClass('disabled')
   } else {
-  	console.log("MORE THAN 1")
+  	
   	$('#save_text_button').removeClass('disabled')
       // $('#text_input_to_options').removeClass('disabled')
   }
@@ -821,6 +854,12 @@
 			alt_texts.push($(this).val());
 		});
 
+		var alt_texts_ids = [];
+		$('.alternate_texts').each(function() {
+			alt_texts_ids.push($(this).attr('name'));
+			console.log($(this).attr('name'))
+		});
+
 
 
 
@@ -849,11 +888,14 @@
 			'private': private_check,
 			'timing_message': "{{timing_message}}",
 			'save_type': save_type,
-			'alt_texts': alt_texts.join('***'),
+			'alt_texts': alt_texts,
+			'alt_texts_ids': alt_texts_ids,
 		},
 		success : function(data) {
 
 			setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);
+			setTimeout(function() {	Materialize.updateTextFields();}, 305);   
+			setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);         
 			$('html, body').animate({scrollTop: $("#brand_logo").offset().top}, 333);
 
 			$.ajax({

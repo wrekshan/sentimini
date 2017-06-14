@@ -19,8 +19,7 @@
   <!-- <script src={% static "js/plotly.js" %}></script> -->
 
   
-  <script src={% static "js/list.min.js" %}></script>
-  <script src={% static "js/list.pagination.min.js" %}></script>
+  
   <link rel="stylesheet" href={% static "css/nouislider.css" %}>
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
@@ -28,7 +27,7 @@
   
   <link rel="stylesheet" href={% static "css/parallax-style.css" %}>
 
-  <script src={% static "js/materialize.min.js" %}></script>
+  <script src={% static "js/materialize.min.js" %} async></script>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href={% static "css/materialize.css" %}>
   <link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
@@ -39,8 +38,10 @@
 
 
 <ul id="dropdown1" class="dropdown-content">
+<li><a href="/consumer/quotation/">Quotes</a></li>
   <li><a href="/consumer/text_commands/">Text Commands</a></li>
   <li><a href="/consumer/beta/">Beta</a></li>
+  <li class="divider"></li>
   <li><a href="/consumer/settings">Settings</a></li>
   <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
 
@@ -61,7 +62,6 @@
 
         {% endif %}
         <li><a href="/consumer/home/">Texts</a></li>
-        <li><a href="/consumer/quotation/">Quotes</a></li>
         <li><a href="/consumer/program/">Programs</a></li>
         <li><a href="/consumer/about/">About</a></li>
         
@@ -82,14 +82,19 @@
           <li><a href="/consumer/home/""><h3>Sentimini!</h3></a></li>
         <li><div class="row"></div></li>
         <li><a href="/consumer/home/">Texts</a></li>
-        <li><a href="/consumer/quotation/">Quotes</a></li>
         <li><a href="/consumer/program/">Programs</a></li>
+
+        <li><div class="row"></div></li>
         <li><a href="/consumer/about/">About</a></li>
         <li><a href="/consumer/text_commands/">Text Commands</a></li>
+        <li><a href="/consumer/quotation/">Quotes</a></li>
+        
+        
         {% if user.is_authenticated %}
         <li><a href="/consumer/beta/">Beta</a></li>
+        <li><div class="row"></div></li>
         <li><a href="/consumer/settings">Settings</a></li>
-        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+        <li><a class="" href="{% url 'account_logout' %}">Sign out (logged in as {{ user.get_username }})</a></li>
         {% else %}
         <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
         {% endif %}
@@ -197,6 +202,7 @@
   $(document).ready(function(){
     // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
+    $('.materialize-textarea').trigger('autoresize');
   });
   </script>
 

@@ -114,47 +114,104 @@ def get_create_inspiration(request):
 
 
 
+def transfer_alt_texts(system_text,user_text):
+	print("TRANSER TEXTS")
+	print("ALT ", system_text.alt_text.all())
+	if system_text.alt_text.all().count()>0:
+		print("GREATER THAN 1")
+		for text in system_text.alt_text.all():
+			print("TEXT", text.alt_text)
+			tmp = AlternateText(user=user_text.user,alt_text=text.alt_text)
+			tmp.save()
+			user_text.alt_text.add(tmp)
+		user_text.save()
+			
+
+
 def inspiration_indvidual_text(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
-	
-
 	tmp = PossibleText.objects.all().get(id=int(request.POST['selected_texts'].split('_')[1]))
+	# print("ALT ", tmp.alt_text.all())
+	user_text = tmp
 	if PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text).count()<1:
+		print("CREATING!")
 		timing = Timing.objects.all().get(id=tmp.timing.id)
 
 		timing.pk=None
 		timing.intended_text_input=""
 		timing.user=request.user
-		tmp.default_timing=False
+		user_text.default_timing=False
 		timing.save()
 
-		tmp.pk=None
-		tmp.timing=timing
-		tmp.user=request.user
-		tmp.tmp_save=False
+		user_text.pk=None
+		user_text.timing=timing
+		user_text.user=request.user
+		user_text.tmp_save=False
 
-		tmp.quick_suggestion=False
-		tmp.date_created=datetime.now(pytz.utc)
-		tmp.save()
+		user_text.quick_suggestion=False
+		user_text.date_created=datetime.now(pytz.utc)
+		user_text.save()
+
+		transfer_alt_texts(PossibleText.objects.all().get(id=int(request.POST['selected_texts'].split('_')[1])),user_text)
 
 		if 'quick_suggestion' in request.POST.keys():
 			if request.user.is_authenticated():	
 				qs = QuickSuggestion(user=request.user,date=datetime.now(pytz.utc),text=tmp,added=True)
 				qs.save()
 
+		response_data['save_type']="added"
+		# html_out = '<div  id = "_" ' + request.POST['selected_texts'].split('_')[1] + ' " class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span class="add-text-inspiration-btn"> <i class="material-icons" >delete</i> </span></div>'
+
+		
+
 	else:
+		print("REMOVING!")
 		possible_texts = PossibleText.objects.all().filter(user=request.user).filter(text=tmp.text)
 		for text in possible_texts:
 			text.delete()
 		response_data['save_type']="removed"
+		# html_out = '<a href="#text_add_confirm" id = "_" ' + request.POST['selected_texts'].split('_')[1] + ' " class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span> <i class="material-icons" >plus</i> </span></a>'
+		
+
+	# response_data['html_out'] = html_out
+
+
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
 
 # Create your views here.
+def text(request,id=None,slug=None):	
+	if id == None:
+		context = {}
+		if request.user.is_authenticated():	
+			if UserSetting.objects.all().filter(user=request.user).count() > 0:
+				working_settings = UserSetting.objects.all().get(user=request.user)
+				if working_settings.settings_complete == True:
+					return render(request,"SS_text_specific.html",context)
+				else:
+					return HttpResponseRedirect('/consumer/settings/')
+		else:
+			return render(request,"SS_text_specific.html",context)
+	
+		return render(request,"SS_text_specific.html",context)
+	else:
+		context = {}
+		working_text = PossibleText.objects.all().get(id=id)
+		context['working_text'] = working_text
+
+		if request.user.is_authenticated():	
+			if PossibleText.objects.all().filter(user=request.user).filter(text=working_text.text).count()>0:
+				user_text = PossibleText.objects.all().filter(user=request.user).filter(text=working_text.text).first()
+				user_text = PossibleText.objects.all().filter(user=request.user).get(id=user_text.id)
+				context['user_text'] = user_text		
+	
+		return render(request,"SS_text_specific.html",context)
+
+
 def program(request,id=None,slug=None):	
 	if id == None:
 		context = {}
@@ -173,7 +230,10 @@ def program(request,id=None,slug=None):
 		working_collection = Collection.objects.all().get(id=id)
 		key = 1
 		collection_info = {}
+		burden = float(0)
 		for text in working_collection.texts.all():
+			burden = burden + text.timing.timing_burden_number()
+			print("BURDEN TEXTS ", text.timing.timing_burden_number())
 			if request.user.is_authenticated():	
 				collection_list = {
 					'text': text,
@@ -189,10 +249,17 @@ def program(request,id=None,slug=None):
 			collection_info[key]= collection_list
 			key = key + 1
 
+
 		collection_info = tuple(collection_info.items())
+		number_of_texts = working_collection.texts.all().count()
+
+
+
 		context = {
 		'working_collection': working_collection,
 		'collection_info': collection_info,
+		'number_of_texts': number_of_texts,
+		'burden': round(burden,2),
 		}
 	
 		return render(request,"SS_inspiration_specific.html",context)
@@ -390,16 +457,30 @@ def get_text_datatable_response(request):
 		working_settings = UserSetting.objects.all().get(user=request.user)
 		main_context['user_timezone'] = working_settings.timezone
 
-		working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-		working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text).filter(time_sent__isnull=False)
-	
-		main_context['working_texts'] = working_texts
-		main_context['text_content'] = working_text.text
-		main_context['id'] = working_text.id
+		if 'find_user_text' in request.POST.keys():
+			tmp_text = PossibleText.objects.all().get(id=int(request.POST['id']))
+			if PossibleText.objects.all().filter(user=request.user).filter(text=tmp_text).count()>0:
+				working_text = PossibleText.objects.all().filter(user=request.user).get(text=tmp_text)
+				working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text).filter(time_sent__isnull=False)
+		
+				main_context['working_texts'] = working_texts
+				main_context['text_content'] = working_text.text
+				main_context['id'] = working_text.id
+				response_data["text_datatable_response"] = render_to_string('SS_text_datatable_response.html', main_context, request=request)
+			else:
+				response_data["text_datatable_response"] = ""
+		else:
+			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_texts = ActualText.objects.all().filter(user=request.user).filter(text=working_text).filter(time_sent__isnull=False)
+		
+			main_context['working_texts'] = working_texts
+			main_context['text_content'] = working_text.text
+			main_context['id'] = working_text.id
+			response_data["text_datatable_response"] = render_to_string('SS_text_datatable_response.html', main_context, request=request)
 
 
 	# get the summary information 
-	response_data["text_datatable_response"] = render_to_string('SS_text_datatable_response.html', main_context, request=request)
+	
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
@@ -415,11 +496,11 @@ def get_csv(request,id=None):
 		response['Content-Disposition'] = 'attachment; filename="sentimini_data_' + working_text.text + '.csv"'
 		writer = csv.writer(response)
 
-		headers = ["time_sent","time_response","response"]
+		headers = ["text_sent","time_sent","time_response","response"]
 		writer.writerow(headers)
 
 		for tmp in working_texts:
-			row = [tmp.time_sent,tmp.time_response,tmp.response]
+			row = [tmp.text_sent, tmp.time_sent,tmp.time_response,tmp.response]
 			writer.writerow(row)
 	else:
 		working_texts = ActualText.objects.all().filter(user=request.user)
@@ -488,13 +569,21 @@ def get_quick_suggestions(request):
 			object_id_list.append(text.text)
 		for text in rejected_list:
 			object_id_list.append(text.text)
-		
 
+	if 'current_suggestions[]' in request.POST.keys():
+		current_ids = request.POST.getlist('current_suggestions[]')		
+		# current_ids.replace("_",'')
+		current_ids = [idz.replace('_','') for idz in current_ids]
+		print("CURRENT IDS", current_ids)
+	else:
+		current_ids=[]
 
+	
 	if 'suggestion_1' in request.POST.keys():
 		if request.POST['suggestion_1'] == "yes":
-			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
-			
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(id__in=current_ids).exclude(text__in=object_id_list).order_by('?').first()
+			current_ids.append(quick_text.id)
+
 			tmp_context = {'working_text': quick_text,
 			'suggestion_number': "1",
 			}
@@ -511,7 +600,8 @@ def get_quick_suggestions(request):
 	
 	if 'suggestion_2' in request.POST.keys():
 		if request.POST['suggestion_2'] == "yes":
-			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(id__in=current_ids).exclude(text__in=object_id_list).order_by('?').first()
+			current_ids.append(quick_text.id)
 
 			tmp_context = {'working_text': quick_text,
 			'suggestion_number': "2",}
@@ -528,7 +618,8 @@ def get_quick_suggestions(request):
 
 	if 'suggestion_3' in request.POST.keys():
 		if request.POST['suggestion_3'] == "yes":
-			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(text__in=object_id_list).order_by('?').first()
+			quick_text = PossibleText.objects.all().filter(quick_suggestion=True).exclude(id__in=current_ids).exclude(text__in=object_id_list).order_by('?').first()
+			current_ids.append(quick_text.id)
 			
 			tmp_context = {'working_text': quick_text,
 			'suggestion_number': "3",}
@@ -695,8 +786,6 @@ def get_options_to_input(request):
 
 	working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 	
-	for atext in working_text.alt_text.all():
-		print("ALT TEXTS", atext.alt_text)
 	working_timing = Timing.objects.all().filter(user=request.user).filter(default_timing=True)[0]
 	default_timing = Timing.objects.all().filter(user=request.user).get(id=working_timing.id)
 	
@@ -813,13 +902,49 @@ def save_timing(request):
 
 
 
+	if 'alt_texts[]' in request.POST.keys():
+		alt_ids = request.POST.getlist('alt_texts_ids[]')
+		# alt_ids = request.POST['alt_texts_ids'].split,
+		alt_texts = request.POST.getlist('alt_texts[]')
 
-	if 'alt_texts' in request.POST.keys():
-		for alt_text in request.POST['alt_texts'].split('***'):
-			if alt_text != "":
-				atext = AlternateText(user=request.user,alt_text=alt_text)
-				atext.save()
-				working_text.alt_text.add(atext)
+		print("alt_ids",alt_ids)
+		print("alt_texts",alt_texts)
+
+
+		# Remove any of the deleted alt texts
+		for alt in working_text.alt_text.all():
+			if not str(alt.id) in str(alt_ids):
+				alt.delete()
+
+		#Update or create any new alts
+		i = 0
+		for alt in alt_texts:
+			if i < len(alt_ids):
+				if alt_ids[int(i)] != None:
+					print("update old")
+					working_alt = working_text.alt_text.all().get(id=alt_ids[int(i)])
+					working_alt.alt_text = str(alt)
+					working_alt.save()
+				else:
+					print("create new")
+					if str(alt) != '' and str(alt) != None:
+						print("ALT", str(alt))
+						working_alt = AlternateText(user=request.user,alt_text=str(alt))
+						working_alt.save()
+						working_text.alt_text.add(working_alt)
+			else:
+				print("create new")
+				if str(alt) != '' and str(alt) != None:
+					working_alt = AlternateText(user=request.user,alt_text=str(alt))
+					working_alt.save()
+					working_text.alt_text.add(working_alt)
+
+
+
+			i = i + 1
+		
+		working_text.save()
+
 
 	#See if there is a timing associated with it, if not assign the default
 	if working_text.timing == None:

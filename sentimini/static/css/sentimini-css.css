@@ -1,6 +1,25 @@
-textarea.empty {
-  height: 30px
+.sent-tooltip {
+	color: #ffc400;
 }
+
+textarea.empty {
+  height: 2px
+}
+
+.alternate_texts{
+	height: 12px;
+	  min-height: 12px;	
+}
+
+#textarea1{
+  height: 12px;
+  min-height: 12px;
+}
+
+
+/*textarea.materialize-textarea{height: 1rem;}*/
+/*textarea.materialize-textarea{height: 1rem;}*/
+
 
 .card-inspiration{
 	 background: rgba(54, 25, 25, .5);
@@ -129,10 +148,6 @@ html {
 		background-color: #EDEDED;
 }
 
-#textarea1{
-  height: 12px;
-  min-height: 12px;
-}
 
 
 .modal_check_label {

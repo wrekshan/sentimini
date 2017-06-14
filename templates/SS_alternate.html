@@ -1,17 +1,22 @@
-<div class="col s12" id="alt_{{counter}}">
-alt_{{counter}}
+<div class="col s12">
+<div id="alt_{{counter}}">
+	<div class="row">
+		<div class="input-field col s11">
+			<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
+			<textarea style="height:12px; min-height: 12px;" rows="1" id="textarea_{{counter}}" class="alternate_texts materialize-textarea" data-length="160" ></textarea>
+			<label class = "active" for="textarea_{{counter}}">Alternative text</label>	
+		</div>
 
-	<div class="input-field col s12">
-		<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
-		<textarea id="textarea_{{counter}}" class="alternate_texts materialize-textarea" data-length="160"></textarea>
-		<label class = "active" for="textarea_{{counter}}">Alternative text</label>	
-	</div>
-
-	<div class="right-align">
-		<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{counter}}" width=100% id="remove_alt_{{counter}}"><i name="remove_alt_{{counter}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
+		<div class="col s1">
+			<div class="right-align">
+			</br>
+			<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{counter}}" width=100% id="remove_alt_{{counter}}"><i name="remove_alt_{{counter}}" class="fa fa-times-circle" aria-hidden="true"></i>
+			</div>
+		</div>
 	</div>
 </div>
 
+</div>
 
 
 <script type="text/javascript">
@@ -19,6 +24,7 @@ alt_{{counter}}
 		$('textarea#textarea_{{counter}}').characterCounter();
 		$('#textarea_{{counter}}').trigger('autoresize');
 		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
 	});
 </script>
 
@@ -26,10 +32,6 @@ alt_{{counter}}
 
 <script type="text/javascript">
 	$('.remove-alt').click(function(){
-		console.log("REMOVE ALT CLICKED")
-		
-		console.log($(this).attr('id'))
-		
 		$('#alt_'+$(this).attr('id').split("_")[2]).empty()
 	})
 </script>

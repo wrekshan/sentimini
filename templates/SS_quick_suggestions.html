@@ -1,15 +1,23 @@
  {% if working_text %}
- <b>{{working_text.text}}</b>
+ 
+
+<a href="/consumer/text/{{working_text.id}}/{{working_text.slug}}/"><b>{{working_text.display_text}}</b></a>
+<!-- 
+ {% if working_text.alt_text.all %}
+ ALL
+                  {% for alt_text in working_text.alt_text.all %}
+                  </br> 
+                  <i class="fa fa-retweet" aria-hidden="true" style="padding-left:1em"></i>{{alt_text}}
+                  
+                  {% endfor %}
+                  {% endif %} -->
     <hr>
     <span style="font-size:80%;">{{working_text.timing.timing_summary|linebreaks}}</span>
 
     {% if user.is_authenticated %}
-    <!-- <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100% href="#quick_suggestion-add-{{suggestion_number}}"><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></div> -->
-
     <a href="#quick_suggestion-add-{{suggestion_number}}" class = "waves-effect waves-blue btn-flat chip" width=100%><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a>
 
-    <!-- <div  name="{{suggestion_number}}"  class = "waves-effect waves-red btn-flat chip" width=100%><a href="#quick_suggestion-add-{{suggestion_number}}"><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a></div> -->
-
+  
     <div  name="{{suggestion_number}}" class = "waves-effect waves-red btn-flat chip loop-{{suggestion_number}}" width=100%><i id="loop_suggestion_hightlight_{{suggestion_number}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
 
 
@@ -37,6 +45,13 @@
     <div class="modal-content">
       <h3>Confirm to add text</h3>
       <p>Text: <b>{{working_text.text}}</b></p>
+       {% if working_text.alt_text.all %}
+       Alternate texts:</br>
+                  {% for alt_text in working_text.alt_text.all %}
+                    <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
+                    </br>
+                {% endfor %}
+                {% endif %}
       
       <p>You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
 
@@ -44,7 +59,7 @@
 
     </div>
     <div class="modal-footer">
-    <a name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-inspiration-btn-{{suggestion_number}} blue darken-2">Confirm</a>
+    <a name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-inspiration-btn-{{suggestion_number}} suggestions blue darken-2">Confirm</a>
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
       
     </div>
@@ -74,6 +89,13 @@
     var suggestion_needed_2 = "no"
     var suggestion_needed_3 = "no"
 
+    
+    var current_suggestions = [];
+    $('.suggestions').each(function() {
+      if (sug_name != $(this).attr('name'))
+      current_suggestions.push($(this).attr('id'));
+    });
+
     // console.log(sug_name)
     var save_suggestions = "yes"
     
@@ -96,6 +118,7 @@
         'suggestion_3': suggestion_needed_3,
         'rejected': 'yes',
         'save_suggestions': save_suggestions,
+        'current_suggestions': current_suggestions,
       },
         success : function(data) {
           console.log("SUCCESS AJAX")
@@ -132,6 +155,12 @@
     var suggestion_needed_3 = "no"
 
     var save_suggestions = "yes"
+
+    var current_suggestions = [];
+    $('.suggestions').each(function() {
+      if (sug_name != $(this).attr('name'))
+      current_suggestions.push($(this).attr('id'));
+    });
     
     if ($(this).attr('name')==1){
       suggestion_needed_1 = "yes"

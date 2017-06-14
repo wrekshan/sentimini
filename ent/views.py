@@ -25,9 +25,11 @@ from django.db.models import Q
 
 # Create your views here.
 
-from .models import PossibleText, ActualText, Collection, Tag, Timing, UserSetting
+from .models import TextLink, TextDescription, AlternateText, PossibleText, ActualText, Collection, Tag, Timing, UserSetting
+from consumer.views import transfer_alt_texts
 
 
+			
 
 
 def update_db_after_import(request):
@@ -98,7 +100,7 @@ def update_db_after_import(request):
 	for text in working_texts:
 		text.text = text.input_text
 		# Get the timing object
-		print("TEXT", text.text)
+		# print("TEXT", text.text)
 		if text.intended_collection != None:
 			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
@@ -115,7 +117,7 @@ def update_db_after_import(request):
 					text.tag.add(tmp)
 
 			#add the collections
-			print("INTENDED COLLECTION", text.intended_collection)
+			# print("INTENDED COLLECTION", text.intended_collection)
 			if text.intended_collection != "":
 				collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
 				text.collection.add(collection)
@@ -139,7 +141,80 @@ def update_db_after_import(request):
 
 			text.save()
 
-	return redirect('feed')
+	# Process the alternate texts
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	for working_text in working_texts:
+		working_text.alt_text.clear()
+
+		working_alts = AlternateText.objects.all().filter(user=request.user).filter(intended_text=working_text.text)
+		for alt in working_alts:
+			working_text.alt_text.add(alt)
+
+		working_text.save()
+
+
+	# Process the descriptions
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	for working_text in working_texts:
+		working_text.description.clear()
+		working_text.save()
+
+	for working_text in working_texts:
+		working_descriptions = TextDescription.objects.all().filter(user=request.user).filter(intended_text=working_text.text)
+		print("DESCIRPTION ", working_descriptions)
+		for description in working_descriptions:
+			working_text.description.add(description)
+
+		working_text.save()
+
+	# ALT TEXSTS DESCRIPTION
+	working_texts = AlternateText.objects.all().filter(user=request.user)	
+	for working_text in working_texts:
+		working_text.description.clear()
+		working_text.save()
+
+
+	for working_text in working_texts:
+		working_descriptions = TextDescription.objects.all().filter(user=request.user).filter(intended_text=working_text.alt_text)
+		for description in working_descriptions:
+			working_text.description.add(description)
+
+		working_text.save()	
+
+
+
+	# Process the LINKS
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = PossibleText.objects.all().filter(user=request.user)
+	for working_text in working_texts:
+		working_text.link.clear()
+		working_text.save()
+
+	for working_text in working_texts:
+		working_links = TextLink.objects.all().filter(user=request.user).filter(intended_text=working_text.text)
+		for link in working_links:
+			working_text.link.add(link)
+
+		working_text.save()
+
+	# ALT TEXSTS DESCRIPTION
+	working_texts = AlternateText.objects.all().filter(user=request.user)	
+	for working_text in working_texts:
+		working_text.link.clear()
+		working_text.save()
+
+
+	for working_text in working_texts:
+		working_links = TextLink.objects.all().filter(user=request.user).filter(intended_text=working_text.alt_text)
+		for link in working_links:
+			working_text.link.add(link)
+
+		working_text.save()		
+
+
+
+	return redirect('/consumer/home/')
 
 
 
@@ -148,8 +223,13 @@ def add_to_collection(request):
 	response_data = {}
 
 	if 'selected_texts' in request.POST.keys():
-		working_texts = request.POST['selected_texts'].split(',')
-		print("WORKING TEXT", working_texts)
+		print("LENGTH", len(request.POST['selected_texts']))
+		if len(request.POST['selected_texts']) == 0:
+			working_collection = Collection.objects.all().get(id=request.POST['collection_name'].split('_')[1])
+			working_texts = PossibleText.objects.all().filter(collection=working_collection)
+		else:
+			working_texts = request.POST['selected_texts'].split(',')
+		
 
 		for text in working_texts:
 			print("TEXT: ", text)
@@ -170,7 +250,10 @@ def add_to_collection(request):
 				tmp.date_created=datetime.now(pytz.utc)
 				tmp.save()
 
-	print("TEXTS",request.POST['selected_texts'])
+				transfer_alt_texts(PossibleText.objects.all().get(id=int(text.split('_')[1])),tmp)
+	
+
+	response_data['message'] = "Program Added!"
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 

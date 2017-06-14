@@ -21,7 +21,9 @@
 
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
+<div class="col s12 ">
   <div class="card">
+  
     <div class="card-image">
       <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
       <span class="card-title">{{working_collection.collection}}</span>
@@ -30,9 +32,13 @@
     <div class="card-content">
 
       <!-- by: {{working_collection.author}} -->
-      <p>{{working_collection.long_description|linebreaks}}</p>
+      
+      {{working_collection.long_description|safe }}
+      <div class="row"></div>
+      There are <b>{{number_of_texts}} texts</b> in this collection.  If you select all of the texts, you would receive an average of <b>{{burden}} total texts per week</b>.
+      <hr>
+      
       <!-- <p>{{working_collection.short_description|linebreaks}}</p> -->
-
 
       <table class="striped">
         <thead>
@@ -61,7 +67,7 @@
                   {% else %}
 
                   <div id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><i class="fa fa-plus" aria-hidden="true"></i>
-                  
+                    
 
                   </div>
                   {% endif %}
@@ -74,48 +80,70 @@
 
 
                 </td>
-                <td>{{value.text.text}}</td>
-                <td>{{value.text.timing.timing_summary|linebreaks}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+                <td>
+                  <a href="/consumer/text/{{value.text.id}}/{{value.text.slug}}/"><b>{{value.text.display_text}}</b></a>
 
-          <div class="card-action right-align">
-            <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
+                  {% if value.text.alt_text.all %}
+                  <div class = "row">
+                 
+
+                  <div class= "col s11 offset s1">
+                  {% for alt_text in value.text.alt_text.all %}
+                
+                    <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
+                    </br>
+                  
+                
+                
+                
+                {% endfor %}
+                </div>
+                {% endif %}
 
 
-            {% if user.is_authenticated %}
-            <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
-            {% else %}
-            <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
-            {% endif %}
 
-            <span id="save_message"></span>
-          </div>
+              </td>
+              <td>{{value.text.timing.timing_summary|linebreaks}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="card-action right-align">
+          <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
 
 
+          {% if user.is_authenticated %}
+          <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
+          {% else %}
+          <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+          {% endif %}
+
+          <span id="save_message"></span>
         </div>
+</div>
+
       </div>
     </div>
+  </div>
 
 
 
-    <!-- GET THE TEXT BOX -->
-    <script type="text/javascript">
-      function startClock(){
-        console.log("STARTING")
-        $.ajax({
-          type: 'POST',
-          url: '/consumer/get_inspiration_display/',
-          data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-        },
-        success : function(data) {
-          setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
-        }
-      })
+  <!-- GET THE TEXT BOX -->
+  <script type="text/javascript">
+    function startClock(){
+      console.log("STARTING")
+      $.ajax({
+        type: 'POST',
+        url: '/consumer/get_inspiration_display/',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
       }
-      if(window.addEventListener){
+    })
+    }
+    if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C
   }
   else{
@@ -190,8 +218,8 @@
 
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
   ga('create', 'UA-85360122-1', 'auto');

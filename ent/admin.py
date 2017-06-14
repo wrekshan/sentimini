@@ -4,23 +4,10 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import TextLink, TextDescription, AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
-#This is the other main workhorse that keeps user preferences.  
-class AlternateTextModelAdmin(admin.ModelAdmin):
-	list_display = [
-		"user",
-		"alt_text",
-		
-		
-	]
-	list_display_links = ["alt_text"]
-	list_filter = ["user"]
-	class Meta:
-		model = AlternateText
 
-admin.site.register(AlternateText,AlternateTextModelAdmin)
 
 class QuickSuggestionModelAdmin(admin.ModelAdmin):
 	list_display = [
@@ -136,6 +123,7 @@ class ActualTextModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
 		"text",
+		"alt_text",
 		"time_to_send",
 		"time_sent",
 		"time_response",
@@ -195,6 +183,58 @@ class TimingModelAdmin(ImportExportModelAdmin):
 admin.site.register(Timing,TimingModelAdmin)
 
 
+class TextLinknResource(resources.ModelResource):
+	class Meta:
+		model = TextLink
+		import_id_fields = ('input_text',)
+		fields = ('intended_text','intended_text_type', 'link', 'link_display', 'input_text')
+
+
+class TextLinkModelAdmin(ImportExportModelAdmin):
+	resource_class = TextLinknResource   
+
+	list_display = [
+		"id",
+		"link",
+		"link_display",
+		"intended_text_type",
+		"intended_text",
+		"input_text",
+	]
+	
+	list_display_links = ["link_display"]
+	list_filter = ["intended_text_type"]
+	class Meta:
+		model = TextLink
+		
+admin.site.register(TextLink,TextLinkModelAdmin)
+
+class TextDescriptionResource(resources.ModelResource):
+	class Meta:
+		model = TextDescription
+		import_id_fields = ('input_text',)
+		fields = ('intended_text','intended_text_type', 'description','input_text')
+
+
+class TextDescriptionModelAdmin(ImportExportModelAdmin):
+	resource_class = TextDescriptionResource   
+
+	list_display = [
+		"id",
+		"description",
+		"intended_text_type",
+		"intended_text",
+		"input_text",
+	]
+	
+	list_display_links = ["description"]
+	list_filter = ["intended_text_type"]
+	class Meta:
+		model = TextDescription
+		
+admin.site.register(TextDescription,TextDescriptionModelAdmin)
+
+
 
 class PossibleTextResource(resources.ModelResource):
 	class Meta:
@@ -222,6 +262,31 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 		model = PossibleText
 		
 admin.site.register(PossibleText,PossibleTextModelAdmin)
+
+
+class AlternateTextResource(resources.ModelResource):
+	class Meta:
+		model = AlternateText
+		import_id_fields = ('input_text',)
+		fields = ('intended_text', 'alt_text', 'input_text')
+
+
+
+#This is the other main workhorse that keeps user preferences.  
+class AlternateTextModelAdmin(ImportExportModelAdmin):
+	resource_class = AlternateTextResource   
+	
+	list_display = [
+		"user",
+		"alt_text",
+		"intended_text",
+	]
+	list_display_links = ["alt_text"]
+	list_filter = ["user"]
+	class Meta:
+		model = AlternateText
+
+admin.site.register(AlternateText,AlternateTextModelAdmin)
 
 
 

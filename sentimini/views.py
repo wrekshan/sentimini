@@ -97,6 +97,9 @@ def delete_text(request):
 	if request.user.is_authenticated():	
 		print("ID TO DELETE",request.POST['id'])
 		possible_text = PossibleText.objects.all().filter(user=request.user).get(id=request.POST['id'])
+		if possible_text.alt_text.all().count()>0:
+			for text in possible_text.alt_text.all():
+				text.delete()
 		print("possible text", possible_text.text)
 		possible_text.delete()
 	return HttpResponse(json.dumps(response_data),content_type="application/json")					

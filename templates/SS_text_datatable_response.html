@@ -1,10 +1,12 @@
 {% load tz %}
+
   <div class="card">
     <div class="card-content small_spaces">
       <span class="card-title"><h4>Viewing data for: {{text_content}}</h4></span>
       <table id="text_data_table" class="display" cellspacing="0" width="100%">
         <thead>
           <tr>
+            <th>Text</th>
             <th>Time Sent</th>
             <th>Time Reply</th>
             <th>Reply</th>
@@ -12,15 +14,20 @@
         </thead>
 
         <tbody>
+        {% if user.is_authenticated %}
         {% timezone user_timezone %}
+
           {% for text in working_texts %}
           <tr>
+          <td>{{text.text_sent}}</td>
             <td><span style="display: none;">{{text.time_sent|date:"YmdGis"}}</span>{{text.time_sent}}</td>
             <td><span style="display: none;">{{text.time_response|date:"YmdGis"}}</span>{{text.time_response}}</td>
             <td>{{text.response}} </td>
       </tr>
       {% endfor %}
       {% endtimezone %}
+      {% endif %}
+      
     </tbody>
   </table>
   <div class="row"></div>
@@ -28,7 +35,7 @@
   <div class="right-align">
   <div id="save_message"></div>
   <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">Download data</div>
-  <a id="view_data_to_input" class="view_data_to_input waves-effect waves-light btn">Back</a>
+  <!-- <a id="view_data_to_input" class="view_data_to_input waves-effect waves-light btn">Back</a> -->
   </div>
 </div>
 </div>

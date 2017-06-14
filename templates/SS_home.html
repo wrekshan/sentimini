@@ -308,6 +308,8 @@ $('#highlight_button').click(function(){
       'text_message': "New Text",},
       success : function(data) {
         $('#text_input').html(data['text_input']);
+        Materialize.updateTextFields();
+        $('.materialize-textarea').trigger('autoresize');
       }
     })
 
@@ -401,6 +403,9 @@ setTimeout(function() {
       'text_message': "New Text",},
       success : function(data) {
         setTimeout(function() {$('#text_input').html(data['text_input']);}, load_delay);
+        setTimeout(function() { Materialize.updateTextFields();}, load_delay+10);      
+        setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, load_delay+10);      
+       
       }
     })
 ;}, timing_keeper);
@@ -473,8 +478,6 @@ $(window).resize(function() {
     }
   })
 </script>
-
-
 
 
 
@@ -551,8 +554,12 @@ $(window).resize(function() {
       'text_message': "New Text",},
       success : function(data) {
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
+        setTimeout(function() {Materialize.updateTextFields();}, 605);
+        setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 610);      
+
         if (window.location.pathname.indexOf("guided_tour") >= 0){
           setTimeout(function() {$('#highlight_button').trigger('click');}, 800);
+          
         }
       }
   })

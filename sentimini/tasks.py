@@ -16,7 +16,7 @@ from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, use_gmail
 
 import string
 
-from ent.models import PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting, Outgoing, Incoming
+from ent.models import AlternateText, PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting, Outgoing, Incoming
 
 from ent.views import time_window_check, date_check_fun
 
@@ -31,25 +31,28 @@ from .celery import app
 #     sender.add_periodic_task(10.0, check_email_for_new, name='add every 10')
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
+# task_seconds_between = 6
+task_seconds_between = 90
+
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'send': {
         'task': 'send_texts',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'check': {
         'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'process': {
         'task': 'process_new_mail',
-        'schedule': timedelta(seconds=90),
+        'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
 }    
@@ -61,7 +64,7 @@ app.conf.beat_schedule = {
 #     sender.add_periodic_task(20.0, send_texts, name='add every 10')
 #     sender.add_periodic_task(20.0, check_email_for_new, name='add every 10')
 #     sender.add_periodic_task(20.0, process_new_mail, name='add every 10')
-task_seconds_between = 15
+
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
 #############################################
@@ -215,10 +218,22 @@ def schedule_texts():
 #############################################
 def send_text(text):
 	# Save all outgoing
+	print("SENDING TEXT")
 	tmp_user = UserSetting.objects.all().get(user=text.user)
 	addressee = tmp_user.sms_address
 
-	message_to_send = str(text.text)
+
+
+	#Check for alternate texts and save
+	if text.text.alt_text.all().count()>0:
+		alt_text = text.text.alt_text.all().order_by('?')[0]
+		message_to_send = alt_text.alt_text
+		text.alt_text = alt_text
+		text.save()
+	else:
+		message_to_send = text.text
+
+
 
 
 	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)

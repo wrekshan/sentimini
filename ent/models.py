@@ -120,6 +120,61 @@ class Timing(models.Model):
 
 		return str(hours_between)
 
+	def timing_burden_number(self):
+		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
+		if self.fuzzy == True:
+			if self.fuzzy_denomination == "minutes":
+				iti_standard = (60 / self.iti_raw) * 24 * 7
+			if self.fuzzy_denomination == "hours":
+				iti_standard = (24 / self.iti_raw) * 7
+			if self.fuzzy_denomination == "days":
+				iti_standard = (7 / self.iti_raw)
+			if self.fuzzy_denomination == "weeks":
+				iti_standard = self.iti_raw
+			if self.fuzzy_denomination == "months":
+				iti_standard = (self.iti_raw / 4)
+			return float(iti_standard)
+		else:
+			num_out = int(0)
+			weekdays = []
+			if self.monday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Monday")
+			if self.tuesday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Tuesday")
+			if self.wednesday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Wednesday")
+			if self.thursday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Thursday")
+			if self.friday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Friday")
+			if self.saturday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Saturday")
+			if self.sunday == True:
+				num_out = num_out + int(self.repeat_in_window)
+				weekdays.append("Sunday")
+
+
+			tmp = str(weekdays)
+			tmp = str.replace(tmp,'[','')
+			tmp = str.replace(tmp,']','')
+			tmp = str.replace(tmp,'\'','')
+			if len(weekdays) == 7:
+				tmp = "all days"
+			elif len(weekdays) == 5:
+				if self.sunday == False & self.saturday == False:
+					tmp = "weekdays"
+			elif len(weekdays) == 2:
+				if self.sunday == True & self.saturday == True:
+					tmp = "weekends"
+			
+			return float(num_out)
+
 	def timing_summary_burden(self):
 		# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
 		if self.fuzzy == True:
@@ -310,10 +365,34 @@ class Collection(models.Model):
 		return slugify(str(self.collection_name + ' ' +str(self.description)))	
 
 
+class TextLink(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	link = models.CharField(max_length=1000,default='')
+	link_display = models.CharField(max_length=1000,default='')
+	intended_text_type = models.CharField(max_length=500,default='')
+	intended_text = models.CharField(max_length=500,default='')
+	input_text = models.CharField(max_length=1500,default='')
+	def __str__(self):
+		return self.link_display
+
+
+class TextDescription(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	description = models.CharField(max_length=1000,default='')
+	intended_text_type = models.CharField(max_length=500,default='')
+	intended_text = models.CharField(max_length=500,default='')
+	input_text = models.CharField(max_length=1500,default='')
+	def __str__(self):
+		return self.description
+
 
 class AlternateText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	description = models.ManyToManyField(TextDescription,blank=True)
+	link = models.ManyToManyField(TextLink,blank=True)
 	alt_text = models.CharField(max_length=160,default='')
+	input_text = models.CharField(max_length=500,default='')
+	intended_text = models.CharField(max_length=500,default='')
 	def __str__(self):
 		return self.alt_text
 
@@ -324,6 +403,8 @@ class PossibleText(models.Model):
 	timing = models.ForeignKey(Timing,null=True)
 	alt_text = models.ManyToManyField(AlternateText,blank=True)
 	text = models.CharField(max_length=160,default='')
+	description = models.ManyToManyField(TextDescription,blank=True)
+	link = models.ManyToManyField(TextLink,blank=True)
 	input_text = models.CharField(max_length=160,default='')
 	date_created = models.DateTimeField(blank=True,null=True)
 	date_scheduled = models.DateTimeField(blank=True,null=True)
@@ -337,6 +418,16 @@ class PossibleText(models.Model):
 	
 	def __str__(self):
 		return self.text
+
+	def slug(self):
+		return slugify(str(self.text))	
+
+	def display_text(self):
+		if (self).alt_text.all().count() < 1:
+			return(self.text)
+		else:
+			return(str(self.text) + " (" + str(self.alt_text.all().count()) + " versions)")
+		
 
 	def number_sent(self):
 		return(ActualText.objects.all().filter(user=self.user).filter(text=self).count())
@@ -354,47 +445,11 @@ class PossibleText(models.Model):
 			return("None")
 
 
-
-
-	# def date_created_local(self):
-	# 	tmper = UserSetting.objects.all().get(user=self.user)
-	# 	time_to_return = self.date_created
-	# 	user_timezone = pytz.timezone(tmper.timezone)
-	# 	return(self.date_created.astimezone(user_timezone))
-		# scheduled_date = scheduled_date.astimezone(pytz.UTC)
-
-
-
-	# def burden(self):
-	# 	if self.timing.fuzzy==True:
-	# 		return (960 / self.timing.iti) / 7
-	# 	else:
-	# 		if self.timing.repeat_in_window is not None:
-	# 			num_out = int(0)
-	# 			if self.timing.monday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.tuesday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.wednesday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.thursday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.friday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.saturday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-	# 			if self.timing.sunday == True:
-	# 				num_out = num_out + int(self.timing.repeat_in_window)
-
-	# 			return (self.timing.repeat_in_window * num_out) / 30
-	# 		else:
-	# 			return 0
-
-
 class ActualText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	# feed = models.ForeignKey(Feed,default=0)
+	alt_text = models.ForeignKey(AlternateText,null=True,blank=True)
 	text = models.ForeignKey(PossibleText,default=0)
+	text_sent =models.CharField(max_length=160,null=True,blank=True) #This is the prompt type
 	time_to_send = models.DateTimeField(blank=True,null=True)
 	time_sent = models.DateTimeField(blank=True,null=True)
 	time_response = models.DateTimeField(blank=True,null=True)
