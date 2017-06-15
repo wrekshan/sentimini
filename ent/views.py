@@ -28,6 +28,25 @@ from django.db.models import Q
 from .models import TextLink, TextDescription, AlternateText, PossibleText, ActualText, Collection, Tag, Timing, UserSetting
 from consumer.views import transfer_alt_texts
 
+def pause_all_users(request):
+	if request.user.is_superuser:
+		working_settings = UserSetting.objects.all()
+		for setting in working_settings:
+			setting.text_request_stop_tmp = setting.text_request_stop
+			setting.text_request_stop = True
+			setting.save()
+
+	return redirect('/admin_panel/')
+
+def restore_all_users(request):
+	if request.user.is_superuser:
+		working_settings = UserSetting.objects.all()
+		for setting in working_settings:
+			setting.text_request_stop = setting.text_request_stop_tmp
+			setting.save()
+
+	return redirect('/admin_panel/')	
+
 
 			
 
@@ -211,8 +230,6 @@ def update_db_after_import(request):
 			working_text.link.add(link)
 
 		working_text.save()		
-
-
 
 	return redirect('/consumer/home/')
 

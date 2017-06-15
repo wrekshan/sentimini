@@ -45,6 +45,7 @@ class UserSetting(models.Model):
 	phone_verified = models.BooleanField(default=False)
 	send_text = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	send_text_tmp = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
+	text_request_stop_tmp = models.BooleanField(default=False) #This is just a yes/no switch.  I think this is set when a user edits contact information and used a high level switch at the beginning of the task file
 	text_request_stop = models.BooleanField(default=False) # This is a yes/no switch that stops texts right before the send_email().  It is set when the tasks reads emails.
 	phone_input = models.CharField(max_length=16,default='') #This is the user phone number
 	phone = models.CharField(max_length=30,default='',null=True) #This is the user phone number

@@ -60,6 +60,7 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 		"send_text",
 		"send_text_tmp",
 		"text_request_stop",
+		"text_request_stop_tmp",
 		"phone_input",
 		"phone",
 		"carrier",

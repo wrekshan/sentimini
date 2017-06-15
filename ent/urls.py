@@ -1,13 +1,16 @@
 from django.conf.urls import url
 
 
-from .views import update_db_after_import, about, save_collection_explicit, add_new_text, simulate, collection, get_display_collection, get_create_collection, save_collection, add_to_collection, collection_create_scaffold
+from .views import pause_all_users, restore_all_users, update_db_after_import, about, save_collection_explicit, add_new_text, simulate, collection, get_display_collection, get_create_collection, save_collection, add_to_collection, collection_create_scaffold
 
 urlpatterns = [
 	url(r'^about/$', about, name='about'),
 	
 	url(r'^collection/$', collection, name='collection'),
 	url(r'^update_db_after_import/$', update_db_after_import, name='update_db_after_import'),
+
+	url(r'^pause_all_users/$', pause_all_users, name='pause_all_users'),
+	url(r'^restore_all_users/$', restore_all_users, name='restore_all_users'),
 	
 	url(r'^get_create_collection/$', get_create_collection, name='get_create_collection'),
 	url(r'^get_display_collection/$', get_display_collection, name='get_display_collection'),
