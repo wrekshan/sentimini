@@ -60,7 +60,7 @@
 		</div>
 
 
-		<div id="advanced_options">
+		<div id="advanced_options" hidden>
 			
 			<hr>
 
@@ -254,7 +254,7 @@
 				<a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save</a>
 				{% else %}
 				<a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
-				<a id="options_default_save" class="save_timing_default waves-effect waves-light btn disabled"><i id="options_default_highlight" class="fa fa-cogs fa-2x" aria-hidden="true"></i> Set default</a>
+				<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
 				<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
 				{% endif %}
 			</div>
