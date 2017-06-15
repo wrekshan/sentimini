@@ -30,6 +30,12 @@ if LIVEHOST:
    
     BROKER_TRANSPORT = 'redis'
 
+    BROKER_TRANSPORT_OPTIONS = {
+    "max_connections": 1,
+    }
+
+    BROKER_POOL_LIMIT = None
+
 
 	# # app = celery.Celery('sentimini',include=['sentimini.tasks'])
 	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
@@ -38,7 +44,7 @@ if LIVEHOST:
     
     # CELERY_IMPORTS=("sentimini.tasks")
     # BROKER_URL = os.environ['CLOUDAMQP_URL']
-    BROKER_POOL_LIMIT = 1 # Will decrease connection usage
+    # BROKER_POOL_LIMIT = 1 # Will decrease connection usage
     BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
     BROKER_CONNECTION_TIMEOUT = 30 # May require a long timeout due to Linux DNS timeouts etc
     CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it creates thousands of queues
