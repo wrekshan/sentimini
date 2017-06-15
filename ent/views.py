@@ -58,7 +58,12 @@ def update_db_after_import(request):
 	working_texts = PossibleText.objects.all().exclude(user=request.user)
 	for text in working_texts:
 		text.input_text = ''
-		text.save(	)
+		text.save()
+
+	working_timings = Timing.objects.all().exclude(user=request.user)	
+	for timing in working_timings:
+		timing.intended_text = ''
+		timing.save()
 
 	# Set up the collection
 	working_collections = Collection.objects.all().filter(user=request.user)
