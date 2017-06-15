@@ -32,7 +32,7 @@ from .celery import app
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
 # task_seconds_between = 6
-task_seconds_between = 90
+task_seconds_between = 20
 
 app.conf.beat_schedule = {
     'schedule': {
@@ -251,6 +251,7 @@ def send_text(text):
 			# print("Sent 1 email")
 
 		if tmp_user.send_text_check == True:
+			print("message_to_send", message_to_send)
 			send_mail('',message_to_send, str(EMAIL_HOST_USER), [addressee], fail_silently=False)
 			text.time_sent = datetime.now(pytz.utc)
 			text.save()
