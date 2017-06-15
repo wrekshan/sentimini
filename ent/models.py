@@ -353,7 +353,7 @@ class Collection(models.Model):
 	collection_name = models.CharField(max_length=160,default='')
 	author = models.CharField(max_length=500,default='')
 	description = models.CharField(max_length=3000,default='')
-	long_description = models.CharField(max_length=3000,default='')
+	long_description = models.TextField(max_length=3000,default='')
 	tag = models.ManyToManyField(Tag,blank=True)
 	publish  = models.BooleanField(default=False) 
 	explict_save  = models.BooleanField(default=False) 

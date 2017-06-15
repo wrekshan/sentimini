@@ -143,7 +143,7 @@ def update_db_after_import(request):
 
 			text.save()
 		else:
-			timing = Timing.objects.all().get(intended_text=text.text)
+			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
 
 			#add the tags
