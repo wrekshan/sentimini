@@ -234,8 +234,6 @@ def send_text(text):
 		message_to_send = text.text
 
 
-
-
 	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)
 	out_check = Outgoing.objects.all().filter(text=text).filter(date_sent__gte=past_ten_minutes).count()
 	actual_check = ActualText.objects.all().filter(user=text.user).filter(text=text.id).filter(time_sent__gte=past_ten_minutes).count()
@@ -287,6 +285,7 @@ def send_texts():
 			if td.seconds/60 > 5:
 				text.delete()
 			else:
+				print("TEXT BEING SENT ------ ", text)
 				send_text(text)		
 		# time specific checks (i.e. sent more than 5 in the last 10 minutes, etc)
 

@@ -200,7 +200,9 @@
 
     </div>
   </div>
+  {% if user.is_authenticated %}
   <div id="text_datatable"></div>
+  {% endif %}
 </div>
 </div>
 </div>
@@ -250,13 +252,6 @@
       
     }
   })
-
-
-
-
-
-
-
 
 
 

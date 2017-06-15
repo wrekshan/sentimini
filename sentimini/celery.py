@@ -24,13 +24,13 @@ else:
  
 if LIVEHOST:
     print("NOT LOCAL HOST")
-	# app = celery.Celery('sentimini',include=['sentimini.tasks'])
-	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
- #                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
-	# BROKER_TRANSPORT = 'redis'
+	app = celery.Celery('sentimini',include=['sentimini.tasks'])
+	app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+	BROKER_TRANSPORT = 'redis'
     
     # CELERY_IMPORTS=("sentimini.tasks")
-    BROKER_URL = os.environ['CLOUDAMQP_URL']
+    # BROKER_URL = os.environ['CLOUDAMQP_URL']
     BROKER_POOL_LIMIT = 1 # Will decrease connection usage
     BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
     BROKER_CONNECTION_TIMEOUT = 30 # May require a long timeout due to Linux DNS timeouts etc
@@ -39,10 +39,10 @@ if LIVEHOST:
     CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
     CELERY_MAX_TASKS_PER_CHILD = 10
     
-    app = celery.Celery('sentimini',
-             broker=BROKER_URL,
-             # backend='amqp://',
-             include=['sentimini.tasks'])
+    # app = celery.Celery('sentimini',
+    #          broker=BROKER_URL,
+    #          # backend='amqp://',
+    #          include=['sentimini.tasks'])
     
     # Below is trying to make livehouse like dev
     
