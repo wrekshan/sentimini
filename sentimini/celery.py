@@ -26,12 +26,11 @@ if LIVEHOST:
     print("NOT LOCAL HOST")
     app = celery.Celery('sentimini',include=['sentimini.tasks'])
 
-    app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+    app.conf.update(BROKER_URL=os.environ['REDIS_URL'])
    
     BROKER_TRANSPORT = 'redis'
 
-    
+
 	# # app = celery.Celery('sentimini',include=['sentimini.tasks'])
 	# app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
  #                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
