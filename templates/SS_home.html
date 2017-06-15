@@ -523,7 +523,7 @@ $(window).resize(function() {
       'text_message': "New Text",},
       success : function(data) {
         setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
-        setTimeout(function() {Materialize.updateTextFields();}, 605);
+        // setTimeout(function() {Materialize.updateTextFields();}, 605);
         setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 610);      
 
         if (window.location.pathname.indexOf("guided_tour") >= 0){

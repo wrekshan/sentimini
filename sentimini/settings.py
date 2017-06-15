@@ -226,7 +226,7 @@ if LIVEHOST:
 
     #These were different than static
     ALLOWED_HOSTS = ['sentimini.com','www.sentimini.com'] 
-    DEBUG = True
+    DEBUG = False
 else:
     DEFAULT_FROM_EMAIL = 'system_dev@sentimini.com'
     ### LOCAL
