@@ -26,7 +26,6 @@ Jinja2==2.8
 jsondatabase==0.1.1
 kombu==4.0.2
 MarkupSafe==0.23
-nltk==3.2.1
 numpy==1.11.1
 oauthlib==1.1.2
 parsedatetime==2.1

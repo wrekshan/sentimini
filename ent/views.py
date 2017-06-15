@@ -124,7 +124,7 @@ def update_db_after_import(request):
 	for text in working_texts:
 		text.text = text.input_text
 		# Get the timing object
-		# print("TEXT", text.text)
+		print("TEXT", text.text)
 		if text.intended_collection != None:
 			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
@@ -209,7 +209,6 @@ def update_db_after_import(request):
 
 
 	# Process the LINKS
-	working_texts = PossibleText.objects.all().filter(user=request.user)
 	working_texts = PossibleText.objects.all().filter(user=request.user)
 	for working_text in working_texts:
 		working_text.link.clear()
