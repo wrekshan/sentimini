@@ -9,8 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-<meta name="description" content="">
-<meta name="author" content="">
+{% block header_extra %}
+{% endblock %}
+
 <link rel="icon" href="{% static "images/raven.ico" %}">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
@@ -24,8 +25,6 @@
 <!-- STARS -->
 <script src="https://use.fontawesome.com/9b758dc6c5.js"></script>
 
-{% block header_extra %}
-{% endblock %}
 
 
 </head>
