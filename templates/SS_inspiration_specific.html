@@ -9,7 +9,7 @@
  <meta property="og:url"           content="www.sentimini.com/consumer/program/{{working_collection.id}}/{{working_collection.slug}}/"/>
  <meta property="og:type"               content="article" />
  <meta property="og:description"   content="{{working_collection.description }}" />
- <meta property="og:image"         content="http://www.sentimini.com//static/images/collection/{{working_collection.collection_name}}.jpg" />
+ <meta property="og:image"         content="http://www.sentimini.com//static/images/collection/first.jpg" />
 </head>
 
 
@@ -24,57 +24,57 @@
 
 
 <body>
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
 
-<!-- CARD FOR NEW TEXTS AND TIMINGS-->
-<div class="row">
-<div class="col s12 ">
-  <div class="card">
-  
-    <div class="card-image">
-      <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
-      <span class="card-title">{{working_collection.collection}}</span>
-      <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
-    </div>
-    <div class="card-content">
+  <!-- CARD FOR NEW TEXTS AND TIMINGS-->
+  <div class="row">
+    <div class="col s12 ">
+      <div class="card">
 
-      <!-- by: {{working_collection.author}} -->
-      
-      {{working_collection.long_description|safe }}
-      <div class="row"></div>
-      There are <b>{{number_of_texts}} texts</b> in this collection.  If you select all of the texts, you would receive an average of <b>{{burden}} total texts per week</b>.
+        <div class="card-image">
+          <img  src="/static/images/collection/{{working_collection.collection_name}}.jpg">
+          <span class="card-title">{{working_collection.collection}}</span>
+          <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
+        </div>
+        <div class="card-content">
 
+          <!-- by: {{working_collection.author}} -->
 
-      <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
+          {{working_collection.long_description|safe }}
+          <div class="row"></div>
+          There are <b>{{number_of_texts}} texts</b> in this collection.  If you select all of the texts, you would receive an average of <b>{{burden}} total texts per week</b>.
 
 
-      <hr>
+          <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
 
 
-      
-      <!-- <p>{{working_collection.short_description|linebreaks}}</p> -->
+          <hr>
 
-      <table class="striped">
-        <thead>
-          <tr>
-            <th data-field="remove"></th>
-            <th data-field="id">Text</th>
-            <th data-field="name">Summary</th>
-          </tr>
-        </thead>
 
-        <tbody>
-          {% for key, value in collection_info %}
 
-          <tr>
-            <td>
+          <!-- <p>{{working_collection.short_description|linebreaks}}</p> -->
+
+          <table class="striped">
+            <thead>
+              <tr>
+                <th data-field="remove"></th>
+                <th data-field="id">Text</th>
+                <th data-field="name">Summary</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for key, value in collection_info %}
+
+              <tr>
+                <td>
                 <!-- {% if user.is_authenticated %}
                 <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{value.text.id}}" checked>
                 <label for="{{working_collection.id}}_{{value.text.id}}" id="{{working_collection.id}}_{{value.text.id}}" class="">
@@ -88,7 +88,7 @@
                   {% else %}
 
                   <div id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><i class="fa fa-plus" aria-hidden="true"></i>
-                    
+
 
                   </div>
                   {% endif %}
@@ -106,43 +106,43 @@
 
                   {% if value.text.alt_text.all %}
                   <div class = "row">
-                 
 
-                  <div class= "col s11 offset s1">
-                  {% for alt_text in value.text.alt_text.all %}
-                
-                    <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
+
+                    <div class= "col s11 offset s1">
+                      {% for alt_text in value.text.alt_text.all %}
+
+                      <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
                     </br>
-                  
-                
-                
-                
-                {% endfor %}
-                </div>
-                {% endif %}
 
 
 
-              </td>
-              <td>{{value.text.timing.timing_summary|linebreaks}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
 
-        <div class="card-action right-align">
-          <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
 
 
-          {% if user.is_authenticated %}
-          <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
-          {% else %}
-          <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
-          {% endif %}
 
-          <span id="save_message"></span>
+                </td>
+                <td>{{value.text.timing.timing_summary|linebreaks}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          <div class="card-action right-align">
+            <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
+
+
+            {% if user.is_authenticated %}
+            <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
+            {% else %}
+            <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+            {% endif %}
+
+            <span id="save_message"></span>
+          </div>
         </div>
-</div>
 
       </div>
     </div>
@@ -150,21 +150,21 @@
 
 </body>
 
-  <!-- GET THE TEXT BOX -->
-  <script type="text/javascript">
-    function startClock(){
-      console.log("STARTING")
-      $.ajax({
-        type: 'POST',
-        url: '/consumer/get_inspiration_display/',
-        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      },
-      success : function(data) {
-        setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
-      }
-    })
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_inspiration_display/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    success : function(data) {
+      setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
     }
-    if(window.addEventListener){
+  })
+  }
+  if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C
   }
   else{
