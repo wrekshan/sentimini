@@ -3,24 +3,27 @@
 {% load staticfiles %}
 {% block content %}
 
+<!DOCTYPE html>
+<html>
 <head>
- <title>{{working_collection.collection}} | Programs | Sentimini</title>
- <meta property="og:title"         content="{{working_collection.collection}} | Programs | Sentimini | View programs and sign up for texts"/>
- <meta property="og:url"           content="www.sentimini.com/consumer/program/{{working_collection.id}}/{{working_collection.slug}}/"/>
- <meta property="og:type"          content="article" />
- <meta property="og:description"   content="{{working_collection.description}}" />
- <meta property="og:image"         content="http://www.sentimini.com//static/images/collection/first.jpg" />
+  <title>{{working_collection.collection}} | Programs | Sentimini</title>
 </head>
-
 <body>
+  <meta content="{{working_collection.collection}} | Programs | Sentimini | View programs and sign up for texts" property="og:title">
+  <meta content="www.sentimini.com/consumer/program/{{working_collection.id}}/{{working_collection.slug}}/" property="og:url">
+  <meta content="article" property="og:type">
+  <meta content="{{working_collection.description}}" property="og:description">
+  <meta content="http://www.sentimini.com//static/images/collection/first.jpg" property="og:image">
   <div id="fb-root"></div>
-  <script>(function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));</script>
+  <script>
+  (function(d, s, id) {
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) return;
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+  </script> <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 
   <!-- CARD FOR NEW TEXTS AND TIMINGS-->
   <div class="row">
@@ -112,7 +115,9 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-    $('.modal').modal()
+    $('.modal').modal(
+
+      )
   })
 </script>
 
