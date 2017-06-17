@@ -1,18 +1,17 @@
 {% extends "SS_base.html" %}
 {% load static %}
 {% load staticfiles %}
-
+{% block content %}
 
 <head>
  <title>{{working_collection.collection}} | Programs | Sentimini</title>
  <meta property="og:title"         content="{{working_collection.collection}} | Programs | Sentimini | View programs and sign up for texts"/>
  <meta property="og:url"           content="www.sentimini.com/consumer/program/{{working_collection.id}}/{{working_collection.slug}}/"/>
- <meta property="og:type"               content="article" />
+ <meta property="og:type"          content="article" />
  <meta property="og:description"   content="{{working_collection.description}}" />
  <meta property="og:image"         content="http://www.sentimini.com//static/images/collection/first.jpg" />
 </head>
 
-{% block content %}
 <body>
   <div id="fb-root"></div>
   <script>(function(d, s, id) {
@@ -110,26 +109,6 @@
 </body>
 
 <!-- GET THE TEXT BOX -->
-<script type="text/javascript">
-  function startClock(){
-    console.log("STARTING")
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/get_inspiration_display/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-    },
-    success : function(data) {
-      setTimeout(function() {$('#inspiration_display').html(data['inspiration_display']);}, 600);
-    }
-  })
-  }
-  if(window.addEventListener){
-    window.addEventListener('load',startClock,false); //W3C
-  }
-  else{
-    window.attachEvent('onload',startClock); //IE
-  }
-</script>
 
 <script type="text/javascript">
   $(document).ready(function(){
