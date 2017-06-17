@@ -5,20 +5,22 @@ from datetime import datetime, timedelta
 from random import random, triangular, randint, gauss
 from django.core.mail import send_mail
 from email.utils import parsedate_tz, parsedate_to_datetime
+
 import pytz
 import re
 import imaplib
 import email
+import time
 from celery.task.control import discard_all
 
 import parsedatetime as pdt # for parsing of datetime shit for NLP
 from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, use_gmail
 
 import string
-
 from ent.models import AlternateText, PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting, Outgoing, Incoming
 
 from ent.views import time_window_check, date_check_fun
+from consumer.views import get_moon_data
 
 from .celery import app
 # app = Celery()
@@ -33,6 +35,8 @@ from .celery import app
 
 # task_seconds_between = 6
 task_seconds_between = 90
+task_seconds_between_moon = 10
+# 10800 - 3hr
 
 app.conf.beat_schedule = {
     'schedule': {
@@ -55,7 +59,15 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
+  #   'moon': {
+  #       'task': 'schedule_moon_texts',
+  #       'schedule': timedelta(seconds=task_seconds_between_moon),
+		# 'args': ()
+  #   },
 }    
+
+
+
 
 
 # @app.on_after_configure.connect
@@ -93,7 +105,42 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 	text.date_scheduled = datetime.now(pytz.utc)
 	text.save()
 
+# @task(name='schedule_moon_texts')
+# def schedule_moon_texts():
+# 	print("MOOOOOOOOON")
+# 	#Get the moon data and format it
+# 	dataj = get_moon_data()
+# 	print("DATAJ", dataj)
+# 	if dataj != "NOT FOUND":
+# 		print('1')
+		
+# 		print('2')
+# 		next_phase = dataj['phasedata'][0]
+# 		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+# 		moon_dt_utc = pytz.utc.localize(moon_dt)
 
+# 		print('3')
+# 		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+# 		for text in working_texts:
+# 			working_settings = UserSetting.objects.all().get(user=text.user)
+# 			user_timezone = pytz.timezone(working_settings.timezone)
+# 			moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+# 			print('4')
+
+# 			# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+# 			if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+# 				# FIGURE OUT THE TIME WINDOW
+# 				date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+# 				time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+# 				time_to_send = datetime.combine(moon_dt_user.date(),text.timing.hour_start)
+# 				time_to_send = time_to_send + timedelta(0,( randint(0,round(time_window.total_seconds()))))
+# 				text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime('%Y %b %d')) + "!"
+
+# 				atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+# 				atext.save()
+# 	else:
+# 		print(dataj)
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
@@ -103,7 +150,7 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
-	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	working_texts = PossibleText.objects.all().filter(text_type='standard').filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
 	for text in working_texts:
 		if text.timing.dow_check() == 1:
 			if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
@@ -165,7 +212,7 @@ def schedule_texts():
 
 
 	#Fuzzy Timings
-	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+	working_texts = PossibleText.objects.all().filter(text_type='standard').filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=True).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
 	for text in working_texts:
 		if ActualText.objects.all().filter(text=text).filter(time_sent__isnull=True).count()<1:
 			# print("SCHEDULING NEW FUZZY TEXT")
@@ -232,6 +279,10 @@ def send_text(text):
 		text.save()
 	else:
 		message_to_send = text.text
+
+	#check for moon texts
+	if text.text_type == 'moon':
+		message_to_send = text.text_sent
 
 
 	past_ten_minutes = datetime.now(pytz.utc) - timedelta(minutes=1)

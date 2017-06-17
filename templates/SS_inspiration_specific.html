@@ -4,13 +4,18 @@
 {% block content %}
 
 <head>
- <title>Programs | Sentimini</title>
- <meta property="og:title"         content="Programs | Sentimini | View programs and sign up for texts"/>
- <meta property="og:url"           content="www.sentimini.com/consumer/program/" />
- <meta property="og:type"          content="website" />
- <meta property="og:description"   content="View programs and sign up for texts.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
- <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+ <title>{{working_collection.collection}} | Programs | Sentimini</title>
+ <meta property="og:title"         content="{{working_collection.collection}} | Programs | Sentimini | View programs and sign up for texts"/>
+ <meta property="og:url"           content="www.sentimini.com/consumer/program/{{working_collection.id}}/{{working_collection.slug}}/" />
+ <meta property="og:type"               content="article" />
+ <meta property="og:description"   content="{{working_collection.description }}" />
+ <meta property="og:image"         content="http://www.sentimini.com//static/images/collection/{{working_collection.collection_name}}.jpg" />
 </head>
+
+
+
+
+
 
 
 <!-- <script src="http://listjs.com/assets/javascripts/list.min.js"></script> -->
@@ -18,6 +23,15 @@
 <script src={% static "js/list.pagination.min.js" %}></script>
 
 
+<body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <!-- CARD FOR NEW TEXTS AND TIMINGS-->
 <div class="row">
@@ -36,7 +50,14 @@
       {{working_collection.long_description|safe }}
       <div class="row"></div>
       There are <b>{{number_of_texts}} texts</b> in this collection.  If you select all of the texts, you would receive an average of <b>{{burden}} total texts per week</b>.
+
+
+      <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
+
+
       <hr>
+
+
       
       <!-- <p>{{working_collection.short_description|linebreaks}}</p> -->
 
@@ -127,7 +148,7 @@
     </div>
   </div>
 
-
+</body>
 
   <!-- GET THE TEXT BOX -->
   <script type="text/javascript">

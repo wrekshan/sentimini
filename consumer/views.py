@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.loader import render_to_string
+from random import random, triangular, randint, gauss
 import json
 from datetime import datetime, timedelta, time, date
 import pytz
@@ -11,6 +12,10 @@ from allauth.account.forms import SignupForm
 from sentimini.views import pause_text
 from ent.models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
 from django.db.models import Q
+
+import time
+
+import requests
 
 import csv
 
@@ -38,43 +43,104 @@ def change_nus(request):
 	return HttpResponse(json.dumps(response_data),content_type="application/json")		
 
 
+# pas {'phase': 'Last Quarter', 'time': '11:33', 'date': '2017 Jun 17'}
+# pas {'phase': 'New Moon', 'time': '02:31', 'date': '2017 Jun 24'}
+# pas {'phase': 'First Quarter', 'time': '00:51', 'date': '2017 Jul 01'}
+# pas {'phase': 'Full Moon', 'time': '04:07', 'date': '2017 Jul 09'}
+
+def get_moon_data():
+	time.sleep(1)
+	output = "NOT FOUND"
+	try:
+		date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+		# requests.get('s')
+		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
+		dataj = data.json()
+		output = dataj
+		return output
+	except:
+		return output
+	
+	
+
+def moon(request):
+	context = {}
+	dataj = get_moon_data()
+	print(dataj)
+	
+	next_phase = dataj['phasedata'][0]
+	moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+	moon_dt_utc = pytz.utc.localize(moon_dt)	
+
+	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+	for text in working_texts:
+		working_settings = UserSetting.objects.all().get(user=text.user)
+		user_timezone = pytz.timezone(working_settings.timezone)
+		moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+
+
+		# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+		if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+			# FIGURE OUT THE TIME WINDOW
+			date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+			time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+			time_to_send = datetime.combine(moon_dt_user.date(),text.timing.hour_start)
+			time_to_send = user_timezone.localize(time_to_send + timedelta(0,( randint(0,round(time_window.total_seconds())))))
+			text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime('%Y %b %d')) + "!"
+
+			atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+			atext.save()
+
+			print("TIME TO SEND", time_to_send)
+			print("TEXT TO SEND", text_to_send)
+
+
+		# 	moon_text = ActualText(user=text.user, text=text)
+		# 	moon_text.save()
+
+		# 	moon_dt_utc = dataj['phasedata'][0]['date']
+
+		# 	pytz.utc.localize(datetime.combine(dataj['phasedata'][0]['date'], dataj['phasedata'][0]['time']))
+
+
+
+		# 	scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+		# 	moon_text.text_sent = ne
+
+
+
+		# 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+		# 	time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+		# 	schedule_specific_text(text,working_settings,user_timezone,time_window,1)
+
+
+
+
+	# 	actual_texts = ActualText.objects.all().filter(user=text.user).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
+
+
+
+
+	print("MOON ", dataj['phasedata'])
+	print("LEN", len(dataj['phasedata']))
+
+
+	print("NEXT DATE", dataj['phasedata'][0]['date'])
+
+
+
+
+
+	for i in range(0,len(dataj['phasedata'])):
+		print("pas", dataj['phasedata'][i])
+	
+	return render(request,"SS_moon.html",context)
+
+
 def test_signup(request):
 	context = {}
-	# get_adapter()
-	# print("test_signup pressed!")
-	# username = "hahahha"
-	# password = "1234567"
-
-	# form_tmp = SignupForm()
-	# form_tmp.username = "hahaha"
-	# form_tmp.email = "Aa12345678@asdf.com"
-	# form_tmp.password1 = "Aa12345678"
-	# form_tmp.password2 = "Aa12345678"
-
-	# print("CLEAN:", DefaultAccountAdapter.clean_username(form_tmp,form_tmp.username))
-
-	# form_tmp.cleaned_data = []
-	# form_tmp.cleaned_data.username = "hahaha"
-	# form_tmp.cleaned_data.email = "Aa12345678@asdf.com"
-	# form_tmp.cleaned_data.password1 = "Aa12345678"
-	# form_tmp.cleaned_data.password2 = "Aa12345678"
-
-	
-	
-	# print("CLEAN", SignupForm.clean(form_tmp))
-
-	# print(form_tmp.clean())
-	# print(form_tmp.cleaned_data)
-
-
-	
-
 	new_user_tmp = DefaultAccountAdapter.new_user(SignupForm,request)
-	# print(new_user_tmp)
-	# DefaultAccountAdapter.save_user(new_user_tmp,request,SignupForm,form_tmp)
-
-	# save_user(self, request, user, form):
-	# print("test_signup pressed!")
 	return render(request,"SS_home.html",context)
 
 # create an inspiration

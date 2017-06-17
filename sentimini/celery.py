@@ -39,6 +39,7 @@ if LIVEHOST:
     CELERY_SEND_EVENTS = False # Will not create celeryev.* queues
     CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
     CELERY_MAX_TASKS_PER_CHILD = 10
+    CELERYD_TASK_SOFT_TIME_LIMIT = 60
     
     app = celery.Celery('sentimini',
              broker=BROKER_URL,
