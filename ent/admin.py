@@ -145,7 +145,7 @@ class TimingResource(resources.ModelResource):
 		model = Timing
 		import_id_fields = ('intended_text_input',)
 		# fields = ('intended_text', 'hour_start', 'hour_end','fuzzy','fuzzy_denomination','iti','iti_noise','monday','tuesday','wednesday','thursday','friday','saturday','sunday')
-		fields = ('intended_text_input', 'hour_start', 'hour_end', 'repeat_in_window', 'fuzzy','fuzzy_denomination','iti_raw','iti_noise')
+		fields = ('intended_text_input', 'text_type', 'hour_start', 'hour_end', 'repeat_in_window', 'fuzzy','fuzzy_denomination','iti_raw','iti_noise')
 
 
 class TimingModelAdmin(ImportExportModelAdmin):
@@ -154,6 +154,7 @@ class TimingModelAdmin(ImportExportModelAdmin):
 		"id",
 		"user",
 		"timing",
+		'text_type',
 		"default_timing",
 		"repeat",
 		"repeat_summary",

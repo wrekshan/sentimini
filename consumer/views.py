@@ -280,6 +280,7 @@ def text(request,id=None,slug=None):
 
 def program(request,id=None,slug=None):	
 	if id == None:
+		print("COLLECTION NAME -----ID IS NON")
 		context = {}
 		if request.user.is_authenticated():	
 			if UserSetting.objects.all().filter(user=request.user).count() > 0:
@@ -293,13 +294,13 @@ def program(request,id=None,slug=None):
 	
 		return render(request,"SS_inspiration.html",context)
 	else:
+		# print("COLLECTION NAME ----- ", working_collection.collection_name)
 		working_collection = Collection.objects.all().get(id=id)
 		key = 1
 		collection_info = {}
 		burden = float(0)
 		for text in working_collection.texts.all():
 			burden = burden + text.timing.timing_burden_number()
-			print("BURDEN TEXTS ", text.timing.timing_burden_number())
 			if request.user.is_authenticated():	
 				collection_list = {
 					'text': text,

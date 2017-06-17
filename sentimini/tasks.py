@@ -281,7 +281,7 @@ def send_text(text):
 		message_to_send = text.text
 
 	#check for moon texts
-	if text.text_type == 'moon':
+	if text.text.text_type == 'moon':
 		message_to_send = text.text_sent
 
 

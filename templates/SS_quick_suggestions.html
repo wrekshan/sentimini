@@ -12,7 +12,8 @@
                   {% endfor %}
                   {% endif %} -->
     <hr>
-    <span style="font-size:80%;">{{working_text.timing.timing_summary|linebreaks}}</span>
+    <span style="font-size:80%;">{{working_text.timing.timing_summary_burden}}</br>{{working_text.timing.timing_summary_range}}</span>
+    <div class="row"></div>
 
     {% if user.is_authenticated %}
     <a href="#quick_suggestion-add-{{suggestion_number}}" class = "waves-effect waves-blue btn-flat chip" width=100%><i id="add_suggestion_hightlight_{{suggestion_number}}" class="fa fa-plus" aria-hidden="true"></i></a>
