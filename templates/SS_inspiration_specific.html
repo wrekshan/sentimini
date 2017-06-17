@@ -75,13 +75,8 @@
 
               <tr>
                 <td>
-                <!-- {% if user.is_authenticated %}
-                <input name="collection_{{working_collection.id}}" type="checkbox" id="{{working_collection.id}}_{{value.text.id}}" checked>
-                <label for="{{working_collection.id}}_{{value.text.id}}" id="{{working_collection.id}}_{{value.text.id}}" class="">
-                  {% endif %} -->
 
                   {% if user.is_authenticated %}
-
                   {% if value.user > 0  %}
                   <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span> <i class="material-icons" >delete</i> </span>
                   </div>
@@ -95,11 +90,7 @@
 
                   {% else %}
                   <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
-                  <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
                   {% endif %}
-
-
-
                 </td>
                 <td>
                   <a href="/consumer/text/{{value.text.id}}/{{value.text.slug}}/"><b>{{value.text.display_text}}</b></a>
@@ -112,41 +103,40 @@
                       {% for alt_text in value.text.alt_text.all %}
 
                       <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
-                    </br>
+                      <div class="row"></div>
+
+                      {% endfor %}
+                    </div>
+                    {% endif %}
 
 
 
+                  </td>
+                  <td>{{value.text.timing.timing_summary|linebreaks}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
 
-                    {% endfor %}
-                  </div>
-                  {% endif %}
-
-
-
-                </td>
-                <td>{{value.text.timing.timing_summary|linebreaks}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-
-          <div class="card-action right-align">
-            <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
+            <div class="card-action right-align">
+              <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
 
 
-            {% if user.is_authenticated %}
-            <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
-            {% else %}
-            <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
-            {% endif %}
+              {% if user.is_authenticated %}
+              <div value="add" id="collection_{{working_collection.id}}" class="waves-effect waves-light btn add-collection-btn" > Add all texts</div> 
+              {% else %}
+              <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+              {% endif %}
 
-            <span id="save_message"></span>
+              <span id="save_message"></span>
+            </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
+</div>
+
 
 </body>
 
