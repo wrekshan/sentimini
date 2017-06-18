@@ -2,7 +2,7 @@
 {% load staticfiles %}
 <script src={% static "js/jquery.timepicker.js" %} async></script>
 <link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
-<!-- <script src={% static "js/materialize.min.js" %} async></script> -->
+<script src={% static "js/materialize.min.js" %} async></script>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <!-- <link rel="stylesheet" href={% static "css/materialize.css" %}> -->
 <link rel="stylesheet" href={% static "css/nouislider.css" %}>
@@ -89,17 +89,12 @@
 
 				<span id="alt_counter" style="display: none;"" >{{forloop.counter|add:"1"}}</span>
 				
-				
 
 				{% endfor %}
 				{% else %}
 				<span id="alt_counter" style="display: none;"" >0</span>
 
 				{% endif %}
-				
-
-				
-				
 				
 
 

@@ -298,7 +298,7 @@ class CollectionResource(resources.ModelResource):
 	class Meta:
 		model = Collection
 		import_id_fields = ('collection_name',)
-		fields = ('collection', 'collection_name', 'intended_tags', 'author', 'description', 'long_description')
+		fields = ('collection', 'collection_name', 'ordering', 'intended_tags', 'author', 'description', 'long_description')
 
 
 class CollectionModelAdmin(ImportExportModelAdmin):
@@ -309,6 +309,7 @@ class CollectionModelAdmin(ImportExportModelAdmin):
 		"id",
 		"user",
 		"collection",
+		"ordering",
 	]
 	list_display_links = ["user"]
 	list_filter = ["user","collection"]

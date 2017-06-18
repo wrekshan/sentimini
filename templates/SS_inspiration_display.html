@@ -37,30 +37,11 @@
 
 
 <div id="possible_text_list">
-
   <ul class="list">
     {% for key, value in collection_info %}
-
- <!--    <div class="col s12">
-    <div class="card large white-text" style="background-image:url('/static/images/collection/dreams.jpg');background-size:100%;">
-    <div class="card-content">
-    <span class="card-title"><h3>{{value.collection.collection_name}}</h3></span>
-    <p>{{value.collection.description}}</p>
-    </div>
-    </div>
-    </div> -->
-
-   <!-- <div class = "card transparent z-depth-5" background = "/static/images/collection/{{value.collection.collection_name}}.jpg"> -->
-
-   <!-- <div class="card-inspiration card-title">{{value.collection.description}} -->
-   <!-- </div> -->
-   
-  
-    <!-- </div> -->
-   
-
     
-    <div class="col s12 m12 l6">
+    {% ifequal forloop.counter 1 %}
+      <div class="col s12 m12 l12">
     <div class="card">
     <div class="card-image">
         <a href="/consumer/program/{{value.collection.id}}/{{value.collection.slug}}/"><img src="/static/images/collection/{{value.collection.collection_name}}.jpg" >
@@ -77,15 +58,31 @@
         </div>
       </div>
       </div>
+      {% else %}
+
+
+
+    
+    <div class="col s12 m12 l6">
+    <div class="card">
+    <div class="card-image">
+        <a href="/consumer/program/{{value.collection.id}}/{{value.collection.slug}}/"><img src="/static/images/collection/{{value.collection.collection_name}}.jpg" >
+        <span class="card-title">{{value.collection.collection}}</span></a>
+        <!-- <img class="activator" src="/static/images/collection/dreams.jpg"> -->
+      </div>
+    <div class="card-content">
+   
+   <p>{{value.collection.description}}</p>
+      </div>
+      <div class="card-action right-align">
+          <a class="waves-effect waves-light btn" href="/consumer/program/{{value.collection.id}}/{{value.collection.slug}}/">Read more and subscribe</a>
+        </div>
+      </div>
+      </div>
       
 
-
-
-
-
-
-
     <!-- OLD CARD -->
+    {% endifequal %}
     {% endfor %}
   </ul>
   <div class="col s10">

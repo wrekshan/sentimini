@@ -367,7 +367,7 @@ def get_inspiration_display(request):
 				print("NAME", tag.split("_"))
 				working_filters.add(Q(collection=str(tag).split("_")[1]),Q.AND)
 
-	working_collection = Collection.objects.all().filter(working_filters)
+	working_collection = Collection.objects.all().filter(working_filters).order_by('ordering')
 
 	for collection in working_collection:
 		collection_list = {}

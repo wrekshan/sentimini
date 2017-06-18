@@ -359,6 +359,7 @@ class Collection(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	collection = models.CharField(max_length=160,default='')
 	collection_name = models.CharField(max_length=160,default='')
+	ordering = models.CharField(max_length=160,default='')
 	author = models.CharField(max_length=500,default='')
 	description = models.CharField(max_length=3000,default='')
 	long_description = models.TextField(max_length=3000,default='')
