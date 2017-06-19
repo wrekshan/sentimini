@@ -49,9 +49,12 @@ def change_nus(request):
 # pas {'phase': 'Full Moon', 'time': '04:07', 'date': '2017 Jul 09'}
 
 def get_moon_data():
-	time.sleep(1)
+	import requests
+	print("GET MOON DATA")
+	
 	output = "NOT FOUND"
 	try:
+		print("GET MOON DATA --- IN TRY")
 		date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
 		# requests.get('s')
 		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
@@ -59,81 +62,161 @@ def get_moon_data():
 		output = dataj
 		return output
 	except:
+		print("GET MOON DATA --- NOT TRY")
 		return output
 	
-	
 
+def get_sun_time(sundata,desired):
+	for i in range(0,len(sundata)):
+		if sundata[i]['phen'] == desired:
+			return sundata[i]['time']
+
+# [{'time': '5:16 a.m. DT', 'phen': 'BC'}, {'time': '5:48 a.m. DT', 'phen': 'R'}, {'time': '1:11 p.m. DT', 'phen': 'U'}, {'time': '8:34 p.m. DT', 'phen': 'S'}, {'time': '9:06 p.m. DT', 'phen': 'EC'}]
 def moon(request):
 	context = {}
-	dataj = get_moon_data()
-	print(dataj)
-	
-	next_phase = dataj['phasedata'][0]
-	moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
-	moon_dt_utc = pytz.utc.localize(moon_dt)	
+	# FOR THE TASKS FILLE
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
 
-	working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
-	for text in working_texts:
-		working_settings = UserSetting.objects.all().get(user=text.user)
+	for user in distinct_users:
+		working_settings = UserSetting.objects.all().get(user=user['user'])
 		user_timezone = pytz.timezone(working_settings.timezone)
-		moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+
+		try:
+			data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=San Francisco, CA')
+			dataj = data.json()
+			output = dataj
+		except:
+			dataj = "NOT FOUND"
+		
+		if dataj != "NOT FOUND":	
+			#Get the sun data
+			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
+			for text in working_texts:
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					if 'Sun Rise' in text.text:
+						text_to_send = 'The sun is rising right now!'
+						time_out = get_sun_time(dataj['sundata'],'R')
+					elif 'Sun Set' in text.text: 
+						text_to_send = 'The sun is setting right now!'
+						time_out = get_sun_time(dataj['sundata'],'S')
+					elif 'Upper Transit' in text.text:
+						text_to_send = 'The sun is at the highest point in the sky today right now!'
+						time_out = get_sun_time(dataj['sundata'],'U')
+					
+					# time_out 8:34 p.m. DT
+					time_out_time = time_out.split(' ')[0]
+					time_out_ampm = time_out.split(' ')[1]
+					if time_out_ampm == "a.m.":
+						time_out_ampm = "AM"
+					else:
+						time_out_ampm = "PM"
+
+					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
+					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
+					time_to_send = user_timezone.localize(time_to_send)
+					time_to_send = time_to_send.astimezone(pytz.UTC)
+
+					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					atext.save()
+				
 
 
-		# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
-		if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
-			# FIGURE OUT THE TIME WINDOW
-			date_today = datetime.now(pytz.utc).astimezone(user_timezone)
-			time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+				# time_out = 
 
-			time_to_send = datetime.combine(moon_dt_user.date(),text.timing.hour_start)
-			time_to_send = user_timezone.localize(time_to_send + timedelta(0,( randint(0,round(time_window.total_seconds())))))
-			text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime('%Y %b %d')) + "!"
+				# Save the sun data
+				# if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
 
-			atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
-			atext.save()
+			
+					# user_timezone = pytz.timezone(working_settings.timezone)
+					# moon_dt_user = moon_dt_utc.astimezone(user_timezone)
 
-			print("TIME TO SEND", time_to_send)
-			print("TEXT TO SEND", text_to_send)
+					# # #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+					# if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					# 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					# 	time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+					# 	moon_dt_user = moon_dt_user - timedelta(1,0)
+					# 	scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+					# 	scheduled_date = scheduled_date.astimezone(pytz.UTC)
+
+					# 	time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+					# 	text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
+
+					# 	atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					# 	atext.save()
 
 
-		# 	moon_text = ActualText(user=text.user, text=text)
-		# 	moon_text.save()
-
-		# 	moon_dt_utc = dataj['phasedata'][0]['date']
-
-		# 	pytz.utc.localize(datetime.combine(dataj['phasedata'][0]['date'], dataj['phasedata'][0]['time']))
-
-
-
-		# 	scheduled_date = user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
-		# 	moon_text.text_sent = ne
+		
 
 
 
-		# 	date_today = datetime.now(pytz.utc).astimezone(user_timezone)
-		# 	time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
-		# 	schedule_specific_text(text,working_settings,user_timezone,time_window,1)
-
-
-
-
-	# 	actual_texts = ActualText.objects.all().filter(user=text.user).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
-
-
-
-
-	print("MOON ", dataj['phasedata'])
-	print("LEN", len(dataj['phasedata']))
-
-
-	print("NEXT DATE", dataj['phasedata'][0]['date'])
+		
 
 
 
 
 
-	for i in range(0,len(dataj['phasedata'])):
-		print("pas", dataj['phasedata'][i])
+
+
+
+
+
+	# # requests.get('s')
+	# try:
+	# 	data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=San Francisco, CA')
+	# 	dataj = data.json()
+	# 	output = dataj
+	# except:
+	# 	dataj = "NOT FOUND"
+
+	# if dataj != "NOT FOUND":
+	# 	print(dataj['sundata'])
+	# 	print(len(dataj['sundata']))
+	# 	for i in range(len(dataj['sundata'])):
+	# 		print(i)
+	# 		print("phen",dataj['sundata'][i]['phen'])
+	# 		if dataj['sundata'][i]['phen'] == 'R':
+	# 			working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").filter(text="Sun Rise")
+	# 		elif dataj['sundata'][i]['phen'] == 'U':
+	# 			working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").filter(text="Upper Transit")
+	# 		elif dataj['sundata'][i]['phen'] == 'S':
+	# 			working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").filter(text="Sun Set")
+
+	# 		if working_texts.count() > 0:
+	# 			for text in working_texts:
+	# 				working_settings = UserSetting.objects.all().get(user=text.user)
+
+	# 				
+
+
+
+	# 				user_timezone = pytz.timezone(working_settings.timezone)
+	# 				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+
+	# 				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+	# 				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+	# 					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+	# 					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+	# 					moon_dt_user = moon_dt_user - timedelta(1,0)
+	# 					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+	# 					scheduled_date = scheduled_date.astimezone(pytz.UTC)
+
+	# 					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+	# 					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
+
+	# 					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+	# 					atext.save()
+
+
+
+				 
+
+
+
+
+
 	
 	return render(request,"SS_moon.html",context)
 
@@ -218,6 +301,7 @@ def inspiration_indvidual_text(request):
 
 		user_text.quick_suggestion=False
 		user_text.date_created=datetime.now(pytz.utc)
+		user_text.input_text = ''
 		user_text.save()
 
 		transfer_alt_texts(PossibleText.objects.all().get(id=int(request.POST['selected_texts'].split('_')[1])),user_text)
@@ -328,8 +412,14 @@ def program(request,id=None,slug=None):
 		'number_of_texts': number_of_texts,
 		'burden': round(burden,2),
 		}
+
+		if working_collection.collection_name=='sun':
+			return render(request,"SS_inspiration_specific_sun.html",context)
+		else:
+			return render(request,"SS_inspiration_specific.html",context)
+
 	
-		return render(request,"SS_inspiration_specific.html",context)
+		
 
 
 
@@ -499,7 +589,7 @@ def settings(request):
 			working_settings.save()
 		else:
 			working_settings = UserSetting.objects.all().get(user=request.user)
-
+		print("CITY STATE", working_settings.city_state())
 		
 
 		context={

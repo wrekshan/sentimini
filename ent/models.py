@@ -40,6 +40,7 @@ class Quotation(models.Model):
 class UserSetting(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	begin_date = models.DateTimeField(default=datetime(2000,1,1,0,00))
+	location = models.CharField(max_length=500,default='',null=True)
 	settings_complete = models.BooleanField(default=False)
 	new_user_step  = models.IntegerField(default=0)
 	phone_verified = models.BooleanField(default=False)
@@ -58,9 +59,14 @@ class UserSetting(models.Model):
 	send_email_check = models.BooleanField(default=False)
 	send_text_check = models.BooleanField(default=True)
 
-	
 	def __str__(self):
 		return self.user.username
+
+	def city_state(self):	
+		tmp = self.location.split(',')
+		return str(str(tmp[len(tmp)-3]) + ", " + str(tmp[len(tmp)-2]))
+
+
 	
 
 class Tag(models.Model):
@@ -183,7 +189,7 @@ class Timing(models.Model):
 
 	def timing_summary_burden(self):
 		if self.text_type == "moon":
-			return str('1 text before moon phase')
+			return str('1 text the day before between')
 		else:
 			# return "1 text around every " + str(self.iti_raw) + " " + self.fuzzy_denomination
 			if self.fuzzy == True:

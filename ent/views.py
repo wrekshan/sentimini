@@ -267,6 +267,7 @@ def add_to_collection(request):
 				tmp.pk=None
 				tmp.timing=timing
 				tmp.user=request.user
+				tmp.input_text=''
 				tmp.tmp_save=False
 				tmp.date_created=datetime.now(pytz.utc)
 				tmp.save()

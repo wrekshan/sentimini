@@ -21,11 +21,13 @@ django-nvd3==0.9.7
 django-taggit==0.21.2
 future==0.15.2
 fuzzywuzzy==0.10.0
+geopy==1.11.0
 gunicorn==19.4.5
 Jinja2==2.8
 jsondatabase==0.1.1
 kombu==4.0.2
 MarkupSafe==0.23
+nltk==3.2.1
 numpy==1.11.1
 oauthlib==1.1.2
 parsedatetime==2.1
@@ -43,6 +45,7 @@ redis==2.10.5
 requests==2.11.1
 requests-oauthlib==0.6.1
 scipy==0.18.1
+Shapely==1.5.17.post1
 six==1.10.0
 tablib==0.11.2
 textblob==0.11.1

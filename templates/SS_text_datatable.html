@@ -44,13 +44,29 @@
             <td>
             <a href="/consumer/text/{{text.id}}/{{text.slug}}/" style="font-size:80%;">{{text.text}}</a> 
 
+
+            {% ifequal text.text_type "standard" %}
+
             <span style="font-size:80%;">(<a id = "{{text.id}}" class="text_edit waves-effect waves-light">edit</a>)
             </span>
+
+            {% endifequal %}
+
              </td>
              
 
-            <td><span style="font-size:80%;" id = "{{text.id}}"><p>{{text.text_type}}</p><p>{{text.timing.timing_summary_burden}}</p><p>{{text.timing.timing_summary_range}}</p></span></td>
             <td>
+
+            {% ifequal text.text_type "sun" %}
+            <span style="font-size:80%;" id = "{{text.id}}"><p>1 text exactly at event</p></span></td>
+            {% else %}
+            <span style="font-size:80%;" id = "{{text.id}}"><p>{{text.timing.timing_summary_burden}}</p><p>{{text.timing.timing_summary_range}}</p></span></td>
+            {% endifequal %}
+            <td>
+
+
+
+
           <!-- <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Increase frequency">trending_up</i>
           <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Decrease frequency">trending_down</i> -->
 

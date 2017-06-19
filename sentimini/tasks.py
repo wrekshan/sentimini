@@ -11,7 +11,11 @@ import re
 import imaplib
 import email
 import time
+import requests
+import json
+
 from celery.task.control import discard_all
+
 
 import parsedatetime as pdt # for parsing of datetime shit for NLP
 from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, use_gmail
@@ -20,7 +24,7 @@ import string
 from ent.models import AlternateText, PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting, Outgoing, Incoming
 
 from ent.views import time_window_check, date_check_fun
-from consumer.views import get_moon_data
+# from consumer.views import get_moon_data
 
 from .celery import app
 # app = Celery()
@@ -35,7 +39,7 @@ from .celery import app
 
 # task_seconds_between = 6
 task_seconds_between = 90
-task_seconds_between_moon = 10
+task_seconds_between_moon = 10800
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
@@ -59,11 +63,16 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
-  #   'moon': {
-  #       'task': 'schedule_moon_texts',
-  #       'schedule': timedelta(seconds=task_seconds_between_moon),
-		# 'args': ()
-  #   },
+    'moon': {
+        'task': 'schedule_moon_texts',
+        'schedule': timedelta(seconds=task_seconds_between_moon),
+		'args': ()
+    },
+    'sun': {
+        'task': 'schedule_sun_texts',
+        'schedule': timedelta(seconds=task_seconds_between_moon),
+		'args': ()
+    },
 }    
 
 
@@ -105,42 +114,107 @@ def schedule_specific_text(text,working_settings,user_timezone, time_window,day)
 	text.date_scheduled = datetime.now(pytz.utc)
 	text.save()
 
-# @task(name='schedule_moon_texts')
-# def schedule_moon_texts():
-# 	print("MOOOOOOOOON")
-# 	#Get the moon data and format it
-# 	dataj = get_moon_data()
-# 	print("DATAJ", dataj)
-# 	if dataj != "NOT FOUND":
-# 		print('1')
+def get_sun_time(sundata,desired):
+	for i in range(0,len(sundata)):
+		if sundata[i]['phen'] == desired:
+			return sundata[i]['time']
+
+@task(name='schedule_sun_texts')	
+def schedule_sun_texts():
+	# print("SUUUUUUUUNNNNNNN")
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
+
+	for user in distinct_users:
+		working_settings = UserSetting.objects.all().get(user=user['user'])
+		user_timezone = pytz.timezone(working_settings.timezone)
+		user_location = working_settings.city_state()
+
+		try:
+			data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=' + user_location)
+			dataj = data.json()
+			output = dataj
+		except:
+			dataj = "NOT FOUND"
 		
-# 		print('2')
-# 		next_phase = dataj['phasedata'][0]
-# 		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
-# 		moon_dt_utc = pytz.utc.localize(moon_dt)
+		if dataj != "NOT FOUND":	
+			#Get the sun data
+			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
+			for text in working_texts:
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					if 'Sun Rise' in text.text:
+						text_to_send = 'The sun is rising right now!'
+						time_out = get_sun_time(dataj['sundata'],'R')
+					elif 'Sun Set' in text.text: 
+						text_to_send = 'The sun is setting right now!'
+						time_out = get_sun_time(dataj['sundata'],'S')
+					elif 'Solar Noon' in text.text:
+						text_to_send = 'The sun is at the highest point in the sky today right now!'
+						time_out = get_sun_time(dataj['sundata'],'U')
+					
+					# time_out 8:34 p.m. DT
+					time_out_time = time_out.split(' ')[0]
+					time_out_ampm = time_out.split(' ')[1]
+					if time_out_ampm == "a.m.":
+						time_out_ampm = "AM"
+					else:
+						time_out_ampm = "PM"
 
-# 		print('3')
-# 		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
-# 		for text in working_texts:
-# 			working_settings = UserSetting.objects.all().get(user=text.user)
-# 			user_timezone = pytz.timezone(working_settings.timezone)
-# 			moon_dt_user = moon_dt_utc.astimezone(user_timezone)
-# 			print('4')
+					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
+					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
+					time_to_send = user_timezone.localize(time_to_send)
+					time_to_send = time_to_send.astimezone(pytz.UTC)
 
-# 			# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
-# 			if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
-# 				# FIGURE OUT THE TIME WINDOW
-# 				date_today = datetime.now(pytz.utc).astimezone(user_timezone)
-# 				time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+					if datetime.now(pytz.utc) < time_to_send:
+						atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+						atext.save()
 
-# 				time_to_send = datetime.combine(moon_dt_user.date(),text.timing.hour_start)
-# 				time_to_send = time_to_send + timedelta(0,( randint(0,round(time_window.total_seconds()))))
-# 				text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime('%Y %b %d')) + "!"
 
-# 				atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
-# 				atext.save()
-# 	else:
-# 		print(dataj)
+@task(name='schedule_moon_texts')
+def schedule_moon_texts():
+	print("MOOOOOOOOON")
+	import requests
+	
+	#Get the moon data and format it
+	# dataj = get_moon_data()
+
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	# requests.get('s')
+	try:
+		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
+		dataj = data.json()
+		output = dataj
+	except:
+		dataj = "NOT FOUND"
+
+	if dataj != "NOT FOUND":
+		next_phase = dataj['phasedata'][0]
+		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+		moon_dt_utc = pytz.utc.localize(moon_dt)
+
+		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+		for text in working_texts:
+			if str(next_phase['phase']) in str(text.text):
+				working_settings = UserSetting.objects.all().get(user=text.user)
+				user_timezone = pytz.timezone(working_settings.timezone)
+				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+
+				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+					moon_dt_user = moon_dt_user - timedelta(1,0)
+					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+					scheduled_date = scheduled_date.astimezone(pytz.UTC)
+
+					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
+
+					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					atext.save()
+	else:
+		print(dataj)
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
@@ -281,7 +355,7 @@ def send_text(text):
 		message_to_send = text.text
 
 	#check for moon texts
-	if text.text.text_type == 'moon':
+	if text.text.text_type == 'moon' or text.text.text_type == 'sun' :
 		message_to_send = text.text_sent
 
 
@@ -320,7 +394,7 @@ def send_text(text):
 @task(name="send_texts")
 # @task()
 def send_texts():
-	# print("TASK 2 - STARTING send_texts ")
+	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
 	#filter out the ones that haven't been sent out yet AND the ones that are suppose to be sent out now
 	user_texts = ActualText.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None)
@@ -365,7 +439,7 @@ def get_first_text_part(msg):
 # @task()
 def check_email_for_new():
 	#Set up the email 
-	# print("TASK 3 - RECIEVE MAIL")
+	print("TASK 3 - RECIEVE MAIL")
 	if use_gmail == 1:
 		mail = imaplib.IMAP4_SSL('imap.gmail.com')
 	else:
@@ -424,7 +498,7 @@ def check_email_for_new():
 @task(name="process_new_mail")
 # @task()
 def process_new_mail():
-	# print("TASK 4 - PROCESS MAIL")
+	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
 	for tp in Toprocess:
 	

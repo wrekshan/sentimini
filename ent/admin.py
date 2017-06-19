@@ -56,6 +56,8 @@ admin.site.register(Beta,BetaModelAdmin)
 class UserSettingModelAdmin(admin.ModelAdmin):
 	list_display = [
 		"user",
+		"location",
+		"timezone",
 		"begin_date",
 		"send_text",
 		"send_text_tmp",
@@ -65,7 +67,6 @@ class UserSettingModelAdmin(admin.ModelAdmin):
 		"phone",
 		"carrier",
 		"sms_address",
-		"timezone",
 		"research_check",
 		"send_email_check",
 		"send_text_check",
@@ -243,7 +244,7 @@ class PossibleTextResource(resources.ModelResource):
 	class Meta:
 		model = PossibleText
 		import_id_fields = ('input_text',)
-		fields = ('input_text', 'intended_collection', 'quick_suggestion','intended_tags')
+		fields = ('input_text', 'text_type','intended_collection', 'quick_suggestion','intended_tags')
 
 
 class PossibleTextModelAdmin(ImportExportModelAdmin):

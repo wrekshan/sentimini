@@ -12,20 +12,20 @@
  <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
 </head>
 
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDs-WdIC-BxpjBSsOjF54EPaCsvfd9kuYo&libraries=places"></script>
 
 <script src={% static "js/select2.full.min.js" %}></script>
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
 
 <div class="row">
-<div class="col s12 m4">
+  <div class="col s12 m4">
     <div class="card">
-      <div class="card-content">
-        
+    <div class="card-content">
         Your <b>phone number</b> is needed to be able to text you.  This has to be a US based number, with the area code.
         <div class="row"></div>
         Your <b>carrier</b> is needed to send you free texts.  Sentimini actually sends an email to your carrier, who sends you the text message.  
         <div class="row"></div>
-        You <b>timezone</b> is needed so Sentimini can send you texts are the correct time.
+        Your <b>location</b> is only used to determine your timezone and for specific programs (like reminding you when the sunrise and sun will be).
         <div class="row"></div>
         You should receive a text message to welcome you to Sentimini in less than 2 minutes.
       </div>
@@ -36,86 +36,79 @@
     <div class="card">
       <div class="card-content">
         <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
-          {{message}}
+        {{message}}
 
-          <!-- Phone -->
-          <h5>Phone Number</h5>
-          <div class="input-field col s11 offset-s1">
-            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
-            <input id="phone_input" type="tel" class="validate">
-            <label for="phone_input">Telephone</label>
-          </div>
+        
 
-          <!-- Carrier -->
-          <h5>Phone Carrier</h5>
-          <div class="input-field col s11 offset-s1">
-            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
-            <div class="row">
-             <select id="carrier_search">
-               {% for carrier in working_carrier %}
-               <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
-               {% endfor %}
-             </select>
-           </div>
-         </div>
+        <!-- Phone -->
+        <h5>Phone Number</h5>
+        <div class="input-field col s11 offset-s1">
+          <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
+          <input id="phone_input" type="tel" class="validate">
+          <label for="phone_input">Telephone</label>
+        </div>
 
-         <!-- TIMEZONE -->
-         <h5>Timezone</h5>
-         <div class="input-field col s11 offset-s1">
-          <!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-          <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="Timezone">schedule</i>
+        <!-- Carrier -->
+        <h5>Phone Carrier</h5>
+        <div class="input-field col s11 offset-s1">
+          <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
           <div class="row">
-           <select id="tz_search">
-             <option value="Eastern Standard Time">Eastern Standard Time</option>
-             <option value="Central Standard Time">Central Standard Time</option>
-             <option value="Mountain Standard Time">Mountain Standard Time</option>
-             <option value="Pacific Standard Time">Pacific Standard Time</option>
-             {% for tz in working_tz %}
-             <option value="{{tz}}">{{tz}}</option>
+           <select id="carrier_search">
+             {% for carrier in working_carrier %}
+             <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
              {% endfor %}
-                <!-- {% for topic in topics %}
-                <option value="topic_{{topic.id}}">{{topic.topic_name}}</option>
-                {% endfor %} -->
-              </select>
-            </div>
+           </select>
+         </div>
+       </div>
+
+
+          <!-- LOCATION -->          
+          <h5>Location (City and State)</h5>
+          <div class="input-field col s11 offset-s1">
+            <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">location_on</i>
+            <input id="locationTextField" type="text" class="validate">
+            <!-- <label for="locationTextField">Location</label> -->
           </div>
-          </div>
-<div class="row"></div>
-<div class="row"></div>
+        </div>
+        <div class="row"></div>
+        <div class="row"></div>
 
         <div class="card-action right-align">
           <div id = "settings_message"></div>
           <a id="skip_settings_trigger" class="waves-effect waves-light btn" href="#skip_settings">Skip</a>
           <a id="settings_modal_trigger" class="waves-effect waves-light btn" href="#confirm_settings">Save</a>
         </div>
-      
+
+      </div>
     </div>
   </div>
-  
 
 </div>
 
 <!-- Modal Structure -->
-<div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:50%;">
+<div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:75%;">
   <div class="modal-content">
-    <h5>Confirm settings</h5>
-    <p>
+    <h3>Confirm settings</h3>
+    
+    <p class="flow-text">
       <b>Telephone: </b><span id="phone_confirm"></span>
     </p>
-    <p>
+    <p class="flow-text">
       <b>Carrier: </b><span id="carrier_confirm"></span>
     </p>
-    <p>
-      <b>Timezone: </b><span id="tz_confirm"></span>
+    <p class="flow-text">
+      <b>Location: </b><span id="loc_confirm"></span>
     </p>
 
-    <p>
+    
+
+    <p = class="flow-text">
       If these are correct, pleace click confirm.  If not, please click edit to edit the settings.
     </p>
 
   </div>
   <div class="modal-footer">
-    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Save</a>
+    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Confirm</a>
     <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
   </div>
 </div>
@@ -147,7 +140,7 @@
     <h5>Carrier</h5>
     <p>Unfortunately this has to be correct for you to receive text messages.  There are a few ways to send text messages, but the only free way is to send an email to an address your carrier provides you.  As a result, the carrier information is needed to correctly address the text messages.</p>
 
-    <h5>Timezone</h5>
+    <h5>Location</h5>
     <p>We don't want to text you when you are asleep.  Therefore, it is necessary to know what timezone you are currently in.</p>
 
 
@@ -159,8 +152,17 @@
 </div>
 
 
+<
 
 
+<script>
+  function init() {
+    var input = document.getElementById('locationTextField');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+  }
+
+  google.maps.event.addDomListener(window, 'load', init);
+</script>
 
 
 <script type="text/javascript">
@@ -175,6 +177,12 @@
 {% if working_settings.phone_input %}
 <script type="text/javascript">
   $('#phone_input').val("{{working_settings.phone_input}}")
+</script>
+{% endif %}
+
+{% if working_settings.location %}
+<script type="text/javascript">
+  $('#locationTextField').val("{{working_settings.location}}")
 </script>
 {% endif %}
 
@@ -213,6 +221,7 @@
 <script>
   var save_settings_data = function(x){
     console.log("SAVE TYPE", x)
+
     if ($("#carrier_search").val() !== null){
       var carrier_search = $('#carrier_search').val()
       console.log("CARRIER "+carrier_search)
@@ -222,8 +231,8 @@
     }
 
 
-    if ($("#tz_search").val() !== null){
-      var tz_search = $('#tz_search').val()
+    if ($("#locationTextField").val() !== null){
+      var tz_search = $('#locationTextField').val()
       console.log("TZ " + tz_search) 
       var tz_good = 1
     } else {
@@ -246,7 +255,7 @@
       'id': "{{working_settings.id}}",
       'phone_input': $('#phone_input').val(),
       'carrier_search': carrier_search,
-      'tz_search': tz_search,
+      'location': $('#locationTextField').val(),
       'email_checkbox': $('#email_checkbox').is(':checked'),
       'text_checkbox': $('#text_checkbox').is(':checked'),
       'research_check': $('#research_check').is(':checked'),
@@ -271,9 +280,8 @@
 </script>
 <script type="text/javascript">
   $('#settings_modal_trigger').click(function(){
-    console.log("TZ" + $("#tz_search").val())
     $('#carrier_confirm').text($("#carrier_search").val())
-    $('#tz_confirm').text($("#tz_search").val())
+    $('#loc_confirm').text($("#locationTextField").val())
     $('#phone_confirm').text($("#phone_input").val())
 
   })

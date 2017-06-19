@@ -3,8 +3,16 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 
+
+from timezonefinder import TimezoneFinder
 from datetime import datetime, timedelta, time, date
 import pytz
+
+
+from geopy import geocoders
+
+
+
 
 from .forms import SignupFormWithoutAutofocus
 from allauth.account.views import SignupView
@@ -297,6 +305,7 @@ def get_feed(request):
 
 def settings(request):
 	if request.user.is_authenticated():	
+
 		working_collections = Collection.objects.all().filter(publish=True)
 		working_carrier = Carrier.objects.all()
 		working_tz = pytz.country_timezones['us']
@@ -305,6 +314,7 @@ def settings(request):
 			working_settings.save()
 		else:
 			working_settings = UserSetting.objects.all().get(user=request.user)
+
 
 		context={
 		'working_collections': working_collections,
@@ -328,8 +338,26 @@ def save_settings(request):
 			working_settings.phone = request.POST['phone_input']
 			working_carrier = Carrier.objects.all().get(carrier=request.POST['carrier_search'])
 
-			if 'tz_search' in request.POST.keys():
-				working_settings.timezone_search = request.POST['tz_search']
+			if 'location' in request.POST.keys():
+				working_settings.location = request.POST['location']
+				print("LOCATION", request.POST['location'])
+
+				# Figure out the TZ
+				g = geocoders.GoogleV3()
+				
+
+				place, (lat, lng) = g.geocode(request.POST['location'])
+				print("place", place)
+				print("lat", lat)
+				print("lng", lng)
+
+				tf = TimezoneFinder()
+				timeZoneStr = tf.closest_timezone_at(lng=lng, lat=lat)
+				print("timeZoneStr", timeZoneStr)
+				working_settings.timezone_search = timeZoneStr
+				working_settings.timezone = timeZoneStr
+
+				# working_settings.timezone_search = 
 
 			if 'carrier_search' in request.POST.keys():
 				working_settings.carrier = request.POST['carrier_search']
@@ -356,16 +384,16 @@ def save_settings(request):
 
 			##### DO THE PROCESS
 			#set up the timezone
-			if 'Eastern Standard Time' in request.POST['tz_search']:
-				working_settings.timezone = 'America/New_York'
-			elif 'Central Standard Time' in request.POST['tz_search']:
-				working_settings.timezone = 'America/Chicago'
-			elif 'Mountain Standard Time' in request.POST['tz_search']:
-				working_settings.timezone = 'America/Denver'
-			elif 'Pacific Standard Time' in request.POST['tz_search']:
-				working_settings.timezone = 'America/Los_Angeles'
-			else:
-				working_settings.timezone = working_settings.timezone_search
+			# if 'Eastern Standard Time' in request.POST['tz_search']:
+			# 	working_settings.timezone = 'America/New_York'
+			# elif 'Central Standard Time' in request.POST['tz_search']:
+			# 	working_settings.timezone = 'America/Chicago'
+			# elif 'Mountain Standard Time' in request.POST['tz_search']:
+			# 	working_settings.timezone = 'America/Denver'
+			# elif 'Pacific Standard Time' in request.POST['tz_search']:
+			# 	working_settings.timezone = 'America/Los_Angeles'
+			# else:
+			# 	working_settings.timezone = working_settings.timezone_search
 			
 			#set up the SMS address	
 			working_settings.sms_address = working_settings.phone_input + working_carrier.sms_address
