@@ -472,6 +472,8 @@ def get_inspiration_display(request):
 	collection_info = tuple(collection_info.items())
 	main_context['collection_info'] = collection_info
 
+	print("collection_info", collection_info)
+
 	#These are for the search bar
 	main_context['collection_names'] = Collection.objects.all().filter(publish=True)
 	main_context['working_tags'] = Tag.objects.all().filter(collection__in=Collection.objects.all().filter(publish=True)).distinct()

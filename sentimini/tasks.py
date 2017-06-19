@@ -38,8 +38,8 @@ from .celery import app
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
 # task_seconds_between = 6
-task_seconds_between = 90
-task_seconds_between_moon = 10800
+task_seconds_between = 1000
+task_seconds_between_moon = 30000
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
