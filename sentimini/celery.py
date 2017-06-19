@@ -82,11 +82,11 @@ else:
 
 
 # Optional configuration, see the application user guide.
-app.conf.update(
-    CELERY_TASK_RESULT_EXPIRES=360,
-    # CELERYD_MAX_TASKS_PER_CHILD = 100,
-    # CELERY_REDIS_MAX_CONNECTIONS =1,
-)
+# app.conf.update(
+#     CELERY_TASK_RESULT_EXPIRES=360,
+#     # CELERYD_MAX_TASKS_PER_CHILD = 100,
+#     # CELERY_REDIS_MAX_CONNECTIONS =1,
+# )
 
 #Celery Stuff
 # BROKER_URL = 'amqp://guest:guest@localhost:5672//'
