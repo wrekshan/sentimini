@@ -42,11 +42,12 @@ if LIVEHOST:
     CELERY_MAX_TASKS_PER_CHILD = 10
     CELERYD_TASK_SOFT_TIME_LIMIT = 60
     
+    
     app = celery.Celery('sentimini',
              broker=BROKER_URL,
              # backend='amqp://',
              include=['sentimini.tasks'])
-    
+    app.conf.broker_transport_options = {'fanout_patterns': True}
     # Below is trying to make livehouse like dev
     
 else:
