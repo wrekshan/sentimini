@@ -465,34 +465,6 @@ $(window).resize(function() {
 
     var save_suggestions = "yes"
 
-      $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_input/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_message': "New Text",},
-      success : function(data) {
-        setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
-        // setTimeout(function() {Materialize.updateTextFields();}, 605);
-        setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 610);      
-
-        if (window.location.pathname.indexOf("guided_tour") >= 0){
-          setTimeout(function() {$('#highlight_button').trigger('click');}, 800);
-          
-        }
-      }
-  })
-
-      $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_datatable/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-      success : function(data) {
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 800);
-      }
-    })
-
-
-
     $.ajax({
       type: 'POST',
       url: '/consumer/get_quick_suggestions/',
@@ -543,6 +515,58 @@ $(window).resize(function() {
   })
 </script>
 {% endifequal %} -->
+
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_input/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'text_message': "New Text",},
+      success : function(data) {
+        setTimeout(function() {$('#text_input').html(data['text_input']);}, 600);
+        // setTimeout(function() {Materialize.updateTextFields();}, 605);
+        setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 610);      
+
+        if (window.location.pathname.indexOf("guided_tour") >= 0){
+          setTimeout(function() {$('#highlight_button').trigger('click');}, 800);
+          
+        }
+      }
+  })
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
+<!-- GET THE TEXT BOX -->
+<script type="text/javascript">
+  function startClock(){
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_datatable/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+      success : function(data) {
+        setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 800);
+      }
+    })
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
 
 
 
