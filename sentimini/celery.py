@@ -32,6 +32,7 @@ if LIVEHOST:
     # CELERY_IMPORTS=("sentimini.tasks")
     # BROKER_URL = os.environ['CLOUDAMQP_URL']
     # BROKER_URL = os.environ['RABBITMQ_BIGWIG_URL']
+    CELERY_UTC_ENABLE = True
     BROKER_URL = os.environ['REDIS_URL']
     BROKER_POOL_LIMIT = 1 # Will decrease connection usage
     BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
@@ -47,7 +48,7 @@ if LIVEHOST:
              broker=BROKER_URL,
              # backend='amqp://',
              include=['sentimini.tasks'])
-    
+
     app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
     # app.conf.broker_transport_options = {'fanout_patterns': True}
