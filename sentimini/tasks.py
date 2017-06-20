@@ -40,7 +40,7 @@ from .celery import app
 
 # task_seconds_between = 6
 task_seconds_between = 1000
-task_seconds_between_moon = 1000
+task_seconds_between_moon = 3000
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
@@ -124,7 +124,7 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-@task(name='schedule_sun_texts',rate_limit="2/m")	
+@task(name='schedule_sun_texts',rate_limit="4/h")	
 def schedule_sun_texts():
 	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
@@ -175,7 +175,7 @@ def schedule_sun_texts():
 						atext.save()
 
 
-@task(name='schedule_moon_texts',rate_limit="2/m")
+@task(name='schedule_moon_texts',rate_limit="4/h")
 def schedule_moon_texts():
 	print("MOOOOOOOOON")
 	import requests
