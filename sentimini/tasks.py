@@ -124,7 +124,7 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-@task(name='schedule_sun_texts')	
+@task(name='schedule_sun_texts',rate_limit="2/m")	
 def schedule_sun_texts():
 	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
@@ -175,7 +175,7 @@ def schedule_sun_texts():
 						atext.save()
 
 
-@task(name='schedule_moon_texts')
+@task(name='schedule_moon_texts',rate_limit="2/m")
 def schedule_moon_texts():
 	print("MOOOOOOOOON")
 	import requests
@@ -224,7 +224,7 @@ def schedule_moon_texts():
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name='schedule_texts')
+@task(name='schedule_texts',rate_limit="2/m")
 # @task()
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
@@ -396,7 +396,7 @@ def send_text(text):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="send_texts")
+@task(name="send_texts",rate_limit="2/m")
 # @task()
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
@@ -440,7 +440,7 @@ def get_first_text_part(msg):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="check_email_for_new")
+@task(name="check_email_for_new",rate_limit="2/m")
 # @task()
 def check_email_for_new():
 	#Set up the email 
@@ -500,7 +500,7 @@ def check_email_for_new():
 # @task(name="process_new_mail")
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="process_new_mail")
+@task(name="process_new_mail",rate_limit="2/m")
 # @task()
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
