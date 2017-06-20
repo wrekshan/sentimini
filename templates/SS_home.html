@@ -363,12 +363,15 @@ setTimeout(function() {$('#quick_suggestions').hide();}, timing_keeper-10);
   timing_keeper = timing_keeper + delay_between
 
 
+setTimeout(function() {$('html, body').animate({scrollTop: $("#timing_option_specific_highlight").offset().top -350}, scroll_delay);}, timing_keeper);
+timing_keeper = timing_keeper + scroll_delay
+
   setTimeout(function() {$('#timing_option_specific_highlight_trigger').tapTarget('open');}, timing_keeper);
   timing_keeper = timing_keeper + number_of_seconds
   setTimeout(function() {$('#timing_option_specific_highlight_trigger').tapTarget('close');}, timing_keeper);
   timing_keeper = timing_keeper + delay_between
 
-setTimeout(function() {$('html, body').animate({scrollTop: $("#options_default_save").offset().top}, scroll_delay);}, timing_keeper);
+setTimeout(function() {$('html, body').animate({scrollTop: $("#options_default_save").offset().top -350}, scroll_delay);}, timing_keeper);
 timing_keeper = timing_keeper + load_delay + scroll_delay
 
 setTimeout(function() {$('#options_default_save_highlight_trigger').tapTarget('open');}, timing_keeper);
@@ -385,7 +388,7 @@ timing_keeper = timing_keeper + load_delay
 
 // setTimeout(function() {$('#download_csv_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
 
-setTimeout(function() {$('html, body').animate({scrollTop: $("#download_csv_highlight").offset().top}, scroll_delay);}, timing_keeper);
+setTimeout(function() {$('html, body').animate({scrollTop: $("#download_csv_highlight").offset().top -350}, scroll_delay);}, timing_keeper);
 
 
 
