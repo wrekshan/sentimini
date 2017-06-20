@@ -79,12 +79,12 @@ task_seconds_between_moon = 30000
 
 
 
-# @app.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(20.0, schedule_texts, name='add every 10')
-#     sender.add_periodic_task(20.0, send_texts, name='add every 10')
-#     sender.add_periodic_task(20.0, check_email_for_new, name='add every 10')
-#     sender.add_periodic_task(20.0, process_new_mail, name='add every 10')
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(20.0, schedule_texts, name='add every 10')
+    sender.add_periodic_task(20.0, send_texts, name='add every 10')
+    sender.add_periodic_task(20.0, check_email_for_new, name='add every 10')
+    sender.add_periodic_task(20.0, process_new_mail, name='add every 10')
 
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
@@ -219,9 +219,9 @@ def get_sun_time(sundata,desired):
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name='schedule_texts')
+@task(name='schedule_texts')
 # @task()
-@periodic_task(run_every=timedelta(seconds=30))
+# @periodic_task(run_every=timedelta(seconds=30))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -392,9 +392,9 @@ def send_text(text):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="send_texts")
+@task(name="send_texts")
 # @task()
-@periodic_task(run_every=timedelta(seconds=30))
+# @periodic_task(run_every=timedelta(seconds=30))
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -437,9 +437,9 @@ def get_first_text_part(msg):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="check_email_for_new")
+@task(name="check_email_for_new")
 # @task()
-@periodic_task(run_every=timedelta(seconds=30))
+# @periodic_task(run_every=timedelta(seconds=30))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -498,9 +498,9 @@ def check_email_for_new():
 # @task(name="process_new_mail")
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-# @task(name="process_new_mail")
+@task(name="process_new_mail")
 # @task()
-@periodic_task(run_every=timedelta(seconds=30))
+# @periodic_task(run_every=timedelta(seconds=30))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
