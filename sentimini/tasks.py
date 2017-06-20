@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from random import random, triangular, randint, gauss
 from django.core.mail import send_mail
 from email.utils import parsedate_tz, parsedate_to_datetime
+from celery.schedules import crontab
 
 import pytz
 import re
@@ -45,22 +46,26 @@ task_seconds_between_moon = 30000
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': timedelta(seconds=task_seconds_between),
+        'schedule': crontab(hour=0, minute=0, second=15),
+        # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'send': {
         'task': 'send_texts',
-        'schedule': timedelta(seconds=task_seconds_between),
+        'schedule': crontab(hour=0, minute=0, second=15),
+        # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'check': {
         'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=task_seconds_between),
+        'schedule': crontab(hour=0, minute=0, second=15),
+        # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'process': {
         'task': 'process_new_mail',
-        'schedule': timedelta(seconds=task_seconds_between),
+        'schedule': crontab(hour=0, minute=0, second=15),
+        # 'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
   #   'moon': {
