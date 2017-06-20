@@ -42,27 +42,27 @@ task_seconds_between = 1000
 task_seconds_between_moon = 30000
 # 10800 - 3hr
 
-app.conf.beat_schedule = {
-    'schedule': {
-        'task': 'schedule_texts',
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'send': {
-        'task': 'send_texts',
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'check': {
-        'task': 'check_email_for_new',
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'process': {
-        'task': 'process_new_mail',
-        'schedule': timedelta(seconds=task_seconds_between),
-		'args': ()
-    },
+# app.conf.beat_schedule = {
+#     'schedule': {
+#         'task': 'schedule_texts',
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'send': {
+#         'task': 'send_texts',
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'check': {
+#         'task': 'check_email_for_new',
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'process': {
+#         'task': 'process_new_mail',
+#         'schedule': timedelta(seconds=task_seconds_between),
+# 		'args': ()
+#     },
   #   'moon': {
   #       'task': 'schedule_moon_texts',
   #       'schedule': timedelta(seconds=task_seconds_between_moon),
@@ -73,7 +73,7 @@ app.conf.beat_schedule = {
   #       'schedule': timedelta(seconds=task_seconds_between_moon),
 		# 'args': ()
   #   },
-}    
+# }    
 
 
 
@@ -219,8 +219,9 @@ def get_sun_time(sundata,desired):
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name='schedule_texts')
+# @task(name='schedule_texts')
 # @task()
+@periodic_task(run_every=timedelta(seconds=30))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -391,8 +392,9 @@ def send_text(text):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="send_texts")
+# @task(name="send_texts")
 # @task()
+@periodic_task(run_every=timedelta(seconds=30))
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -435,8 +437,9 @@ def get_first_text_part(msg):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="check_email_for_new")
+# @task(name="check_email_for_new")
 # @task()
+@periodic_task(run_every=timedelta(seconds=30))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -495,8 +498,9 @@ def check_email_for_new():
 # @task(name="process_new_mail")
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="process_new_mail")
+# @task(name="process_new_mail")
 # @task()
+@periodic_task(run_every=timedelta(seconds=30))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
