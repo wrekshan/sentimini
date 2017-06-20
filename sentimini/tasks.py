@@ -42,27 +42,27 @@ task_seconds_between = 1000
 task_seconds_between_moon = 30000
 # 10800 - 3hr
 
-# app.conf.beat_schedule = {
-#     'schedule': {
-#         'task': 'schedule_texts',
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'send': {
-#         'task': 'send_texts',
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'check': {
-#         'task': 'check_email_for_new',
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'process': {
-#         'task': 'process_new_mail',
-#         'schedule': timedelta(seconds=task_seconds_between),
-# 		'args': ()
-#     },
+app.conf.beat_schedule = {
+    'schedule': {
+        'task': 'schedule_texts',
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'send': {
+        'task': 'send_texts',
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'check': {
+        'task': 'check_email_for_new',
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'process': {
+        'task': 'process_new_mail',
+        'schedule': timedelta(seconds=task_seconds_between),
+		'args': ()
+    },
   #   'moon': {
   #       'task': 'schedule_moon_texts',
   #       'schedule': timedelta(seconds=task_seconds_between_moon),
@@ -73,18 +73,18 @@ task_seconds_between_moon = 30000
   #       'schedule': timedelta(seconds=task_seconds_between_moon),
 		# 'args': ()
   #   },
-# }    
+}    
 
 
 
 
 
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(20.0, schedule_texts, name='add every 10')
-    sender.add_periodic_task(20.0, send_texts, name='add every 10')
-    sender.add_periodic_task(20.0, check_email_for_new, name='add every 10')
-    sender.add_periodic_task(20.0, process_new_mail, name='add every 10')
+# @app.on_after_configure.connect
+# def setup_periodic_tasks(sender, **kwargs):
+#     sender.add_periodic_task(20.0, schedule_texts, name='add every 10')
+#     sender.add_periodic_task(20.0, send_texts, name='add every 10')
+#     sender.add_periodic_task(20.0, check_email_for_new, name='add every 10')
+#     sender.add_periodic_task(20.0, process_new_mail, name='add every 10')
 
 #############################################
 ######## PERODIC TASK TO SCHEDULE NOW TEXTS
@@ -119,109 +119,108 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-# @task(name='schedule_sun_texts')	
-# def schedule_sun_texts():
-# 	print("SUUUUUUUUNNNNNNN")
-# 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
-# 	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
+@task(name='schedule_sun_texts')	
+def schedule_sun_texts():
+	print("SUUUUUUUUNNNNNNN")
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
 
-# 	for user in distinct_users:
-# 		working_settings = UserSetting.objects.all().get(user=user['user'])
-# 		user_timezone = pytz.timezone(working_settings.timezone)
-# 		user_location = working_settings.city_state()
+	for user in distinct_users:
+		working_settings = UserSetting.objects.all().get(user=user['user'])
+		user_timezone = pytz.timezone(working_settings.timezone)
+		user_location = working_settings.city_state()
 
-# 		try:
-# 			data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=' + user_location)
-# 			dataj = data.json()
-# 			output = dataj
-# 		except:
-# 			dataj = "NOT FOUND"
+		try:
+			data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=' + user_location)
+			dataj = data.json()
+			output = dataj
+		except:
+			dataj = "NOT FOUND"
 		
-# 		if dataj != "NOT FOUND":	
-# 			#Get the sun data
-# 			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
-# 			for text in working_texts:
-# 				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
-# 					if 'Sun Rise' in text.text:
-# 						text_to_send = 'The sun is rising right now!'
-# 						time_out = get_sun_time(dataj['sundata'],'R')
-# 					elif 'Sun Set' in text.text: 
-# 						text_to_send = 'The sun is setting right now!'
-# 						time_out = get_sun_time(dataj['sundata'],'S')
-# 					elif 'Solar Noon' in text.text:
-# 						text_to_send = 'The sun is at the highest point in the sky today right now!'
-# 						time_out = get_sun_time(dataj['sundata'],'U')
+		if dataj != "NOT FOUND":	
+			#Get the sun data
+			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
+			for text in working_texts:
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					if 'Sun Rise' in text.text:
+						text_to_send = 'The sun is rising right now!'
+						time_out = get_sun_time(dataj['sundata'],'R')
+					elif 'Sun Set' in text.text: 
+						text_to_send = 'The sun is setting right now!'
+						time_out = get_sun_time(dataj['sundata'],'S')
+					elif 'Solar Noon' in text.text:
+						text_to_send = 'The sun is at the highest point in the sky today right now!'
+						time_out = get_sun_time(dataj['sundata'],'U')
 					
-# 					# time_out 8:34 p.m. DT
-# 					time_out_time = time_out.split(' ')[0]
-# 					time_out_ampm = time_out.split(' ')[1]
-# 					if time_out_ampm == "a.m.":
-# 						time_out_ampm = "AM"
-# 					else:
-# 						time_out_ampm = "PM"
+					# time_out 8:34 p.m. DT
+					time_out_time = time_out.split(' ')[0]
+					time_out_ampm = time_out.split(' ')[1]
+					if time_out_ampm == "a.m.":
+						time_out_ampm = "AM"
+					else:
+						time_out_ampm = "PM"
 
-# 					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
-# 					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
-# 					time_to_send = user_timezone.localize(time_to_send)
-# 					time_to_send = time_to_send.astimezone(pytz.UTC)
+					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
+					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
+					time_to_send = user_timezone.localize(time_to_send)
+					time_to_send = time_to_send.astimezone(pytz.UTC)
 
-# 					if datetime.now(pytz.utc) < time_to_send:
-# 						atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
-# 						atext.save()
+					if datetime.now(pytz.utc) < time_to_send:
+						atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+						atext.save()
 
 
-# @task(name='schedule_moon_texts')
-# def schedule_moon_texts():
-# 	print("MOOOOOOOOON")
-# 	import requests
+@task(name='schedule_moon_texts')
+def schedule_moon_texts():
+	print("MOOOOOOOOON")
+	import requests
 	
-# 	#Get the moon data and format it
-# 	# dataj = get_moon_data()
+	#Get the moon data and format it
+	# dataj = get_moon_data()
 
-# 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
-# 	# requests.get('s')
-# 	try:
-# 		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
-# 		dataj = data.json()
-# 		output = dataj
-# 	except:
-# 		dataj = "NOT FOUND"
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	# requests.get('s')
+	try:
+		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
+		dataj = data.json()
+		output = dataj
+	except:
+		dataj = "NOT FOUND"
 
-# 	if dataj != "NOT FOUND":
-# 		next_phase = dataj['phasedata'][0]
-# 		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
-# 		moon_dt_utc = pytz.utc.localize(moon_dt)
+	if dataj != "NOT FOUND":
+		next_phase = dataj['phasedata'][0]
+		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+		moon_dt_utc = pytz.utc.localize(moon_dt)
 
-# 		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
-# 		for text in working_texts:
-# 			if str(next_phase['phase']) in str(text.text):
-# 				working_settings = UserSetting.objects.all().get(user=text.user)
-# 				user_timezone = pytz.timezone(working_settings.timezone)
-# 				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+		for text in working_texts:
+			if str(next_phase['phase']) in str(text.text):
+				working_settings = UserSetting.objects.all().get(user=text.user)
+				user_timezone = pytz.timezone(working_settings.timezone)
+				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
 
-# 				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
-# 				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
-# 					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
-# 					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
 
-# 					moon_dt_user = moon_dt_user - timedelta(1,0)
-# 					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
-# 					scheduled_date = scheduled_date.astimezone(pytz.UTC)
+					moon_dt_user = moon_dt_user - timedelta(1,0)
+					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+					scheduled_date = scheduled_date.astimezone(pytz.UTC)
 
-# 					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
-# 					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
+					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
 
-# 					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
-# 					atext.save()
-# 	else:
-# 		print(dataj)
+					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					atext.save()
+	else:
+		print(dataj)
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
 @task(name='schedule_texts')
 # @task()
-# @periodic_task(run_every=timedelta(seconds=30))
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	#Specific Timings
@@ -394,7 +393,6 @@ def send_text(text):
 # @app.task
 @task(name="send_texts")
 # @task()
-# @periodic_task(run_every=timedelta(seconds=30))
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -439,7 +437,6 @@ def get_first_text_part(msg):
 # @app.task
 @task(name="check_email_for_new")
 # @task()
-# @periodic_task(run_every=timedelta(seconds=30))
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -500,7 +497,6 @@ def check_email_for_new():
 # @app.task
 @task(name="process_new_mail")
 # @task()
-# @periodic_task(run_every=timedelta(seconds=30))
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
