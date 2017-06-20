@@ -47,7 +47,10 @@ if LIVEHOST:
              broker=BROKER_URL,
              # backend='amqp://',
              include=['sentimini.tasks'])
-    app.conf.broker_transport_options = {'fanout_patterns': True}
+    
+    app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+    # app.conf.broker_transport_options = {'fanout_patterns': True}
     # Below is trying to make livehouse like dev
     
 else:

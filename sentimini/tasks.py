@@ -121,7 +121,7 @@ def get_sun_time(sundata,desired):
 
 @task(name='schedule_sun_texts')	
 def schedule_sun_texts():
-	# print("SUUUUUUUUNNNNNNN")
+	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
 	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
 
