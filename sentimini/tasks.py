@@ -46,25 +46,25 @@ task_seconds_between_moon = 30000
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': crontab(hour=0, minute=0, second=15),
+        'schedule': crontab(hour=0, minute=1),
         # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'send': {
         'task': 'send_texts',
-        'schedule': crontab(hour=0, minute=0, second=15),
+        'schedule': crontab(hour=0, minute=1),
         # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'check': {
         'task': 'check_email_for_new',
-        'schedule': crontab(hour=0, minute=0, second=15),
+        'schedule': crontab(hour=0, minute=1),
         # 'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'process': {
         'task': 'process_new_mail',
-        'schedule': crontab(hour=0, minute=0, second=15),
+        'schedule': crontab(hour=0, minute=1),
         # 'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
