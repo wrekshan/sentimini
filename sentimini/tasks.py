@@ -40,7 +40,7 @@ from .celery import app
 
 # task_seconds_between = 6
 task_seconds_between = 1000
-task_seconds_between_moon = 30000
+task_seconds_between_moon = 3000
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
