@@ -46,38 +46,38 @@ task_seconds_between_moon = 30000
 app.conf.beat_schedule = {
     'schedule': {
         'task': 'schedule_texts',
-        'schedule': crontab(hour=0, minute=1),
-        # 'schedule': timedelta(seconds=task_seconds_between),
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'send': {
         'task': 'send_texts',
-        'schedule': crontab(hour=0, minute=1),
-        # 'schedule': timedelta(seconds=task_seconds_between),
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'check': {
         'task': 'check_email_for_new',
-        'schedule': crontab(hour=0, minute=1),
-        # 'schedule': timedelta(seconds=task_seconds_between),
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
         'args': ()
     },
     'process': {
         'task': 'process_new_mail',
-        'schedule': crontab(hour=0, minute=1),
-        # 'schedule': timedelta(seconds=task_seconds_between),
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
-  #   'moon': {
-  #       'task': 'schedule_moon_texts',
-  #       'schedule': timedelta(seconds=task_seconds_between_moon),
-		# 'args': ()
-  #   },
-  #   'sun': {
-  #       'task': 'schedule_sun_texts',
-  #       'schedule': timedelta(seconds=task_seconds_between_moon),
-		# 'args': ()
-  #   },
+    'moon': {
+        'task': 'schedule_moon_texts',
+        'schedule': timedelta(seconds=task_seconds_between_moon),
+		'args': ()
+    },
+    'sun': {
+        'task': 'schedule_sun_texts',
+        'schedule': timedelta(seconds=task_seconds_between_moon),
+		'args': ()
+    },
 }    
 
 
@@ -124,7 +124,7 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-@task(name='schedule_sun_texts',rate_limit="2/m")	
+@task(name='schedule_sun_texts',rate_limit="1/h")	
 def schedule_sun_texts():
 	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
@@ -175,7 +175,7 @@ def schedule_sun_texts():
 						atext.save()
 
 
-@task(name='schedule_moon_texts',rate_limit="2/m")
+@task(name='schedule_moon_texts',rate_limit="1/h")
 def schedule_moon_texts():
 	print("MOOOOOOOOON")
 	import requests
