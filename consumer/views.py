@@ -74,51 +74,67 @@ def get_sun_time(sundata,desired):
 # [{'time': '5:16 a.m. DT', 'phen': 'BC'}, {'time': '5:48 a.m. DT', 'phen': 'R'}, {'time': '1:11 p.m. DT', 'phen': 'U'}, {'time': '8:34 p.m. DT', 'phen': 'S'}, {'time': '9:06 p.m. DT', 'phen': 'EC'}]
 def moon(request):
 	context = {}
-	# FOR THE TASKS FILLE
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
-	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
+	print("PLACE HOLDER")
+	data = requests.get('https://api.github.com/events/')
+	print("AFTER PLACEHOLDER")
+	data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=San Francisco, CA')
+	print("DATA",data)
+	dataj = data.json()
+	print("DATAJ",dataj)
+	output = dataj
 
-	for user in distinct_users:
-		working_settings = UserSetting.objects.all().get(user=user['user'])
-		user_timezone = pytz.timezone(working_settings.timezone)
 
-		try:
-			data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=San Francisco, CA')
-			dataj = data.json()
-			output = dataj
-		except:
-			dataj = "NOT FOUND"
+	# FOR THE TASKS FILLE
+
+
+
+	# date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	# distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
+
+
+
+	# for user in distinct_users:
+	# 	working_settings = UserSetting.objects.all().get(user=user['user'])
+	# 	user_timezone = pytz.timezone(working_settings.timezone)
+
+	# 	try:
+	# 		data = requests.get('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=San Francisco, CA')
+	# 		dataj = data.json()
+	# 		output = dataj
+	# 	except:
+	# 		dataj = "NOT FOUND"
 		
-		if dataj != "NOT FOUND":	
-			#Get the sun data
-			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
-			for text in working_texts:
-				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
-					if 'Sun Rise' in text.text:
-						text_to_send = 'The sun is rising right now!'
-						time_out = get_sun_time(dataj['sundata'],'R')
-					elif 'Sun Set' in text.text: 
-						text_to_send = 'The sun is setting right now!'
-						time_out = get_sun_time(dataj['sundata'],'S')
-					elif 'Upper Transit' in text.text:
-						text_to_send = 'The sun is at the highest point in the sky today right now!'
-						time_out = get_sun_time(dataj['sundata'],'U')
+	# 	if dataj != "NOT FOUND":	
+	# 		#Get the sun data
+	# 		working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
+	# 		for text in working_texts:
+	# 			if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+	# 				if 'Sun Rise' in text.text:
+	# 					text_to_send = 'The sun is rising right now!'
+	# 					time_out = get_sun_time(dataj['sundata'],'R')
+	# 				elif 'Sun Set' in text.text: 
+	# 					text_to_send = 'The sun is setting right now!'
+	# 					time_out = get_sun_time(dataj['sundata'],'S')
+	# 				elif 'Upper Transit' in text.text:
+	# 					text_to_send = 'The sun is at the highest point in the sky today right now!'
+	# 					time_out = get_sun_time(dataj['sundata'],'U')
 					
-					# time_out 8:34 p.m. DT
-					time_out_time = time_out.split(' ')[0]
-					time_out_ampm = time_out.split(' ')[1]
-					if time_out_ampm == "a.m.":
-						time_out_ampm = "AM"
-					else:
-						time_out_ampm = "PM"
+	# 				# time_out 8:34 p.m. DT
+	# 				time_out_time = time_out.split(' ')[0]
+	# 				time_out_ampm = time_out.split(' ')[1]
+	# 				if time_out_ampm == "a.m.":
+	# 					time_out_ampm = "AM"
+	# 				else:
+	# 					time_out_ampm = "PM"
 
-					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
-					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
-					time_to_send = user_timezone.localize(time_to_send)
-					time_to_send = time_to_send.astimezone(pytz.UTC)
+	# 				date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
+	# 				time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
+	# 				time_to_send = user_timezone.localize(time_to_send)
+	# 				time_to_send = time_to_send.astimezone(pytz.UTC)
 
-					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
-					atext.save()
+	# 				atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+	# 				atext.save()
 				
 
 

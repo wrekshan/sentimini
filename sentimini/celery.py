@@ -40,7 +40,7 @@ if LIVEHOST:
     CELERY_RESULT_BACKEND = None # AMQP is not recommended as result backend as it creates thousands of queues
     CELERY_SEND_EVENTS = False # Will not create celeryev.* queues
     CELERY_EVENT_QUEUE_EXPIRES = 60 # Will delete all celeryev. queues without consumers after 1 minute.
-    CELERY_MAX_TASKS_PER_CHILD = 10
+    CELERY_MAX_TASKS_PER_CHILD = 5
     CELERYD_TASK_SOFT_TIME_LIMIT = 60
     
     

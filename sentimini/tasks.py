@@ -5,29 +5,23 @@ from datetime import datetime, timedelta
 from random import random, triangular, randint, gauss
 from django.core.mail import send_mail
 from email.utils import parsedate_tz, parsedate_to_datetime
-from celery.schedules import crontab
 
+import sys
 import pytz
 import re
 import imaplib
 import email
-import time
-import requests
+import string
 import json
 
-from celery.task.control import discard_all
-
-
+# import requests
 import parsedatetime as pdt # for parsing of datetime shit for NLP
+
 from .settings import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD, use_gmail
-
-import string
 from ent.models import AlternateText, PossibleText, Collection, Timing, Tag, ActualText, Carrier, UserSetting, Outgoing, Incoming
-
 from ent.views import time_window_check, date_check_fun
-# from consumer.views import get_moon_data
-
 from .celery import app
+
 # app = Celery()
 
 # @app.on_after_configure.connect
@@ -39,8 +33,10 @@ from .celery import app
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
 # task_seconds_between = 6
-task_seconds_between = 1000
-task_seconds_between_moon = 3000
+task_seconds_between = 30
+task_seconds_between_moon = 10
+rate_limit_moon = "6/m"
+rate_limit_all_else = "2/m"
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
@@ -124,7 +120,7 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-@task(name='schedule_sun_texts',rate_limit="4/h")	
+@task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
 def schedule_sun_texts():
 	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
@@ -175,22 +171,21 @@ def schedule_sun_texts():
 						atext.save()
 
 
-@task(name='schedule_moon_texts',rate_limit="4/h")
+@task(name='schedule_moon_texts',rate_limit=rate_limit_moon)
 def schedule_moon_texts():
 	print("MOOOOOOOOON")
 	import requests
 	
-	#Get the moon data and format it
-	# dataj = get_moon_data()
-
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
-	# requests.get('s')
+	print("BEFORE GET")
+	print("BEFORE AFTER")
+	
 	try:
-		data = requests.get('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4')
+		data = requests.get(str('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4'))
 		dataj = data.json()
-		output = dataj
+		print("dataj", dataj)
 	except:
-		dataj = "NOT FOUND"
+		dataj="NOT FOUND"
 
 	if dataj != "NOT FOUND":
 		next_phase = dataj['phasedata'][0]
@@ -224,7 +219,7 @@ def schedule_moon_texts():
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name='schedule_texts',rate_limit="2/m")
+@task(name='schedule_texts',rate_limit=rate_limit_all_else)
 # @task()
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
@@ -396,7 +391,7 @@ def send_text(text):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="send_texts",rate_limit="2/m")
+@task(name="send_texts",rate_limit=rate_limit_all_else)
 # @task()
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
@@ -440,7 +435,7 @@ def get_first_text_part(msg):
 
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="check_email_for_new",rate_limit="2/m")
+@task(name="check_email_for_new",rate_limit=rate_limit_all_else)
 # @task()
 def check_email_for_new():
 	#Set up the email 
@@ -500,7 +495,7 @@ def check_email_for_new():
 # @task(name="process_new_mail")
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
-@task(name="process_new_mail",rate_limit="2/m")
+@task(name="process_new_mail",rate_limit=rate_limit_all_else)
 # @task()
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
