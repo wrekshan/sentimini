@@ -28,6 +28,15 @@ from django.db.models import Q
 from .models import TextLink, TextDescription, AlternateText, PossibleText, ActualText, Collection, Tag, Timing, UserSetting
 from consumer.views import transfer_alt_texts
 
+def reset_settings_complete(request):
+	if request.user.is_superuser:
+		working_settings = UserSetting.objects.all()
+		for setting in working_settings:
+			setting.settings_complete = False
+			setting.save()
+
+	return redirect('/admin_panel/')
+
 def pause_all_users(request):
 	if request.user.is_superuser:
 		working_settings = UserSetting.objects.all()
