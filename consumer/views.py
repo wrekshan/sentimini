@@ -536,7 +536,7 @@ def settings(request):
 			working_settings.save()
 		else:
 			working_settings = UserSetting.objects.all().get(user=request.user)
-		print("CITY STATE", working_settings.city_state())
+		# print("CITY STATE", working_settings.city_state())
 		
 
 		context={
