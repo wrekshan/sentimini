@@ -42,6 +42,12 @@
       <a class="waves-effect waves-light btn" href="/ent/restore_all_users/">Restore user texts</a>
       </div>
 
+      <div class="row">
+        This will schedule the sun and moon data!
+      <a id="get_moon_data" class="waves-effect waves-light btn">Sun and Moon Data</a>
+      <span id="moon_out"></span>
+      </div>
+
 
 
 
@@ -49,6 +55,21 @@
   </div>
 </div>
 
+<script type="text/javascript">
+  
+$('#get_moon_data').click(function(){
+  $.ajax({
+      type: 'POST',
+      url: '/consumer/moon/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        $('#moon_out').text("MOON DATA SCHEDULED")
+        
+      }
+    })
+})
+</script>
 
 
 {% endblock %}

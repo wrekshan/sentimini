@@ -14,10 +14,10 @@ from ent.models import AlternateText, Quotation, QuickSuggestion, Beta, ActualTe
 from django.db.models import Q
 
 import time
-
 import requests
-
 import csv
+
+
 
 def get_alternate(request):
 	main_context = {} # to build out the specific html stuff
@@ -74,6 +74,9 @@ def get_sun_time(sundata,desired):
 # [{'time': '5:16 a.m. DT', 'phen': 'BC'}, {'time': '5:48 a.m. DT', 'phen': 'R'}, {'time': '1:11 p.m. DT', 'phen': 'U'}, {'time': '8:34 p.m. DT', 'phen': 'S'}, {'time': '9:06 p.m. DT', 'phen': 'EC'}]
 def moon(request):
 	context = {}
+	response_data = {} # to send back to the template
+	# if request.user.is_superuser:
+	print("SUUUUUUUUNNNNNNN")
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
 	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
 
@@ -125,16 +128,49 @@ def moon(request):
 					if datetime.now(pytz.utc) < time_to_send:
 						atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
 						atext.save()
+
+	print("MOOOOOOOOON")
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	# print("BEFORE GET")
+	# print("BEFORE AFTER")
 	
+	try:
+		data = requests.get(str('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4'))
+		dataj = data.json()
+		# print("dataj", dataj)
+	except:
+		dataj="NOT FOUND"
 
+	if dataj != "NOT FOUND":
+		next_phase = dataj['phasedata'][0]
+		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+		moon_dt_utc = pytz.utc.localize(moon_dt)
 
+		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+		for text in working_texts:
+			if str(next_phase['phase']) in str(text.text):
+				working_settings = UserSetting.objects.all().get(user=text.user)
+				user_timezone = pytz.timezone(working_settings.timezone)
+				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
 
+				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
 
+					moon_dt_user = moon_dt_user - timedelta(1,0)
+					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+					scheduled_date = scheduled_date.astimezone(pytz.UTC)
 
+					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
 
-
+					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					atext.save()
+	else:
+		print(dataj)						
 	
-	return render(request,"SS_moon.html",context)
+	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 
 def test_signup(request):

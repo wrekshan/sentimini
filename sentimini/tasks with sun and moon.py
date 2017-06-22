@@ -23,12 +23,6 @@ from ent.views import time_window_check, date_check_fun
 from .celery import app
 from celery.task.control import inspect
 
-from .celery import LIVE_HOST
-
-if LIVE_HOST:
-	base_url = 'http://www.sentimini.com/'
-else:
-	base_url = 'http://localhost:8000/'
 
 # app = Celery()
 
@@ -41,9 +35,9 @@ else:
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
 # task_seconds_between = 6
-task_seconds_between = 30
-task_seconds_between_moon = 30
-rate_limit_moon = "2/m"
+task_seconds_between = 15
+task_seconds_between_moon = 10
+rate_limit_moon = "6/m"
 rate_limit_all_else = "2/m"
 # 10800 - 3hr
 
@@ -72,10 +66,14 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
-    'process': {
+    'sun': {
         'task': 'schedule_sun_texts',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
+        'schedule': timedelta(seconds=task_seconds_between_moon),
+		'args': ()
+    },
+    'moon': {
+        'task': 'schedule_moon_texts',
+        'schedule': timedelta(seconds=task_seconds_between_moon),
 		'args': ()
     },
 }    
@@ -126,8 +124,104 @@ def get_sun_time(sundata,desired):
 
 @task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
 def schedule_sun_texts():
-	print("GETTING SUN AND MOON")
-	requests.get(base_url+'/consumer/moon/')
+	print("SUUUUUUUUNNNNNNN")
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	distinct_users = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="sun").values('user').distinct()
+
+	for user in distinct_users:
+		working_settings = UserSetting.objects.all().get(user=user['user'])
+		user_timezone = pytz.timezone(working_settings.timezone)
+		user_location = working_settings.city_state()
+
+		print("date_now", date_now)
+		print("user_location", user_location)
+
+		data = requests.get(str('http://api.usno.navy.mil/rstt/oneday?date='+ date_now +'&loc=' + user_location))
+		dataj = data.json()
+		print("DATAJ", dataj)
+		
+		if dataj != "NOT FOUND":	
+			print("DATA FOUND")
+			#Get the sun data
+			working_texts = PossibleText.objects.all().filter(user=working_settings.user).filter(tmp_save=False).filter(active=True).filter(text_type="sun")
+			for text in working_texts:
+				print("text",text.text)
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					if 'Sun Rise' in text.text:
+						text_to_send = 'The sun is rising right now!'
+						time_out = get_sun_time(dataj['sundata'],'R')
+					elif 'Sun Set' in text.text: 
+						text_to_send = 'The sun is setting right now!'
+						time_out = get_sun_time(dataj['sundata'],'S')
+					elif 'Solar Noon' in text.text:
+						text_to_send = 'The sun is at the highest point in the sky today right now!'
+						time_out = get_sun_time(dataj['sundata'],'U')
+					
+					# time_out 8:34 p.m. DT
+					time_out_time = time_out.split(' ')[0]
+					time_out_ampm = time_out.split(' ')[1]
+					if time_out_ampm == "a.m.":
+						time_out_ampm = "AM"
+					else:
+						time_out_ampm = "PM"
+
+					date_out = str(str(datetime.now(pytz.utc).date()) + ' ' + time_out_time + ' ' + time_out_ampm)
+					time_to_send = datetime.strptime(date_out, "%Y-%m-%d %I:%M %p")
+					time_to_send = user_timezone.localize(time_to_send)
+					time_to_send = time_to_send.astimezone(pytz.UTC)
+
+					print("time_to_send",time_to_send)
+					print("datetime.now(pytz.utc)",datetime.now(pytz.utc))
+
+					if datetime.now(pytz.utc) < time_to_send:
+						atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+						atext.save()
+
+
+@task(name='schedule_moon_texts',rate_limit=rate_limit_moon)
+def schedule_moon_texts():
+	print("MOOOOOOOOON")
+	import requests
+	
+	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	# print("BEFORE GET")
+	# print("BEFORE AFTER")
+	
+	try:
+		data = requests.get(str('http://api.usno.navy.mil/moon/phase?date='+date_now+'&nump=4'))
+		dataj = data.json()
+		# print("dataj", dataj)
+	except:
+		dataj="NOT FOUND"
+
+	if dataj != "NOT FOUND":
+		next_phase = dataj['phasedata'][0]
+		moon_dt = datetime.strptime(str(dataj['phasedata'][0]['date'])+' '+dataj['phasedata'][0]['time'], '%Y %b %d %H:%M')
+		moon_dt_utc = pytz.utc.localize(moon_dt)
+
+		working_texts = PossibleText.objects.all().filter(tmp_save=False).filter(active=True).filter(text_type="moon")
+		for text in working_texts:
+			if str(next_phase['phase']) in str(text.text):
+				working_settings = UserSetting.objects.all().get(user=text.user)
+				user_timezone = pytz.timezone(working_settings.timezone)
+				moon_dt_user = moon_dt_utc.astimezone(user_timezone)
+
+				# #See if there is a text scheduled in the future for this phase.  if not, then schedule it.
+				if ActualText.objects.all().filter(user=text.user).filter(text=text).filter(time_sent__isnull=True).filter(time_to_send__gte=pytz.utc.localize(datetime.now())).count() < 1:
+					date_today = datetime.now(pytz.utc).astimezone(user_timezone)
+					time_window = user_timezone.localize(datetime.combine(date_today, text.timing.hour_end)) - user_timezone.localize(datetime.combine(date_today, text.timing.hour_start))
+
+					moon_dt_user = moon_dt_user - timedelta(1,0)
+					scheduled_date = user_timezone.localize(datetime.combine(moon_dt_user.date(), text.timing.hour_start))
+					scheduled_date = scheduled_date.astimezone(pytz.UTC)
+
+					time_to_send = scheduled_date + timedelta(0,randint(0,round(time_window.total_seconds())))
+					text_to_send = "The " + dataj['phasedata'][0]['phase'] + " will happen at "  + str(moon_dt_user.strftime('%-I:%M %p')) + " on " + str(moon_dt_user.strftime(' %B %d, %Y')) + "!"
+
+					atext = ActualText(user=text.user,text=text,time_to_send=time_to_send,text_sent=text_to_send)
+					atext.save()
+	else:
+		print(dataj)
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
