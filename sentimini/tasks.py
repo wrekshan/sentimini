@@ -44,7 +44,7 @@ else:
 task_seconds_between = 30
 rate_limit_all_else = "30/m"
 
-task_seconds_between_moon = 60
+task_seconds_between_moon = 7200 #3 hr
 # rate_limit_moon = "6/h"
 
 # 10800 - 3hr
@@ -131,7 +131,7 @@ def get_sun_time(sundata,desired):
 @periodic_task(run_every=timedelta(seconds=task_seconds_between_moon),rate_limit=rate_limit_all_else)
 def schedule_sun_texts():
 	print("GETTING SUN AND MOON")
-	# requests.get(base_url+'/consumer/moon/')
+	requests.get(base_url+'/consumer/moon/')
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
