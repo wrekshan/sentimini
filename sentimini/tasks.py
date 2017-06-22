@@ -41,8 +41,8 @@ else:
 #     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
 
 # task_seconds_between = 6
-task_seconds_between = 30
-rate_limit_all_else = "12/m"
+task_seconds_between = 5
+rate_limit_all_else = "60/m"
 
 task_seconds_between_moon = 2
 rate_limit_moon = "6/h"
@@ -128,7 +128,7 @@ def get_sun_time(sundata,desired):
 			return sundata[i]['time']
 
 # @task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
-@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+@periodic_task(run_every=timedelta(seconds=task_seconds_between_moon),rate_limit=rate_limit_moon)
 def schedule_sun_texts():
 	print("GETTING SUN AND MOON")
 	# requests.get(base_url+'/consumer/moon/')
