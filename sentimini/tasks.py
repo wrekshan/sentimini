@@ -24,8 +24,6 @@ from ent.views import time_window_check, date_check_fun
 from .celery import app
 from celery.task.control import inspect
 
-from .celery import LIVE_HOST
-
 if socket.gethostname().startswith('myhost.local'):
 	base_url = 'http://localhost:8000/'
 else:
