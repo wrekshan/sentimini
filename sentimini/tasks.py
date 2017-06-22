@@ -72,12 +72,12 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
-    'process': {
-        'task': 'schedule_sun_texts',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
-		'args': ()
-    },
+  #   'process': {
+  #       'task': 'schedule_sun_texts',
+  #       # 'schedule': crontab(hour=0, minute=1),
+  #       'schedule': timedelta(seconds=task_seconds_between),
+		# 'args': ()
+  #   },
 }    
 
 
@@ -124,10 +124,10 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-@task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
-def schedule_sun_texts():
-	print("GETTING SUN AND MOON")
-	requests.get(base_url+'/consumer/moon/')
+# @task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
+# def schedule_sun_texts():
+# 	print("GETTING SUN AND MOON")
+# 	requests.get(base_url+'/consumer/moon/')
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
