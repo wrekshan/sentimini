@@ -64,7 +64,7 @@ class UserSetting(models.Model):
 
 	def city_state(self):	
 		tmp = self.location.split(',')
-		return str(str(tmp[len(tmp)-3]) + ", " + str(tmp[len(tmp)-2]))
+		return str(str(tmp[len(tmp)-3]) + "," + str(tmp[len(tmp)-2]))
 
 
 	

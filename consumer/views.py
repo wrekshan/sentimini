@@ -74,7 +74,17 @@ def get_sun_time(sundata,desired):
 # [{'time': '5:16 a.m. DT', 'phen': 'BC'}, {'time': '5:48 a.m. DT', 'phen': 'R'}, {'time': '1:11 p.m. DT', 'phen': 'U'}, {'time': '8:34 p.m. DT', 'phen': 'S'}, {'time': '9:06 p.m. DT', 'phen': 'EC'}]
 def moon(request):
 	context = {}
+	working_settings = UserSetting.objects.all().get(user=request.user)
+	user_timezone = pytz.timezone(working_settings.timezone)
+
+	date_now = datetime.now(pytz.utc).astimezone(user_timezone)
+
+	date_now = str(date_now.strftime('%-m/%-d/%Y'))
+	print("DATE USER", str(date_now.strftime('%-m/%-d/%Y')))
+
 	date_now = str(datetime.now(pytz.utc).strftime('%-m/%-d/%Y'))
+	print("DATE UTC", str(date_now.strftime('%-m/%-d/%Y')))
+
 	print("PLACE HOLDER")
 	data = requests.get('https://api.github.com/events/')
 	print("AFTER PLACEHOLDER")
