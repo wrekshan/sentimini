@@ -13,6 +13,7 @@ import imaplib
 import email
 import string
 import json
+import socket
 
 import requests
 import parsedatetime as pdt # for parsing of datetime shit for NLP
@@ -25,10 +26,11 @@ from celery.task.control import inspect
 
 from .celery import LIVE_HOST
 
-if LIVE_HOST:
-	base_url = 'http://www.sentimini.com/'
-else:
+if socket.gethostname().startswith('myhost.local'):
 	base_url = 'http://localhost:8000/'
+else:
+	base_url = 'http://www.sentimini.com/'
+	
 
 # app = Celery()
 
