@@ -140,11 +140,11 @@ def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 	
 	# INSPECT 
-	# i = app.control.inspect()
-	# print("REGISTERED", i.registered())
-	# print("ACTIVE", i.active())
-	# print("SCHEDULED", i.scheduled())
-	# print("RESERVED", i.reserved())
+	i = app.control.inspect()
+	print("REGISTERED", i.registered())
+	print("ACTIVE", i.active())
+	print("SCHEDULED", i.scheduled())
+	print("RESERVED", i.reserved())
 
 
 
