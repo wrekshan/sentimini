@@ -42,9 +42,11 @@ else:
 
 # task_seconds_between = 6
 task_seconds_between = 30
-task_seconds_between_moon = 30
-rate_limit_moon = "2/m"
 rate_limit_all_else = "2/m"
+
+task_seconds_between_moon = 3600
+rate_limit_moon = "1/h"
+
 # 10800 - 3hr
 
 app.conf.beat_schedule = {
@@ -72,12 +74,12 @@ app.conf.beat_schedule = {
         'schedule': timedelta(seconds=task_seconds_between),
 		'args': ()
     },
-  #   'process': {
-  #       'task': 'schedule_sun_texts',
-  #       # 'schedule': crontab(hour=0, minute=1),
-  #       'schedule': timedelta(seconds=task_seconds_between),
-		# 'args': ()
-  #   },
+    'process': {
+        'task': 'schedule_sun_texts',
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
+		'args': ()
+    },
 }    
 
 
@@ -124,10 +126,10 @@ def get_sun_time(sundata,desired):
 		if sundata[i]['phen'] == desired:
 			return sundata[i]['time']
 
-# @task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
-# def schedule_sun_texts():
-# 	print("GETTING SUN AND MOON")
-# 	requests.get(base_url+'/consumer/moon/')
+@task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
+def schedule_sun_texts():
+	print("GETTING SUN AND MOON")
+	requests.get(base_url+'/consumer/moon/')
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
