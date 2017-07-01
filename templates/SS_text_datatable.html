@@ -8,6 +8,10 @@
 <div class="card">
   <div class="card-content">
     <span class="card-title" ><h4><i id="scheduled_text_highlight" class="fa fa-calendar" aria-hidden="true"></i> Your Texts <i id="help_highlight" class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'These are of the texts you will receive.  You can edit the timing, view data, or delete the texts here.'></i></h4></span>
+
+
+
+
     <div id="possible_text_list">
 
 
@@ -107,16 +111,23 @@
     {% endfor %}
 
   </ul> 
+  <hr>
   {% endtimezone %}
 
-  <div class="col s10">
+  <div class="col s8">
     <ul class="pagination"></ul>
+  </div>
+  <div class="col s4 right-align">
+  </br>
+  <div style="background-color:#e4e4e4;" id = "{{id}}" class = "download_csv waves-effect waves-teal btn-flat chip">
+    <span><i id="download_csv_highlight" class="fa fa-floppy-o" aria-hidden="true"></i> Download data</span></span>
+    </div>
   </div>
   <div class="row"></div>
   {% endif %}
 
-
 </div>
+
 
 </div>
 </div>
