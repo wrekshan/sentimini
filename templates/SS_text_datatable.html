@@ -13,9 +13,9 @@
 
       <div class="row">
         <div class="col s12 m6">
-          
+
          <input class="search" placeholder="Search for a text..." />
-         
+
        </div>
      </div>
 
@@ -81,10 +81,12 @@
               </a>
 
               <p>
-                Created: <span class="sort_created" style="word-wrap: break-word; font-size:100%">{{text.date_created|date:"d M Y"}}</span>
+                <span class="sort_created" style="display: none;">{{text.date_created|date:"YmdGis"}}}</span>
+                Created: <span style="word-wrap: break-word; font-size:100%">{{text.date_created|date:"d M Y"}}</span>
               </p>
               <p>
-                Last sent: <span class="sort_sent" style="word-wrap: break-word; font-size:100%">{{text.last_sent|date:"h:iA d M Y"}}</span>
+              <span class="sort_sent" style="display: none;">{{text.last_sent|date:"YmdGis"}}}</span>
+                Last sent: <span style="word-wrap: break-word; font-size:100%">{{text.last_sent|date:"h:iA d M Y"}}</span>
               </p>
             </div>
           </div>
