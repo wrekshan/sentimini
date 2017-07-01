@@ -35,7 +35,7 @@
   <div class="waves-effect waves-teal btn-flat chip sort" data-sort="sort_timing">
     Timing
   </div>
-
+  {% if user.is_authenticated %}
   {% timezone user_timezone %}
   <ul class="list ">
    {% for text in working_texts %}
@@ -108,10 +108,12 @@
 
   </ul> 
   {% endtimezone %}
+
   <div class="col s10">
     <ul class="pagination"></ul>
   </div>
   <div class="row"></div>
+  {% endif %}
 
 
 </div>
