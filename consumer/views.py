@@ -306,6 +306,21 @@ def text(request,id=None,slug=None):
 	
 		return render(request,"SS_text_specific.html",context)
 
+def get_text_specific_overview(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	working_text = PossibleText.objects.all().get(id=request.POST['id'])
+	main_context['working_text']=working_text
+	if request.user.is_authenticated():	
+		if PossibleText.objects.all().filter(user=request.user).filter(text=working_text.text).count()>0:
+			user_text = PossibleText.objects.all().filter(user=request.user).filter(text=working_text.text).first()
+			user_text = PossibleText.objects.all().filter(user=request.user).get(id=user_text.id)
+			main_context['user_text'] = user_text
+
+	response_data["text_specific_overview"] = render_to_string('SS_text_specific_overview.html', main_context, request=request)
+
+	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 def program(request,id=None,slug=None):	
 	if id == None:

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import home, moon, text, get_alternate, quotation, submit_quotation, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, program, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
+from .views import home, moon, text, get_text_specific_overview, get_alternate, quotation, submit_quotation, guided_tour, settings, change_nus, get_quick_suggestions, about, beta, get_create_inspiration, submit_beta, inspiration_indvidual_text, text_commands, program, create_inspiration, get_inspiration_display, get_timing_option_input, get_csv, get_text_input, get_text_datatable, get_text_datatable_response, get_input_to_options, get_options_to_input, save_text, save_timing_default, save_timing, test_signup
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
@@ -35,6 +35,7 @@ urlpatterns = [
 	url(r'^save_timing_default/$', save_timing_default, name='save_timing_default'),	
 	url(r'^test_signup/$', test_signup, name='test_signup'),
 	url(r'^inspiration_indvidual_text/$', inspiration_indvidual_text, name='inspiration_indvidual_text'),
+	url(r'^get_text_specific_overview/$', get_text_specific_overview, name='get_text_specific_overview'),
 
 	
 ]

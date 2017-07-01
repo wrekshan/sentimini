@@ -99,112 +99,16 @@
 
 <div class="col s12 m9">
   <!-- CARD FOR NEW TEXTS AND TIMINGS-->
+  <div id = "text_content_card">
 
-  <div class="card">
-    <div class="card-content">
-
-      <!-- TEXT AND BASIC INFO -->
-      <h4>{{working_text.text}}</h4>
-
-      
-      <div id="add_text_button">
-        {% if user.is_authenticated %}
-        {% if user_text  %}
-        <div  id = "_{{working_text.id}}" class = "add-text-inspiration-btn waves-effect waves-red btn-flat chip "><span> <i class="material-icons" >delete</i> </span></div>
-        {% else %}
-        <div  id = "_{{working_text.id}}" class = "add-text-inspiration-btn waves-effect waves-red btn-flat chip "><span> <i class="fa fa-plus" aria-hidden="true"></i> </span></div>
-        {% endif %}
-        <span id="output_message"></span>
-      </div>
-
-      
-      {% if user_text %}
-      {{user_text.timing.timing_summary}}
-      {% else %}
-      {{working_text.timing.timing_summary}}
-      {% endif %}
-
-      {% else %}
-      <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
-      {{working_text.timing.timing_summary}}
-      <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
-      {% endif %}
-
-
-      
-      
-      <!-- DESCRIPTIONS IF ANY -->
-      {% if working_text.description.all %}
-      <div class="row"></div>
-      {% for description in working_text.description.all %}
-      {{description}}
-      {% endfor %}
-      {% endif %}
-
-      <!-- Read more -->
-      {% if working_text.link.all %}
-      <div class="row"></div>
-      Read more:
-      {% for link in working_text.link.all %}
-      <li><a target='_blank' href='{{link.link|safe}}'>{{link.link_display}}</a></li>
-      {% endfor %}
-      {% endif %}
-
-      {% if working_text.alt_text.all %}
-      {% for alt_text in working_text.alt_text.all %}
-      <hr> 
-      <div class = "row">
-      <div class="col s2">
-      <b>Alternate</b>:
-      </div>
-      <div class="col s10"> {{alt_text}}
-      {% if alt_text.description.all %}
-      <div class="row"></div>
-      {% for description in alt_text.description.all %}
-      {{description}}
-      {% endfor %}
-      {% endif %}
-
-      <!-- Read more -->
-      {% if alt_text.link.all %}
-      <div class="row"></div>
-      Read more:
-      {% for link in alt_text.link.all %}
-      
-      <li><a target='_blank' href="{{link.link}}">{{link.link_display}}</a></li>
-      
-      {% endfor %}
-      {% endif %}
-
-</div>
-      </div>
-      {% endfor %}
-      {% endif %}
-
-
-      <!-- COLLECTIONS -->
-      {% if working_text.collection.all %}
-      <hr>
-      {% for collection in working_text.collection.all %}
-
-      Part of the <a href="/consumer/program/{{collection.id}}/{{collection.slug}}/">{{collection}}</a> program - {{collection.description}}
-
-      {% endfor %}
-      {% endif %}
-      <div class="row"></div>
-      View more <a href="/consumer/program/">programs</a>
-
-      <div class="right-align">
-      <btn class="waves-effect waves-light btn smart-back">Back</btn>
-      </div>
-
+    
     </div>
+    {% if user.is_authenticated %}
+    <div id="text_datatable"></div>
+    {% endif %}
   </div>
-  {% if user.is_authenticated %}
-  <div id="text_datatable"></div>
-  {% endif %}
 </div>
-</div>
+
 </div>
 
 
@@ -233,9 +137,24 @@
 <script type="text/javascript">
   function startClock(){
     console.log("STARTING")
-
-
      $.ajax({
+      type: 'POST',
+      url: '/consumer/get_text_specific_overview/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'id': "{{working_text.id}}",
+
+    },
+    success : function(data) {
+      // $('#quick_suggestions').html("");
+      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
+
+      
+    }
+  })
+
+
+    $.ajax({
       type: 'POST',
       url: '/consumer/get_text_datatable_response/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
@@ -247,7 +166,7 @@
     success : function(data) {
       // $('#quick_suggestions').html("");
       $('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-        setTimeout(function() {$('#text_datatable').html(data['text_datatable_response']);}, 350);
+      setTimeout(function() {$('#text_datatable').html(data['text_datatable_response']);}, 350);
 
       
     }
@@ -313,46 +232,7 @@
   });
 </script>
 
-<script type="text/javascript">
-  $('.smart-back').click(function(){
-    window.location.href =  document.referrer;
 
-  })
-</script>
-
-<script type="text/javascript">
-  $('.add-text-inspiration-btn').click(function() {
-    console.log("ADD BUTTON CLICKED")
-    var text_id_button = $(this).attr('id')
-    var text_id_button_id = $(this).attr('id').split("_")[1]
-    console.log("text_id_button" + text_id_button)
-    console.log("text_id_button_id" + text_id_button_id)
-    
-    $.ajax({
-      type: 'POST',
-      url: '/consumer/inspiration_indvidual_text/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'selected_texts': $(this).attr('id'),
-    },
-    success : function(data) {
-      if (data['save_type'] == "removed"){
-        console.log("REMOVED")
-        $("#_{{working_text.id}}").html('<span> <i class="fa fa-plus" aria-hidden="true"></i> </span>')
-        $('#output_message').html('Text Removed')
-        
-
-      } else {
-        console.log("ADD")
-        
-        $("#_{{working_text.id}}").html('<span> <i class="material-icons" >delete</i> </span>')
-        $('#output_message').html('Text Added')
-
-      }
-
-    }
-  })
-  })
-</script>
 
 
 <script>
@@ -377,4 +257,9 @@
   ga('send', 'pageview');
 
 </script>
+
+
+
+
+
 {% endblock %}

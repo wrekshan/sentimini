@@ -441,6 +441,33 @@
 <script>
 
 	$('.edit_text_to_input').click(function() {
+
+		if ($(location).attr('href').includes('/consumer/text/')) {
+
+			$.ajax({
+		      type: 'POST',
+		      url: '/consumer/get_text_specific_overview/',
+		      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+		      'id': "{{working_text.id}}",
+
+		    },
+		    success : function(data) {
+		      // $('#quick_suggestions').html("");
+		      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+		      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
+
+		      
+		    }
+		  })
+
+		} else {
+
+
+
+
+
+
+
 		$.ajax({
 			type: 'POST',
 			url: '/consumer/get_text_input/',
@@ -454,6 +481,7 @@
 			
 			}
 		})
+		}
 
 
 	})
@@ -478,7 +506,29 @@
 				setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);       
 
 
-				$.ajax({
+				
+
+
+				if ($(location).attr('href').includes('/consumer/text/')) {
+
+			$.ajax({
+		      type: 'POST',
+		      url: '/consumer/get_text_specific_overview/',
+		      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+		      'id': "{{working_text.id}}",
+
+		    },
+		    success : function(data) {
+		      // $('#quick_suggestions').html("");
+		      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+		      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
+
+		      
+		    }
+		  })
+
+		} else {
+			$.ajax({
 					type: 'POST',
 					url: '/consumer/get_text_datatable/',
 					data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
@@ -489,6 +539,7 @@
 
 					}
 				})
+		}
     //     $.ajax({
     //   type: 'POST',
     //   url: '/consumer/get_quick_suggestions/',
