@@ -67,14 +67,14 @@
 
                   {% if user.is_authenticated %}
                   {% if value.user > 0  %}
-                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><span> <i class="material-icons" >delete</i> </span>
+                  <div  id = "{{working_collection.id}}_{{value.text.id}}" class = "btn-floating red add-text-inspiration-btn"><i class="material-icons" >delete</i> 
                   </div>
                   {% else %}
-                  <div id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-red btn-flat chip add-text-inspiration-btn"><i class="fa fa-plus" aria-hidden="true"></i>
+                  <div id = "{{working_collection.id}}_{{value.text.id}}" class = "btn-floating red add-text-inspiration-btn"><i class="fa fa-plus" aria-hidden="true"></i>
                   </div>
                   {% endif %}
                   {% else %}
-                  <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
+                  <a  href="{% url 'account_signup' %}" class = "btn-floating chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
                   {% endif %}
                 </td>
                 <td>
