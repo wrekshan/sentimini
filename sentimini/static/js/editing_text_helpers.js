@@ -20,6 +20,7 @@ function getTime(hours, minutes) {
 }
 
 function slideTime_start(event, ui){
+    console.log("IN FUCTION static")
     var val0 = slider.noUiSlider.get()[0],
         val1 = slider.noUiSlider.get()[1],
         minutes0 = parseInt(val0 % 60, 10),
@@ -28,6 +29,8 @@ function slideTime_start(event, ui){
         hours1 = parseInt(val1 / 60 % 24, 10);
         startTime = getTime(hours0, minutes0);
         endTime = getTime(hours1, minutes1);
+        console.log("IN FUCNTION val", val0)
+        console.log("IN FUCNTION start", startTime)
         return startTime
 }
 

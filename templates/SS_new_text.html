@@ -325,8 +325,12 @@
 				$('#alternate_form').append(data['alternate_form']);
 				$('#alt_counter').text(tmp);
 				$('#alt_text_title_message').text("Only the alternate text will be sent.  The text in the 'New Text' box should be considered a title.  It will not be sent to you.")
+				Materialize.updateTextFields();
+				$('.materialize-textarea').trigger('autoresize');
 			}
 		})
+
+
 
 	})
 </script>
@@ -876,10 +880,10 @@
 
 <script type="text/javascript">
 	$('.save_timing').click(function() {
-
-
 		var start_time = slideTime_start()
 		var end_time = slideTime_end()
+		console.log("start_time", start_time)
+		console.log("start_time_val", slider.noUiSlider.get()[0])
 		var ITI_mean = $('#ITI_mean').val()
 		var ITI_noise = $('#ITI_noise').val()
 

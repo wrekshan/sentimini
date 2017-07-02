@@ -67,21 +67,21 @@
                </p>
              </div>
              <div class="col s12 m4">
-               <a id = "{{text.id}}" class="text_edit btn-floating blue"><i class="material-icons">mode_edit</i></a>
+               <a id = "{{text.id}}" class="text_edit btn-floating bluetooltipped" data-position="top" data-delay="50" data-tooltip="Edit"><i class="material-icons">mode_edit</i></a>
 
                {% if text.active == True %}
-               <div  id = "table_{{text.id}}" class = "btn-floating grey feed-pause-text-btn">
-                <i  class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">pause</i>
+               <div  id = "table_{{text.id}}" class = "btn-floating grey feed-pause-text-btn tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+                <i class="material-icons">pause</i>
               </div>
               {% else %}
 
-              <div id = "table_{{text.id}}" class = "btn-floating green feed-pause-text-btn">
-                <i class=" material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">play_arrow</i>
+              <div id = "table_{{text.id}}" class = "btn-floating green feed-pause-text-btn tooltipped" data-position="top" data-delay="50" data-tooltip="Start">
+                <i class="material-icons">play_arrow</i>
               </div>
               {% endif %}
 
-              <a class="modal-trigger btn-floating red" href="#modal_delete_texts_{{text.id}}">
-                <i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Delete">delete</i>
+              <a class="modal-trigger btn-floating red tooltipped" href="#modal_delete_texts_{{text.id}}" data-position="top" data-delay="50" data-tooltip="Delete">
+                <i class="material-icons">delete</i>
               </a>
 
               <p>

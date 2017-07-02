@@ -934,6 +934,8 @@ def get_options_to_input(request):
 def save_timing_function(request,working_timing):
 	# SAVE THE VALUES
 	if 'hour_start' in request.POST.keys():
+		print("HOUR START", request.POST['hour_start'])
+		print("HOUR START VAL", request.POST['hour_start_value'])
 		working_timing.hour_start = datetime.strptime(request.POST['hour_start'],'%I:%M %p')
 	if 'hour_end' in request.POST.keys():
 		working_timing.hour_end = datetime.strptime(request.POST['hour_end'],'%I:%M %p')
