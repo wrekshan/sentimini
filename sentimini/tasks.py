@@ -128,29 +128,20 @@ def get_sun_time(sundata,desired):
 			return sundata[i]['time']
 
 # @task(name='schedule_sun_texts',rate_limit=rate_limit_moon)	
-@periodic_task(run_every=timedelta(seconds=task_seconds_between_moon),rate_limit=rate_limit_moon)
-def schedule_sun_texts():
-	print("GETTING SUN AND MOON")
-	requests.get(base_url+'/consumer/moon/')
+# @periodic_task(run_every=timedelta(seconds=task_seconds_between_moon),rate_limit=rate_limit_moon)
+# def schedule_sun_texts():
+# 	print("GETTING SUN AND MOON")
+# 	requests.get(base_url+'/consumer/moon/')
 
 # @periodic_task(run_every=timedelta(seconds=10))
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 # @app.task
 # @task(name='schedule_texts',rate_limit=rate_limit_all_else)
 # @task()
-@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_moon)
+
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
-	
-	# INSPECT 
-	# i = app.control.inspect()
-	# print("REGISTERED", i.registered())
-	# print("ACTIVE", i.active())
-	# print("SCHEDULED", i.scheduled())
-	# print("RESERVED", i.reserved())
-
-
-
 
 	#Specific Timings
 	working_texts = PossibleText.objects.all().filter(text_type='standard').filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
