@@ -412,14 +412,39 @@ class AlternateText(models.Model):
 	def __str__(self):
 		return self.alt_text
 
+class IdealText(models.Model):
+	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	collection = models.ManyToManyField(Collection,blank=True,related_name='ideal_texts')
+	timing = models.ForeignKey(Timing,null=True,blank=True,related_name='ideal_timing')
+	alt_text = models.ManyToManyField(AlternateText,blank=True,related_name='ideal_alts')
+	text = models.CharField(max_length=160,default='')
+	text_type = models.CharField(max_length=160,default='standard') #this is like sun/moon/etc
+	edit_type = models.CharField(max_length=160,default='consumer') #this is consumer/pro
+	description = models.ManyToManyField(TextDescription,blank=True)
+	link = models.ManyToManyField(TextLink,blank=True)
+	input_text = models.CharField(max_length=160,default='')
+	date_created = models.DateTimeField(blank=True,null=True)
+	tag = models.ManyToManyField(Tag,blank=True)
+	tmp_save = models.BooleanField(default=True) 
+	quick_suggestion = models.BooleanField(default=False) 
 
+	intended_collection = models.CharField(max_length=160,blank=True,null=True)
+	intended_tags = models.CharField(max_length=600,blank=True,null=True)
+	
+	def __str__(self):
+		return self.text
+
+# You will have to go through and change it so that PossibleText is JUST for scheduled texts by users
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
+	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True,related_name='creator_user')
 	collection = models.ManyToManyField(Collection, related_name='texts',blank=True)
 	timing = models.ForeignKey(Timing,null=True,blank=True)
 	alt_text = models.ManyToManyField(AlternateText,blank=True)
 	text = models.CharField(max_length=160,default='')
-	text_type = models.CharField(max_length=160,default='standard')
+	ideal_text = models.ForeignKey(IdealText,null=True,blank=True,related_name='ideal_text')
+	text_type = models.CharField(max_length=160,default='standard') #this is like sun/moon/etc
+	edit_type = models.CharField(max_length=160,default='consumer') #this is consumer/pro
 	description = models.ManyToManyField(TextDescription,blank=True)
 	link = models.ManyToManyField(TextLink,blank=True)
 	input_text = models.CharField(max_length=160,default='')

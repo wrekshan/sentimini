@@ -1,0 +1,122 @@
+{% load static %}
+
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+<div class="card">
+	<div class="card-content">
+		<span class="card-title">
+			Adding (and eventually editing) person
+		</span>
+		<div class="row">
+			<div class="input-field col s6">
+				<i class="material-icons prefix">phone</i>
+				<input id="icon_telephone" type="tel" class="validate">
+				<label for="icon_telephone">Telephone</label>
+			</div>
+		</div>
+
+		<!-- GROUPS -->
+		<div class="row">
+			<div class="input-field col s12">
+				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+				<div class="row">
+					<div class="col s12">
+						<select id="group_bar" multiple="multiple" placeholder="">
+							{% for group in working_groups %}
+							<option value="{{group.group}}">{{group.group}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- TEXT -->
+		<div class="row">
+			<div class="input-field col s12">
+				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+				<div class="row">
+					<div class="col s12">
+						<select id="text_bar" multiple="multiple" placeholder="">
+							{% for text in working_texts %}
+							<option value="{{text.text}}">{{text.text}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- PROGRAMS -->
+		<div class="row">
+			<div class="input-field col s12">
+				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
+				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+				<div class="row">
+					<div class="col s12">
+						<select id="program_bar" multiple="multiple" placeholder="">
+							{% for program in working_programs %}
+							<option value="{{program.collection}}">{{program.collection}}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+
+<script>
+	$("#group_bar").select2({
+		tags: true,
+		tokenSeparators: [',', ' '],
+		placeholder: "Groups",
+		allowClear: true
+	}).on('select2:unselecting', function() {
+		$(this).data('unselecting', true);
+	}).on('select2:opening', function(e) {
+		if ($(this).data('unselecting')) {
+			$(this).removeData('unselecting');
+			e.preventDefault();
+		}
+	});
+</script>
+
+<script>
+	$("#text_bar").select2({
+		tags: true,
+		tokenSeparators: [',', ' '],
+		placeholder: "Texts",
+		allowClear: true
+	}).on('select2:unselecting', function() {
+		$(this).data('unselecting', true);
+	}).on('select2:opening', function(e) {
+		if ($(this).data('unselecting')) {
+			$(this).removeData('unselecting');
+			e.preventDefault();
+		}
+	});
+</script>
+
+<script>
+	$("#program_bar").select2({
+		tags: true,
+		tokenSeparators: [',', ' '],
+		placeholder: "Programs",
+		allowClear: true
+	}).on('select2:unselecting', function() {
+		$(this).data('unselecting', true);
+	}).on('select2:opening', function(e) {
+		if ($(this).data('unselecting')) {
+			$(this).removeData('unselecting');
+			e.preventDefault();
+		}
+	});
+</script>

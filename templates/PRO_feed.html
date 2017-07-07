@@ -1,0 +1,57 @@
+
+<div class="card">
+	<div class="card-content">
+		<b>Groups</b>
+		<ul class="list ">
+			{% for group in working_groups %}
+			<li class="collection-item">
+				<hr>
+				<div class="row">
+					<div class="col s12 m8">
+						<a class="sort_text" href="/professional/group/{{group.id}}/" style="font-size:150%;">{{group.group}}</a> 
+						<p>
+							You should be able to edit or add texts.  Assign programs.  Click on the page will bring you to the specific view.
+						</p>
+					</div>
+					<div class="col s12 m4">
+						<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+							<i class="material-icons">pause</i>
+						</div>
+					</div>
+				</div>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+
+<div class="card">
+	<div class="card-content">
+		<b>People</b>
+		<ul class="list ">
+			{% for person in working_persons %}
+			<li class="collection-item">
+				<hr>
+				<div class="row">
+					<div class="col s12 m8">
+						<span style="font-size:150%;">{{person.phone_input}}</span>
+						<p>
+							You should be able to edit or add texts.  Assign programs.  Click on the page will bring you to the specific view.
+						</p>
+						<p>
+							This should also have a list of groups that this person belongs to.
+						</p>
+					</div>
+					<div class="col s12 m4">
+						<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+							<i class="material-icons">pause</i>
+						</div>
+					</div>
+				</div>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+

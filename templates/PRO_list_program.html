@@ -1,0 +1,37 @@
+
+<div class="card">
+	<div class="card-content">
+		<b>Programs</b>
+		<ul class="list ">
+			{% for collection in working_collections %}
+			<li class="collection-item">
+				<hr>
+				<div class="row">
+					<div class="col s12 m8">
+						<a class="sort_text" href="/professional/program/{{collection.id}}/" style="font-size:150%;">{{collection.collection_name}}</a> 
+						<p>
+							{{collection.description}}
+						</p>
+					</div>
+					<div class="col s12 m4 right-align">
+						<div class="row">
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+								<i class="material-icons">pause</i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign to collection">
+								<i class="fa fa-comments-o" aria-hidden="true"></i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to person">
+								<i class="fa fa-user" aria-hidden="true"></i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to group">
+								<i class="fa fa-users" aria-hidden="true"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>

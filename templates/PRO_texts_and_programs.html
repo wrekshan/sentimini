@@ -1,0 +1,101 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% load staticfiles %}
+
+
+{% block header_extra %}
+<head>
+ <title>Home | Sentimini</title>
+ <meta property="og:title"         content="Home | Sentimini | Create and edit texts"/>
+ <meta property="og:url"           content="www.sentimini.com/consumer/home/" />
+ <meta property="og:type"          content="website" />
+ <meta property="og:description"   content="Create and edit texts.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+ <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+</head>
+
+{% endblock %}
+
+{% block content %}
+<!-- QUICK SUGGESTIONS-->
+<div class="row">
+<div class="col s12 m3">
+  <div id="pro_filters"></div>
+</div>
+
+  <div class="col s12 m9">
+  <div class="row"></div>
+  <div class="row">
+
+   
+
+
+  <p>
+  This can be a floating action button that expands!
+  </p>
+  <a href='/professional/texts_and_programs/' id="add_user" class="waves-effect waves-light chip">People</a>
+  <a href='/professional/people_and_groups/' id="add_group" class="waves-effect waves-light chip">Texts</a>
+  </div>
+    <div id="pro_feed"></div>
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
+</script>
+
+<script type="text/javascript">
+  function startClock(){
+    console.log("STARTING")
+    $.ajax({
+      type: 'POST',
+      url: '/professional/get_pro_filters/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        $('#pro_filters').html(data['pro_filters']);
+        
+      }
+  })
+
+    $.ajax({
+      type: 'POST',
+      url: '/professional/get_pro_feed/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        $('#pro_feed').html(data['pro_feed']);
+        
+      }
+  })
+
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+{% endblock %}
+

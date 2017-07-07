@@ -1,0 +1,44 @@
+<div class="row"></div>
+<a id="add_person_button" class="waves-effect waves-light chip">Add person</a>
+<a  id="add_group_button" class="waves-effect waves-light chip">Add text</a>
+
+<!-- <div class="card">
+<div class="card-content">
+<b>Quick actions</b>
+<p>
++ person
+</p>
+<p>
++ group
+</p>
+</div>
+</div> -->
+
+<div class="card">
+<div class="card-content">
+<b>Fast stats</b>
+<li>1 stat</li>
+<li>1 stat</li>
+<li>1 stat</li>
+</div>
+</div>
+
+
+<script>
+  $('#add_person_button').click(function() {
+    console.log("add person clicked")
+    $.ajax({
+      type: 'POST',
+      url: '/professional/get_add_person/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        $('#add_person').html(data['add_person']);
+        
+      }
+  })
+    
+  })
+
+</script>
+

@@ -4,7 +4,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import TextLink, TextDescription, AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import IdealText, TextLink, TextDescription, AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
 
@@ -238,7 +238,32 @@ class TextDescriptionModelAdmin(ImportExportModelAdmin):
 		
 admin.site.register(TextDescription,TextDescriptionModelAdmin)
 
+class IdealTextResource(resources.ModelResource):
+	class Meta:
+		model = PossibleText
+		import_id_fields = ('input_text',)
+		fields = ('input_text', 'text_type','intended_collection', 'quick_suggestion','intended_tags')
 
+
+class IdealTextModelAdmin(ImportExportModelAdmin):
+	resource_class = IdealTextResource   
+
+	list_display = [
+		"id",
+		"tmp_save",
+		"text_type",
+		"quick_suggestion",
+		"user",
+		"input_text",
+		"text",
+		"date_created",
+	]
+	list_display_links = ["user"]
+	list_filter = ["user","text"]
+	class Meta:
+		model = IdealText
+		
+admin.site.register(IdealText,IdealTextModelAdmin)
 
 class PossibleTextResource(resources.ModelResource):
 	class Meta:
@@ -254,6 +279,7 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 		"id",
 		"active",
 		"tmp_save",
+		"edit_type",
 		"text_type",
 		"quick_suggestion",
 		"user",
@@ -262,7 +288,7 @@ class PossibleTextModelAdmin(ImportExportModelAdmin):
 		"date_created",
 	]
 	list_display_links = ["user"]
-	list_filter = ["user","text"]
+	list_filter = ["user","text","edit_type"]
 	class Meta:
 		model = PossibleText
 		

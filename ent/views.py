@@ -247,7 +247,6 @@ def update_db_after_import(request):
 	return redirect('/consumer/home/')
 
 
-
 def add_to_collection(request):
 	print("ADDING TO COLECTION")
 	response_data = {}

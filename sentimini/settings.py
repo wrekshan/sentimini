@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'ent',
     'vis',
     'power',
+    'professional',
     
 ]
 

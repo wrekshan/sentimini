@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^ent/', include('ent.urls',namespace="ent")),
     url(r'^power/', include('power.urls',namespace="power")),
     url(r'^consumer/', include('consumer.urls',namespace="consumer")),
+    url(r'^professional/', include('professional.urls',namespace="professional")),
     url(r'^vis/', include('vis.urls',namespace="vis")),
 
     url(r'^test_page/$', test_page, name='test_page'),

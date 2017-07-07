@@ -1,0 +1,81 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% load staticfiles %}
+
+
+{% block header_extra %}
+<head>
+	<title>Home | Sentimini</title>
+	<meta property="og:title"         content="Home | Sentimini | Create and edit texts"/>
+	<meta property="og:url"           content="www.sentimini.com/consumer/home/" />
+	<meta property="og:type"          content="website" />
+	<meta property="og:description"   content="Create and edit texts.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
+	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+</head>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col s12 m3">
+		<div class="card">
+			<div class="card-content">
+			Short cut action items
+			<li>Add person</li>
+			<li>Add Text</li>
+			<li>Add Program</li>
+			<li>Save Text Data</li>
+			</div>
+		</div>
+	</div>
+
+	<div class="col s12 m9">
+	PERSON SPECIFIC
+		<div class="card">
+			<div class="card-content">
+				Data Vis!
+			</div>
+		</div>
+
+		<div id="person_list"></div>
+
+		<div class="row"></div>
+
+
+
+
+	</div>
+</div>
+
+<script type="text/javascript">
+  function startClock(){
+    $.ajax({
+      type: 'POST',
+      url: '/professional/get_pro_feed/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+      success : function(data) {
+        $('#person_list').html(data['person_list']);
+      }
+  })
+
+  }
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+
+<script>
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+	ga('create', 'UA-85360122-1', 'auto');
+	ga('send', 'pageview');
+
+</script>
+{% endblock %}
