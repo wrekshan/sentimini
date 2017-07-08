@@ -4,17 +4,52 @@
 <link rel="stylesheet" href={% static "css/materialize.css" %}>
 
 
-<ul class="collapsible" data-collapsible="accordion">
+<ul class="collapsible" data-collapsible="accordion" >
 	<li>
-		<div class="collapsible-header"><i class="material-icons">filter_drama</i>People</div>
-		<div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+		<div class="collapsible-header active"><i class="fa fa-user" aria-hidden="true"></i>People</div>
+		<div class="collapsible-body">
+			<input name = "person_all" type="checkbox" id="person_all" checked="checked"/>
+			<label for="person_all">Show All</label>
+
+			{% for person in working_persons %}
+			<input name = "person_{{person.id}}" type="checkbox" id="person_{{person.id}}"/>
+			<label for="person_{{person.id}}">{{person.person}}</label>
+			{% endfor %}
+		</div>
+	</li>
+</ul>
+
+<ul class="collapsible" data-collapsible="accordion" >
+	<li>
+		<div class="collapsible-header active"><i class="fa fa-users" aria-hidden="true"></i>Groups</div>
+		<div class="collapsible-body">
+			<input name = "group_all" type="checkbox" id="group_all" checked="checked"/>
+			<label for="group_all">Show All</label>
+
+			{% for group in working_groups %}
+			<input name = "group_{{group.id}}" type="checkbox" id="group_{{group.id}}"/>
+			<label for="group_{{group.id}}">{{group.group}}</label>
+			{% endfor %}
+			
+
+
+		</div>
 	</li>
 </ul>
 
 <ul class="collapsible" data-collapsible="accordion">
 	<li>
-		<div class="collapsible-header"><i class="material-icons">place</i>Texts</div>
-		<div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+		<div class="collapsible-header active"><i class="fa fa-commenting-o" aria-hidden="true"></i>Texts</div>
+		<div class="collapsible-body">
+			<input name = "text_all" type="checkbox" id="text_all" checked="checked"/>
+			<label for="text_all">Show All</label>
+
+			{% for text in working_texts %}
+			<input name = "text_{{text.id}}" type="checkbox" id="text_{{text.id}}"/>
+			<label for="text_{{text.id}}">{{text.text}}</label>
+			{% endfor %}
+			
+		</div>
 	</li>
 </ul>
 
@@ -25,4 +60,8 @@
 	</li>
 </ul>
 
-
+<script>
+$(document).ready(function(){
+    $('.collapsible').collapsible();
+  });
+</script>

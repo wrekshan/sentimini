@@ -64,9 +64,10 @@
       },
       success : function(data) {
         $('#pro_filters').html(data['pro_filters']);
+        $('#quick_actions').html(data['quick_actions']);
         
       }
-  })
+	  })
 
 		$.ajax({
 			type: 'POST',

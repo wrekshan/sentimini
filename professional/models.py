@@ -6,7 +6,7 @@ from decimal import *
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.template.defaultfilters import slugify
 
-from ent.models import UserSetting, Collection, Timing
+from ent.models import UserSetting, Collection, Timing, IdealText
 
 # Create your models here.
 class Person(models.Model):
@@ -18,7 +18,7 @@ class Person(models.Model):
 	phone_input = models.CharField(max_length=16,default='')
 	verified = models.BooleanField(default=False)
 	accepted = models.BooleanField(default=False)
-	collection = models.ManyToManyField(Collection,blank=True)
+	collection = models.ManyToManyField(Collection,blank=True, related_name='person')
 
 	def __str__(self):
 		return self.phone_input
@@ -27,6 +27,8 @@ class Group(models.Model):
 	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True)
 	group = models.CharField(max_length=1000,default='',null=True)
 	person = models.ManyToManyField(Person,blank=True)
+	collection = models.ManyToManyField(Collection,blank=True,related_name='group')
+	ideal_text = models.ManyToManyField(IdealText,blank=True)
 	
 	def __str__(self):
 		return self.group		

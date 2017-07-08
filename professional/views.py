@@ -54,8 +54,6 @@ def create_fake_users(request):
 		else:
 			print("NOT FOUND")
 
-
-
 		working_person.save()
 
 
@@ -79,6 +77,27 @@ def transfer_ideal_texts(ideal_text,possible_text):
 	possible_text.edit_type = ideal_text.edit_type
 	possible_text.tmp_save = ideal_text.tmp_save
 	return possible_text
+
+def save_fake_text(working_person,text):
+	tmp = PossibleText(user=working_person.person)
+	tmp = transfer_ideal_texts(text,tmp)
+
+	timing = Timing.objects.all().get(id=tmp.timing.id)
+	timing.pk=None
+	timing.intended_text_input=""
+	timing.user=working_person.person
+	timing.save()
+
+	tmp.pk=None
+	tmp.edit_type="professional_actual"
+	tmp.timing=timing
+	tmp.user=working_person.person
+	tmp.input_text=''
+	tmp.tmp_save=False
+	tmp.date_created=datetime.now(pytz.utc)
+	tmp.save()
+
+	return tmp
 	
 
 def create_fake_texts(request):
@@ -122,34 +141,32 @@ def create_fake_texts(request):
 
 		working_text.save()
 
-	# Assign Texts to texts/programs to persons/groups
+	# Assign text and programs to groups
+
 	# Texts from collections
 	working_collections = Collection.objects.all().filter(user=request.user)
 	for i in range(0,3):
 		working_collection = Collection.objects.all().filter(user=request.user).order_by('?')[0]
+		for j in range(0,1):
+			working_group = Group.objects.all().filter(creator=request.user).order_by('?')[0]
+			working_group.collection.add(working_collection)
+			working_group.save()
+
+			for person in working_group.person.all():
+				for text in working_collection.ideal_texts.all():
+					save_fake_text(person,text)
+
+
+
+
+
 		for j in range(0,3):
 			working_person = Person.objects.all().filter(creator=request.user).order_by('?')[0]
 			working_person.collection.add(working_collection)
 			working_person.save()
 
 			for text in working_collection.ideal_texts.all():
-				tmp = PossibleText(user=working_person.person)
-				tmp = transfer_ideal_texts(text,tmp)
-
-				timing = Timing.objects.all().get(id=tmp.timing.id)
-				timing.pk=None
-				timing.intended_text_input=""
-				timing.user=working_person.person
-				timing.save()
-
-				tmp.pk=None
-				tmp.edit_type="professional_actual"
-				tmp.timing=timing
-				tmp.user=working_person.person
-				tmp.input_text=''
-				tmp.tmp_save=False
-				tmp.date_created=datetime.now(pytz.utc)
-				tmp.save()
+				save_fake_text(working_person,text)
 
 				# transfer_alt_texts(text,tmp)
 
@@ -157,26 +174,13 @@ def create_fake_texts(request):
 	working_texts = IdealText.objects.all().filter(user=request.user).filter(edit_type="professional_ideal")
 	for j in range(0,3):
 		working_person = Person.objects.all().filter(creator=request.user).order_by('?')[0]
-
-		tmp = PossibleText(user=working_person.person)
-		tmp = transfer_ideal_texts(text,tmp)
-
-		timing = Timing.objects.all().get(id=tmp.timing.id)
-		timing.pk=None
-		timing.intended_text_input=""
-		timing.user=working_person.person
-		timing.save()
-
-		tmp.pk=None
-		tmp.edit_type="professional_actual"
-		tmp.timing=timing
-		tmp.user=working_person.person
-		tmp.input_text=''
-		tmp.tmp_save=False
-		tmp.date_created=datetime.now(pytz.utc)
-		tmp.save()
-
+		tmp = save_fake_text(working_person,text)
 		transfer_alt_texts(text,tmp)
+
+	#Add programs to groups
+	#Add texts to groups	
+
+
 
 	# Now just simulate the responses...will have to add time in later
 	working_texts = PossibleText.objects.all().filter(creator=request.user).filter(edit_type="professional_actual")
@@ -348,8 +352,17 @@ def text(request,id=None):
 def get_pro_filters(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
+	response_data['quick_actions'] = render_to_string('PRO_quick_actions.html', main_context, request=request)
 	if 'viewer' in request.POST.keys():
 		if request.POST['viewer'] == "Program":
+			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_groups = working_program.group.all()
+			working_persons = working_program.person.all()
+			working_texts = working_program.ideal_texts.all()
+
+			main_context['working_groups'] = working_groups
+			main_context['working_persons'] = working_persons
+			main_context['working_texts'] = working_texts
 			response_data['pro_filters'] = render_to_string('PRO_filters_programs.html', main_context, request=request)
 
 	else:
@@ -363,8 +376,8 @@ def get_pro_feed(request):
 	if 'viewer' in request.POST.keys():
 		if request.POST['viewer'] == "Program":
 			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-			
 			working_persons = Person.objects.all().filter(creator=request.user)
+
 			working_texts = working_program.ideal_texts.all()
 			main_context['working_texts'] = working_texts
 			response_data['text_list'] = render_to_string('PRO_list_text.html', main_context, request=request)
