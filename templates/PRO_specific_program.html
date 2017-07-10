@@ -73,7 +73,7 @@
 			type: 'POST',
 			url: '/professional/get_pro_feed/',
 			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-			'viewer': "Program",
+			'basic_view': "Program",
 			'id': '{{id}}',
 		},
 		success : function(data) {

@@ -8,16 +8,17 @@
 		<div class="collapsible-header active"><i class="material-icons">filter_drama</i>Basic View</div>
 		<div class="collapsible-body">
 
-			<input name = "basic_view_all" type="checkbox" id="basic_view_all" checked="checked"/>
-			<label for="basic_view_all">Show All</label>
-			<input name = "view_people" type="checkbox" id="view_people"/>
-			<label for="view_people">People</label>
-			<input name = "view_groups" type="checkbox" id="view_groups"/>
-			<label for="view_groups">Groups</label>
-			<input name = "view_texts" type="checkbox" id="view_texts"/>
-			<label for="view_texts">Texts</label>
-			<input name = "view_programs" type="checkbox" id="view_programs"/>
-			<label for="view_programs">Programs</label>
+			<form action="#">
+				<input class="basic_view_radio" name="basic_view" type="radio" id="person_view" checked />
+				<label for="person_view">People</label>
+				<input class="basic_view_radio" name="basic_view" type="radio" id="group_view"/>
+				<label for="group_view">Groups</label>
+				<input class="basic_view_radio" name="basic_view" type="radio" id="text_view" />
+				<label for="text_view">Texts</label>
+				<input class="basic_view_radio" name="basic_view" type="radio" id="program_view" />
+				<label for="program_view">Programs</label>
+
+			</form>
 
 		</div>
 
@@ -41,4 +42,23 @@
 	</li>
 </ul>
 
+<script type="text/javascript">
+	$('.basic_view_radio').change(function() {
+		console.log("GETTING PRO FEED")
+		$.ajax({
+			type: 'POST',
+			url: '/professional/get_pro_feed/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'basic_view_change': 'basic_view_change',
+			'basic_view': $(this).attr('id'),
+		},
+		success : function(data) {
+			$('#pro_feed').html(data['pro_feed']);
 
+		}
+	})
+
+	})
+
+
+</script>

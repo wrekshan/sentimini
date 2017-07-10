@@ -19,35 +19,19 @@
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
 <div class="col s12 m3">
+  <div id="quick_actions"></div>
   <div id="pro_filters"></div>
   <a class="waves-effect waves-light btn" href="/professional/home/" style=" width: 100%;">Pro Home</a> 
+  <div class="row"></div>
+        <a class="waves-effect waves-light btn" href="/professional/create_fake_users" style=" width: 100%;">Fake Users</a> 
+        <div class="row"></div>
+        <a class="waves-effect waves-light btn" href="/professional/create_fake_texts/" style=" width: 100%;">Fake Texts</a>
+  
 </div>
 
+
   <div class="col s12 m9">
-
-
-  <div class="row"></div>
-  
-  HOME
-   <div class="row">
-        <a class="waves-effect waves-light btn" href="/professional/create_fake_users" >Create Fake Users</a> 
-        <a class="waves-effect waves-light btn" href="/professional/create_fake_texts/" >Create Fake Texts</a>
-    </div>
-    <div class="row">
-
-   
-
-
-  <p>
-  This can be a floating action button that expands!
-  </p>
-  <a href='/professional/texts_and_programs/' id="add_user" class="waves-effect waves-light chip">People</a>
-  <a href='/professional/people_and_groups/' id="add_group" class="waves-effect waves-light chip">Texts</a>
-  </div>
-    <div id="program_list"></div>
-    <div id="text_list"></div>
-    <!-- <div id="group_list"></div> -->
-    <!-- <div id="person_list"></div> -->
+    <div id="pro_feed"></div>
   </div>
 </div>
 
@@ -70,23 +54,23 @@
       },
       success : function(data) {
         $('#pro_filters').html(data['pro_filters']);
+        $('#quick_actions').html(data['quick_actions']);
         
       }
   })
 
     $.ajax({
-      type: 'POST',
-      url: '/professional/get_pro_feed/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      },
-      success : function(data) {
-        $('#group_list').html(data['group_list']);
-        $('#person_list').html(data['person_list']);
-        $('#text_list').html(data['text_list']);
-        $('#program_list').html(data['program_list']);
-        
-      }
-  })
+        type: 'POST',
+        url: '/professional/get_pro_feed/',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+        'basic_view_change': 'basic_view_change',
+        'basic_view': 'person_view',
+        },
+        success : function(data) {
+          $('#pro_feed').html(data['pro_feed']);
+          
+        }
+    })
 
   }
   if(window.addEventListener){

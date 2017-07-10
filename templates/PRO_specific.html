@@ -17,29 +17,24 @@
 {% block content %}
 <div class="row">
 	<div class="col s12 m3">
-		<div class="card">
-			<div class="card-content">
-			Short cut action items
-			<li>Add person</li>
-			<li>Add Text</li>
-			<li>Add Program</li>
-			<li>Save Text Data</li>
-			</div>
-		</div>
+		<div id="quick_actions"></div>
+		<div id="pro_filters"></div>
+		<a class="waves-effect waves-light btn" href="/professional/home/" style=" width: 100%;">Pro Home</a> 
+  <div class="row"></div>
+        <a class="waves-effect waves-light btn" href="/professional/create_fake_users" style=" width: 100%;">Fake Users</a> 
+        <div class="row"></div>
+        <a class="waves-effect waves-light btn" href="/professional/create_fake_texts/" style=" width: 100%;">Fake Texts</a>
 	</div>
 
 	<div class="col s12 m9">
-	<div class="row">
-	  <a class="waves-effect waves-light btn" href="/professional/home/">Pro Home</a> 
-	  </div>
-	{{specific_type}} SPECIFIC
+	PRO SPECIFIC
 		<div class="card">
 			<div class="card-content">
 				Data Vis!
 			</div>
 		</div>
 
-		<div id="person_list"></div>
+		<div id="actual_text_list"></div>
 
 		<div class="row"></div>
 
@@ -50,26 +45,40 @@
 </div>
 
 <script type="text/javascript">
-  function startClock(){
-    $.ajax({
-      type: 'POST',
-      url: '/professional/get_pro_feed/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'id': '{{id}}'
-      'specific_type': '{{specific_type}}'
-      },
-      success : function(data) {
-        $('#person_list').html(data['person_list']);
-      }
-  })
+	function startClock(){
+		$.ajax({
+			type: 'POST',
+			url: '/professional/get_pro_filters/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'type': '{{type}}',
+			'id': '{{id}}',
+		},
+		success : function(data) {
+			$('#pro_filters').html(data['pro_filters']);
+			$('#quick_actions').html(data['quick_actions']);
 
-  }
-  if(window.addEventListener){
+		}
+	})
+
+		$.ajax({
+			type: 'POST',
+			url: '/professional/get_actual_text_feed/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'id': '{{id}}',
+			'type': '{{type}}',
+		},
+		success : function(data) {
+			$('#actual_text_list').html(data['actual_text_list']);
+		}
+	})
+
+	}
+	if(window.addEventListener){
     window.addEventListener('load',startClock,false); //W3C
-  }
-  else{
+}
+else{
     window.attachEvent('onload',startClock); //IE
-  }
+}
 </script>
 
 

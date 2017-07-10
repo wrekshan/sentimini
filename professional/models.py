@@ -6,7 +6,7 @@ from decimal import *
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.template.defaultfilters import slugify
 
-from ent.models import UserSetting, Collection, Timing, IdealText
+from ent.models import UserSetting, Collection, Timing, IdealText, PossibleText, ActualText
 
 # Create your models here.
 class Person(models.Model):
@@ -22,6 +22,12 @@ class Person(models.Model):
 
 	def __str__(self):
 		return self.phone_input
+
+	def number_texts(self):	
+		PossibleText.objects.all().filter(user=self.person).count()
+		
+	def number_texts_sent(self):	
+		ActualText.objects.all().count()	
 
 class Group(models.Model):
 	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True)

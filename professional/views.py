@@ -266,15 +266,16 @@ def group(request,id=None):
 				context = {
 					'working_persons': working_persons,
 					'id': id,
+					'type': 'group',
 				
 					}
-				return render(request,"PRO_specific_group.html",context)
+				return render(request,"PRO_specific.html",context)
 			else:
 				return HttpResponseRedirect('/consumer/settings/')
 		else:
 			return HttpResponseRedirect('/consumer/settings/')
 
-	return render(request,"PRO_specific_group.html",context)
+	return render(request,"PRO_specific.html",context)
 
 def person(request,id=None):
 	context = {}
@@ -287,15 +288,15 @@ def person(request,id=None):
 				context = {
 					'working_persons': working_persons,
 					'id': id,
-				
+					'type': 'person',
 					}
-				return render(request,"PRO_specific_person.html",context)
+				return render(request,"PRO_specific.html",context)
 			else:
 				return HttpResponseRedirect('/consumer/settings/')
 		else:
 			return HttpResponseRedirect('/consumer/settings/')
 
-	return render(request,"PRO_specific_person.html",context)
+	return render(request,"PRO_specific.html",context)
 
 def program(request,id=None):
 	context = {}
@@ -310,15 +311,16 @@ def program(request,id=None):
 					'working_program': working_program,
 					'working_persons': working_persons,
 					'id': id,
+					'type': 'program',
 				
 					}
-				return render(request,"PRO_specific_program.html",context)
+				return render(request,"PRO_specific.html",context)
 			else:
 				return HttpResponseRedirect('/consumer/settings/')
 		else:
 			return HttpResponseRedirect('/consumer/settings/')
 
-	return render(request,"PRO_specific_program.html",context)
+	return render(request,"PRO_specific.html",context)
 
 def text(request,id=None):
 	context = {}
@@ -331,18 +333,16 @@ def text(request,id=None):
 				context = {
 					'working_persons': working_persons,
 					'id': id,
+					'type': 'text',
 				
 					}
-				return render(request,"PRO_specific_text.html",context)
+				return render(request,"PRO_specific.html",context)
 			else:
 				return HttpResponseRedirect('/consumer/settings/')
 		else:
 			return HttpResponseRedirect('/consumer/settings/')
 
-	return render(request,"PRO_specific_text.html",context)		
-
-
-
+	return render(request,"PRO_specific.html",context)		
 
 
 
@@ -353,8 +353,9 @@ def get_pro_filters(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 	response_data['quick_actions'] = render_to_string('PRO_quick_actions.html', main_context, request=request)
-	if 'viewer' in request.POST.keys():
-		if request.POST['viewer'] == "Program":
+	print("KEYS HERE....", request.POST.keys())
+	if 'type' in request.POST.keys():
+		if request.POST['type'] == "program":
 			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 			working_groups = working_program.group.all()
 			working_persons = working_program.person.all()
@@ -363,10 +364,61 @@ def get_pro_filters(request):
 			main_context['working_groups'] = working_groups
 			main_context['working_persons'] = working_persons
 			main_context['working_texts'] = working_texts
-			response_data['pro_filters'] = render_to_string('PRO_filters_programs.html', main_context, request=request)
+			response_data['pro_filters'] = render_to_string('PRO_filters_actual_texts.html', main_context, request=request)
+
+		elif request.POST['type'] == 'person':
+			working_person = Person.objects.all().get(id=int(request.POST['id']))
+			working_programs = working_person.collection.all()
+			working_texts = IdealText.objects.all().filter(user=working_person.person)
+
+			main_context['working_programs'] = working_programs
+			main_context['working_texts'] = working_texts
+			response_data['pro_filters'] = render_to_string('PRO_filters_actual_texts.html', main_context, request=request)
+		
+		elif request.POST['type'] == 'text':
+			tmp = IdealText.objects.all().get(id=int(request.POST['id']))
+			working_text = PossibleText.objects.all().filter(user=request.user).filter(ideal_text=tmp)
+
+			working_texts = ActualText.objects.all().filter(text=working_text)
+			main_context['working_texts'] = working_texts
+
+			response_data['pro_filters'] = render_to_string('PRO_filters_actual_texts.html', main_context, request=request)
+
+		elif request.POST['group'] == 'group':
+			working_group = Group.objects.all().get(id=int(request.POST['id']))
+
+
+
+
 
 	else:
 		response_data['pro_filters'] = render_to_string('PRO_filters.html', main_context, request=request)
+	return HttpResponse(json.dumps(response_data),content_type="application/json")
+
+def get_actual_text_feed(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+
+	if request.POST['type'] == 'person':
+		working_person = Person.objects.all().get(id=int(request.POST['id']))
+		working_texts = ActualText.objects.all().filter(user=working_person.person)
+		main_context['working_texts'] = working_texts
+		print("MODEL THING:", working_person.number_texts_sent())
+	elif request.POST['type'] == 'program':
+		working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		working_groups = working_program.group.all()
+		working_persons = working_program.person.all()
+
+		working_texts = working_program.texts.all()
+		
+		# actual_texts = ActualText.objects.all().filter(text__in=working_texts)
+
+		main_context['working_groups'] = working_groups
+		main_context['working_persons'] = working_persons
+		main_context['working_texts'] = working_texts
+
+	
+	response_data['actual_text_list'] = render_to_string('PRO_list_actual_text.html', main_context, request=request)	
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 def get_pro_feed(request):
@@ -383,16 +435,26 @@ def get_pro_feed(request):
 			response_data['text_list'] = render_to_string('PRO_list_text.html', main_context, request=request)
 		elif request.POST['viewer'] == "Text":
 			working_text = IdealText.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
-			
-
 			working_persons = Person.objects.all().filter(creator=request.user)
-			print(working_text)
 			working_user_texts = PossibleText.objects.all().filter(creator=request.user).filter(text=working_text.text)
-			print(working_user_texts)
 			working_texts = ActualText.objects.all().filter(text__ideal_text=working_text)
 			main_context['working_texts'] = working_texts
-			print(working_texts)
 			response_data['text_list'] = render_to_string('PRO_list_actual_text.html', main_context, request=request)	
+	elif 'basic_view_change' in request.POST.keys():
+		print("BASIC VEW CHANGE")
+		if request.POST['basic_view'] == 'text_view':
+			main_context['working_texts'] = IdealText.objects.all().filter(user=request.user).filter(edit_type="professional_ideal")
+			response_data['pro_feed'] = render_to_string('PRO_list_text.html', main_context, request=request)
+		if request.POST['basic_view'] == 'program_view':
+			main_context['working_collections'] = Collection.objects.all().filter(user=request.user)
+			response_data['pro_feed'] = render_to_string('PRO_list_program.html', main_context, request=request)
+		if request.POST['basic_view'] == 'person_view':
+			main_context['working_persons'] = Person.objects.all().filter(creator=request.user)
+			response_data['pro_feed'] = render_to_string('PRO_list_person.html', main_context, request=request)
+		if request.POST['basic_view'] == 'group_view':
+			main_context['working_groups'] = Group.objects.all().filter(creator=request.user)
+			response_data['pro_feed'] = render_to_string('PRO_list_group.html', main_context, request=request)			
+
 
 	else:
 		working_persons = Person.objects.all().filter(creator=request.user)

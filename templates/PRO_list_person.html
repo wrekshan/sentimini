@@ -8,8 +8,11 @@
 				<hr>
 				<div class="row">
 					<div class="col s12 m8">
-						<span style="font-size:150%;">{{person.display_name}}</span>
-						<span style="font-size:100%;">{{person.phone_input}}</span>
+					<a class="sort_text" href="/professional/person/{{person.id}}/" style="font-size:150%;">{{person.display_name}}</a> 
+					{{person.number_texts}}
+					{{person.number_texts_sent}}
+						
+						<!-- <span style="font-size:100%;">{{person.phone_input}}</span> -->
 						<div class="row"></div>
 						{% for group in person.group_set.all %}
 						<div class="chip">
@@ -18,8 +21,19 @@
 						{% endfor %}
 					</div>
 					<div class="col s12 m4">
-						<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
-							<i class="material-icons">pause</i>
+						<div class="row">
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+								<i class="material-icons">pause</i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign to collection">
+								<i class="fa fa-comments-o" aria-hidden="true"></i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to person">
+								<i class="fa fa-user" aria-hidden="true"></i>
+							</div>
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to group">
+								<i class="fa fa-users" aria-hidden="true"></i>
+							</div>
 						</div>
 					</div>
 				</div>
