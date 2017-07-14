@@ -1,0 +1,46 @@
+
+<div class="card">
+  <div class="card-content">
+    <h5>Actual Texts</h5>
+    <table id="actual_text_data_table" class="display" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Time Sent</th>
+          <th>Time Reply</th>
+          <th>Reply</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% if user.is_authenticated %}
+        
+
+        {% for text in working_texts %}
+        <tr>
+          <td>{{text.text}}</td>
+          <td><span style="display: none;">{{text.time_sent|date:"YmdGis"}}</span>{{text.time_sent}}</td>
+          <td><span style="display: none;">{{text.time_response|date:"YmdGis"}}</span>{{text.time_response}}</td>
+          <td>{{text.response}} </td>
+        </tr>
+
+        {% endfor %}
+        
+        {% endif %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#actual_text_data_table').DataTable(
+    {
+      "bLengthChange": false,
+      "pageLength": 5,
+      "order": [[ 0, "desc" ]],
+
+    });
+  } );
+</script>

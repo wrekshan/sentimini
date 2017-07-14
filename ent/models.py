@@ -434,6 +434,9 @@ class IdealText(models.Model):
 	def __str__(self):
 		return self.text
 
+
+	
+
 # You will have to go through and change it so that PossibleText is JUST for scheduled texts by users
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
@@ -442,7 +445,7 @@ class PossibleText(models.Model):
 	timing = models.ForeignKey(Timing,null=True,blank=True)
 	alt_text = models.ManyToManyField(AlternateText,blank=True)
 	text = models.CharField(max_length=160,default='')
-	ideal_text = models.ForeignKey(IdealText,null=True,blank=True,related_name='ideal_text')
+	ideal_text = models.ForeignKey(IdealText,null=True,blank=True,related_name='possible_text')
 	text_type = models.CharField(max_length=160,default='standard') #this is like sun/moon/etc
 	edit_type = models.CharField(max_length=160,default='consumer') #this is consumer/pro
 	description = models.ManyToManyField(TextDescription,blank=True)
@@ -460,6 +463,20 @@ class PossibleText(models.Model):
 	
 	def __str__(self):
 		return self.text
+		
+	def number_texts_sent(self):
+		return ActualText.objects.all().filter(user=self.user).filter(text=self).count()
+
+	def number_texts_replies(self):	
+		return ActualText.objects.all().filter(user=self.user).filter(text=self).filter(response__isnull=False).count()	
+
+	def response_rate(self):
+		sent = ActualText.objects.all().filter(user=self.user).filter(text=self).count()
+		response = ActualText.objects.all().filter(user=self.user).filter(text=self).filter(response__isnull=False).count()	
+		if sent > 0:
+			return 100*(round(response/sent,2))
+		else:
+			return "NA"	
 
 	def slug(self):
 		return slugify(str(self.text))	

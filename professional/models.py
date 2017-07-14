@@ -19,22 +19,38 @@ class Person(models.Model):
 	verified = models.BooleanField(default=False)
 	accepted = models.BooleanField(default=False)
 	collection = models.ManyToManyField(Collection,blank=True, related_name='person')
+	ideal_text  = models.ManyToManyField(IdealText,blank=True,related_name='person')
 
 	def __str__(self):
 		return self.phone_input
 
 	def number_texts(self):	
-		PossibleText.objects.all().filter(user=self.person).count()
+		return PossibleText.objects.all().filter(creator=self.creator).filter(user=self.person).count()
 		
-	def number_texts_sent(self):	
-		ActualText.objects.all().count()	
+	def number_texts_sent(self):
+		working_texts = PossibleText.objects.all().filter(creator=self.creator).filter(user=self.person)
+		return ActualText.objects.all().filter(text__in=working_texts).count()
+
+	def number_texts_replies(self):	
+		working_texts = PossibleText.objects.all().filter(creator=self.creator).filter(user=self.person)
+		return ActualText.objects.all().filter(text__in=working_texts).filter(response__isnull=False).count()	
+
+	def response_rate(self):
+		working_texts = PossibleText.objects.all().filter(creator=self.creator).filter(user=self.person)
+		sent = ActualText.objects.all().filter(text__in=working_texts).count()
+		response = ActualText.objects.all().filter(text__in=working_texts).filter(response__isnull=False).count()
+		if sent > 0:
+			return 100*(round(response/sent,2))
+		else:
+			return "NA"
 
 class Group(models.Model):
 	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True)
 	group = models.CharField(max_length=1000,default='',null=True)
-	person = models.ManyToManyField(Person,blank=True)
+	person = models.ManyToManyField(Person,blank=True,related_name='group')
 	collection = models.ManyToManyField(Collection,blank=True,related_name='group')
-	ideal_text = models.ManyToManyField(IdealText,blank=True)
+	ideal_text = models.ManyToManyField(IdealText,blank=True,related_name='group')
+	possible_text = models.ManyToManyField(PossibleText,blank=True,related_name='group')
 	
 	def __str__(self):
 		return self.group		

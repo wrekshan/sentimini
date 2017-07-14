@@ -76,6 +76,11 @@ def transfer_ideal_texts(ideal_text,possible_text):
 	possible_text.text_type = ideal_text.text_type
 	possible_text.edit_type = ideal_text.edit_type
 	possible_text.tmp_save = ideal_text.tmp_save
+
+	if ideal_text.group != None:
+		for group in ideal_text.group.all():
+			possible_text.group.add(group)
+
 	return possible_text
 
 def save_fake_text(working_person,text):
@@ -154,10 +159,10 @@ def create_fake_texts(request):
 
 			for person in working_group.person.all():
 				for text in working_collection.ideal_texts.all():
+					# tmp = Person.objects.all().get(person=person.person)
+					person.ideal_text.add(text)
+					person.save()
 					save_fake_text(person,text)
-
-
-
 
 
 		for j in range(0,3):
@@ -166,6 +171,8 @@ def create_fake_texts(request):
 			working_person.save()
 
 			for text in working_collection.ideal_texts.all():
+				working_person.ideal_text.add(text)
+				working_person.save()
 				save_fake_text(working_person,text)
 
 				# transfer_alt_texts(text,tmp)
@@ -345,7 +352,84 @@ def text(request,id=None):
 	return render(request,"PRO_specific.html",context)		
 
 
+def get_summary_info(request):
+	main_context = {} # to build out the specific html stuff
+	response_data = {} # to send back to the template
+	
+	if 'type' in request.POST.keys():
+		if request.POST['type'] == "program":
+			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_groups = working_program.group.all()
+			working_persons = working_program.person.all()
+			working_texts = working_program.ideal_texts.all()
 
+			print("working_groups",working_groups)
+			print("working_persons",working_persons)
+
+			main_context['working_groups'] = working_groups
+			main_context['working_persons'] = working_persons
+			main_context['working_texts'] = working_texts
+			main_context['display_name'] = working_program.collection_name
+
+			response_data['summary_info'] = render_to_string('PRO_summary_info.html', main_context, request=request)
+
+		elif request.POST['type'] == 'person':
+			working_person = Person.objects.all().get(id=int(request.POST['id']))
+			working_programs = working_person.collection.all()
+			working_groups = working_person.group.all()
+			working_texts = PossibleText.objects.all().filter(creator=request.user).filter(user=working_person.person)
+
+			print("working_groups",working_groups)
+			print("working_programs",working_programs)
+			print("working_texts",working_texts)
+
+			main_context['working_programs'] = working_programs
+			main_context['working_groups'] = working_groups
+			main_context['working_texts'] = working_texts
+			main_context['working_person'] = working_person
+			
+			response_data['ideal_text_list'] = render_to_string('PRO_dt_ideal_text.html', main_context, request=request)
+			response_data['summary_info'] = render_to_string('PRO_summary_person.html', main_context, request=request)
+		
+		elif request.POST['type'] == 'text':
+			tmp = IdealText.objects.all().get(id=int(request.POST['id']))
+			working_text = PossibleText.objects.all().filter(user=request.user).filter(ideal_text=tmp)
+			working_texts = ActualText.objects.all().filter(text=working_text)
+			main_context['working_texts'] = working_texts
+			main_context['working_persons'] = tmp.person.all()
+
+			main_context['display_name'] = working_text.text
+
+
+			response_data['pro_filters'] = render_to_string('PRO_summary_info.html', main_context, request=request)
+
+		elif request.POST['type'] == 'group':
+			working_group = Group.objects.all().get(id=int(request.POST['id']))
+
+			print("IN FILTER TEXTS", working_group.ideal_text.all())
+
+			main_context['working_persons'] = working_group.person.all()
+			main_context['working_texts'] = working_group.possible_text.all()
+			main_context['working_group'] = working_group
+
+			person_filters = Q()
+			for person in working_group.person.all():
+				person_filters.add(Q(user=person.person),Q.OR)
+
+			text_filters = Q()
+			for text in working_group.possible_text.all():
+				text_filters.add(Q(text=text),Q.OR)
+
+			main_context['working_texts'] = PossibleText.objects.all().filter(person_filters).filter(text_filters)
+
+
+			response_data['ideal_text_list'] = render_to_string('PRO_dt_ideal_group.html', main_context, request=request)
+			response_data['summary_info'] = render_to_string('PRO_summary_group.html', main_context, request=request)
+
+
+	else:
+		response_data['pro_filters'] = render_to_string('PRO_filters.html', main_context, request=request)
+	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 
 
@@ -361,6 +445,9 @@ def get_pro_filters(request):
 			working_persons = working_program.person.all()
 			working_texts = working_program.ideal_texts.all()
 
+			print("working_groups",working_groups)
+			print("working_persons",working_persons)
+
 			main_context['working_groups'] = working_groups
 			main_context['working_persons'] = working_persons
 			main_context['working_texts'] = working_texts
@@ -369,7 +456,11 @@ def get_pro_filters(request):
 		elif request.POST['type'] == 'person':
 			working_person = Person.objects.all().get(id=int(request.POST['id']))
 			working_programs = working_person.collection.all()
-			working_texts = IdealText.objects.all().filter(user=working_person.person)
+			working_groups = working_person.group.all()
+			working_texts = PossibleText.objects.all().filter(creator=request.user).filter(user=working_person.person)
+
+			print("working_groups",working_groups)
+			print("working_programs",working_programs)
 
 			main_context['working_programs'] = working_programs
 			main_context['working_texts'] = working_texts
@@ -378,17 +469,29 @@ def get_pro_filters(request):
 		elif request.POST['type'] == 'text':
 			tmp = IdealText.objects.all().get(id=int(request.POST['id']))
 			working_text = PossibleText.objects.all().filter(user=request.user).filter(ideal_text=tmp)
-
 			working_texts = ActualText.objects.all().filter(text=working_text)
 			main_context['working_texts'] = working_texts
+			main_context['working_persons'] = tmp.person.all()
 
 			response_data['pro_filters'] = render_to_string('PRO_filters_actual_texts.html', main_context, request=request)
 
-		elif request.POST['group'] == 'group':
+		elif request.POST['type'] == 'group':
 			working_group = Group.objects.all().get(id=int(request.POST['id']))
 
+			print("IN FILTER TEXTS", working_group.ideal_text.all())
 
 
+			main_context['working_persons'] = working_group.person.all()
+			main_context['working_texts'] = working_group.ideal_text.all()
+			response_data['pro_filters'] = render_to_string('PRO_filters_actual_texts.html', main_context, request=request)
+
+			# working_texts = ActualText.objects.all().filter(person__in=working_group.person.all())
+			# main_context['working_texts'] = working_texts
+
+
+			
+			# for text in working_group.ideal_texts.all():
+				# working_filters.add(Q(text=),Q.OR)
 
 
 	else:
@@ -403,22 +506,44 @@ def get_actual_text_feed(request):
 		working_person = Person.objects.all().get(id=int(request.POST['id']))
 		working_texts = ActualText.objects.all().filter(user=working_person.person)
 		main_context['working_texts'] = working_texts
+		
 		print("MODEL THING:", working_person.number_texts_sent())
+	
 	elif request.POST['type'] == 'program':
 		working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 		working_groups = working_program.group.all()
 		working_persons = working_program.person.all()
 
-		working_texts = working_program.texts.all()
+		text_filters = Q()
+		for text in working_program.texts.all():
+			text_filters.add(Q(text=text),Q.OR)
 		
-		# actual_texts = ActualText.objects.all().filter(text__in=working_texts)
+		main_context['working_texts'] = ActualText.objects.all().filter(text_filters)
+	
+	elif request.POST['type'] == 'group':
+		working_group = Group.objects.all().get(id=int(request.POST['id']))
+		
+		person_filters = Q()
+		for person in working_group.person.all():
+			person_filters.add(Q(user=person.person),Q.OR)
 
-		main_context['working_groups'] = working_groups
-		main_context['working_persons'] = working_persons
-		main_context['working_texts'] = working_texts
+		text_filters = Q()
+		for text in working_group.possible_text.all():
+			text_filters.add(Q(text=text),Q.OR)
+
+		main_context['working_texts'] = ActualText.objects.all().filter(person_filters).filter(text_filters)
+	
+	elif request.POST['type'] == 'text':
+		working_text = IdealText.objects.all().get(id=int(request.POST['id']))
+		text_filters = Q()
+		for text in working_text.possible_text.all():
+			text_filters.add(Q(text=text),Q.OR)
+
+		main_context['working_texts'] = ActualText.objects.all().filter(text_filters)
+
 
 	
-	response_data['actual_text_list'] = render_to_string('PRO_list_actual_text.html', main_context, request=request)	
+	response_data['actual_text_list'] = render_to_string('PRO_dt_actual_text.html', main_context, request=request)	
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 def get_pro_feed(request):
@@ -480,11 +605,19 @@ def get_people_and_group_side(request):
 	response_data['people_and_group_side'] = render_to_string('PRO_people_and_group_side.html', main_context, request=request)
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
-def get_add_person(request):
+def get_add_new(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
+	print("ADDING PERSON!!!!")
 
-	response_data['add_person'] = render_to_string('PRO_add_person.html', main_context, request=request)
+	if request.POST['type'] == "person_create":
+		response_data['add_new'] = render_to_string('PRO_add_person.html', main_context, request=request)
+	if request.POST['type'] == "group_create":
+		response_data['add_new'] = render_to_string('PRO_add_person.html', main_context, request=request)
+	if request.POST['type'] == "text_create":
+		response_data['add_new'] = render_to_string('PRO_add_person.html', main_context, request=request)
+	if request.POST['type'] == "program_create":
+		response_data['add_new'] = render_to_string('PRO_add_person.html', main_context, request=request)		
 	return HttpResponse(json.dumps(response_data),content_type="application/json")
 
 

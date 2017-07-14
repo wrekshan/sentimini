@@ -53,24 +53,13 @@
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       },
       success : function(data) {
-        $('#pro_filters').html(data['pro_filters']);
+        // $('#pro_filters').html(data['pro_filters']);
         $('#quick_actions').html(data['quick_actions']);
         
       }
   })
 
-    $.ajax({
-        type: 'POST',
-        url: '/professional/get_pro_feed/',
-        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-        'basic_view_change': 'basic_view_change',
-        'basic_view': 'person_view',
-        },
-        success : function(data) {
-          $('#pro_feed').html(data['pro_feed']);
-          
-        }
-    })
+   
 
   }
   if(window.addEventListener){

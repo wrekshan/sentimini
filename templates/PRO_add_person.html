@@ -3,11 +3,29 @@
 <script src={% static "js/select2.full.min.js" %}></script>
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
 
-<div class="card">
-	<div class="card-content">
-		<span class="card-title">
-			Adding (and eventually editing) person
-		</span>
+
+
+
+		
+		<h3>Add new person</h3>
+		<p class="flow-text">You will be able to add texts and programs or assign to groups after entering in the basic information.</p>
+		
+		
+
+		<div class="row">
+			<div class="input-field col s6">
+				<i class="material-icons prefix">account_circle</i>
+				<input id="icon_prefix" type="text" class="validate">
+				<label for="icon_prefix">First Name</label>
+			</div>
+
+			<div class="input-field col s6">
+
+				<input id="last_name" type="text" class="validate">
+				<label for="last_name">Last Name</label>
+			</div>
+		</div>
+
 		<div class="row">
 			<div class="input-field col s6">
 				<i class="material-icons prefix">phone</i>
@@ -16,11 +34,21 @@
 			</div>
 		</div>
 
-		<!-- GROUPS -->
 		<div class="row">
-			<div class="input-field col s12">
-				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+			<div class="input-field col s6">
+				<i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">location_on</i>
+				<input id="locationTextField" type="text" class="validate">
+				<label for="locationTextField">Location</label>
+			</div>
+		</div>
+
+		<!-- GROUPS -->
+		<!-- <div class="row">
+			<div class="input-field col s6">
+				
+				<i class="prefix fa fa-users" aria-hidden="true"></i>
+
+				
 				<div class="row">
 					<div class="col s12">
 						<select id="group_bar" multiple="multiple" placeholder="">
@@ -31,13 +59,24 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
-		<!-- TEXT -->
+
+
+<!-- 
+<div class="card">
+	<div class="card-content">
+		<span class="card-title">
+			Texts and Programs
+		</span>
+
+		
+
+		
 		<div class="row">
 			<div class="input-field col s12">
-				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+		
+				<i class=" prefix tooltipped fa fa-commenting-o" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
 				<div class="row">
 					<div class="col s12">
 						<select id="text_bar" multiple="multiple" placeholder="">
@@ -51,11 +90,11 @@
 		</div>
 
 
-		<!-- PROGRAMS -->
+		
 		<div class="row">
 			<div class="input-field col s12">
-				<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">class</i> -->
-				<i class=" prefix tooltipped fa fa-tag" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
+				
+				<i class=" prefix tooltipped fa fa-comments-o" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="These are tags for categorization"></i>
 				<div class="row">
 					<div class="col s12">
 						<select id="program_bar" multiple="multiple" placeholder="">
@@ -70,7 +109,13 @@
 
 	</div>
 </div>
+ -->
 
+<script type="text/javascript">
+	  $(document).ready(function(){
+    $('ul.tabs').tabs();
+  });
+</script>
 
 
 <script>

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from .views import home, people_and_groups, texts_and_programs, group, person, program, text, create_fake_users, create_fake_texts, get_pro_feed, get_pro_filters, get_people_and_group_side, get_add_person, get_actual_text_feed
+from .views import home, people_and_groups, texts_and_programs, group, person, program, text, create_fake_users, create_fake_texts, get_pro_feed, get_pro_filters, get_summary_info, get_people_and_group_side, get_add_new, get_actual_text_feed
 
 urlpatterns = [
 	url(r'^home/$', home, name='home'),
@@ -15,11 +15,12 @@ urlpatterns = [
 
 
 	url(r'^get_pro_feed/$', get_pro_feed, name='get_pro_feed'),
+	url(r'^get_summary_info/$', get_summary_info, name='get_summary_info'),
 	url(r'^get_actual_text_feed/$', get_actual_text_feed, name='get_actual_text_feed'),
 	url(r'^get_pro_filters/$', get_pro_filters, name='get_pro_filters'),
 
 	url(r'^get_people_and_group_side/$', get_people_and_group_side, name='get_people_and_group_side'),
-	url(r'^get_add_person/$', get_add_person, name='get_add_person'),
+	url(r'^get_add_new/$', get_add_new, name='get_add_new'),
 
 	url(r'^create_fake_users/$', create_fake_users, name='create_fake_users'),
 	url(r'^create_fake_texts/$', create_fake_texts, name='create_fake_texts'),

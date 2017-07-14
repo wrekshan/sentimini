@@ -11,6 +11,7 @@
 	<meta property="og:type"          content="website" />
 	<meta property="og:description"   content="Create and edit texts.  Lightweight tools for mindfulness, behavior change, and learning about this world." />
 	<meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
 </head>
 {% endblock %}
 
@@ -27,13 +28,15 @@
 	</div>
 
 	<div class="col s12 m9">
-	PRO SPECIFIC
-		<div class="card">
-			<div class="card-content">
-				Data Vis!
-			</div>
-		</div>
 
+	PRO SPECIFIC {{type}}
+
+		<div id="data_vis"></div>
+		
+
+		<div id="summary_info"></div>
+
+		<div id="ideal_text_list"></div>
 		<div id="actual_text_list"></div>
 
 		<div class="row"></div>
@@ -59,6 +62,18 @@
 
 		}
 	})
+		$.ajax({
+			type: 'POST',
+			url: '/professional/get_summary_info/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'id': '{{id}}',
+			'type': '{{type}}',
+		},
+		success : function(data) {
+			$('#summary_info').html(data['summary_info']);
+			$('#ideal_text_list').html(data['ideal_text_list']);
+		}
+	})
 
 		$.ajax({
 			type: 'POST',
@@ -71,6 +86,8 @@
 			$('#actual_text_list').html(data['actual_text_list']);
 		}
 	})
+
+
 
 	}
 	if(window.addEventListener){

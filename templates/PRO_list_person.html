@@ -8,16 +8,24 @@
 				<hr>
 				<div class="row">
 					<div class="col s12 m8">
-					<a class="sort_text" href="/professional/person/{{person.id}}/" style="font-size:150%;">{{person.display_name}}</a> 
-					{{person.number_texts}}
-					{{person.number_texts_sent}}
+						<a class="sort_text" href="/professional/person/{{person.id}}/" style="font-size:150%;">{{person.display_name}}</a> 
+						<p>Total texts: {{person.number_texts}}</p>
+						<p>
+							{{person.response_rate}}% response Rate ({{person.number_texts_replies}} replies / {{person.number_texts_sent}} sent)
+						</p>
 						
 						<!-- <span style="font-size:100%;">{{person.phone_input}}</span> -->
 						<div class="row"></div>
-						{% for group in person.group_set.all %}
-						<div class="chip">
-						<span style="font-size:80%;">{{group}}</span>
-						</div>
+						{% for group in person.group.all %}
+						
+						<span class="blue lighten-2 white-text" style="font-size:100%;">{{group.group}}</span>
+						
+						{% endfor %}
+
+						{% for collection in person.collection.all %}
+						
+						<span class="red lighten-2 white-text" style="font-size:100%;">{{collection.collection_name}}</span>
+						
 						{% endfor %}
 					</div>
 					<div class="col s12 m4">
@@ -25,21 +33,22 @@
 							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
 								<i class="material-icons">pause</i>
 							</div>
-							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign to collection">
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign Text">
+								<i class="fa fa-commenting-o" aria-hidden="true"></i>
+							</div>
+
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign Program">
 								<i class="fa fa-comments-o" aria-hidden="true"></i>
 							</div>
-							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to person">
-								<i class="fa fa-user" aria-hidden="true"></i>
-							</div>
-							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assing to group">
+							
+							<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign to group">
 								<i class="fa fa-users" aria-hidden="true"></i>
 							</div>
 						</div>
 					</div>
-				</div>
-			</li>
-			{% endfor %}
-		</ul>
+				</li>
+				{% endfor %}
+			</ul>
+		</div>
 	</div>
-</div>
 

@@ -1,8 +1,176 @@
+View
 <div class="center-align">
-</br>
-<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="New Text"><i class="fa fa-commenting-o" aria-hidden="true"></i></div>
-	<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="New Program"><i class="fa fa-comments-o" aria-hidden="true"></i></div>
-	<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="New Person"><i class="fa fa-user" aria-hidden="true"></i></div>
-	<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="New Group"><i class="fa fa-users" aria-hidden="true"></i></div>
+    <div  id = "person_view" class = "qa_view btn-floating grey"><i class="fa fa-user" aria-hidden="true"></i></div>
+
+    <div  id = "group_view" class = "qa_view btn-floating grey"><i class="fa fa-users" aria-hidden="true"></i></div>
+
+    <div  id = "text_view" class = "qa_view btn-floating grey"><i class="fa fa-commenting-o" aria-hidden="true"></i></div>
+
+    <div  id = "program_view" class = "qa_view btn-floating grey"><i class="fa fa-comments-o" aria-hidden="true"></i></div>
 </div>
-</br>
+
+New
+
+<div class="center-align">
+    <a  href="#modal1" id = "person_create" class = "qa_create btn-floating grey"><i class="fa fa-user" aria-hidden="true"></i></a>
+
+    <a href="#modal1" id = "group_create" class = "qa_create btn-floating grey"><i class="fa fa-users" aria-hidden="true"></i></a>
+
+    <a href="#modal1" id = "text_create" class = "qa_create btn-floating grey"><i class="fa fa-commenting-o" aria-hidden="true"></i></a>
+
+    <a href="#modal1" id = "program_create" class = "qa_create btn-floating grey"><i class="fa fa-comments-o" aria-hidden="true"></i></a>
+</div>
+<hr>
+
+
+<!-- Modal Structure -->
+  <div id="modal1" class="modal modal-fixed-footer">
+    <div class="modal-content">
+      <div id="create_content"></div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Cancel</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Save</a>
+    </div>
+  </div>
+
+
+
+
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+</script>          
+
+
+<script type="text/javascript">
+    $('.qa_create').click(function(){
+
+         $.ajax({
+                type: 'POST',
+                url: '/professional/get_add_new/',
+                data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'type': $(this).attr('id'),
+                
+            },
+            success : function(data) {
+                $('#create_content').html(data['add_new']);
+            }
+        })
+
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    $('.qa_view').click(function(){
+        if (window.location.href.includes('/professional/home/')){
+
+            $('.qa_view').addClass('grey')
+            $(this).removeClass('grey')
+            $(this).addClass('blue')
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/professional/get_pro_feed/',
+                data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'basic_view_change': 'basic_view_change',
+                'basic_view': $(this).attr('id'),
+            },
+            success : function(data) {
+                $('#pro_feed').html(data['pro_feed']);
+            }
+        })
+
+            
+        } else {
+            if ($(this).attr('id')=='person_view'){
+                window.location.replace("/professional/home/?view_person");    
+            } else if ($(this).attr('id')=='group_view'){
+                window.location.replace("/professional/home/?view_group");    
+            } else if ($(this).attr('id')=='text_view'){
+                window.location.replace("/professional/home/?view_text");    
+            } else if ($(this).attr('id')=='program_view'){
+                window.location.replace("/professional/home/?view_program");    
+            }
+            
+        }
+    })
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    if (window.location.href.includes('home')){
+        var view_tmp = 'person_view'
+        $('.qa_view').addClass('grey')
+        // $('#person_view').removeClass('grey')
+        // $('#person_view').addClass('blue')
+
+        if (window.location.href.includes('?view_text')){
+            view_tmp = 'text_view'
+            $('#text_view').removeClass('grey')
+            $('#text_view').addClass('blue')
+        } else if (window.location.href.includes('?view_program')){
+            view_tmp = 'program_view'
+            $('#program_view').removeClass('grey')
+            $('#program_view').addClass('blue')
+        } else if (window.location.href.includes('?view_person')){
+            view_tmp = 'person_view'
+            $('#person_view').removeClass('grey')
+            $('#person_view').addClass('blue')
+        } else if (window.location.href.includes('?view_group')){
+            view_tmp = 'group_view'
+            $('#group_view').removeClass('grey')
+            $('#group_view').addClass('blue')
+        } else {
+            view_tmp = 'person_view'
+            $('#person_view').removeClass('grey')
+            $('#person_view').addClass('blue')
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/professional/get_pro_feed/',
+            data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'basic_view_change': 'basic_view_change',
+            'basic_view': view_tmp,
+        },
+        success : function(data) {
+            $('#pro_feed').html(data['pro_feed']);
+        }
+        });
+    } else {
+        $('.qa_view').addClass('grey')
+        // $('#person_view').removeClass('grey')
+        // $('#person_view').addClass('blue')
+
+        if (window.location.href.includes('text')){
+            view_tmp = 'text_view'
+            $('#text_view').removeClass('grey')
+            $('#text_view').addClass('blue')
+        } else if (window.location.href.includes('program')){
+            view_tmp = 'program_view'
+            $('#program_view').removeClass('grey')
+            $('#program_view').addClass('blue')
+        } else if (window.location.href.includes('person')){
+            view_tmp = 'person_view'
+            $('#person_view').removeClass('grey')
+            $('#person_view').addClass('blue')
+        } else if (window.location.href.includes('group')){
+            view_tmp = 'group_view'
+            $('#group_view').removeClass('grey')
+            $('#group_view').addClass('blue')
+        }
+
+    }
+});
+</script>

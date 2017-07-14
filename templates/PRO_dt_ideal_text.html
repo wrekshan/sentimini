@@ -1,0 +1,45 @@
+
+<div class="card">
+  <div class="card-content">
+    <h5>Ideal Texts</h5>
+    <table id="ideal_text_datatable" class="display" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th>Text</th>
+          <th>Response Rate</th>
+          <th>Average</th>
+          <th>Reply</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {% if user.is_authenticated %}
+        
+
+        {% for text in working_texts %}
+        <tr>
+          <td>{{text.text}}</td>
+          <td>{{text.text}}</td>
+          <td> {{text.response_rate}}% response Rate ({{text.number_texts_replies}} replies / {{text.number_texts_sent}} sent)</td>
+          <td>{{text.response}} </td>
+        </tr>
+
+        {% endfor %}
+        
+        {% endif %}
+
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $('#ideal_text_datatable').DataTable(
+    {
+      "bLengthChange": false,
+      "pageLength": 5,
+      "order": [[ 0, "desc" ]],
+    });
+  } );
+</script>

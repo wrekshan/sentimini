@@ -1,0 +1,43 @@
+<div class="card">
+	<div class="card-content">
+		<span style="font-size: 150%;">{{working_person.display_name}}</span> 
+		<div  class = "btn-floating blue tooltipped" data-position="top" data-delay="50" data-tooltip="Edit Person Settings"><i class="material-icons">edit</i></div>
+
+		<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Pause">
+			<i class="material-icons">pause</i>
+		</div>
+		<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign Text">
+			<i class="fa fa-commenting-o" aria-hidden="true"></i>
+		</div>
+
+		<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign Program">
+			<i class="fa fa-comments-o" aria-hidden="true"></i>
+		</div>
+		
+		<div  id = "table_{{text.id}}" class = "btn-floating grey tooltipped" data-position="top" data-delay="50" data-tooltip="Assign to group">
+			<i class="fa fa-users" aria-hidden="true"></i>
+		</div>
+		
+		<p>Total texts: {{working_person.number_texts}}</p>
+		<p>
+			{{working_person.response_rate}}% response Rate ({{working_person.number_texts_replies}} replies / {{working_person.number_texts_sent}} sent)
+		</p>
+		<p>
+			{% for group in working_person.group.all %}
+			<div class="chip blue lighten-2 ">
+				<span class="white-text" style="font-size:100%;">{{group.group}}</span>
+				<i class="close material-icons">close</i>
+			</div>
+
+			{% endfor %}
+
+			{% for collection in working_person.collection.all %}
+			<div class="chip red lighten-2">
+				<span class=" white-text" style="font-size:100%;">{{collection.collection_name}}</span>
+				<i class="close material-icons">close</i>
+			</div>
+			{% endfor %}
+		</p>
+
+	</div>
+</div>
