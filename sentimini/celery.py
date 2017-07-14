@@ -57,8 +57,8 @@ if LIVEHOST:
     app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
                 CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
     
-    app.conf.broker_transport_options = {'fanout_prefix': True} 
-    app.conf.broker_transport_options = {'fanout_patterns': True}
+    app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True} 
+    app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_patterns': True}
     # app.conf.broker_transport_options = {'fanout_patterns': True}
     # Below is trying to make livehouse like dev
     
