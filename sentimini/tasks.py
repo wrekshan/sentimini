@@ -80,12 +80,12 @@ rate_limit_moon = "6/h"
 
 
 
-@app.on_after_finalize.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(12.0, schedule_texts, name='add every 10')
-    sender.add_periodic_task(12.0, send_texts, name='add every 10')
-    sender.add_periodic_task(12.0, check_email_for_new, name='add every 10')
-    sender.add_periodic_task(12.0, process_new_mail, name='add every 10')
+# @app.on_after_finalize.connect
+# def setup_periodic_tasks(sender, **kwargs):
+#     sender.add_periodic_task(12.0, schedule_texts, name='add every 10')
+#     sender.add_periodic_task(12.0, send_texts, name='add every 10')
+#     sender.add_periodic_task(12.0, check_email_for_new, name='add every 10')
+#     sender.add_periodic_task(12.0, process_new_mail, name='add every 10')
     # sender.add_periodic_task(300.0, schedule_sun_texts, name='add every 10')
 
 #############################################
@@ -134,7 +134,7 @@ def get_sun_time(sundata,desired):
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 # @app.task
-@app.task(bind=True)
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 
@@ -310,7 +310,7 @@ def send_text(text):
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 # @app.task
-@app.task(bind=True)
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -357,7 +357,7 @@ def get_first_text_part(msg):
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 # @app.task
-@app.task(bind=True)
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -418,9 +418,9 @@ def check_email_for_new():
 # @app.task
 # @task(name="process_new_mail",rate_limit=rate_limit_all_else)
 # @task()
-# @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+
 # @app.task
-@app.task(bind=True)
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
