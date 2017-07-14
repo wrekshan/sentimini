@@ -86,7 +86,7 @@ rate_limit_moon = "6/h"
 
 
 
-@app.on_after_configure.connect
+@app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     sender.add_periodic_task(12.0, schedule_texts, name='add every 10')
     sender.add_periodic_task(12.0, send_texts, name='add every 10')
