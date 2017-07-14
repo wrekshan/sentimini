@@ -58,8 +58,8 @@ if LIVEHOST:
     # Load task modules from all registered Django app configs.
     app.autodiscover_tasks()
 
-    app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+    # app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+    #             CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
     
     app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True} 
     app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_patterns': True}

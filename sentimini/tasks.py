@@ -133,7 +133,8 @@ def get_sun_time(sundata,desired):
 # @task(name='schedule_texts',rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@app.task(bind=True)
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 
@@ -308,7 +309,8 @@ def send_text(text):
 # @task(name="send_texts",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@app.task(bind=True)
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -354,7 +356,8 @@ def get_first_text_part(msg):
 # @task(name="check_email_for_new",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@app.task(bind=True)
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -416,7 +419,8 @@ def check_email_for_new():
 # @task(name="process_new_mail",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@app.task(bind=True)
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
