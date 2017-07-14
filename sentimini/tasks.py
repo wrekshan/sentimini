@@ -32,14 +32,6 @@ else:
 
 # app = Celery()
 
-# @app.on_after_configure.connect
-# def setup_periodic_tasks(sender, **kwargs):
-#     # Calls test('hello') every 10 seconds.
-#     sender.add_periodic_task(10.0, schedule_texts, name='add every 10')
-#     sender.add_periodic_task(10.0, send_texts, name='add every 10')
-#     sender.add_periodic_task(10.0, check_email_for_new, name='add every 10')
-#     sender.add_periodic_task(10.0, process_new_mail, name='add every 10')
-
 # task_seconds_between = 6
 task_seconds_between = 15
 rate_limit_all_else = "4/m"
@@ -137,9 +129,10 @@ def get_sun_time(sundata,desired):
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between))
 
 # @task(name='schedule_texts',rate_limit=rate_limit_all_else)
-# @task()
+
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@task()
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
 
@@ -314,7 +307,8 @@ def send_text(text):
 # @task(name="send_texts",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@task()
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -360,7 +354,8 @@ def get_first_text_part(msg):
 # @task(name="check_email_for_new",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@task()
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -422,7 +417,8 @@ def check_email_for_new():
 # @task(name="process_new_mail",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
+# @app.task
+@task()
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
