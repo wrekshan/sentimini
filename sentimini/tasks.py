@@ -35,46 +35,46 @@ else:
 
 
 # task_seconds_between = 6
-task_seconds_between = 20.0
-rate_limit_all_else = "10/m"
+task_seconds_between = 20
+rate_limit_all_else = "3/m"
 
 task_seconds_between_moon = 7200 #3 hr
 rate_limit_moon = "6/h"
 
 # 10800 - 3hr
 
-app.conf.beat_schedule = {
-    'schedule': {
-        'task': 'schedule_texts',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'send': {
-        'task': 'send_texts',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'check': {
-        'task': 'check_email_for_new',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
-        'args': ()
-    },
-    'process': {
-        'task': 'process_new_mail',
-        # 'schedule': crontab(hour=0, minute=1),
-        'schedule': timedelta(seconds=task_seconds_between),
-		'args': ()
-    },
-  #   'process': {
-  #       'task': 'schedule_sun_texts',
-  #       # 'schedule': crontab(hour=0, minute=1),
-  #       'schedule': timedelta(seconds=task_seconds_between_moon),
-		# 'args': ()
-  #   },
-}    
+# app.conf.beat_schedule = {
+#     'schedule': {
+#         'task': 'schedule_texts',
+#         # 'schedule': crontab(hour=0, minute=1),
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'send': {
+#         'task': 'send_texts',
+#         # 'schedule': crontab(hour=0, minute=1),
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'check': {
+#         'task': 'check_email_for_new',
+#         # 'schedule': crontab(hour=0, minute=1),
+#         'schedule': timedelta(seconds=task_seconds_between),
+#         'args': ()
+#     },
+#     'process': {
+#         'task': 'process_new_mail',
+#         # 'schedule': crontab(hour=0, minute=1),
+#         'schedule': timedelta(seconds=task_seconds_between),
+# 		'args': ()
+#     },
+#     'process': {
+#         'task': 'schedule_sun_texts',
+#         # 'schedule': crontab(hour=0, minute=1),
+#         'schedule': timedelta(seconds=task_seconds_between_moon),
+# 		'args': ()
+#     },
+# }    
 
 
 
@@ -82,10 +82,10 @@ app.conf.beat_schedule = {
 
 # @app.on_after_finalize.connect
 # def setup_periodic_tasks(sender, **kwargs):
-#     sender.add_periodic_task(task_seconds_between, schedule_texts, name='add every 10')
-#     sender.add_periodic_task(task_seconds_between, send_texts, name='add every 10')
-#     sender.add_periodic_task(task_seconds_between, check_email_for_new, name='add every 10')
-#     sender.add_periodic_task(task_seconds_between, process_new_mail, name='add every 10')
+#     sender.add_periodic_task(12.0, schedule_texts, name='add every 10')
+#     sender.add_periodic_task(12.0, send_texts, name='add every 10')
+#     sender.add_periodic_task(12.0, check_email_for_new, name='add every 10')
+#     sender.add_periodic_task(12.0, process_new_mail, name='add every 10')
     # sender.add_periodic_task(300.0, schedule_sun_texts, name='add every 10')
 
 #############################################
@@ -133,10 +133,11 @@ def get_sun_time(sundata,desired):
 # @task(name='schedule_texts',rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
-# @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+# @app.task
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def schedule_texts():
 	print("TASK 1 - STARTING schedule_texts")
+	app.control.purge()
 
 	#Specific Timings
 	working_texts = PossibleText.objects.all().filter(text_type='standard').filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
@@ -309,8 +310,8 @@ def send_text(text):
 # @task(name="send_texts",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
-# @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+# @app.task
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def send_texts():
 	print("TASK 2 - STARTING send_texts ")
 	today_date = datetime.now(pytz.utc)
@@ -356,8 +357,8 @@ def get_first_text_part(msg):
 # @task(name="check_email_for_new",rate_limit=rate_limit_all_else)
 # @task()
 # @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
-@app.task
-# @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+# @app.task
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def check_email_for_new():
 	#Set up the email 
 	print("TASK 3 - RECIEVE MAIL")
@@ -419,8 +420,8 @@ def check_email_for_new():
 # @task(name="process_new_mail",rate_limit=rate_limit_all_else)
 # @task()
 
-@app.task
-# @periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
+# @app.task
+@periodic_task(run_every=timedelta(seconds=task_seconds_between),rate_limit=rate_limit_all_else)
 def process_new_mail():
 	print("TASK 4 - PROCESS MAIL")
 	Toprocess = Incoming.objects.all().filter(processed=0)
