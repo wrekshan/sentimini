@@ -30,10 +30,10 @@ if LIVEHOST:
 	# BROKER_TRANSPORT = 'redis'
     
     # CELERY_IMPORTS=("sentimini.tasks")
-    # BROKER_URL = os.environ['CLOUDAMQP_URL']
+    BROKER_URL = os.environ['CLOUDAMQP_URL']
     # BROKER_URL = os.environ['RABBITMQ_BIGWIG_URL']
     CELERY_UTC_ENABLE = True
-    BROKER_URL = os.environ['REDIS_URL']
+    # BROKER_URL = os.environ['REDIS_URL']
     BROKER_POOL_LIMIT = 1 # Will decrease connection usage
     BROKER_HEARTBEAT = None # We're using TCP keep-alive instead
     BROKER_CONNECTION_TIMEOUT = 30 # May require a long timeout due to Linux DNS timeouts etc
@@ -59,7 +59,7 @@ if LIVEHOST:
     app.autodiscover_tasks()
 
     # app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
-    #             CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+                # CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
     
     app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True} 
     app.conf.BROKER_TRANSPORT_OPTIONS = {'fanout_patterns': True}
