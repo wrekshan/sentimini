@@ -36,7 +36,7 @@ else:
 
 # task_seconds_between = 6
 task_seconds_between = 15
-rate_limit_all_else = "4/m"
+rate_limit_all_else = "10/m"
 
 task_seconds_between_moon = 7200 #3 hr
 rate_limit_moon = "6/h"
