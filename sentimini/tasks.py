@@ -43,49 +43,49 @@ rate_limit_moon = "6/h"
 
 # 10800 - 3hr
 
-# app.conf.beat_schedule = {
-#     'schedule': {
-#         'task': 'schedule_texts',
-#         # 'schedule': crontab(hour=0, minute=1),
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'send': {
-#         'task': 'send_texts',
-#         # 'schedule': crontab(hour=0, minute=1),
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'check': {
-#         'task': 'check_email_for_new',
-#         # 'schedule': crontab(hour=0, minute=1),
-#         'schedule': timedelta(seconds=task_seconds_between),
-#         'args': ()
-#     },
-#     'process': {
-#         'task': 'process_new_mail',
-#         # 'schedule': crontab(hour=0, minute=1),
-#         'schedule': timedelta(seconds=task_seconds_between),
-# 		'args': ()
-#     },
-#     'process': {
-#         'task': 'schedule_sun_texts',
-#         # 'schedule': crontab(hour=0, minute=1),
-#         'schedule': timedelta(seconds=task_seconds_between_moon),
-# 		'args': ()
-#     },
-# }    
+app.conf.beat_schedule = {
+    'schedule': {
+        'task': 'schedule_texts',
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'send': {
+        'task': 'send_texts',
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'check': {
+        'task': 'check_email_for_new',
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
+        'args': ()
+    },
+    'process': {
+        'task': 'process_new_mail',
+        # 'schedule': crontab(hour=0, minute=1),
+        'schedule': timedelta(seconds=task_seconds_between),
+		'args': ()
+    },
+  #   'process': {
+  #       'task': 'schedule_sun_texts',
+  #       # 'schedule': crontab(hour=0, minute=1),
+  #       'schedule': timedelta(seconds=task_seconds_between_moon),
+		# 'args': ()
+  #   },
+}    
 
 
 
 
 
-@app.on_after_finalize.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(task_seconds_between, schedule_texts, name='add every 10')
-    sender.add_periodic_task(task_seconds_between, send_texts, name='add every 10')
-    sender.add_periodic_task(task_seconds_between, check_email_for_new, name='add every 10')
-    sender.add_periodic_task(task_seconds_between, process_new_mail, name='add every 10')
+# @app.on_after_finalize.connect
+# def setup_periodic_tasks(sender, **kwargs):
+#     sender.add_periodic_task(task_seconds_between, schedule_texts, name='add every 10')
+#     sender.add_periodic_task(task_seconds_between, send_texts, name='add every 10')
+#     sender.add_periodic_task(task_seconds_between, check_email_for_new, name='add every 10')
+#     sender.add_periodic_task(task_seconds_between, process_new_mail, name='add every 10')
     # sender.add_periodic_task(300.0, schedule_sun_texts, name='add every 10')
 
 #############################################
