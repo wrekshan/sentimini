@@ -1,5 +1,6 @@
 web: gunicorn sentimini.wsgi --log-file -
-worker: REMAP_SIGTERM=SIGQUIT celery -A sentimini worker -B -c=1
+worker1: REMAP_SIGTERM=SIGQUIT celery -A sentimini worker -c=1
+worker2: REMAP_SIGTERM=SIGQUIT celery -A sentimini beat -c=1
 
 
 

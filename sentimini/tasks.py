@@ -140,9 +140,9 @@ def schedule_texts():
 	i = inspect()
 	print("before scheduled", i.scheduled())
 	print("active", i.active())
-	app.control.purge()
-	print("after scheduled", i.scheduled())
-	print("active", i.active())
+	# app.control.purge()
+	# print("after scheduled", i.scheduled())
+	# print("active", i.active())
 
 	#Specific Timings
 	working_texts = PossibleText.objects.all().filter(text_type='standard').filter(tmp_save=False).filter(active=True).filter(timing__fuzzy=False).filter(timing__date_start__lte=pytz.utc.localize(datetime.now()))
