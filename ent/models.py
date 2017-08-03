@@ -546,7 +546,7 @@ class ActualText(models.Model):
 
 class QuickSuggestion(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	text = models.ForeignKey(IdealText,default=0)
+	text = models.ForeignKey(IdealText,null=True,blank=True)
 	date = models.DateTimeField(blank=True,null=True)
 	added = models.BooleanField(default=False)
 	rejected = models.BooleanField(default=False)
