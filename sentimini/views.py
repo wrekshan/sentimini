@@ -23,7 +23,7 @@ from numpy import *
 from django.db.models import Avg
 from django.db.models import Q
 
-from ent.models import PossibleText, Program, Timing, Tag, ActualText, Carrier, UserSetting, IdealText
+from ent.models import PossibleText, Program, Timing, Tag, ActualText, Carrier, UserSetting, IdealText, QuickSuggestion
 from consumer.views import get_timing_default, save_timing_function
 
 
@@ -295,12 +295,17 @@ def admin_panel(request):
 # you can also probably delete this as it isn't called in the task file either
 def delete_unsent_texts(request):
 	response_data = {}
-	working_texts = ActualText.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None)
 
-	for text in working_texts:
-		td = text.time_to_send - datetime.now(pytz.utc)
-		if td.seconds/60 > 5:
-			text.delete()
+	working_qs = QuickSuggestion.objects.all()
+	for qs in working_qs:
+		qs.delete()
+		
+	# working_texts = ActualText.objects.filter(time_to_send__lte=datetime.now(pytz.utc)).filter(time_sent=None)
+
+	# for text in working_texts:
+	# 	td = text.time_to_send - datetime.now(pytz.utc)
+	# 	if td.seconds/60 > 5:
+	# 		text.delete()
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")					
 		
