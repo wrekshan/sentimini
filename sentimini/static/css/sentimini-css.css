@@ -1,3 +1,21 @@
+
+
+html,
+body,
+.view {
+    height: 100%;
+}
+
+.view {
+    background: url("https://mdbootstrap.com/images/regular/city/img%20(17).jpg")no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+
 .sent-tooltip {
 	color: #ffc400;
 }
@@ -21,7 +39,7 @@ textarea.empty {
 /*textarea.materialize-textarea{height: 1rem;}*/
 
 
-.card-inspiration{
+.card-program{
 	 background: rgba(54, 25, 25, .5);
 }
 
@@ -48,10 +66,7 @@ i.icon-white {
     color: white;
 }
 
-.timing_text_title {
-	font-size: 100%;
-    line-height: normal;
-}
+
 
 .modal-about {
 	font-size: 120%;

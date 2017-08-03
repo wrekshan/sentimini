@@ -20,7 +20,6 @@ function getTime(hours, minutes) {
 }
 
 function slideTime_start(event, ui){
-    console.log("IN FUCTION staticfiles")
     var val0 = slider.noUiSlider.get()[0],
         val1 = slider.noUiSlider.get()[1],
         minutes0 = parseInt(val0 % 60, 10),

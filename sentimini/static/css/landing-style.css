@@ -1,0 +1,107 @@
+.title_text {
+  font-size: 150%;
+    line-height: bold;
+}
+
+
+
+@media (max-width: 600px) {
+  .flex-s {
+    display: flex;
+    flex-direction: column; /* Stack on top */
+  }
+  .box-a {
+    order: 2; /* Go down, bring Box B up */
+  }
+}
+
+@media only screen and (max-width: 600px) { .row.valign-wrapper { display: inherit; } }
+
+
+
+
+
+.selector {
+    
+    
+    text-align: center; margin: 1em 0;
+}
+
+
+
+
+@media only screen and (max-width: 600px) {
+    .equal_heights { 
+        display: block;
+        height: auto;
+    }
+    img.mockup {
+        width: 40%;
+    }
+
+    
+    
+}
+
+@media only screen and (min-width: 600px) {
+    .equal_heights { 
+        display: block;
+        height: 500px;
+    }
+    img.mockup {
+        width: 55%;
+    }
+    
+}
+.title_text {
+    font-size: 150%;
+    line-height: bold;
+}
+
+
+
+
+label.invalid {
+    color: red;
+    font-size: 0.8rem;
+    left: 0;
+    position: relative;
+    top: -15px;
+    transform: none !important;
+}
+
+video#bgvid { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    
+
+    z-index: -100;
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+}
+
+#background {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    background: url(polina.jpg) no-repeat;
+    background-size: cover;
+}
+.container h1 {
+    color: white;
+}
+

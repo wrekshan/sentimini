@@ -1,0 +1,122 @@
+{% load static %}
+{% load staticfiles %}
+<script src={% static "js/materialize.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+
+<ul class="collapsible" data-collapsible="accordion">	
+	<li>
+		<div class="collapsible-header active"><i class="material-icons">apps</i>Categories</div>
+		<div class="collapsible-body">
+			<input name = "tag_all" type="checkbox" id="tag_all" checked="checked" value="tag_all"/>
+			<label for="tag_all">Show All</label>
+			</br>
+
+			{% for tag in working_tags %}
+			<input name = "tag_check" type="checkbox" id="tag_{{tag}}" value ="{{tag.id}}"/>
+			<label for="tag_{{tag}}">{{tag}}</label>
+			</br>
+			{% endfor %}
+
+		</div>
+	</li>
+</ul>
+<!-- 
+
+<ul class="collapsible" data-collapsible="accordion">	
+	<li>
+		<div class="collapsible-header"><i class="material-icons">whatshot</i>Texts Per Week</div>
+		<div class="collapsible-body">
+			<input name = "burden_all" type="checkbox" id="burden_all" checked="checked"/>
+			<label for="burden_all">Show All</label>
+			</br>
+			<input name = "burden_1_5" type="checkbox" id="burden_1_5"/>
+			<label for="burden_1_5">1-5</label>
+			</br>
+			<input name = "burden_6_10" type="checkbox" id="burden_6_10"/>
+			<label for="person_all">6-10</label>
+			</br>
+			<input name = "burden_1_5" type="checkbox" id="burden_1_5"/>
+			<label for="person_all">11-20</label>
+			</br>
+			<input name = "burden_1_5" type="checkbox" id="burden_1_5"/>
+			<label for="person_all">>20 </label>
+		</div>
+	</li>
+</ul>
+
+
+
+
+
+<ul class="collapsible" data-collapsible="accordion">	
+	<li>
+		<div class="collapsible-header"><i class="material-icons">whatshot</i>Date</div>
+		<div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+	</li>
+</ul>
+ -->
+<script>
+	$(document).ready(function(){
+		$('.collapsible').collapsible();
+	});
+</script>
+
+
+
+<script>
+var update_main_window = function(){
+	if ($("#program_tag_bar").val() !== null){
+      var program_tags = $('#program_tag_bar').val().join(',')  
+    }
+
+     var filter_tags = [];
+	  $('input[name=tag_check]:checked').each(function() {
+	   filter_tags.push($(this).val());
+	 });
+
+	  $.ajax({
+      type: 'POST',
+      url: '/consumer/get_program_display/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'program_switch': $('#program_switch').is(':checked'),
+      'program_tags': program_tags,
+      'filter_tags': filter_tags,
+	    },
+	    success : function(data) {
+	      console.log("program DISPLAY WORKED!")
+	      $('#program_display').html(data['program_display']);
+	    }
+	  })
+
+}
+</script>
+
+<script type="text/javascript">
+$('input[name=tag_check]').click(function() {
+		console.log("LENS LEFT SIDE STAR OTHER")
+		$('#tag_all').removeAttr('checked');
+		update_main_window()
+	});
+
+	$('#tag_all').click(function() {
+		console.log("STAR ALL")
+		$('input[name=tag_check]').removeAttr('checked');
+		update_main_window()
+
+	});
+
+
+	
+	  // GET THE TAGS
+ //  var all_topics = [];
+ //  $('input[name=topic_checkbox]:checked').each(function() {
+ //   all_topics.push($(this).val());
+ // });
+  
+ //  if (all_topics.length<1){
+ //    $('#topic_all').prop("checked", true);
+ //  }
+
+
+
+</script>

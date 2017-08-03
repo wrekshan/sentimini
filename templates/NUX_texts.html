@@ -1,0 +1,196 @@
+{% load static %}
+{% load staticfiles %}
+<script src={% static "js/materialize.min.js" %}></script>
+
+
+
+
+<h5 class="center-align">Creating an account</h5>
+<div class="hide-on-med-and-up">
+	<div class="col s2 center-align">
+		Start
+	</div>
+	<div class="col s7">
+		<div class="progress">
+			<div class="determinate" style="width: 10%"></div>
+		</div>
+	</div>
+
+	<div class="col s3 center-align">
+		Complete
+	</div>
+	
+	<div class="col s12 center-align">
+		Next: Text Schedule
+	</div>
+</div>
+
+<div class="hide-on-small-only">
+	<div class="col s2 center-align">
+		Start
+	</div>
+	<div class="col s8">
+		<div class="progress">
+			<div class="determinate" style="width: 10%"></div>
+		</div>
+	</div>
+
+	<div class="col s2 center-align">
+		Complete
+	</div>
+	
+	<div class="col s12 center-align">
+		Next: Text Schedule
+	</div>
+</div>
+
+
+<div class="col s12 m8">
+	<div class="card">
+		<div class="card-content">
+			<div class="title_text">Create you first text!</div>
+			<form >
+				<div class="input-field col s12">
+					<i id = "new_text_highlight" class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
+					<textarea style="height:10px; min-height: 10px;" id="textarea1" class="materialize-textarea" data-length="160" autofocus></textarea>
+					<label class="active" for="textarea1">What's to important to you?</label>
+				</div>
+			</form>
+			<div class="row"></div>
+
+
+			<div class="right-align">
+				<div class="row">
+					<a id="NUX_random_suggestion" class="waves-effect waves-red chip">Random Suggestion</a>
+					<a id="NUX_submit_text" class="waves-effect waves-light btn">Done!</a>
+				</div>
+				<div id="save_message"></div>
+			</div>
+
+
+		</div>
+	</div>
+
+	<div class="card" >
+		<div class="card-content">
+			
+			<h5>Remember what you want</h5>
+			<p class="flow-text">
+				You can send texts at specific times.  Remember to strech right before bed each night or go for a run when you wake up.
+			</p>
+			<div class="row"></div>
+
+
+			<h5>Change your habits</h5>
+			<p class="flow-text">
+				You can send texts at repeating times throughout the day.  Quick smoking, drink more water, or be more mindful.
+			</p>
+			<div class="row"></div>
+
+			<h5>Keep track of things</h5>
+			<p class="flow-text">
+				You can send texts back to Sentimini.   Keep a dream journal, track your emotions, or keep a record if you take medications.
+			</p>
+		</div>
+	</div>
+</div>
+
+<div class="col s12 m4">
+	<div class="card">
+		<div class="card-content">
+			<p class="flow-text">
+				Use the random suggestion button if you get stuck. You can always edit your texts later.
+			</p>
+			
+			<div class="row"></div>
+			<p class="flow-text">
+				You can sign up for programs of texts after you create your account.
+			</p>
+
+
+			<div class="row"></div>
+			<p class="flow-text">
+				You'll be able to set the schedule in the next step.
+			</p>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="col s12 m8">
+	
+</div>
+
+
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		
+		Materialize.updateTextFields();
+		 $('#textarea1').trigger('autoresize');
+		
+
+	});
+</script>
+
+<script type="text/javascript">
+	function startClock(){
+		document.getElementById("textarea1").focus();
+		Materialize.updateTextFields();
+
+		// console.log("GETTING LEGEND")
+
+	}
+</script>
+
+<script type="text/javascript">
+	$('#NUX_random_suggestion').click(function(){
+		console.log("GETINNG RNADO")
+		$.ajax({
+			type: 'POST',
+			url: '/get_random_suggestion/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+		},
+		success : function(data) {
+			$('#textarea1').val(data['suggestion'])
+			document.getElementById("textarea1").focus();
+			Materialize.updateTextFields();
+			$('#textarea1').trigger('autoresize');
+		}
+	})
+
+
+	})
+</script>
+
+<script type="text/javascript">
+	$('#NUX_submit_text').click(function(){
+
+		if ($('#textarea1').val() == ""){
+			console.log("NULL")
+			$('#save_message').html("Please set up a text to continue.  You can even just use the random suggestion.")
+		} else {
+			$.ajax({
+				type: 'POST',
+				url: '/get_nux_timing/',
+				data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+				'text_content': $('#textarea1').val(),
+			},
+			success : function(data) {
+				// $('#NUX_legend').html(data['NUX_legend']);
+				$('#NUX_signup').html(data['NUX_timing']);
+				$('#NUX_selector').html("");
+				$('#NUX_examples').html("");
+				window.location.hash = '';
+				window.location.hash = 'timing_for_text';
+			}
+		})
+		}
+
+	})
+</script>
+
+

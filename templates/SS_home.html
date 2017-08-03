@@ -23,9 +23,7 @@
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
   <div class="col s12 m3">
-  <div class="card">
-  <a  id="highlight_button" class="waves-effect waves-light btn block hide-on-small-only" style=" width: 100%;">Tour</a>
-  </div>
+  
   <span id="NUS_tracker" hidden>0</span>
   <span id="NUS_switch" hidden>0</span>
   
@@ -90,7 +88,10 @@
 
 <!-- <a href="/consumer/quotation/">Add your own suggestions</a>
 <div class="row"></div> -->
-<a href="/consumer/program/" class="waves-effect waves-light btn block hide-on-small-only" style=" width: 100%;">See Programs</a>
+<!-- <a href="/consumer/program/" class="waves-effect waves-light btn block hide-on-small-only" style=" width: 100%;">See Programs</a> -->
+
+  
+
 <!-- <a href="/consumer/program/">See Programs</a> -->
 
 <!-- </div> -->
@@ -168,251 +169,8 @@
       
     </div>
   </div>
-
-  <div id="add_suggestion_hightlight_1_trigger" class="tap-target amber darken-1" data-activates="add_suggestion_hightlight_1">
-    <div class="tap-target-content ">
-      <h5>Add suggested texts</h5>
-      <p class="flow-text">
-      You can add any of these texts.  They are just meant as suggestions
-      </p>
-      <p class="flow-text">
-      This tour will cycle through the features of this site.
-      </br>
-        You don't have to click anything.
-      </p>
-      
-    </div>
   </div>
 
-  <div id="scheduled_text_hightlight_trigger" class="tap-target amber darken-1" data-activates="scheduled_text_highlight">
-    <div id="scheduled_text_hightlight_content" class="tap-target-content center-align">
-      <h5>Review or edit scheduled texts</h5>
-      <p class="flow-text">
-      You can review all of your scheduled texts here.
-      </p>
-      <p class="flow-text">
-      You can edit, pause, or delete any of the texts.
-      </p>
-      
-    </div>
-  </div>
-
-  <div id="new_text_highlight_trigger" class="tap-target amber darken-1" data-activates="new_text_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Create new texts</h5>
-      <p class="flow-text">
-      You can add a new text here.  Whatever you want.  
-      </p>
-      
-    </div>
-  </div>
-
-   <div id="timing_highlight_trigger" class="tap-target amber darken-1" data-activates="show_options_top">
-    <div class="tap-target-content center-align">
-      <h5>Options</h5>
-      <p class="flow-text">
-      You can edit the timing of the text.
-      </p>
-    </div>
-  </div>
-
-  <div id="specific_time_hours_highlight_trigger" class="tap-target amber darken-1" data-activates="specific_time_hours_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Set the hour range</h5>
-      <p class="flow-text">
-      Sentimini will send the text at a random time within the hour range.  
-      </p>
-      <p class="flow-text">
-      Don't worry, you can always schedule them for specific times.
-
-      </p>
-    </div>
-  </div>
-
-<div id="timing_option_specific_highlight_trigger" class="tap-target amber darken-1" data-activates="timing_option_specific_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Advanced controls</h5>
-      <p class="flow-text">
-      You can receive the same text multiple times per day. 
-      </p>
-      <p class="flow-text">
-      You can also set the days of the week you want to receive the text.
-      </p>
-      
-    </div>
-  </div>
-
-  <div id="options_default_save_highlight_trigger" class="tap-target amber darken-1" data-activates="options_default_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Save timings as default</h5>
-      <p class="flow-text">
-      If you like a timing, you can set it as a default.  
-      </p>
-      <p class="flow-text">
-      FYI:  you can add a text with the default timing from your phone.
-      </br>
-      Just text, "new:" and whatever text you want.  
-      </p>
-    </div>
-  </div>
-
-  <div id="download_csv_highlight_trigger" class="tap-target amber darken-1" data-activates="download_csv_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Download your replies</h5>
-      <p class="flow-text">
-      Sentimini will collect any replies you make to the texts.  
-      </p>
-      <p class="flow-text">
-      You can easily download any data you collect.
-      </p>
-    </div>
-  </div>
-
-
-
-  <div id="help_highlight_trigger" class="tap-target amber darken-1" data-activates="help_highlight">
-    <div class="tap-target-content center-align">
-      <h5>Find help</h5>
-      <p class="flow-text">
-      If you are ever lost or stuck, hit one of these buttons.</br>It will provide all the necessary information.
-      <div class="row"></div>
-      That's it for the tour.  Enjoy!
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- FOR THE TOUR! -->
-
-<script type="text/javascript">
-
-
-$('#highlight_button').click(function(){
- 
-
-  var pathname = window.location.pathname; // Returns path only
-  var url      = window.location.href;  
-
-  var timing_keeper = 500
-  var load_delay = 333
-  var delay_between = 666
-  var number_of_seconds = 5555  
-  var scroll_delay = 888
-
-  // MAKE SURE THE RIGTH PAGES ARE UP
-  $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_input/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'text_message': "New Text",},
-      success : function(data) {
-        $('#text_input').html(data['text_input']);
-        Materialize.updateTextFields();
-        $('.materialize-textarea').trigger('autoresize');
-      }
-    })
-
-   $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_datatable/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-      success : function(data) {
-        $('#text_datatable').html(data['text_datatable']);
-      }
-    })
-
-
-if ($(window).width() < 600 ) {
-setTimeout(function() {$('#quick_suggestions').show();}, timing_keeper-10);
-}
-
-
-
-
-  setTimeout(function() {$('#add_suggestion_hightlight_1_trigger').tapTarget('open');}, timing_keeper);
-  timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#add_suggestion_hightlight_1_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper  + 800
-  if ($(window).width() < 600 ) {
-setTimeout(function() {$('#quick_suggestions').hide();}, timing_keeper-10);
-}
-  
-
-  
-
-  setTimeout(function() {$('#scheduled_text_hightlight_trigger').tapTarget('open');}, timing_keeper);
-  timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#scheduled_text_hightlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + delay_between
-
-
-  setTimeout(function() {$('#timing_highlight_trigger').tapTarget('open');}, timing_keeper);
-  timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#timing_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + delay_between
-
-
-
-  setTimeout(function() {$('#advanced_options').show();}, timing_keeper);
-
-  timing_keeper = timing_keeper + load_delay
-
-
-  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('open');}, timing_keeper + load_delay);
-  timing_keeper = timing_keeper + number_of_seconds + load_delay
-  setTimeout(function() {$('#specific_time_hours_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + delay_between
-
-
-setTimeout(function() {$('html, body').animate({scrollTop: $("#timing_option_specific_highlight").offset().top -350}, scroll_delay);}, timing_keeper);
-timing_keeper = timing_keeper + scroll_delay
-
-  setTimeout(function() {$('#timing_option_specific_highlight_trigger').tapTarget('open');}, timing_keeper);
-  timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#timing_option_specific_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + delay_between
-
-setTimeout(function() {$('html, body').animate({scrollTop: $("#options_default_save").offset().top -350}, scroll_delay);}, timing_keeper);
-timing_keeper = timing_keeper + load_delay + scroll_delay
-
-setTimeout(function() {$('#options_default_save_highlight_trigger').tapTarget('open');}, timing_keeper);
-timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#options_default_save_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + delay_between
-
-
-  setTimeout(function() {$('#advanced_options').hide();}, timing_keeper);
-  
-
-timing_keeper = timing_keeper + load_delay
-
-
-// setTimeout(function() {$('#download_csv_highlight')[0].scrollIntoView( {block: "start", behavior: "smooth"} );;}, timing_keeper);
-
-setTimeout(function() {$('html, body').animate({scrollTop: $("#download_csv_highlight").offset().top -350}, scroll_delay);}, timing_keeper);
-
-
-
-timing_keeper = timing_keeper + load_delay + scroll_delay
-setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('open');}, timing_keeper );
-timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#download_csv_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + load_delay
-
-setTimeout(function() {$('html, body').animate({scrollTop: $("#brand_logo").offset().top}, scroll_delay);}, timing_keeper);
-timing_keeper = timing_keeper + load_delay + scroll_delay
-
-setTimeout(function() {$('#help_highlight_trigger').tapTarget('open');}, timing_keeper);
-timing_keeper = timing_keeper + number_of_seconds
-  setTimeout(function() {$('#help_highlight_trigger').tapTarget('close');}, timing_keeper);
-  timing_keeper = timing_keeper + load_delay
-
-  if (pathname.indexOf("guided_tour") >= 0){
-    setTimeout(function() {window.location.replace("/accounts/signup/");}, timing_keeper);
-  }
-
-})
-  </script>
 
 
 <script type="text/javascript">

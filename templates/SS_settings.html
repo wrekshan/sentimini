@@ -35,14 +35,14 @@
   <div class="col s12 m8">
     <div class="card">
       <div class="card-content">
-        <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span>
-        {{message}}
+        <!-- <span class="card-title"><h4>Contact Settings<a href="#settings_modal"><i class="small material-icons">info_outline</i></h4></a></span> -->
+        <h5>{{message}}</h5>
 
         
 
         <!-- Phone -->
         <h5>Phone Number</h5>
-        <div class="input-field col s11 offset-s1">
+        <div class="input-field col s12">
           <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
           <input id="phone_input" type="tel" class="validate">
           <label for="phone_input">Telephone</label>
@@ -50,7 +50,7 @@
 
         <!-- Carrier -->
         <h5>Phone Carrier</h5>
-        <div class="input-field col s11 offset-s1">
+        <div class="input-field col s12">
           <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
           <div class="row">
            <select id="carrier_search">
@@ -64,7 +64,7 @@
 
           <!-- LOCATION -->          
           <h5>Location (City and State)</h5>
-          <div class="input-field col s11 offset-s1">
+          <div class="input-field col s12">
             <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">location_on</i>
             <input id="locationTextField" type="text" class="validate">
             <!-- <label for="locationTextField">Location</label> -->

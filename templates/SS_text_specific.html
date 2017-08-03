@@ -21,7 +21,7 @@
 <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css">
 
-
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <!-- QUICK SUGGESTIONS-->
 <div class="row">
   <div class="col s12 m3">
@@ -87,9 +87,8 @@
 <!-- <div class="card"> -->
 <!-- <div class="card-content"> -->
 
-<a href="/consumer/quotation/">Add your own suggestions</a>
-<div class="row"></div>
-<a href="/consumer/program/">See more uses of Sentimini</a>
+<a href="/consumer/program/" class="waves-effect waves-light btn block hide-on-small-only" style=" width: 100%;">See Programs</a>
+
 
 <!-- </div> -->
 <!-- </div> -->
@@ -100,9 +99,8 @@
 <div class="col s12 m9">
   <!-- CARD FOR NEW TEXTS AND TIMINGS-->
   <div id = "text_content_card">
-
-    
     </div>
+    <div id="text_vis_card"></div>
     {% if user.is_authenticated %}
     <div id="text_datatable"></div>
     {% endif %}
@@ -113,35 +111,14 @@
 
 
 
-
-<!-- Modal Structure -->
-<div id="text_add_confirm" class="modal modal-fixed-footer" style="max-height:50%;">
-  <div class="modal-content">
-    <h3>Confirm to add text</h3>
-    <p>Text: <b>{{working_text.text}}</b></p>
-
-    <p>You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
-
-    <p>You can always edit the the text or timings in the scheduled text panel.</p>
-
-  </div>
-  <div class="modal-footer">
-    <div id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-inspiration-btn blue darken-2">Confirm</div>
-    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
-
-  </div>
-</div>
-
-
 <!-- GET THE TEXT BOX -->
 <script type="text/javascript">
   function startClock(){
-    console.log("STARTING")
      $.ajax({
       type: 'POST',
       url: '/consumer/get_text_specific_overview/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'id': "{{working_text.id}}",
+      'id': window.location.href.split('/')[window.location.href.split('/').length-3],
 
     },
     success : function(data) {
@@ -153,12 +130,27 @@
     }
   })
 
+  //    $.ajax({
+  //     type: 'POST',
+  //     url: '/vis/get_text_specific_vis/',
+  //     data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+  //     'id': window.location.href.split('/')[window.location.href.split('/').length-3],
+  //   },
+  //   success : function(data) {
+  //     // $('#quick_suggestions').html("");
+  //     $('#text_vis_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+  //     setTimeout(function() {$('#text_vis_card').html(data['text_vis']);}, 350);
+
+      
+  //   }
+  // })
+
 
     $.ajax({
       type: 'POST',
       url: '/consumer/get_text_datatable_response/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'id': "{{working_text.id}}",
+      'id': window.location.href.split('/')[window.location.href.split('/').length-3],
       'text_message': "Viewing Data",
       'find_user_text': "yes",
 

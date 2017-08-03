@@ -1,0 +1,163 @@
+{% load static %}
+{% load staticfiles %}
+
+<script src="http://listjs.com/assets/javascripts/list.min.js"></script>
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+
+
+
+<div id="possible_text_list">
+Showing {{number_of_programs}} programs
+  <ul class="list">
+    {% for key, value in program_info %}
+    
+    <div class="col s12 m12 l12">
+    <div class="card">
+    <div class="card-image">
+        <a href="/consumer/program/{{value.program.id}}/{{value.program.slug}}/"><img src="/static/images/program/{{value.program.program_name}}.jpg" >
+        <span class="card-title">{{value.program.program}}</span></a>
+        <!-- <img class="activator" src="/static/images/program/dreams.jpg"> -->
+      </div>
+    <div class="card-content">
+    <!-- <p>total texts per week: {{value.program.total_burden}}</p> -->
+    {% for tag in value.program.tag.all %}
+            
+            <span class="red lighten-2 white-text chip" style="font-size:100%;">{{tag.tag}}</span>
+            
+            {% endfor %}
+
+
+   <p>{{value.program.description}}</p>
+      </div>
+      <div class="card-action right-align">
+          <a class="waves-effect waves-light btn" href="/consumer/program/{{value.program.id}}/{{value.program.slug}}/">Read more and subscribe</a>
+        </div>
+      </div>
+      </div>
+      
+
+    
+    {% endfor %}
+  </ul>
+  <div class="col s10">
+    <ul class="pagination"></ul>
+  </div>
+</div>
+</div>
+
+
+
+<!-- FOR THE CHECKBOXES -->
+{% for key, value in program_info %}
+{% for text in value.program.texts.all %}
+<script type="text/javascript">
+  $('input[name={{value.program.id}}_{{text.id}}]').click(function() {
+    $('#{{value.program.id}}_all').removeAttr('checked');
+  });
+
+  $('#{{value.program.id}}_all').click(function() {
+    $('input[name={{value.program.id}}_{{text.id}}]').removeAttr('checked');  
+  });
+</script>
+{% endfor %}
+{% endfor %}
+
+
+<script type="text/javascript">
+  $('.add-program-btn').click(function(){
+    var program_name = this.id
+
+    // GET THE SPEFIC OPTIONS
+    var selected_texts = [];
+    $("input:checkbox").each(function() {
+      if ($(this).attr('name')===program_name){
+       selected_texts.push(this.id);
+      }     
+     });
+
+    console.log("SELECTED TEXTS " + selected_texts)
+    $.ajax({
+      type: 'POST',
+      url: '/ent/add_to_program/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'program_name': program_name,
+      'selected_texts': selected_texts.join(','),
+    },
+    success : function(data) {
+      console.log("program DISPLAY WORKED!")
+      $.ajax({
+      type: 'POST',
+      url: '/get_side/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'side_switch': $('#side_switch').is(':checked')
+      },
+    success : function(data) {
+     $('#side_content').html(data['SIDE']);
+   }
+ })
+    }
+  })
+  })
+    
+
+
+
+</script>
+
+
+<!-- THIS IS THE COLLAPISBLE -->
+<script type="text/javascript">
+ $(document).ready(function(){
+  $('.collapsible').collapsible();
+});
+
+</script>
+
+
+<script type="text/javascript">
+// var options = {
+//   valueNames: [ 'text-text', 'text_id' ]
+// };
+
+// var userList = new List('possible_text_list', options);
+
+
+var monkeyList = new List('possible_text_list', {
+  valueNames: ['text-text', 'time_sent',''],
+  page: 10,
+  plugins: [ ListPagination({}) ] 
+});
+</script>
+
+
+
+<script type="text/javascript">
+  $('#program_switch').change(function(){
+    $.ajax({
+      type: 'POST',
+      url: '/ent/get_display_program/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'program_switch': $('#program_switch').is(':checked')},
+
+      success : function(data) {
+        console.log("program DISPLAY WORKED!")
+        $('#MAIN').html(data['program']);
+      }
+    })
+  })
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>

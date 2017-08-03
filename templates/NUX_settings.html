@@ -1,0 +1,328 @@
+{% load static %}
+{% load staticfiles %}
+<head>
+  <script src={% static "js/select2.full.min.js" %}></script>
+  <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+</head>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDs-WdIC-BxpjBSsOjF54EPaCsvfd9kuYo&libraries=places&callback=init"></script>
+
+
+
+<h5 class="center-align">Creating an account</h5>
+<div class="hide-on-med-and-up">
+  <div class="col s2 center-align">
+    Start
+  </div>
+  <div class="col s7">
+    <div class="progress">
+      <div class="determinate" style="width: 70%"></div>
+    </div>
+  </div>
+
+  <div class="col s3 center-align">
+    Complete
+  </div>
+  
+  <div class="col s12 center-align">
+    Next: Email and passwords
+  </div>
+</div>
+
+<div class="hide-on-small-only">
+  <div class="col s2 center-align">
+    Start
+  </div>
+  <div class="col s8">
+    <div class="progress">
+      <div class="determinate" style="width: 70%"></div>
+    </div>
+  </div>
+
+  <div class="col s2 center-align">
+    Complete
+  </div>
+  
+  <div class="col s12 center-align">
+    Next: Email and passwords
+  </div>
+</div>
+
+
+
+
+
+<div class="col s12 m8" >
+  <div class="card">
+    <div class="card-content">
+      <h5>How does we send this to you?</h5>
+      <!-- Phone -->
+      <div class="row"></div>
+
+      
+      <h5>Phone Number</h5>
+      <div class="input-field col s12">
+        <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="10 digit phone number.">phone</i>
+        <input id="phone_input" type="tel" class="validate">
+        <label for="phone_input">Telephone</label>
+      </div>
+      
+
+      <!-- Carrier -->
+      <div class="row"></div>
+      <h5>Phone Carrier</h5>
+      <div class="input-field col s12">
+        <i class="material-icons prefix tooltipped" aria-hidden="true" data-position="top" data-delay="50" data-tooltip="This is used to find your text address">settings_input_antenna</i>
+        <div class="row">
+         <select id="carrier_search">
+           {% for carrier in working_carrier %}
+           <option value="{{carrier.carrier}}">{{carrier.carrier}}</option>
+           {% endfor %}
+         </select>
+       </div>
+     </div>
+     
+
+
+     <!-- LOCATION -->       
+     <div class="row"></div>
+     <h5>Location (City and State)</h5>
+     <div class="input-field col s12">
+      <i class="material-icons prefix tooltipped">location_on</i>
+      <input id="locationTextField" type="text" class="validate">
+      <!-- <label for="locationTextField">Location</label> -->
+    </div>
+    
+    
+
+    
+    <div class="right-align">
+      <div id = "settings_message"></div>
+      <a id="NUX_submit_text" class="waves-effect waves-light btn">Back</a>
+      <a id="settings_modal_trigger" class="waves-effect waves-light btn" href="#confirm_settings">Done!</a>
+    </div>
+    
+
+  </div>
+</div>
+</div>
+
+
+<div class="col s12 m4">
+  <div class="card">
+    <div class="card-content">
+      <p class="flow-text">
+       Your <b>phone number</b> is needed to be able to text you (US based number with the area code)
+       </p>
+       <div class="row"></div>
+       <p class="flow-text">
+       Your <b>carrier</b> is needed to send you free texts (for beta only)
+       </p>
+       <div class="row"></div>
+       <p class="flow-text">
+       Your <b>location</b> is used to determine your timezone
+
+
+     </p>
+
+   </div>
+ </div>
+
+</div>
+
+
+<!-- Modal Structure -->
+<div id="confirm_settings" class="modal modal-fixed-footer" style="max-height:75%;">
+  <div class="modal-content">
+    <h3>Confirm settings</h3>
+    
+    <p class="flow-text">
+      <b>Telephone: </b><span id="phone_confirm"></span>
+    </p>
+    <p class="flow-text">
+      <b>Carrier: </b><span id="carrier_confirm"></span>
+    </p>
+    <p class="flow-text">
+      <b>Location: </b><span id="loc_confirm"></span>
+    </p>
+
+    
+
+    <p = class="flow-text">
+      If these are correct, pleace click confirm.  If not, please click edit to edit the settings.
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <a id="save_settings_button" class="settings-save-btn waves-effect waves-light btn">Confirm</a>
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Edit</a>
+  </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="skip_settings" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div class="modal-content">
+    <h5>Are you sure?</h5>
+    <p>
+      You won't be able to receive any text messages until these settings are completed.  
+    </p>
+
+  </div>
+  <div class="modal-footer">
+    <a id="reject_settings_button" class="settings-save-btn waves-effect waves-light btn-flat">Yes, I don't want to recieve texts.</a>
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">No, Edit Settings</a>
+  </div>
+</div>
+
+
+
+<script>
+  function init() {
+    var input = document.getElementById('locationTextField');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+  }
+
+  // google.maps.event.addDomListener(window, 'load', init);
+</script>
+
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+
+<script>
+  $("#carrier_search").select2({
+    tokenSeparators: [',', ' '],
+    placeholder: "Phone carrier",
+  })
+
+  $("#tz_search").select2({
+    tokenSeparators: [',', ' '],
+    placeholder: "Timezone",
+  })
+</script>
+
+<!-- LOAD OLD VALUES IF PRESENT -->
+
+<script type="text/javascript">
+  $('#NUX_submit_text').click(function(){
+
+    if ($('#textarea1').val() == ""){
+      console.log("NULL")
+      $('#save_message').html("Please set up a text to continue.  You can even just use the random suggestion.")
+    } else {
+      $.ajax({
+        type: 'POST',
+        url: '/get_nux_timing/',
+        data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+        'text_content': '{{text_content}}',
+      },
+      success : function(data) {
+        // $('#NUX_legend').html(data['NUX_legend']);
+        $('#NUX_signup').html(data['NUX_timing']);
+        $('#NUX_legend').html(data['NUX_legend']);
+        $('#NUX_selector').html("");
+        $('#NUX_examples').html("");
+        window.location.hash = '';
+        window.location.hash = 'timing_for_text';
+      }
+    })
+    }
+    
+  })
+</script>
+
+
+<script>
+  var save_settings_data = function(x){
+    console.log("SAVE TYPE", x)
+
+    if ($("#carrier_search").val() !== null){
+      var carrier_search = $('#carrier_search').val()
+      console.log("CARRIER "+carrier_search)
+      var carrier_good = 1
+    } else {
+      var carrier_good = 0
+    }
+
+
+    if ($("#locationTextField").val() !== null){
+      var tz_search = $('#locationTextField').val()
+      console.log("TZ " + tz_search) 
+      var tz_good = 1
+    } else {
+      var tz_good = 0
+    }
+
+    if ($("#phone_input").val() !== null){
+
+      var phone_good = 1
+    } else {
+      var phone_good = 0
+    }
+
+    if ((phone_good == 1 && carrier_good == 1 && tz_good ==1) || (x=="reject_settings_button")){
+    // LOAD THE AJAX
+    $.ajax({
+      type: 'POST',
+      url: '/get_nux_signup/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'phone_input': $('#phone_input').val(),
+      'carrier_search': carrier_search,
+      'location': $('#locationTextField').val(),
+      'text_content': '{{text_content}}',
+      'hour_start':  '{{hour_start}}',
+      'date_start':  '{{date_start}}',
+      'date_end':  '{{date_end}}',
+      'hour_end':  '{{hour_end}}',
+      'hour_start_value':  '{{hour_start_value}}',
+      'hour_end_value':  '{{hour_end_value}}',
+      'iti':  '{{iti}}',
+      'iti_noise':  '{{iti_noise}}',
+      'fuzzy_denomination':  '{{fuzzy_denomination}}',
+      'fuzzy':  '{{fuzzy}}',
+      'num_repeats':  '{{num_repeats}}',
+      'weekdays':  '{{weekdays}}',
+
+    },
+    success : function(data) {
+      $('#confirm_settings').modal('close');
+      $('#NUX_legend').html(data['NUX_legend']);
+      $('#NUX_signup').html(data['NUX_signup']);
+      $('#NUX_selector').html("");
+      $('#NUX_examples').html("");
+      window.location.hash = '';
+      window.location.hash = 'create_an_account';
+    }
+  })
+
+  } else {
+    $('#settings_message').html("Please enter your phone number and select your carrier and timezone to continue.");
+
+  }
+
+
+
+  
+}
+</script>
+<script type="text/javascript">
+  $('#settings_modal_trigger').click(function(){
+    $('#carrier_confirm').text($("#carrier_search").val())
+    $('#loc_confirm').text($("#locationTextField").val())
+    $('#phone_confirm').text($("#phone_input").val())
+
+  })
+</script>
+
+<script>
+  $('.settings-save-btn').click(function() {
+    save_settings_data($(this).attr("id"))
+  })
+</script>

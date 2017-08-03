@@ -1,0 +1,134 @@
+
+ <!-- <div class="col s12 m5 offset-m1 center-align teal "> -->
+ 
+
+          <!-- <div class="card transparent">
+          <div class="card-content"> -->
+
+            
+            <h2 class="hide-on-small-only">Change your life</h2>
+            <h4 class="hide-on-med-and-up">Change your life</h4>
+
+            
+            <h5 class="">Really easy tools for</h5>
+            <div class="input-field col s6 offset-s3 center-align">
+              <select id="select_program">
+                {% for name in display_names %}
+                <option value="{{name}}">{{name}}</option>
+                {% endfor %}
+                <option value="view_more">View more...</option>
+            </select>
+            <!-- <label>Materialize Select</label> -->
+        </div>
+
+      
+        {% if user.is_authenticated %}
+        <a href="/consumer/home/"  class="btn-large waves-effect waves-light z-depth-5">Start texting!</a>
+
+        {% else %}
+        <a id="show_texts_programs" class="sign_up btn-large waves-effect waves-light z-depth-5">Start texting!</a>
+
+        <div class="row"></div>
+        <!-- <a href="{% url 'account_login' %}"">Already signed up, then sign in</a> -->
+        <!-- <div class="row"></div> -->
+        <span class="header col s12">Signing up is free and takes less than 3 minutes.</span>
+        
+        <span>Already signed up, then <a style="font-size: 140%;" href="{% url 'account_login' %}">sign in</a>.</span>
+
+        {% endif %}
+        <!-- </div> -->
+
+
+<script>
+  $(document).ready(function() {
+    $('select').material_select();
+  });
+</script>        
+
+
+<script>
+    $( "#sign-up-link" ).click(function() {
+      console.log("LINK CLICKED")
+      $.ajax({
+      type: 'POST',
+      url: '/get_nux_signup/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+    success : function(data) {
+      
+      
+      $('#NUX_signup').html(data['NUX_signup']);
+      $('#NUX_selector').html("");
+      $('#NUX_examples').html("");
+      window.location.hash = '';
+      window.location.hash = 'create_an_account';
+    }
+  })
+})
+</script>
+
+<script>
+    $( ".sign_up" ).click(function() {
+      console.log("LINK CLICKED")
+      $.ajax({
+      type: 'POST',
+      url: '/get_nux_texts/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+    success : function(data) {
+      
+      
+      $('#NUX_signup').html(data['NUX_texts']);
+      $('#NUX_selector').html("");
+      $('#NUX_examples').html("");
+      $('#NUX_everything_else').html("");
+      window.location.hash = '';
+      window.location.hash = 'create_a_text';
+    }
+  })
+})
+</script>
+
+
+<script>
+    $( "#show_settings" ).click(function() {
+      console.log("LINK CLICKED")
+      $.ajax({
+      type: 'POST',
+      url: '/get_nux_settings/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+    success : function(data) {
+      
+      
+      $('#NUX_signup').html(data['NUX_settings']);
+      $('#NUX_selector').html("");
+      $('#NUX_examples').html("");
+      window.location.hash = '';
+      window.location.hash = 'create_settings';
+    }
+  })
+})
+</script>
+
+
+  <script>
+    $( "#select_program" ).change(function() {
+      console.log("ChAGED")
+      var viewing = $('#select_program').val()
+      viewing = viewing.replace(/ /g,"_");
+      if (viewing == "view_more"){
+        window.location.href = "/consumer/program/";
+      } else {
+        console.log("changing pic")
+        console.log(viewing)
+        $('.mockup').addClass('hidden')
+        $('#'+viewing).removeClass('hidden')
+        // $('#sms_picture').html("<img class ='mockup' src='/static/images/mockups/" + viewing + ".png'>")
+
+      }
+
+    })
+  </script>
+
+

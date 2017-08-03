@@ -1,0 +1,281 @@
+{% load static %}
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+<script src={% static "js/materialize.min.js" %}></script>
+<script src={% static "js/jquery.validate.min.js" %}></script>
+<link href={% static "css/landing-style.css" %} type="text/css" rel="stylesheet" media="screen,projection"/>
+
+
+
+{% load i18n %}
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '319542021809076',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();   
+  };
+
+  (function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/sdk.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+
+<h5 class="center-align">Creating an account</h5>
+<div class="hide-on-med-and-up">
+  <div class="col s2 center-align">
+    Start
+  </div>
+  <div class="col s7">
+    <div class="progress">
+      <div class="determinate" style="width: 95%"></div>
+    </div>
+  </div>
+
+  <div class="col s3 center-align">
+    Complete
+  </div>
+  
+  <div class="col s12 center-align">
+    Next: Aww yeah!
+  </div>
+</div>
+
+<div class="hide-on-small-only">
+  <div class="col s2 center-align">
+    Start
+  </div>
+  <div class="col s8">
+    <div class="progress">
+      <div class="determinate" style="width: 95%"></div>
+    </div>
+  </div>
+
+  <div class="col s2 center-align">
+    Complete
+  </div>
+  
+  <div class="col s12 center-align">
+    Next: Aww yeah!
+  </div>
+</div>
+
+
+
+<div class="col s12 m8">
+  <div class="card" style="background-color:rgba(255, 255, 255, 0.9);">
+    <div class="card-content">
+      <h5>Sign up</h5>
+      <div id="signup_message"></div>
+
+
+      <div class="row">
+        <!-- USING MATERIALIZE -->
+        <form class="col s12 formValidate" id="formValidate" method="get" action="">
+          <!-- <form class="col s12 right-alert"> -->
+          <div class="row">
+
+             <!--    <div class="input-field col s12 right-alert">
+                  <i class="material-icons prefix">account_circle</i>
+                  <input id="signup_username" name="signup_username" type="text" aria-required="true">
+                  <label for="signup_username">User Name (at least 5 characters)</label>
+                </div> -->
+
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">email</i>
+                  <input id="signup_email" name="signup_email" type="email" >
+                  <label for="signup_email">Email</label>
+                </div>
+
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">enhanced_encryption</i>
+                  <input id="signup_password1" name="signup_password1" type="password">
+                  <label for="signup_password1">Password (>5 characters)</label>
+                </div>
+
+                <div class="input-field col s12">
+                  <i class="material-icons prefix">enhanced_encryption</i>
+                  <input id="signup_password2" name="signup_password2" type="password">
+                  <label for="signup_password2">Confirm Password</label>
+                </div>
+              </form>
+
+              <div class="right-align">
+              <a id="submit_signup" class="waves-effect waves-light btn btn-block" style="width=100%"><div id="sub_btn_text">Submit</div></a>
+              </div>
+
+              <!-- <div class="row"></div>
+              <div class="center-align"> or </div>
+
+              {% load account socialaccount %}  
+              {% get_providers as socialaccount_providers %}
+              {% if socialaccount_providers %}
+              <p>{% blocktrans with site.name as site_name %}{% endblocktrans %}</p>
+              <div class="socialaccount_ballot">
+                {% include "fb_sign_up.html" with process="login" %}
+              </div>
+              {% include "socialaccount/snippets/login_extra.html" %}
+              {% endif %} -->
+
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="col s12 m4">
+  <div class="card">
+    <div class="card-content">
+      <p class="flow-text">
+       After this, you are done!  Good work!
+     </p>
+     <div class="row"></div>
+      <p class="flow-text">
+       Don't forget, you Sentimini will keep a record of any replies you make
+     </p>
+     <div class="row"></div>
+      <p class="flow-text">
+       You can also schedule a new text by texting, "New:" and the text you want 
+     </p>
+
+   </div>
+ </div>
+
+</div>
+
+
+
+
+  <script type="text/javascript">
+
+    $("#formValidate").validate({
+      rules: {
+        signup_username: {
+          required: true,
+          minlength: 5
+
+        },
+        signup_email: {
+          required: true,
+          email:true
+        },
+        signup_password1: {
+          required: true,
+          minlength: 5
+        },
+        signup_password2: {
+          required: true,
+          minlength: 5,
+          equalTo: "#signup_password1"
+        },
+
+      },
+
+        //For custom messages
+        messages: {
+          signup_username:{
+            required: "Enter a username",
+            minlength: "Enter at least 5 characters"
+          },
+          signup_password2:{
+            equalTo: "Passwords do not match",
+          },
+
+        },
+        errorElement : 'div',
+        errorPlacement: function(error, element) {
+          var placement = $(element).data('error');
+          if (placement) {
+            $(placement).append(error)
+          } else {
+            error.insertAfter(element);
+          }
+        }
+      });
+    </script>
+
+
+    <script type="text/javascript">
+      function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    </script>
+
+    <script type="text/javascript">
+      $( "#submit_signup" ).click(function() {
+        console.log("SIGN UP!!!!")
+        var data = {"csrfmiddlewaretoken" : '{{ csrf_token }}',
+        "username": $('#signup_email').val(),
+        "email": $('#signup_email').val(),
+        "password1": $('#signup_password1').val(),
+        "password2": $('#signup_password2').val() 
+      };
+
+
+
+      $.post({
+        url : "{% url 'account_signup' %}",
+        type: "POST",
+        data : data,
+        success : function(data) {
+          var csrftoken = getCookie('csrftoken');
+          $.ajax({
+            type: 'POST',
+            url: '/nux_finalize/',
+            data: {'csrfmiddlewaretoken': csrftoken,
+            'phone_input': '{{phone_input}}',
+            'carrier_search': '{{carrier_search}}',
+            'location': '{{location}}',
+            'text_content': '{{text_content}}',
+            'hour_start':  '{{hour_start}}',
+            'date_start':  '{{date_start}}',
+            'date_end':  '{{date_end}}',
+            'hour_end':  '{{hour_end}}',
+            'hour_start_value':  '{{hour_start_value}}',
+            'hour_end_value':  '{{hour_end_value}}',
+            'iti':  '{{iti}}',
+            'iti_noise':  '{{iti_noise}}',
+            'fuzzy_denomination':  '{{fuzzy_denomination}}',
+            'fuzzy':  '{{fuzzy}}',
+            'num_repeats':  '{{num_repeats}}',
+            'weekdays':  '{{weekdays}}',
+          },
+          success : function(data) {
+
+            window.location.replace("/consumer/home/");
+          }
+        })
+        } 
+
+      
+    });
+
+
+
+    })
+
+  </script>
+

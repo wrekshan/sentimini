@@ -25,18 +25,18 @@
 
      <span>Sort by:</span>
    </br>
-   <div class="waves-effect waves-teal btn-flat chip sort" data-sort="sort_text">
+   <div class="waves-effect waves-red btn-flat chip sort" data-sort="sort_text">
     Text
   </div>
 
-  <div class="waves-effect waves-teal btn-flat chip sort" data-sort="sort_created">
+  <div class="waves-effect waves-red btn-flat chip sort" data-sort="sort_created">
     Created
   </div>
 
-  <div class="waves-effect waves-teal btn-flat chip sort" data-sort="sort_sent">
+  <div class="waves-effect waves-red btn-flat chip sort" data-sort="sort_sent">
     Sent
   </div>
-  <div class="waves-effect waves-teal btn-flat chip sort" data-sort="sort_timing">
+  <div class="waves-effect waves-red btn-flat chip sort" data-sort="sort_timing">
     Timing
   </div>
   {% if user.is_authenticated %}
@@ -134,11 +134,14 @@
 
 <!-- MODAL DELETE BUTTON -->
 {% for text in working_texts %}
-<div id="modal_delete_texts_{{text.id}}" class="modal modal-fixed-footer" name ="delete_modal" style="max-height:25%;">
+<div id="modal_delete_texts_{{text.id}}" class="modal modal-fixed-footer" name ="delete_modal" style="max-height:50%;">
 
   <div class="modal-content">
     <h4>Are you sure?</h4>
-    <p>This will delete this text and all data associated with it.  You can always just 'pause' the text</p>
+    <p class="flow-text">This will delete this text and all data associated with it.</p>
+    <p class="flow-text">You can always just 'pause' the text.</p>
+
+
     
   </div>
   <div class="modal-footer">

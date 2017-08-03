@@ -25,7 +25,7 @@ from django.db.models import Q
 
 # Create your views here.
 
-from .models import TextLink, TextDescription, AlternateText, PossibleText, ActualText, Collection, Tag, Timing, UserSetting
+from .models import TextLink, TextDescription, AlternateText, IdealText, PossibleText, ActualText, Program, Tag, Timing, UserSetting
 from consumer.views import transfer_alt_texts
 
 def reset_settings_complete(request):
@@ -64,6 +64,7 @@ def update_db_after_import(request):
 	print("update_db_after_import")
 
 	#clear away the input text from the people who signed up
+	# caneval - I'M PRETTY SURE I DON'T NEED THIS ANY MORE
 	working_texts = PossibleText.objects.all().exclude(user=request.user)
 	for text in working_texts:
 		text.input_text = ''
@@ -74,27 +75,27 @@ def update_db_after_import(request):
 		timing.intended_text = ''
 		timing.save()
 
-	# Set up the collection
-	working_collections = Collection.objects.all().filter(user=request.user)
-	for collection in working_collections:
-		if collection.intended_tags is not None:
-			tags = collection.intended_tags.split(',')
+	# Set up the program
+	working_programs = Program.objects.all().filter(user=request.user)
+	for program in working_programs:
+		if program.intended_tags is not None:
+			tags = program.intended_tags.split(',')
 			for tag in tags:
+				tag = tag.strip()
 				if tag !='':
 					if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
 						tmp = Tag(tag=tag,user=request.user)
 						tmp.save()
 					else:
 						tmp = Tag.objects.all().get(tag=tag)
-					collection.tag.add(tmp)
+					program.tag.add(tmp)
 
-		collection.publish=True
-		collection.save()
+		program.publish=True
+		program.save()
 
 	# Set up the timings
 	working_timing = Timing.objects.all().filter(user=request.user)
 	for timing in working_timing:
-		print("ID", timing.id)
 		timing.intended_text = timing.intended_text_input
 		timing.repeat = True
 
@@ -129,34 +130,40 @@ def update_db_after_import(request):
 		timing.save()
 
 	# Set up the texts
-	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = IdealText.objects.all().filter(user=request.user)
 	for text in working_texts:
 		text.text = text.input_text
 		# Get the timing object
 		print("TEXT", text.text)
-		if text.intended_collection != None:
+		if text.intended_program != None:
+			print("PROGRAM NOT NONE")
 			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
 
 			#add the tags
 			tags = text.intended_tags.split(',')
 			for tag in tags:
+				print("----------")
+				print("TAG", tag)
 				if tag !='':
 					if Tag.objects.all().filter(user=request.user).filter(tag=tag).count()<1:
+						print("CREATE NEW")
 						tmp = Tag(tag=tag,user=request.user)
 						tmp.save()
 					else:
+						print("NOT CREATE NEW")
 						tmp = Tag.objects.all().get(tag=tag)
 					text.tag.add(tmp)
 
-			#add the collections
-			# print("INTENDED COLLECTION", text.intended_collection)
-			if text.intended_collection != "":
-				collection= Collection.objects.all().filter(user=request.user).get(collection_name=text.intended_collection)
-				text.collection.add(collection)
+			#add the programs
+			print("INTENDED program", text.intended_program)
+			if text.intended_program != "":
+				program= Program.objects.all().filter(user=request.user).get(program_name=text.intended_program)
+				text.program.add(program)
 
 			text.save()
 		else:
+			print("PROGRAM IS  NONE")
 			timing = Timing.objects.all().filter(user=request.user).get(intended_text=text.text)
 			text.timing = timing
 
@@ -175,7 +182,7 @@ def update_db_after_import(request):
 			text.save()
 
 	# Process the alternate texts
-	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = IdealText.objects.all().filter(user=request.user)
 	for working_text in working_texts:
 		working_text.alt_text.clear()
 
@@ -187,15 +194,14 @@ def update_db_after_import(request):
 
 
 	# Process the descriptions
-	working_texts = PossibleText.objects.all().filter(user=request.user)
-	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = IdealText.objects.all().filter(user=request.user)
 	for working_text in working_texts:
 		working_text.description.clear()
 		working_text.save()
 
 	for working_text in working_texts:
 		working_descriptions = TextDescription.objects.all().filter(user=request.user).filter(intended_text=working_text.text)
-		print("DESCIRPTION ", working_descriptions)
+		# print("DESCIRPTION ", working_descriptions)
 		for description in working_descriptions:
 			working_text.description.add(description)
 
@@ -218,7 +224,7 @@ def update_db_after_import(request):
 
 
 	# Process the LINKS
-	working_texts = PossibleText.objects.all().filter(user=request.user)
+	working_texts = IdealText.objects.all().filter(user=request.user)
 	for working_text in working_texts:
 		working_text.link.clear()
 		working_text.save()
@@ -247,15 +253,15 @@ def update_db_after_import(request):
 	return redirect('/consumer/home/')
 
 
-def add_to_collection(request):
+def add_to_program(request):
 	print("ADDING TO COLECTION")
 	response_data = {}
 
 	if 'selected_texts' in request.POST.keys():
 		print("LENGTH", len(request.POST['selected_texts']))
 		if len(request.POST['selected_texts']) == 0:
-			working_collection = Collection.objects.all().get(id=request.POST['collection_name'].split('_')[1])
-			working_texts = PossibleText.objects.all().filter(collection=working_collection)
+			working_program = Program.objects.all().get(id=request.POST['program_name'].split('_')[1])
+			working_texts = PossibleText.objects.all().filter(program=working_program)
 		else:
 			working_texts = request.POST['selected_texts'].split(',')
 		
@@ -289,7 +295,7 @@ def add_to_collection(request):
 
 
 
-def get_hourly_count_of_prompts(request,collection,tmp_date):
+def get_hourly_count_of_prompts(request,program,tmp_date):
 	tmp_hours = list(range(0,24))
 	# tmp_mins = (0,15,30,45)
 	tmp_mins = (0,10,20,30,40,50)
@@ -298,7 +304,7 @@ def get_hourly_count_of_prompts(request,collection,tmp_date):
 	num_text_out = []
 	text_color = []
 
-	working_texts = PossibleText.objects.all().filter(collection=collection)
+	working_texts = PossibleText.objects.all().filter(program=program)
 
 	# print("user_tz: ", user_tz)
 	for hr in tmp_hours:
@@ -307,11 +313,11 @@ def get_hourly_count_of_prompts(request,collection,tmp_date):
 			max_date = pytz.utc.localize(datetime(tmp_date.year,tmp_date.month,tmp_date.day,hr,(mins+9),59))
 			# max_date = pytz.utc.localize(datetime(tmp_date.year,tmp_date.month,tmp_date.day,hr,(mins+14),59))
 
-			#get the possible texts for the collection
+			#get the possible texts for the program
 			
 			actual_texts = ActualText.objects.all().filter(text__in=working_texts).filter(time_to_send__gte=min_date).filter(time_to_send__lte=max_date)
 
-			# print("COLLECTION:    ", collection)
+			# print("program:    ", program)
 			# print("working_texts: ", working_texts)
 			# print("actual_texts:  ", actual_texts)
 							
@@ -365,8 +371,8 @@ def get_hourly_count_of_prompts(request,collection,tmp_date):
 
 
 
-#COLLECTION PAGE
-def get_collection_heatmap(request,collection):
+#program PAGE
+def get_program_heatmap(request,program):
 	num_text_by_date = []
 	text_by_date = []
 	text_color_by_date =[]
@@ -383,7 +389,7 @@ def get_collection_heatmap(request,collection):
 	tmp_date = datetime.now(pytz.utc)
 	#GO FOR A WEEK
 	for tmp_counter in list(range(0,7)):
-		text_color, num_text_out, text_out = get_hourly_count_of_prompts(request=request,collection=collection,tmp_date=tmp_date)
+		text_color, num_text_out, text_out = get_hourly_count_of_prompts(request=request,program=program,tmp_date=tmp_date)
 		num_text_by_date.append(num_text_out)
 		text_by_date.append(text_out)
 		text_color_by_date.append(text_color)
@@ -465,28 +471,28 @@ def get_collection_heatmap(request,collection):
 
 	return div
 
-def get_display_collection(request):
+def get_display_program(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
 	key = 1
-	collection_info = {}
+	program_info = {}
 
 	working_filters = Q()
 
-	if 'collection_switch' in request.POST.keys():
-		if request.POST['collection_switch'] == "true":
-			print("COLLECTION TRUE")
+	if 'program_switch' in request.POST.keys():
+		if request.POST['program_switch'] == "true":
+			print("program TRUE")
 			working_filters.add(Q(user=request.user),Q.AND)
-			# working_collection = Collection.objects.all().filter(user=request.user)
-			main_context['collection_switch_check'] = "true"
+			# working_program = Program.objects.all().filter(user=request.user)
+			main_context['program_switch_check'] = "true"
 		else:
 			working_filters.add(Q(publish=True),Q.AND)
-			# working_collection = Collection.objects.all().filter(publish=True)
+			# working_program = Program.objects.all().filter(publish=True)
 
-	if 'collection_tags' in request.POST.keys():
-		working_tags = request.POST['collection_tags'].split(',')
-		main_context['searched_tags'] = request.POST['collection_tags']
+	if 'program_tags' in request.POST.keys():
+		working_tags = request.POST['program_tags'].split(',')
+		main_context['searched_tags'] = request.POST['program_tags']
 
 		for tag in working_tags:
 			print("TAG", tag)
@@ -496,30 +502,30 @@ def get_display_collection(request):
 				working_filters.add(Q(tag__in=tmp),Q.AND)
 			else:
 				print("NAME", tag.split("_"))
-				working_filters.add(Q(collection=str(tag).split("_")[1]),Q.AND)
+				working_filters.add(Q(program=str(tag).split("_")[1]),Q.AND)
 
-	working_collection = Collection.objects.all().filter(working_filters)
+	working_program = Program.objects.all().filter(working_filters)
 
-	for collection in working_collection:
-		collection_list = {}
-		collection_list = {
-			"collection": collection,
-			# "heatmap": get_collection_heatmap(request=request,collection=collection)
+	for program in working_program:
+		program_list = {}
+		program_list = {
+			"program": program,
+			# "heatmap": get_program_heatmap(request=request,program=program)
 		}
 
-		collection_info[key] = collection_list
+		program_info[key] = program_list
 		key = key + 1
 
-	collection_info = tuple(collection_info.items())
-	main_context['collection_info'] = collection_info
+	program_info = tuple(program_info.items())
+	main_context['program_info'] = program_info
 
 	#These are for the search bar
-	main_context['collection_names'] = Collection.objects.all().filter(publish=True)
-	main_context['working_tags'] = Tag.objects.all().filter(collection__in=Collection.objects.all().filter(publish=True)).distinct()
+	main_context['program_names'] = Program.objects.all().filter(publish=True)
+	main_context['working_tags'] = Tag.objects.all().filter(program__in=program.objects.all().filter(publish=True)).distinct()
 
 
 
-	response_data["COLLECTION"] = render_to_string('COLLECTION_display.html', main_context, request=request)
+	response_data["program"] = render_to_string('program_display.html', main_context, request=request)
 	
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
@@ -530,11 +536,11 @@ def get_display_collection(request):
 
 
 
-def save_collection_explicit(request):
+def save_program_explicit(request):
 	print("HI")
 
-def save_collection(request):
-	print("SAVE COLLECTION!")
+def save_program(request):
+	print("SAVE program!")
 	response_data = {}
 
 	###### NAME
@@ -542,17 +548,17 @@ def save_collection(request):
 		print("ID IN POST")
 		if request.POST['id'] != "":
 			print("ID NOT NONE")
-			working_collection = Collection.objects.all().get(id=request.POST['id'])
+			working_program = Program.objects.all().get(id=request.POST['id'])
 		else:
 			print("ID NONE")
-			if 'collection_name' in request.POST.keys():
-				print("COLLECTION NAME IN POST")
-				working_collection = Collection(collection=request.POST['collection_name'])
-				working_collection.save()
+			if 'program_name' in request.POST.keys():
+				print("program NAME IN POST")
+				working_program = program(program=request.POST['program_name'])
+				working_program.save()
 	
 	###### DESCRIPTION
-	if 'collection_description' in request.POST.keys():
-		working_collection.description = request.POST['collection_description']
+	if 'program_description' in request.POST.keys():
+		working_program.description = request.POST['program_description']
 
 	###### TAGS
 	if 'tag_vals' in request.POST.keys():
@@ -566,7 +572,7 @@ def save_collection(request):
 				working_tag = Tag(user=request.user, tag=tag)
 				working_tag.save()
 
-			working_collection.tag.add(working_tag)
+			working_program.tag.add(working_tag)
     
 	print("request.POST.keys()", request.POST.keys())
 	###### SELECTED TEXTS
@@ -576,7 +582,7 @@ def save_collection(request):
 		if request.POST['selected_text[]'] != "":
 			print("SELECTED TEXT VAL", request.POST['selected_text[]'])
 			working_text = PossibleText.objects.all().filter(user=request.user).get(id=int(request.POST['selected_text[]']))
-			working_collection.texts.add(working_text)
+			working_program.texts.add(working_text)
 
 
 	####### PUBLISH
@@ -585,29 +591,29 @@ def save_collection(request):
 	if 'publish_switch' in request.POST.keys():
 		print()
 		if request.POST['publish_switch'] == "true":
-			working_collection.publish = True
+			working_program.publish = True
 		else:
-			working_collection.publish = False
+			working_program.publish = False
 
-	working_collection.save()
-	print("working_collection id put back: ", working_collection.id)
+	working_program.save()
+	print("working_program id put back: ", working_program.id)
 
 	all_possible_texts = PossibleText.objects.all().filter(user=request.user)
 
 	context = {
-		'id': working_collection.id,
-		'working_collection': working_collection,
+		'id': working_program.id,
+		'working_program': working_program,
 		'all_possible_texts': all_possible_texts,
 	}
-	response_data['active_texts'] = render_to_string('COLLECTION_active_texts.html', context, request=request)
-	response_data['id'] = working_collection.id,
+	response_data['active_texts'] = render_to_string('program_active_texts.html', context, request=request)
+	response_data['id'] = working_program.id,
 
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
 
 
 
-def get_create_collection(request):
+def get_create_program(request):
 	main_context = {} # to build out the specific html stuff
 	response_data = {} # to send back to the template
 
@@ -617,10 +623,10 @@ def get_create_collection(request):
 		print("ID HERE", request.POST['id'])
 		if request.POST['id'] != None:
 			if request.POST['id'] != '':
-				main_context['editing_collection'] = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+				main_context['editing_program'] = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 
 
-				tmp_tags = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id'])).tag
+				tmp_tags = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id'])).tag
 
 				tags = []
 				for tag in tmp_tags.all():
@@ -629,31 +635,31 @@ def get_create_collection(request):
 				main_context['tags'] = tags
 			
 
-	main_context['working_collection'] = Collection.objects.all()
+	main_context['working_program'] = Program.objects.all()
 	main_context['all_possible_texts'] = PossibleText.objects.all().filter(user=request.user).exclude(text__exact='')
 
-	response_data["COLLECTION"] = render_to_string('COLLECTION_create.html', main_context, request=request)
+	response_data["program"] = render_to_string('program_create.html', main_context, request=request)
 	
 	# else
 	return HttpResponse(json.dumps(response_data),content_type="application/json")	
 
-def collection_create_scaffold(request,id=None):
+def program_create_scaffold(request,id=None):
 	if request.user.is_authenticated():	
 
 		context = {
-			"working_collection": Collection.objects.all(),
+			"working_program": Program.objects.all(),
 			"id": id,
 		}			
 
-		return render(request,"collection_create_scaffold.html",context)
+		return render(request,"program_create_scaffold.html",context)
 	else:
 
 		context = {
-			"working_collection": Collection.objects.all().filter(publish=True),
+			"working_program": Program.objects.all().filter(publish=True),
 			
 		}			
 
-		return render(request,"collections_not_user.html",context)
+		return render(request,"programs_not_user.html",context)
 
 
 def add_new_text(request,id=None):
@@ -677,20 +683,20 @@ def add_new_text(request,id=None):
 
 
 
-def collection(request):
+def program(request):
 	if request.user.is_authenticated():	
 
 		context = {
-			"working_collection": Collection.objects.all(),
+			"working_program": Program.objects.all(),
 		}			
 
-		return render(request,"collection.html",context)
+		return render(request,"program.html",context)
 	else:
 		context = {
 			
 		}			
 
-		return render(request,"collection.html",context)
+		return render(request,"program.html",context)
 
 
 

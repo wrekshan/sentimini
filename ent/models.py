@@ -251,7 +251,15 @@ class Timing(models.Model):
 			hours_between = str(self.hour_start.strftime("%-I:%M%p"))
 		else:
 			hours_between = str(self.hour_start.strftime("%-I:%M%p")) +  " - " + str(self.hour_end.strftime("%-I:%M%p"))
-			
+
+		dates_between = ""
+		if self.date_start_value != None:
+			dates_between = str(self.date_start_value)
+		if self.date_end_value != None:
+			dates_between = dates_between + " to " + str(self.date_end_value)	
+		else:
+			dates_between = dates_between + " to no end in sight"
+
 		if self.fuzzy == True:
 			if self.fuzzy_denomination == "minutes":
 				iti_standard = (60 / self.iti_raw) * 24 * 7
@@ -303,7 +311,7 @@ class Timing(models.Model):
 				if self.sunday == True & self.saturday == True:
 					tmp = "weekends"
 			
-			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ") \n" + hours_between
+			return str(round(num_out)) + " per week (" + str(self.repeat_in_window) + " on " + str(tmp) + ") \n" + hours_between + " \n" + dates_between
 
 
 	def __str__(self):
@@ -361,24 +369,34 @@ class Timing(models.Model):
 
 
 
-class Collection(models.Model):
+class Program(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	collection = models.CharField(max_length=160,default='')
-	collection_name = models.CharField(max_length=160,default='')
+	program = models.CharField(max_length=160,default='')
+	program_name = models.CharField(max_length=160,default='')
 	ordering = models.CharField(max_length=160,default='')
 	author = models.CharField(max_length=500,default='')
 	description = models.CharField(max_length=3000,default='')
 	long_description = models.TextField(max_length=3000,default='')
-	tag = models.ManyToManyField(Tag,blank=True)
+	tag = models.ManyToManyField(Tag,blank=True, related_name='program')
 	publish  = models.BooleanField(default=False) 
 	explict_save  = models.BooleanField(default=False) 
 	intended_tags = models.CharField(max_length=600,blank=True,null=True)
 
 	def __str__(self):
-		return self.collection
+		return self.program
 
 	def slug(self):
-		return slugify(str(self.collection_name + ' ' +str(self.description)))	
+		return slugify(str(self.program_name + ' ' +str(self.description)))	
+
+	def total_texts(self):
+		return self.ideal_texts.all().count()
+
+	def total_burden(self):
+		burden = 0
+		for text in self.ideal_texts.all():
+			burden = burden + int(text.timing.timing_burden_number())
+
+		return(burden)
 
 
 class TextLink(models.Model):
@@ -414,7 +432,7 @@ class AlternateText(models.Model):
 
 class IdealText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	collection = models.ManyToManyField(Collection,blank=True,related_name='ideal_texts')
+	program = models.ManyToManyField(Program,blank=True,related_name='ideal_texts')
 	timing = models.ForeignKey(Timing,null=True,blank=True,related_name='ideal_timing')
 	alt_text = models.ManyToManyField(AlternateText,blank=True,related_name='ideal_alts')
 	text = models.CharField(max_length=160,default='')
@@ -428,11 +446,20 @@ class IdealText(models.Model):
 	tmp_save = models.BooleanField(default=True) 
 	quick_suggestion = models.BooleanField(default=False) 
 
-	intended_collection = models.CharField(max_length=160,blank=True,null=True)
+	intended_program = models.CharField(max_length=160,blank=True,null=True)
 	intended_tags = models.CharField(max_length=600,blank=True,null=True)
 	
 	def __str__(self):
 		return self.text
+
+	def display_text(self):
+		if (self).alt_text.all().count() < 1:
+			return(self.text)
+		else:
+			return(str(self.text) + " (" + str(self.alt_text.all().count()) + " versions)")	
+
+	def slug(self):
+		return slugify(str(self.text))			
 
 
 	
@@ -441,7 +468,7 @@ class IdealText(models.Model):
 class PossibleText(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
 	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True,related_name='creator_user')
-	collection = models.ManyToManyField(Collection, related_name='texts',blank=True)
+	program = models.ManyToManyField(Program, related_name='possible_texts',blank=True)
 	timing = models.ForeignKey(Timing,null=True,blank=True)
 	alt_text = models.ManyToManyField(AlternateText,blank=True)
 	text = models.CharField(max_length=160,default='')
@@ -458,7 +485,7 @@ class PossibleText(models.Model):
 	tmp_save = models.BooleanField(default=True) 
 	quick_suggestion = models.BooleanField(default=False) 
 
-	intended_collection = models.CharField(max_length=160,blank=True,null=True)
+	intended_program = models.CharField(max_length=160,blank=True,null=True)
 	intended_tags = models.CharField(max_length=600,blank=True,null=True)
 	
 	def __str__(self):
@@ -519,7 +546,7 @@ class ActualText(models.Model):
 
 class QuickSuggestion(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL,default=1)
-	text = models.ForeignKey(PossibleText,default=0)
+	text = models.ForeignKey(IdealText,default=0)
 	date = models.DateTimeField(blank=True,null=True)
 	added = models.BooleanField(default=False)
 	rejected = models.BooleanField(default=False)

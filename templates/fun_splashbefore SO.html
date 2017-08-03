@@ -1,0 +1,304 @@
+{% load static %}
+{% load staticfiles %}
+<main>
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+
+    <title>Sentimini!</title> 
+    <meta property="og:title"         content="About | Sentimini | Mindful Reminders"/>
+    <meta property="og:url"           content="www.sentimini.com/consumer/about/" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:description"   content="Lightweight tools for mindfulness, behavior change, and learning about this world." />
+    <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
+
+    <!-- CSS  -->
+    <!-- Optional theme -->  
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href={% static "css/materialize.css" %}>
+    
+    <link rel="icon" href="{% static "images/raven.ico" %}">
+    
+
+    <script src={% static "js/materialize.min.js" %}></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src={% static "js/select2.full.min.js" %}></script>
+    <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+    <link href={% static "css/style.css" %} type="text/css" rel="stylesheet" media="screen,projection"/>
+    <script src="https://use.fontawesome.com/d86baeb400.js"></script>
+
+
+
+
+    <style>    
+      nav ul li a{
+        color: white;
+      }    
+
+      nav .brand-logo{
+        color: white;
+      }
+    </style>
+
+
+  </head>
+  
+  <ul id="dropdown1" class="dropdown-content">
+      <li><a href="/consumer/quotation/">Quotes</a></li>
+      <li><a href="/consumer/text_commands/">Text Commands</a></li>
+      <li><a href="/consumer/beta/">Beta</a></li>
+      <li class="divider"></li>
+      <li><a href="/consumer/settings">Settings</a></li>
+      <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+
+    </ul>
+
+    <!-- NAV BAR -->
+    <nav role="navigation">
+      <div class="nav-wrapper container ">
+
+
+        <a href="/" class="brand-logo">Sentimini!</a>
+
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons icon-white" style="color:black;">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          {% if user.is_superuser %}
+          <li><a href="/admin_panel/">Admin</a></li>
+          <li><a href="/power/home/">Power</a></li>
+
+
+          {% endif %}
+          <li><a href="/consumer/home/">Texts</a></li>
+          
+          <li><a href="/consumer/program/">Programs</a></li>
+          <li><a href="/consumer/about/">About</a></li>
+
+
+          <!-- Dropdown Trigger -->
+          {% if user.is_authenticated %}
+          <!-- <li><a href="/consumer/beta/">Beta</a></li> -->
+          <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
+          {% else %}
+          <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
+          {% endif %}
+
+
+        </ul>
+
+        <ul class="side-nav" id="mobile-demo">
+
+          <li><a href="/consumer/home/""><h3>Sentimini!</h3></a></li>
+          <li><div class="row"></div></li>
+          <li><a href="/consumer/home/">Texts</a></li>
+          <li><a href="/consumer/program/">Programs</a></li>
+          <li><a href="/consumer/about/">About</a></li>
+          <li><a href="/consumer/text_commands/">Text Commands</a></li>
+          {% if user.is_authenticated %}
+          <li><a href="/consumer/beta/">Beta</a></li>
+          <li><a href="/consumer/settings">Settings</a></li>
+          <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+          {% else %}
+          <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
+          {% endif %}
+          
+        </ul>
+      </div>
+
+    </nav>
+
+
+<body>
+ <div class="col s6 center-align">
+        <div class="row"></div>
+        <div class="row"></div>
+        
+        <img src="/static/images/mockups/productivity.png" width="50%">
+        </div>
+  <div class="homepage-hero-module">
+    <div class="video-container">
+        <div class="filter"></div>
+        <video autoplay loop class="fillWidth">
+            <source src="/static/video/{{video_name}}/{{video_name}}.mp4" type="video/mp4" />Your browser does not support the video tag. I suggest you upgrade your browser.
+            <source src="/static/video/{{video_name}}/{{video_name}}.webm" type="video/webm" />Your browser does not support the video tag. I suggest you upgrade your browser.
+        </video>
+
+        <div class="poster hidden">
+            <img src="/static/video/{{video_name}}/{{video_name}}.jpg" alt="">
+        </div>
+    </div>
+</div>
+
+
+
+  
+
+
+    <!--Mask-->
+
+    <!-- <div class="container"> -->
+      <div class="row">
+        <div class="col s5 offset-s1 center-align">
+          <div class="row"></div>
+          <div class="row"></div>
+          <div class="row"></div>
+          <div class="row"></div>
+          <div class="row"></div>
+          <div class="row"></div>
+
+          <!-- <div class="card transparent">
+            <div class="card-content"> -->
+              <h2 class="">Transform your life</h2>
+              <div class="row"></div>
+              <h5 class="">Simple, scalable SMS solutions for</h5>
+
+                <div class="input-field col s6 offset-s3 center-align" style="font-size: 300px; height: 74px;">
+                  <select style="font-size: 300px">
+                    <option style="font-size: 300px" value="1" selected>Productivity</option>
+                    <option style="font-size: 300%" value="2">Mindfulness</option>
+                    <option style="font-size: 300%" value="3">Smoking</option>
+                    <option style="font-size: 300%" value="4">View more...</option>
+                  </select>
+                  <!-- <label>Materialize Select</label> -->
+                </div>
+              
+              <div class="row"></div>
+              <div class="row"></div>
+
+
+              {% if user.is_authenticated %}
+              <a class="btn-large waves-effect waves-light" href="/consumer/home/" > Schedule a text</a>
+
+              {% else %}
+              <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn-large waves-effect waves-light">Sign Up</a>
+
+              <div class="row"></div>
+              <!-- <a href="{% url 'account_login' %}"">Already signed up, then sign in</a> -->
+              <!-- <div class="row"></div> -->
+              <span class="header col s12">Signing up is free and should take less than 1 minute.</span>
+              <div class="row"></div>
+              <span>Already signed up, then <a style="font-size: 140%;" href="{% url 'account_login' %}">sign in</a>.</span>
+
+              {% endif %}
+            </div>
+        <!--   </div>
+        </div> -->
+        <div class="col s6 center-align">
+        <div class="row"></div>
+        <div class="row"></div>
+        
+        <img src="/static/images/mockups/productivity.png" width="50%">
+        </div>
+      </div>
+    <!-- </div> -->
+<div class="row"></div>
+<div class="row"></div>
+
+    <footer>
+      <div class="footer-copyright">
+        <div class="container">
+        <span class="right-align">
+        hey hey
+        </span>
+        <span class="left-align">
+          Sentimini! (c) 2017
+          </span>
+        </div>
+      </div>
+    </footer>
+  </body>
+  </html>
+
+
+
+  <script>
+    $(document).ready(function() {
+      $('select').material_select();
+    });
+  </script>
+
+
+<script type="text/javascript">
+  $( document ).ready(function() {
+
+    scaleVideoContainer();
+
+    initBannerVideoSize('.video-container .poster img');
+    initBannerVideoSize('.video-container .filter');
+    initBannerVideoSize('.video-container video');
+
+    $(window).on('resize', function() {
+        scaleVideoContainer();
+        scaleBannerVideoSize('.video-container .poster img');
+        scaleBannerVideoSize('.video-container .filter');
+        scaleBannerVideoSize('.video-container video');
+    });
+
+});
+
+function scaleVideoContainer() {
+
+    var height = $(window).height() + 5;
+    var unitHeight = parseInt(height) + 'px';
+    $('.homepage-hero-module').css('height',unitHeight);
+
+}
+
+function initBannerVideoSize(element){
+
+    $(element).each(function(){
+        $(this).data('height', $(this).height());
+        $(this).data('width', $(this).width());
+    });
+
+    scaleBannerVideoSize(element);
+
+}
+
+function scaleBannerVideoSize(element){
+
+    var windowWidth = $(window).width(),
+    windowHeight = $(window).height() + 5,
+    videoWidth,
+    videoHeight;
+
+    // console.log(windowHeight);
+
+    $(element).each(function(){
+        var videoAspectRatio = $(this).data('height')/$(this).data('width');
+
+        $(this).width(windowWidth);
+
+        if(windowWidth < 1000){
+            videoHeight = windowHeight;
+            videoWidth = videoHeight / videoAspectRatio;
+            $(this).css({'margin-top' : 0, 'margin-left' : -(videoWidth - windowWidth) / 2 + 'px'});
+
+            $(this).width(videoWidth).height(videoHeight);
+        }
+
+        $('.homepage-hero-module .video-container video').addClass('fadeIn animated');
+
+    });
+}
+</script>
+
+  <!-- OLD BELOW -->
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>

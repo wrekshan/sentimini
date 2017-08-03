@@ -62,7 +62,7 @@
 
     </div>
     <div class="modal-footer">
-    <a name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-inspiration-btn-{{suggestion_number}} suggestions blue darken-2">Confirm</a>
+    <a name="{{suggestion_number}}" id = "{{working_collection.id}}_{{working_text.id}}" href="#!" class="modal-action modal-close waves-effect waves-blue btn-flat add-text-program-btn-{{suggestion_number}} suggestions blue darken-2">Confirm</a>
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
       
     </div>
@@ -71,13 +71,13 @@
   <!-- Modal Structure -->
   <div id="quick_suggestion-signup-{{suggestion_number}}" class="modal modal-fixed-footer" style="max-height:50%;">
     <div class="modal-content">
-      <h3>Please <a href="{% url 'account_signup' %}">sign up</a> or <a href="{% url 'account_login' %}"">sign in</a> to add text</h3>
+      <h3>Please <a href="/?sign_up/">sign up</a> or <a href="{% url 'account_login' %}"">sign in</a> to add text</h3>
       
       <p>Feel free to keep browsing!  We're glad you are here!</p>
 
     </div>
     <div class="modal-footer">
-    <a href="{% url 'account_signup' %}" class="modal-action modal-close waves-effect btn-flat blue darken-2">Sign up</a>
+    <a href="/?sign_up/" class="modal-action modal-close waves-effect btn-flat blue darken-2">Sign up</a>
       <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Keep browsing</a>
       
     </div>
@@ -86,7 +86,7 @@
 <script type="text/javascript">
   $('.loop-{{suggestion_number}}').click(function() {
     
-    var sug_name = $('.add-text-inspiration-btn-{{suggestion_number}}').attr('name')
+    var sug_name = $('.add-text-program-btn-{{suggestion_number}}').attr('name')
     var sug_name = $(this).attr('name')
     var suggestion_needed_1 = "no"
     var suggestion_needed_2 = "no"
@@ -148,11 +148,11 @@
 </script>
 
 <script type="text/javascript">
-  $('.add-text-inspiration-btn-{{suggestion_number}}').click(function() {
+  $('.add-text-program-btn-{{suggestion_number}}').click(function() {
     console.log("ADD BUTTON CLICKED")
     var text_id_button = $(this).attr('id')
     var text_id_button_id = $(this).attr('id').split("_")[1]
-    var sug_name = $('.add-text-inspiration-btn-{{suggestion_number}}').attr('name')
+    var sug_name = $('.add-text-program-btn-{{suggestion_number}}').attr('name')
     var suggestion_needed_1 = "no"
     var suggestion_needed_2 = "no"
     var suggestion_needed_3 = "no"
@@ -178,7 +178,7 @@
     console.log("NAME" + $(this).attr('name'))
     $.ajax({
       type: 'POST',
-      url: '/consumer/inspiration_indvidual_text/',
+      url: '/consumer/program_indvidual_text/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'selected_texts': $(this).attr('id'),
       'quick_suggestion': "yes",

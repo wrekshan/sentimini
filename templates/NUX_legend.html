@@ -1,0 +1,21 @@
+
+
+<script src="/static/js/jquery.knob.js"></script>       
+
+<div class="card">
+	<div class="card-content">
+
+		<div class="center-align">
+			<div class="card-title">Progress</div>
+			<input type="text" value="{{legend_progress}}" class="dial" data-width="50%" data-readOnly=true data-fgColor="#1e88e5">
+		</div>
+		
+		<div class=" center-align">{{legend_message|safe}}</div>
+	</div>
+</div>
+
+<script>
+	$(function() {
+		$(".dial").knob();
+	});
+</script>

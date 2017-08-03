@@ -4,7 +4,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from .models import IdealText, TextLink, TextDescription, AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Collection, Timing, Tag, Carrier, UserSetting, Outgoing
+from .models import IdealText, TextLink, TextDescription, AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Program, Timing, Tag, Carrier, UserSetting, Outgoing
 
 
 
@@ -240,9 +240,9 @@ admin.site.register(TextDescription,TextDescriptionModelAdmin)
 
 class IdealTextResource(resources.ModelResource):
 	class Meta:
-		model = PossibleText
+		model = IdealText
 		import_id_fields = ('input_text',)
-		fields = ('input_text', 'text_type','intended_collection', 'quick_suggestion','intended_tags')
+		fields = ('input_text', 'text_type','intended_program', 'quick_suggestion','intended_tags')
 
 
 class IdealTextModelAdmin(ImportExportModelAdmin):
@@ -269,7 +269,7 @@ class PossibleTextResource(resources.ModelResource):
 	class Meta:
 		model = PossibleText
 		import_id_fields = ('input_text',)
-		fields = ('input_text', 'text_type','intended_collection', 'quick_suggestion','intended_tags')
+		fields = ('input_text', 'text_type','intended_program', 'quick_suggestion','intended_tags')
 
 
 class PossibleTextModelAdmin(ImportExportModelAdmin):
@@ -321,28 +321,28 @@ admin.site.register(AlternateText,AlternateTextModelAdmin)
 
 
 
-class CollectionResource(resources.ModelResource):
+class ProgramResource(resources.ModelResource):
 	class Meta:
-		model = Collection
-		import_id_fields = ('collection_name',)
-		fields = ('collection', 'collection_name', 'ordering', 'intended_tags', 'author', 'description', 'long_description')
+		model = Program
+		import_id_fields = ('program_name',)
+		fields = ('program', 'program_name', 'ordering', 'intended_tags', 'author', 'description', 'long_description')
 
 
-class CollectionModelAdmin(ImportExportModelAdmin):
-	resource_class = CollectionResource   
+class ProgramModelAdmin(ImportExportModelAdmin):
+	resource_class = ProgramResource   
 
 
 	list_display = [
 		"id",
 		"user",
-		"collection",
+		"program",
 		"ordering",
 	]
 	list_display_links = ["user"]
-	list_filter = ["user","collection"]
+	list_filter = ["user","program"]
 	class Meta:
-		model = Collection
+		model = Program
 		
-admin.site.register(Collection,CollectionModelAdmin)
+admin.site.register(Program,ProgramModelAdmin)
 
 

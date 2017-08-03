@@ -1,0 +1,189 @@
+{% load static %}
+{% block content %}
+<main>
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+  <title>Sentimini!</title>
+
+  <!-- CSS  -->
+  <!-- Optional theme -->  
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href={% static "css/materialize.css" %}>
+    <link rel="stylesheet" href={% static "css/parallax-style.css" %}>
+
+    <script src={% static "js/materialize.min.js" %}></script>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href={% static "css/materialize.css" %}>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+<script src={% static "js/select2.full.min.js" %}></script>
+
+
+
+</head>
+<body>
+  <nav class="white" role="navigation">
+    <div class="nav-wrapper container">
+      <a id="logo-container" href="#" class="brand-logo black-text">Sentimini!</a>
+      <ul class="right hide-on-med-and-down">
+       <li><a href="{% url 'account_login' %}">Sign In</a></li>
+        <li><a href="{% url 'account_signup' %}">Sign Up</a></li>
+      </ul>
+
+      <ul id="nav-mobile" class="side-nav">
+        <li><a href="#">Sign up</a></li>
+      </ul>
+      <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+  </nav>
+
+<div class="container center-align">
+
+
+
+<!-- SEARCH BAR -->
+<div class="row ">
+    <div class='col s6'>  
+    <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+
+        <div class="input-field col s12" >
+        <span>Text scheduling + data visualization = the perfect</span>
+          
+           <select id="collection_tag_bar">
+               {% for collection in working_collections %}
+               <option value="{{collection.id}}">{{collection.collection}}</option>
+               {% endfor %}
+          </select>
+        </div>
+        <div class="row"></div>
+        <div class="row"></div>
+        
+
+        <a class="waves-effect waves-light btn z-depth-4" href="{% url 'account_signup' %}" > Sign Up</a>
+        <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+        I just want to schedule a reminder text.
+
+    </div>
+
+      <div id ="collection_descrption" class= 'col s6 '>
+       <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+      Sentimini provides tools to schedule text messages and visualize any replies.  
+      <div class="row"></div>
+
+      From scheduling a text to reminder to pick up coffee, to interactive programs to inspire creativity, to monitoring aspects of health.
+      <div class="row"></div>
+      Explore prefilled collections or just schedule a reminder text.
+
+
+      </div>
+</div>
+    
+
+
+
+</div>
+
+  <footer class="page-footer blue lighten-2">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Sentimini</h5>
+          <p class="grey-text text-lighten-4">Sentimini is in beta status.  Hopefully there will be an open dataset component to it.  Read more here.</p>
+
+
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Browse Collections</h5>
+          <!-- <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul> -->
+        </div>
+        <div class="col l3 s12">
+          <h5 class="white-text">Sign up</h5>
+          <!-- <ul>
+            <li><a class="white-text" href="#!">Link 1</a></li>
+            <li><a class="white-text" href="#!">Link 2</a></li>
+            <li><a class="white-text" href="#!">Link 3</a></li>
+            <li><a class="white-text" href="#!">Link 4</a></li>
+          </ul> -->
+        </div>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      <div class="container">
+      Sentimini
+      </div>
+    </div>
+  </footer>
+
+
+
+
+  </body>
+</html>
+
+
+{% endblock %}
+
+<script>
+$(document).ready(function(){
+  $('.parallax').parallax();
+});
+</script>
+
+
+<!-- SEARCH BAR -->
+<script>
+  $("#collection_tag_bar").select2({
+      // tags: true,
+    // tokenSeparators: [',', ' '],
+    placeholder: "Search for a text or tag...",
+  }).on('select2:unselecting', function() {
+    $(this).data('unselecting', true);
+  }).on('select2:opening', function(e) {
+    if ($(this).data('unselecting')) {
+      $(this).removeData('unselecting');
+      e.preventDefault();
+    }
+  });
+
+</script>
+
+
+<script type="text/javascript">
+  $('#collection_tag_bar').change(function(){
+    
+
+    $.ajax({
+      type: 'POST',
+      url: '/fun_splash_description/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'collection_id': $('#collection_tag_bar').val(),
+    },
+
+
+
+    success : function(data) {
+      console.log("COLLECTION DISPLAY WORKED!")
+      $('#collection_descrption').html(data['description']);
+    }
+  })
+
+  })
+</script>

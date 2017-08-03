@@ -18,13 +18,29 @@ from django.contrib import admin
 
 from django.views.generic import TemplateView
 
-from .views import admin_panel, delete_unsent_texts, slow_redirect, upload_text_csv, fun_splash_description, fun_splash, app_home, delete_text, pause_text, tag_specific, feed_specific, get_feed_specific, save_settings, settings, landing, test_page, feed, signup_view, get_side, get_feed, get_new_text_form, get_new_text_hist, get_next_text_modal, get_new_text_basic_feed, save_new_text
+from .views import admin_panel, delete_unsent_texts, slow_redirect, fun_splash, landing, get_nux_legend, test_page, signup_view, get_nux_home, get_nux_signup, get_nux_texts, get_random_suggestion, get_nux_timing, delete_text, pause_text, get_nux_settings, save_settings, nux_finalize
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin_panel/$', admin_panel, name='admin_panel'),
     url(r'^delete_unsent_texts/$', delete_unsent_texts, name='delete_unsent_texts'),
+    url(r'^fun_splash/$', fun_splash, name='fun_splash'),
+
+    url(r'^get_nux_home/$', get_nux_home, name='get_nux_home'),
+    url(r'^get_nux_signup/$', get_nux_signup, name='get_nux_signup'),
+    url(r'^get_nux_texts/$', get_nux_texts, name='get_nux_texts'),
+    url(r'^get_nux_timing/$', get_nux_timing, name='get_nux_timing'),
+    url(r'^get_nux_settings/$', get_nux_settings, name='get_nux_settings'),
+    url(r'^get_nux_legend/$', get_nux_legend, name='get_nux_legend'),
+    url(r'^nux_finalize/$', nux_finalize, name='nux_finalize'),
+
     
+    url(r'^get_random_suggestion/$', get_random_suggestion, name='get_random_suggestion'),
+
+    url(r'^delete_text/$', delete_text, name='delete_text'),    
+    url(r'^pause_text/$', pause_text, name='pause_text'),    
+    url(r'^save_settings/$', save_settings, name='save_settings'),    
+
 
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'}),
     url(r'accounts/signup', 'sentimini.views.signup_view'),
@@ -36,33 +52,9 @@ urlpatterns = [
     url(r'^vis/', include('vis.urls',namespace="vis")),
 
     url(r'^test_page/$', test_page, name='test_page'),
-    url(r'^upload_text_csv/$', upload_text_csv, name='upload_text_csv'),
-    url(r'^feed/$', feed, name='feed'),
-    url(r'^app_home/$', app_home, name='app_home'),
-    url(r'^fun_splash/$', fun_splash, name='fun_splash'),
-    url(r'^fun_splash_description/$', fun_splash_description, name='fun_splash_description'),
     
-    url(r'^get_feed_specific/$', get_feed_specific, name='get_feed_specific'),
-    url(r'^feed_specific/(?P<id>[0-9]+)/$', feed_specific, name='feed_specific'),
-    url(r'^tag_specific/(?P<id>[0-9]+)/$', tag_specific, name='tag_specific'),
-
-    url(r'^pause_text/$', pause_text, name='pause_text'),
-    url(r'^delete_text/$', delete_text, name='delete_text'),
-
-    url(r'^$', slow_redirect, name='slow_redirect'),
+    
+    url(r'^$', fun_splash, name='fun_splash'),
     url(r'^landing/$', landing, name='landing'),
-
-    url(r'^settings/$', settings, name='settings'),
-    url(r'^save_settings/$', save_settings, name='save_settings'),
-
-    url(r'^get_side/$', get_side, name='get_side'),
-    url(r'^get_feed/$', get_feed, name='get_feed'),
-    url(r'^get_next_text_modal/$', get_next_text_modal, name='get_next_text_modal'),
-    url(r'^get_new_text_basic_feed/$', get_new_text_basic_feed, name='get_new_text_basic_feed'),
-    url(r'^get_new_text_form/$', get_new_text_form, name='get_new_text_form'),
-    url(r'^get_new_text_hist/$', get_new_text_hist, name='get_new_text_hist'),
-
-    url(r'^save_new_text/$', save_new_text, name='save_new_text'),
-    # url(r'^edit_text/(?P<id>[0-9]+)/$', edit_text, name='edit_text'),
     
 ]

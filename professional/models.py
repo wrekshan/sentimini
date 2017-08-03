@@ -6,7 +6,7 @@ from decimal import *
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.template.defaultfilters import slugify
 
-from ent.models import UserSetting, Collection, Timing, IdealText, PossibleText, ActualText
+from ent.models import UserSetting, Program, Timing, IdealText, PossibleText, ActualText
 
 # Create your models here.
 class Person(models.Model):
@@ -18,8 +18,8 @@ class Person(models.Model):
 	phone_input = models.CharField(max_length=16,default='')
 	verified = models.BooleanField(default=False)
 	accepted = models.BooleanField(default=False)
-	collection = models.ManyToManyField(Collection,blank=True, related_name='person')
-	ideal_text  = models.ManyToManyField(IdealText,blank=True,related_name='person')
+	program = models.ManyToManyField(Program,blank=True, related_name='person')
+	ideal_text  = models.ManyToManyField(IdealText,blank=True, related_name='person')
 
 	def __str__(self):
 		return self.phone_input
@@ -48,7 +48,7 @@ class Group(models.Model):
 	creator = models.ForeignKey(settings.AUTH_USER_MODEL,blank=True,null=True)
 	group = models.CharField(max_length=1000,default='',null=True)
 	person = models.ManyToManyField(Person,blank=True,related_name='group')
-	collection = models.ManyToManyField(Collection,blank=True,related_name='group')
+	program = models.ManyToManyField(Program,blank=True,related_name='group')
 	ideal_text = models.ManyToManyField(IdealText,blank=True,related_name='group')
 	possible_text = models.ManyToManyField(PossibleText,blank=True,related_name='group')
 	

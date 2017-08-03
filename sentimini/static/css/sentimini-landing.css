@@ -1,3 +1,14 @@
-body {
-	background-color: #00bcd4;
+.title_text {
+	font-size: 150%;
+    line-height: bold;
+}
+
+
+label.invalid {
+    color: red;
+    font-size: 0.8rem;
+    left: 0;
+    position: relative;
+    top: -15px;
+    transform: none !important;
 }

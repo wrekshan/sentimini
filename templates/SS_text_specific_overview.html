@@ -23,24 +23,55 @@
 
 
 
-          <div  id = "_{{working_text.id}}" class = "add-text-inspiration-btn btn-floating red "><i class="material-icons" >delete</i></div>
+          <div name = "delete" id = "_{{working_text.id}}" class = "initiate-add-text btn-floating red "><i class="material-icons" >delete</i></div>
           {% else %}
-          <div  id = "_{{working_text.id}}" class = "add-text-inspiration-btn btn-floating red "> <i class="fa fa-plus" aria-hidden="true"></i> </div>
+          <div name = "add" id = "_{{working_text.id}}" class = "initiate-add-text btn-floating red "> <i class="fa fa-plus" aria-hidden="true"></i> </div>
           {% endif %}
           <span id="output_message"></span>
         </div>
 
 
         {% if user_text %}
-        {{user_text.timing.timing_summary}}
+        {{user_text.timing.timing_summary|linebreaks}}
         {% else %}
-        {{working_text.timing.timing_summary}}
+        {{working_text.timing.timing_summary|linebreaks}}
         {% endif %}
 
         {% else %}
-        <a  href="{% url 'account_signup' %}" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
-        {{working_text.timing.timing_summary}}
+        <a  href="/?sign_up/" class = "waves-effect waves-red btn-flat chip" ><i class="fa fa-plus" aria-hidden="true"></i></a>
+        {{working_text.timing.timing_summary|linebreaks}}
         <!-- <div style="background-color:#2196f3;" id = "{{working_collection.id}}_{{value.text.id}}" class = "waves-effect waves-teal btn-flat chip">Add -->
+        {% endif %}
+
+        <!-- Alt texts -->
+        {% if working_text.alt_text.all %}
+        <div class="row"></div>
+        Alternate Versions:
+        </br>
+        {% for alt_text in working_text.alt_text.all %}
+        
+          
+           <span style="font-size: 120%;"><i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}</span>
+           </br>
+            {% if alt_text.description.all %}
+            <div class="row"></div>
+            {% for description in alt_text.description.all %}
+            {{description}}
+            {% endfor %}
+            {% endif %}
+
+            <!-- Read more -->
+            {% if alt_text.link.all %}
+            <div class="row"></div>
+            Read more:
+            {% for link in alt_text.link.all %}
+            <li><a target='_blank' href="{{link.link}}">{{link.link_display}}</a></li>
+            {% endfor %}
+            {% endif %}
+
+        
+        
+        {% endfor %}
         {% endif %}
 
 
@@ -63,36 +94,7 @@
         {% endfor %}
         {% endif %}
 
-        {% if working_text.alt_text.all %}
-        {% for alt_text in working_text.alt_text.all %}
-        <hr> 
-        <div class = "row">
-          <div class="col s2">
-            <b>Alternate</b>:
-          </div>
-          <div class="col s10"> {{alt_text}}
-            {% if alt_text.description.all %}
-            <div class="row"></div>
-            {% for description in alt_text.description.all %}
-            {{description}}
-            {% endfor %}
-            {% endif %}
-
-            <!-- Read more -->
-            {% if alt_text.link.all %}
-            <div class="row"></div>
-            Read more:
-            {% for link in alt_text.link.all %}
-
-            <li><a target='_blank' href="{{link.link}}">{{link.link_display}}</a></li>
-
-            {% endfor %}
-            {% endif %}
-
-          </div>
-        </div>
-        {% endfor %}
-        {% endif %}
+        
 
 
         <!-- COLLECTIONS -->
@@ -113,6 +115,58 @@
 
       </div>
     </div>
+
+
+<!-- Add Modal Structure -->
+<div id="text_add_confirm" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div class="modal-content">
+      <h4>Confirm to add text</h4>
+      <p class="flow-text">Text: <b>{{working_text.text}}</b></p>
+       {% if working_text.alt_text.all %}
+       Alternate texts:</br>
+       <p class="flow-text">
+                  {% for alt_text in working_text.alt_text.all %}
+                    <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
+                    </br>
+                {% endfor %}
+                </p>
+                {% endif %}
+      
+      <p class="flow-text">You will receive <b>{{working_text.timing.timing_summary_burden}}</b> between <b>{{working_text.timing.timing_summary_range}}</b>.</p>
+
+      <p class="flow-text">You can always edit the the text or timings in the scheduled text panel.</p>
+
+    </div>
+    <div class="modal-footer">
+    <a  id = "_{{working_text.id}}" href="#!" class="add-text-program-btn modal-action modal-close waves-effect waves-blue btn-flat suggestions blue darken-2">Confirm</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+</div>
+
+
+<!-- Add Delete Structure -->
+<div id="text_delete_confirm" class="modal modal-fixed-footer" style="max-height:50%;">
+  <div class="modal-content">
+      <h4>Are you sure?</h4>
+      <p class="flow-text">This will delete this text and all data associated with it.</p>
+      <p class="flow-text">You can always just 'pause' the text.</p>
+
+    </div>
+    <div class="modal-footer">
+    <a id = "_{{working_text.id}}" href="#!" class="add-text-program-btn modal-action modal-close waves-effect waves-blue btn-flat  suggestions blue darken-2">Confirm</a>
+      <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+   $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+  });
+</script>
 
 <!-- TEXT EDIT -->
 <script type="text/javascript">
@@ -145,9 +199,20 @@
 
 
 
+<script>
+$('.initiate-add-text').click(function() {
+  console.log($(this).attr('name'))
+  if ($(this).attr('name') == 'add'){
+    $('#text_add_confirm').modal('open');  
+  } else {
+    $('#text_delete_confirm').modal('open');  
+  }
+})
+</script>
+
+
 <script type="text/javascript">
-  $('.add-text-inspiration-btn').click(function() {
-    console.log("ADD BUTTON CLICKED")
+  $('.add-text-program-btn').click(function() {
     var text_id_button = $(this).attr('id')
     var text_id_button_id = $(this).attr('id').split("_")[1]
     console.log("text_id_button" + text_id_button)
@@ -155,37 +220,39 @@
     
     $.ajax({
       type: 'POST',
-      url: '/consumer/inspiration_indvidual_text/',
+      url: '/consumer/program_indvidual_text/',
       data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
       'selected_texts': $(this).attr('id'),
     },
     success : function(data) {
       if (data['save_type'] == "removed"){
         console.log("REMOVED")
-        $("#_{{working_text.id}}").html('<span> <i class="fa fa-plus" aria-hidden="true"></i> </span>')
-        $('#output_message').html('Text Removed')
-        window.location.href =  document.referrer;
+        // location.reload()
+        // $("#_{{working_text.id}}").html('<span> <i class="fa fa-plus" aria-hidden="true"></i> </span>')
+        // $('#output_message').html('Text Removed')
+        window.location.href =  '/consumer/home/';
 
       } else {
-        console.log("ADD")
+        // location.reload()
+        window.location.href =  data['redirect'];
         
-        $("#_{{working_text.id}}").html('<span> <i class="material-icons" >delete</i> </span>')
-        $('#output_message').html('Text Added')
-        $.ajax({
-      type: 'POST',
-      url: '/consumer/get_text_specific_overview/',
-      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-      'id': "{{working_text.id}}",
+        // $("#_{{working_text.id}}").html('<span> <i class="material-icons" >delete</i> </span>')
+        // $('#output_message').html('Text Added')
+  //       $.ajax({
+  //     type: 'POST',
+  //     url: '/consumer/get_text_specific_overview/',
+  //     data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+  //     'id': "{{working_text.id}}",
 
-    },
-    success : function(data) {
-      // $('#quick_suggestions').html("");
-      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
+  //   },
+  //   success : function(data) {
+  //     // $('#quick_suggestions').html("");
+  //     $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+  //     setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
 
       
-    }
-  })
+  //   }
+  // })
 
       }
 

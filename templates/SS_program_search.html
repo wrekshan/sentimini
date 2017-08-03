@@ -1,0 +1,87 @@
+{% load static %}
+{% load staticfiles %}
+
+<script src="http://listjs.com/assets/javascripts/list.min.js"></script>
+<script src={% static "js/list.min.js" %}></script>
+<script src={% static "js/list.pagination.min.js" %}></script>
+<script src={% static "js/select2.full.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+
+
+<div class="row">
+  <div class="input-field col s12">
+    <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="These are tags for categorization">search</i>
+    <div class="row">
+    <select id="program_tag_bar" multiple="multiple">
+      <optgroup label="Name">
+       {% for program in program_names %}
+       <option value="program_{{program.program}}">{{program.program}}</option>
+       {% endfor %}
+     </optgroup>
+
+
+     <optgroup label="Tags">
+
+       {% for tag in working_tags %}
+       <option value="tag_{{tag.tag}}">{{tag}}</option>
+       {% endfor %}
+
+     </optgroup>
+
+   </select>
+ </div>
+</div>
+
+</div>
+
+
+<!-- SELECT@ -->
+{% if searched_tags %}
+<script type="text/javascript">
+  $('#program_tag_bar').val("{{searched_tags|safe}}")
+</script>
+{% endif %}
+
+
+
+<script type="text/javascript">
+  $('#program_tag_bar').change(function(){
+    if ($("#program_tag_bar").val() !== null){
+      var program_tags = $('#program_tag_bar').val().join(',')  
+    }
+    $('#tag_all').prop('checked', true);
+    $('input[name=tag_check]').removeAttr('checked');
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/get_program_display/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'program_switch': $('#program_switch').is(':checked'),
+      'program_tags': program_tags,
+    },
+    success : function(data) {
+      console.log("program DISPLAY WORKED!")
+      $('#program_display').html(data['program_display']);
+    }
+  })
+
+  })
+</script>
+
+<!-- SEARCH BAR -->
+<script>
+  $("#program_tag_bar").select2({
+      // tags: true,
+    // tokenSeparators: [',', ' '],
+    placeholder: "Search for a text or tag...",
+  }).on('select2:unselecting', function() {
+    $(this).data('unselecting', true);
+  }).on('select2:opening', function(e) {
+    if ($(this).data('unselecting')) {
+      $(this).removeData('unselecting');
+      e.preventDefault();
+    }
+  });
+
+</script>

@@ -1,0 +1,462 @@
+{% load static %}
+{% load staticfiles %}
+<main>
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no"/>
+
+
+    <title>Sentimini!</title> 
+    <meta property="og:title"         content="About | Sentimini | Mindful Reminders"/>
+    <meta property="og:url"           content="www.sentimini.com/consumer/about/" />
+    <meta property="og:type"          content="website" />
+    <meta property="og:description"   content="Lightweight tools for mindfulness, behavior change, and learning about this world." />
+    <meta property="og:image"         content="http://www.your-domain.com/path/image.jpg" />
+
+
+    <!-- CSS  -->
+    <!-- Optional theme -->  
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href={% static "css/materialize.css" %}>
+    
+    <link rel="icon" href="{% static "images/raven.ico" %}">
+    
+
+    <script src={% static "js/materialize.min.js" %}></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src={% static "js/select2.full.min.js" %}></script>
+    <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
+    <script src="https://use.fontawesome.com/d86baeb400.js"></script>
+
+    <script src={% static "js/jquery.vide.js" %}></script>
+
+    <link href={% static "css/landing-style.css" %} type="text/css" rel="stylesheet" media="screen,projection"/>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+  </head>
+
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDs-WdIC-BxpjBSsOjF54EPaCsvfd9kuYo&libraries=places"></script> -->
+
+  <!-- NAV BAR -->
+  <ul id="dropdown1" class="dropdown-content">
+    <li><a href="/consumer/quotation/">Quotes</a></li>
+    <li><a href="/consumer/text_commands/">Text Commands</a></li>
+    <li><a href="/consumer/beta/">Beta</a></li>
+    <li class="divider"></li>
+    <li><a href="/consumer/settings">Settings</a></li>
+    <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+
+  </ul>
+
+  <nav role="navigation">
+    <div class="nav-wrapper container ">
+
+
+      <a href="/" class="brand-logo">Sentimini!</a>
+
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons icon-white" style="color:black;">menu</i></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        {% if user.is_superuser %}
+        <li><a href="/admin_panel/">Admin</a></li>
+        <li><a href="/power/home/">Power</a></li>
+
+
+        {% endif %}
+        <li><a href="/consumer/home/">Texts</a></li>
+
+        <li><a href="/consumer/program/">Programs</a></li>
+        <!-- <li><a href="/consumer/about/">About</a></li> -->
+
+
+        <!-- Dropdown Trigger -->
+        {% if user.is_authenticated %}
+        <!-- <li><a href="/consumer/beta/">Beta</a></li> -->
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{ user.get_username }}<i class="material-icons right">arrow_drop_down</i></a></li>
+        {% else %}
+        <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
+        {% endif %}
+
+
+      </ul>
+
+      <ul class="side-nav" id="mobile-demo">
+
+        <li><a href="/consumer/home/""><h3>Sentimini!</h3></a></li>
+        <li><div class="row"></div></li>
+        <li><a href="/consumer/home/">Texts</a></li>
+        <li><a href="/consumer/program/">Programs</a></li>
+        <li><a href="/consumer/about/">About</a></li>
+        <li><a href="/consumer/text_commands/">Text Commands</a></li>
+        {% if user.is_authenticated %}
+        <li><a href="/consumer/beta/">Beta</a></li>
+        <li><a href="/consumer/settings">Settings</a></li>
+        <li><a class="" href="{% url 'account_logout' %}">Sign out</a></li>
+        {% else %}
+        <li><a class="" href="{% url 'account_login' %}">Sign in</a></li>
+        {% endif %}
+
+      </ul>
+    </div>
+
+  </nav>
+  <body>
+
+    <div id = "NUX_everything">
+      <div class="container">
+        <div class="row flex-s valign-wrapper">
+
+          <div class="col s12 m6 box-a center-align">
+            <div id = "NUX_examples"></div>
+          </div>
+
+          <div class="col s12 m6 box-b center-align">
+            <div id = "NUX_selector"></div>
+
+          </div>
+        </div>
+        
+      </div>
+      <div class="container">
+        <div class="row">
+          <div id = "NUX_signup"></div>
+          
+        </div>
+      </div>
+    </div>
+
+
+
+    <div id = "NUX_everything_else">
+      <div class="section">
+        <div class="row " >
+          <div class="col s12 m6  green darken-2 equal_heights">
+            <span class="center-align"><h3>Texts of anything, anytime</h3></span>
+            <div class="center-align">
+              <img  class="hide-on-small-only" src='/static/images/new_text.png' alt="Smiley face" width="62%">
+              <img  class="hide-on-med-and-up" src='/static/images/new_text.png' alt="Smiley face" width="90%">
+              
+              <p class="flow-text">
+                You can schedule texts for exact times or repeating times.  You can even schedule texts just by texting.
+              </p>
+              <p class="flow-text">
+                Check out the <a href="/consumer/home/">scheduler</a> or the different <a href="/consumer/program/">programs</a> of text messages.
+              </p>
+            </div>
+          </div>
+          <div class="col s12 m6 amber equal_heights" >
+            <span class="center-align"><h3>A few seconds, major benefit</h3></span>
+            <p class="flow-text">
+
+              <i class="fa fa-quote-left" aria-hidden="true"></i>
+              Many times I've been stressing out about something and a text has popped up.</p>
+
+              <p class="flow-text">Suddenly, my entire outlook changes.  I'm able to relax or see things from wider perspective.</p>
+
+              <p class="flow-text">From there, whatever I was worrying about just doesn't seem so terrible.
+                <i class="fa fa-quote-right" aria-hidden="true"></i>
+              </p>
+
+              <p class="flow-text">- Katrin, proud Sentimini user</p>
+
+            </div>
+          </div>
+        </div>
+
+
+        <div class="section">
+          <div class="row " >
+            <div class="col s12 m8 offset-m2 " >
+
+              <span class="center-align"><h3>Any replies are collected and stored in downloadable tables</h3></span>
+              
+
+            </div>
+          </div>
+        </div>
+
+
+     <!--    <div class="section">
+      <div class="row " >
+      <div class="col s12 m6 " >
+      </div>
+      <div class="col s12 m6 " >
+      <div class="center-align">
+      <img  src='/static/images/text_table.png' alt="Smiley face" width="100%%">
+      </div>
+      </div>
+      </div>
+    </div> -->
+
+    <!-- Three panel with ICON -->
+    
+    <div class="section cyan">
+      <div class="container">
+        <!-- <div class="row">
+          <div class="center-align">
+            <p class="flow-text">
+              There are three ways you can support Sentimini.
+            </p>
+
+          </div>
+        </div> -->
+
+     
+
+
+        <div class="row valign-wrapper">
+            <div class="col s12 m4">
+              <div class="center-align">
+              
+                <h1 class="hide-on-small-only"><i class="fa fa-heart fa-3x red-text" aria-hidden="true"></i></h1>
+                <h3 class="hide-on-med-and-up"><i class="fa fa-heart fa-3x red-text" aria-hidden="true"></i></h3>
+              </div>
+            </div>
+            <div class="col s12 m8 ">
+              <h4 class="center-align">Sentimini is in beta</h4>
+              <p class="flow-text">  At this point it is free to use.  Sentimini cannot take any responsiblity over data security or any potential charges that this service may incur (though we think it won't cost anything and your data will be secure). </p>
+              <p class="flow-text">Let us know how we are doing <a href="/consumer/beta/">here</a> or just email the founder, william@sentimini.com.</p>
+            </div>
+        </div>
+
+
+         <!--  <div class="col s12 m4">
+            <div class="icon-block">
+              <div class="center-align ">
+                <i class="fa fa-heart-o fa-5x" aria-hidden="true"></i>
+              </div>
+              <h3 class="center">Everyone</h3>
+              <p class="flow-text center-align">Up to 5 texts per day</br>Ad supported</br>Free</p>
+            </div>
+          </div>
+
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <div class="center-align">
+                <i class="fa fa-heart fa-5x" aria-hidden="true"></i>
+              </div>
+              <h3 class="center center-align">Engaged</h3>
+              <p class="flow-text center-align">Up to 5 texts per day</br>No ads</br>3 USD per month</p>
+            </div>
+          </div>
+
+          <div class="col s12 m4">
+            <div class="icon-block">
+              <div class="center-align">
+                <i class="fa fa-heart fa-5x red-text" aria-hidden="true"></i>
+              </div>
+              <h3 class="center">Invested</h3>
+              <p class="flow-text center-align">Unlimited texts</br>No ads</br>7 USD per month</p>
+              
+            </div>
+          </div>
+
+        </div> -->
+
+
+
+      </div>
+    </div>
+
+
+
+    <div class="section">
+      <div class="row" >
+        <div class="col s12 m8 offset-m2 center-align" >
+          <h4>Sentinini is designed to be used in research, healthcare, therapy, and education.  The first step is to understand why and how people use it.</h4>
+          {% if user.is_authenticated %}
+        <a href="/consumer/home/"  class="btn-large waves-effect waves-light z-depth-5">Start texting!</a>
+
+        {% else %}
+        <a id="show_texts_programs" class="sign_up btn-large waves-effect waves-light z-depth-5">Start texting!</a>
+
+        <div class="row"></div>
+        <!-- <a href="{% url 'account_login' %}"">Already signed up, then sign in</a> -->
+        <!-- <div class="row"></div> -->
+        <span class="header col s12">Signing up is free and takes less than 3 minutes.</span>
+        
+        <span>Already signed up, then <a style="font-size: 140%;" href="{% url 'account_login' %}">sign in</a>.</span>
+
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<!-- FOOTER -->
+<!-- Modal Structure -->
+<div id="who_modal" class="modal modal-fixed-footer">
+  <div class="modal-content modal-about">
+    <h4>Who made this?</h4>
+    <p class="flow-text">
+    It is sometimes strange to see a website made by an unknown person, so I wanted to tell you a bit about myself.  My name is William Rekshan.  I made Sentimini because I took a class on meditation and emotions, but I kept on forgetting to pay attention!  I looked around for an emotion tracker that would help me and I found none that were quite right.</p>
+    <div class="row"></div>
+    <p class="flow-text">
+    So I made Sentimini.  I've personally used it for over a year.  I've found it truly amazing to be so caught up in my throughts only to receive a text encouraging me to just breathe, or that I will die, or that I actually do love the people in my life.
+    </p>
+    <div class="row"></div>
+    <p class="flow-text">
+    I've worked in psychology research for nearly 10 years!  Please see my <a href="https://www.linkedin.com/in/williamrekshan">LinkedIn</a> or <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=rekshan">published research papers</a> for an idea of who I am.  I've learned so much about statistics, this world, and what it means to be human through this work.  I just wanted to give back!
+    </p>
+    <div class="row"></div>
+    <p class="flow-text">
+    Please email me at william@sentimini.com if you have any questions or thoughts!  I'd love to speak with you!  I hope you enjoy!
+    </p>
+
+
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Thanks!</a>
+  </div>
+</div>
+
+<div id="why_modal" class="modal modal-fixed-footer">
+  <div class="modal-content small_spaces modal-about">
+    <h4>Why was this made?</h4>
+    <p class="flow-text">
+    Sentimini was originally intended to be an emotion tracking app.  When I looked for emotion tracking apps, I never found really solved my problem....that I just kept on forgetting to pay attention to my emotions.  I really needed an app that would remind me at random times throughout the day.  
+    </p>
+    <div class="row"></div>
+    <p class="flow-text">
+    I've worked in neuroscience and psychology research for almost 10 years, with 4 of those as a statistician, so I knew immediately that this is a wonderful, less biased way of quantitatively exploring lived human experience.  In fact, there is already a lot of great work in this area:  <a href="https://www.trackyourhappiness.org/">track your happiness</a>,  <a href="http://www.mappiness.org.uk/">mappiness</a>, and much of <a href="http://www.uvm.edu/pdodds/files/papers/others/everything/kahneman2004a.pdf">Daniel Kahneman's</a> work.  While working to develop fMRI based neurofeedback to assist people experiencing chronic pain, I witnessed people transform their lives by being curious about their experiences (in this case mindfullness while experience pain).  
+    </p>
+    <div class="row"></div>
+    <p class="flow-text">
+    I wanted to be able to learn about others through research and offer tools to improve life that I would use myself.  So, I made Sentimini for myself.  I've used it to improve my own life.  I know what I want to do in life.  I know what I need to do to make myself happier.  I just need a small nudge to remember.  I hope that others will find it helpful.  I hope to be able to do open-source citizen science with it.  
+    </p>
+    <div class="row"></div>
+    <p class="flow-text">
+    Please email me at william@sentimini.com if you have any questions or thoughts!  I'd love to speak with you!  I hope you enjoy!
+    </p>
+    
+  </div>
+  <div class="modal-footer">
+    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Thanks!</a>
+  </div>
+</div>
+
+
+  <footer class="page-footer blue darken-1 white-text">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <h5 class="white-text">Sentimini!</h5>
+          <p>Change your life with really easy SMS based tools.</p>
+          <!-- <span >In beta.  Free tools to schedule texts and view replies for mindfulness, behavior change, and learning about this amazing and beautiful world.</span> -->
+          
+          <a class="white-text" href="#who_modal">Who made this?</a>
+          <a class="white-text" href="#why_modal">Why was this made?</a>
+        </div>
+        <div class="col l3 s12">
+          <!-- <h5>Texting</h5> -->
+          <ul>
+            <li><a href="/consumer/home/" class="white-text">Texts</a></li>
+            <li><a href="/consumer/program/" class="white-text">Programs</a></li>
+            <li><a href="/consumer/text_commands/" class="white-text">Text Commands</a></li>
+          </ul>
+        </div>
+        <div class="col l3 s12">
+          <!-- <h5>Account</h5> -->
+          <ul>
+            {% if user.is_authenticated %}
+            <li><a href="/consumer/settings/" class="white-text">Settings</a></li>
+            <li><a href="/consumer/beta/" class="white-text">Beta Feedback</a></li>
+            <li><a href="{% url 'account_logout' %}" class="white-text">Sign out</a></li>
+            {% else %}
+            <li><a href="/?sign_up/" class="white-text">Sign up</a></li>
+            <li><a href="{% url 'account_login' %}" class="white-text">Sign in</a></li>
+            {% endif %}
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-copyright">
+      <div class="container">
+        Sentimini! (c) 2017
+      </div>
+    </div>
+  </footer>
+  
+</body>
+</html>
+
+
+<script type="text/javascript">
+  function startClock(){
+    if (window.location.href.includes('?sign_up'))
+    {
+       $.ajax({
+      type: 'POST',
+      url: '/get_nux_texts/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      },
+    success : function(data) {
+      
+      
+      $('#NUX_signup').html(data['NUX_texts']);
+      $('#NUX_selector').html("");
+      $('#NUX_examples').html("");
+      $('#NUX_everything_else').html("");
+      // window.location.hash = '';
+      // window.location.hash = 'create_a_text';
+    }
+  })
+
+    } else {
+
+
+
+    $.ajax({
+      type: 'POST',
+      url: '/get_nux_home/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+    },
+    success : function(data) {
+      $('#NUX_selector').html(data['NUX_selector']);
+      $('#NUX_examples').html(data['NUX_examples']);
+      $('#NUX_footer').html(data['NUX_footer']);
+    }
+  })
+    }
+  }
+
+  if(window.addEventListener){
+    window.addEventListener('load',startClock,false); //W3C
+  }
+  else{
+    window.attachEvent('onload',startClock); //IE
+  }
+</script>
+
+<script>
+  $(document).ready(function(){
+    $('.modal').modal();
+    $(".dropdown-button").dropdown()
+    $(".button-collapse").sideNav();
+    window.location.hash = '';
+  })
+</script>
+
+njh 
+<!-- OLD BELOW -->
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>

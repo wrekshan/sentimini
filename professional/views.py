@@ -9,8 +9,8 @@ from allauth.account.adapter import get_adapter, DefaultAccountAdapter
 from sentimini.forms import SignupFormWithoutAutofocus
 from allauth.account.forms import SignupForm
 
-from sentimini.views import pause_text
-from ent.models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Collection, Tag
+
+from ent.models import AlternateText, Quotation, QuickSuggestion, Beta, ActualText, PossibleText, Timing, Carrier, UserSetting, Program, Tag
 from django.db.models import Q
 
 import time
@@ -19,7 +19,7 @@ import csv
 
 from consumer.views import get_timing_default, transfer_alt_texts
 from .models import Person, Group
-from ent.models import IdealText, PossibleText, ActualText, Collection, UserSetting
+from ent.models import IdealText, PossibleText, ActualText, Program, UserSetting
 
 
 
@@ -112,9 +112,9 @@ def create_fake_texts(request):
 
 
 	#Start Fresh
-	working_collections = Collection.objects.all().filter(user=request.user)
-	for collection in working_collections:
-		collection.delete()
+	working_programs = Program.objects.all().filter(user=request.user)
+	for program in working_programs:
+		program.delete()
 
 	working_texts = IdealText.objects.all().filter(user=request.user)	
 	for text in working_texts:
@@ -128,11 +128,11 @@ def create_fake_texts(request):
 	for text in working_texts:
 		text.delete()	
 
-	#Create some blank collections
+	#Create some blank programs
 	for i in range(0,num_programs):
-		working_collection = Collection(user=request.user,collection=str("program "+str(i)), collection_name=str("program "+str(i)))
-		working_collection.description = "This is just a description of the program."
-		working_collection.save()
+		working_program = Program(user=request.user,program=str("program "+str(i)), program_name=str("program "+str(i)))
+		working_program.description = "This is just a description of the program."
+		working_program.save()
 
 	for i in range(0,num_texts):
 		working_text = IdealText(user=request.user,edit_type="professional_ideal")
@@ -141,24 +141,24 @@ def create_fake_texts(request):
 		working_text.save()
 
 		for j in range(0,randint(0, num_programs)):
-			working_collection = Collection.objects.all().filter(user=request.user).order_by('?')[0]
-			working_text.collection.add(working_collection)
+			working_program = Program.objects.all().filter(user=request.user).order_by('?')[0]
+			working_text.program.add(working_program)
 
 		working_text.save()
 
 	# Assign text and programs to groups
 
-	# Texts from collections
-	working_collections = Collection.objects.all().filter(user=request.user)
+	# Texts from programs
+	working_programs = Program.objects.all().filter(user=request.user)
 	for i in range(0,3):
-		working_collection = Collection.objects.all().filter(user=request.user).order_by('?')[0]
+		working_program = Program.objects.all().filter(user=request.user).order_by('?')[0]
 		for j in range(0,1):
 			working_group = Group.objects.all().filter(creator=request.user).order_by('?')[0]
-			working_group.collection.add(working_collection)
+			working_group.program.add(working_program)
 			working_group.save()
 
 			for person in working_group.person.all():
-				for text in working_collection.ideal_texts.all():
+				for text in working_program.ideal_texts.all():
 					# tmp = Person.objects.all().get(person=person.person)
 					person.ideal_text.add(text)
 					person.save()
@@ -167,10 +167,10 @@ def create_fake_texts(request):
 
 		for j in range(0,3):
 			working_person = Person.objects.all().filter(creator=request.user).order_by('?')[0]
-			working_person.collection.add(working_collection)
+			working_person.program.add(working_program)
 			working_person.save()
 
-			for text in working_collection.ideal_texts.all():
+			for text in working_program.ideal_texts.all():
 				working_person.ideal_text.add(text)
 				working_person.save()
 				save_fake_text(working_person,text)
@@ -311,7 +311,7 @@ def program(request,id=None):
 		if UserSetting.objects.all().filter(user=request.user).count() > 0:
 			working_settings = UserSetting.objects.all().get(user=request.user)
 			working_persons = Person.objects.all().filter(creator=request.user)
-			working_program = Collection.objects.all().filter(user=request.user).get(id=id)
+			working_program = Program.objects.all().filter(user=request.user).get(id=id)
 			if working_settings.settings_complete == True:
 				
 				context = {
@@ -358,7 +358,7 @@ def get_summary_info(request):
 	
 	if 'type' in request.POST.keys():
 		if request.POST['type'] == "program":
-			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_program = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 			working_groups = working_program.group.all()
 			working_persons = working_program.person.all()
 			working_texts = working_program.ideal_texts.all()
@@ -369,13 +369,13 @@ def get_summary_info(request):
 			main_context['working_groups'] = working_groups
 			main_context['working_persons'] = working_persons
 			main_context['working_texts'] = working_texts
-			main_context['display_name'] = working_program.collection_name
+			main_context['display_name'] = working_program.program_name
 
 			response_data['summary_info'] = render_to_string('PRO_summary_info.html', main_context, request=request)
 
 		elif request.POST['type'] == 'person':
 			working_person = Person.objects.all().get(id=int(request.POST['id']))
-			working_programs = working_person.collection.all()
+			working_programs = working_person.program.all()
 			working_groups = working_person.group.all()
 			working_texts = PossibleText.objects.all().filter(creator=request.user).filter(user=working_person.person)
 
@@ -440,7 +440,7 @@ def get_pro_filters(request):
 	print("KEYS HERE....", request.POST.keys())
 	if 'type' in request.POST.keys():
 		if request.POST['type'] == "program":
-			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_program = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 			working_groups = working_program.group.all()
 			working_persons = working_program.person.all()
 			working_texts = working_program.ideal_texts.all()
@@ -455,7 +455,7 @@ def get_pro_filters(request):
 
 		elif request.POST['type'] == 'person':
 			working_person = Person.objects.all().get(id=int(request.POST['id']))
-			working_programs = working_person.collection.all()
+			working_programs = working_person.program.all()
 			working_groups = working_person.group.all()
 			working_texts = PossibleText.objects.all().filter(creator=request.user).filter(user=working_person.person)
 
@@ -510,7 +510,7 @@ def get_actual_text_feed(request):
 		print("MODEL THING:", working_person.number_texts_sent())
 	
 	elif request.POST['type'] == 'program':
-		working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+		working_program = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 		working_groups = working_program.group.all()
 		working_persons = working_program.person.all()
 
@@ -552,7 +552,7 @@ def get_pro_feed(request):
 
 	if 'viewer' in request.POST.keys():
 		if request.POST['viewer'] == "Program":
-			working_program = Collection.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
+			working_program = Program.objects.all().filter(user=request.user).get(id=int(request.POST['id']))
 			working_persons = Person.objects.all().filter(creator=request.user)
 
 			working_texts = working_program.ideal_texts.all()
@@ -571,7 +571,7 @@ def get_pro_feed(request):
 			main_context['working_texts'] = IdealText.objects.all().filter(user=request.user).filter(edit_type="professional_ideal")
 			response_data['pro_feed'] = render_to_string('PRO_list_text.html', main_context, request=request)
 		if request.POST['basic_view'] == 'program_view':
-			main_context['working_collections'] = Collection.objects.all().filter(user=request.user)
+			main_context['working_programs'] = Program.objects.all().filter(user=request.user)
 			response_data['pro_feed'] = render_to_string('PRO_list_program.html', main_context, request=request)
 		if request.POST['basic_view'] == 'person_view':
 			main_context['working_persons'] = Person.objects.all().filter(creator=request.user)
@@ -585,12 +585,12 @@ def get_pro_feed(request):
 		working_persons = Person.objects.all().filter(creator=request.user)
 		working_groups = Group.objects.all().filter(creator=request.user)
 		working_texts = IdealText.objects.all().filter(user=request.user).filter(edit_type="professional_ideal")
-		working_collections = Collection.objects.all().filter(user=request.user)
+		working_programs = Program.objects.all().filter(user=request.user)
 
 		main_context['working_persons'] = working_persons
 		main_context['working_groups'] = working_groups
 		main_context['working_texts'] = working_texts
-		main_context['working_collections'] = working_collections
+		main_context['working_programs'] = working_programs
 
 		response_data['group_list'] = render_to_string('PRO_list_group.html', main_context, request=request)
 		response_data['person_list'] = render_to_string('PRO_list_person.html', main_context, request=request)

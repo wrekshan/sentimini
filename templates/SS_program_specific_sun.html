@@ -1,0 +1,196 @@
+{% extends "SS_base.html" %}
+{% load static %}
+{% load staticfiles %}
+
+{% block header_extra %}
+  <title>{{working_program.program}} | Programs | Sentimini</title>
+  <meta content="{{working_program.description}}" property="og:title">
+  <meta content="{{working_program.program}} | Programs | Sentimini | View programs and sign up for texts" property="og:description">
+  <meta content="www.sentimini.com/consumer/program/{{working_program.id}}/{{working_program.slug}}/" property="og:url">
+  <meta content="website" property="og:type">
+  
+  <meta content="http://www.sentimini.com//static/images/program/{{working_program.program_name}}.jpg" property="og:image">
+{% endblock %}
+{% block content %}
+<body>
+  
+  <div id="fb-root"></div>
+  <script>
+  (function(d, s, id) {
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) return;
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.9&appId=319542021809076";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+  </script> 
+  <!-- CARD FOR NEW TEXTS AND TIMINGS-->
+
+  <!-- CARD FOR NEW TEXTS AND TIMINGS-->
+  <div class="row">
+    <div class="col s12 ">
+      <div class="card">
+
+        <div class="card-image">
+          <img  src="/static/images/program/{{working_program.program_name}}.jpg">
+          <span class="card-title">{{working_program.program}}</span>
+        </div>
+        <div class="card-content">
+
+          <!-- by: {{working_program.author}} -->
+
+
+          {{working_program.long_description|safe }}
+          <div class="row"></div>
+          There are <b>{{number_of_texts}} texts</b> in this program.  If you select all of the texts, you would receive an average of <b>{{burden}} total texts per week</b>.
+
+
+          <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdevelopers.facebook.com%2Fdocs%2Fplugins%2F&amp;src=sdkpreparse">Share</a></div>
+          <hr>
+
+
+          <table class="striped">
+            <thead>
+              <tr>
+                <th data-field="remove"></th>
+                <th data-field="id">Text</th>
+                <th data-field="name">Summary</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for key, value in program_info %}
+
+              <tr>
+                <td>
+
+                  {% if user.is_authenticated %}
+                  {% if value.user > 0  %}
+                  <div  id = "{{working_program.id}}_{{value.text.id}}" class = "btn-floating red add-text-program-btn"><i class="material-icons" >delete</i>
+                  </div>
+                  {% else %}
+                  <div id = "{{working_program.id}}_{{value.text.id}}" class = "btn-floating red add-text-program-btn"><i class="fa fa-plus" aria-hidden="true"></i>
+                  </div>
+                  {% endif %}
+                  {% else %}
+                  <a  href="{% url 'account_signup' %}" class = "btn-floating red" ><i class="fa fa-plus" aria-hidden="true"></i></a>
+                  {% endif %}
+                </td>
+                <td>
+                  <a href="/consumer/text/{{value.text.id}}/{{value.text.slug}}/"><b>{{value.text.display_text}}</b></a>
+                  {% if value.text.alt_text.all %}
+                  <div class = "row">
+                    <div class= "col s11 offset s1">
+                      {% for alt_text in value.text.alt_text.all %}
+                      <i class="fa fa-comments-o" aria-hidden="true"></i> {{alt_text}}
+                      <div class="row"></div>
+                      {% endfor %}
+                    </div>
+                    {% endif %}
+                  </td>
+                  <td>
+                  
+                  <span>1 text at the exact time of {{value.text.text|lower}}</span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <div class="card-action right-align">
+              <a class="waves-effect waves-light btn" href="/consumer/program/">Back</a>
+              {% if user.is_authenticated %}
+              <div value="add" id="program_{{working_program.id}}" class="waves-effect waves-light btn add-program-btn" > Add all texts</div> 
+              {% else %}
+              <a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light">Sign Up</a>
+              {% endif %}
+              <span id="save_message"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+
+<!-- GET THE TEXT BOX -->
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.modal').modal(
+
+      )
+  })
+</script>
+
+
+<script type="text/javascript">
+  $('.add-program-btn').click(function(){
+    var program_name = this.id
+
+    // GET THE SPEFIC OPTIONS
+    var selected_texts = [];
+    $(".add-text-program-btn").each(function() {
+     selected_texts.push(this.id);
+
+   });
+
+    console.log("SELECTED TEXTS " + selected_texts)
+    $.ajax({
+      type: 'POST',
+      url: '/ent/add_to_program/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'program_name': program_name,
+      'selected_texts': selected_texts.join(','),
+    },
+    success : function(data) {
+      // $('#save_message').text("Text added!")
+      $('.add-text-program-btn').html('<i class="material-icons" >delete</i>')
+      $('.add-text-program-btn').css('background-color', '#e4e4e4');
+      
+    },
+    
+  })
+  })
+</script>
+
+<script type="text/javascript">
+  $('.add-text-program-btn').click(function() {
+    var text_id_button = $(this).attr('id')
+    var text_id_button_id = $(this).attr('id').split("_")[1]
+    $.ajax({
+      type: 'POST',
+      url: '/consumer/program_indvidual_text/',
+      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+      'selected_texts': $(this).attr('id'),
+    },
+    success : function(data) {
+      if (data['save_type'] == "removed"){
+        $("#"+text_id_button).html('<i class="fa fa-plus" aria-hidden="true"></i>')
+        // $("#"+text_id_button).css('background-color', '#2196f3');
+
+      } else {
+        $("#"+text_id_button).html('<span> <i class="material-icons" >delete</i> </span>')
+        // $("#"+text_id_button).css('background-color', '#e4e4e4');
+      }
+      // console.log("SUCESS AJAX ~line 392")
+      // $('#model_content_for_switch').html(data['model_content_for_switch']);
+    }
+  })
+  })
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-85360122-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+{% endblock %}

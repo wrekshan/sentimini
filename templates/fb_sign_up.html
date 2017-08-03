@@ -1,20 +1,13 @@
 {% load static %}
 <link rel="stylesheet" href={% static "css/bootstrap-social.css" %}>
 
-
-
 {% load socialaccount %}
-
 {% get_providers as socialaccount_providers %}
-
-
 {% for provider in socialaccount_providers %}
 
-  <a class="btn btn-block btn-social btn-facebook" href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+  <a class="btn  btn-social btn-facebook" href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
     <span class="fa fa-facebook"></span> Sign up using Facebook
   </a>
-
-
 {% endfor %}
 
 

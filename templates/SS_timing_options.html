@@ -106,7 +106,7 @@
 <div class="col s12">
   <h5>Every</h5>
   <form action="#">
-    <p>
+    <p class="flow-text">
       <input class="modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
       <label class="modal_check_label" for="Sunday">Sun</label>
       
@@ -251,6 +251,9 @@
 </script>
 {% endif %}
 
+
+
+{% if user.is_authenticated %}
 {% if working_timing.monday %}
 <script type="text/javascript">
   $('#Monday').prop('checked', true);
@@ -291,6 +294,18 @@
 <script type="text/javascript">
   $('#Sunday').prop('checked', true);
 </script>
+{% endif %}
+{% else %}
+<script type="text/javascript">
+$('#Monday').prop('checked', true);
+$('#Tuesday').prop('checked', true);
+$('#Wednesday').prop('checked', true);
+$('#Thursday').prop('checked', true);
+$('#Friday').prop('checked', true);
+$('#Saturday').prop('checked', true);
+$('#Sunday').prop('checked', true);
+</script>
+
 {% endif %}
 
 

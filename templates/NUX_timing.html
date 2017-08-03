@@ -1,0 +1,571 @@
+{% load static %}
+{% load staticfiles %}
+
+<script src={% static "js/jquery.timepicker.js" %}></script>
+<link rel="stylesheet" href={% static "css/jquery.timepicker.css" %}>
+<script src={% static "js/materialize.min.js" %}></script>
+<link rel="stylesheet" href={% static "css/nouislider.css" %}>
+<script src={% static "js/nouislider.js" %}></script>
+<script src={% static "js/editing_text_helpers.js" %} ></script>
+<link rel="stylesheet" href={% static "css/landing-style.css" %}>
+
+<h5 class="center-align">Creating an account</h5>
+<div class="hide-on-med-and-up">
+	<div class="col s2 center-align">
+		Start
+	</div>
+	<div class="col s7">
+		<div class="progress">
+			<div class="determinate" style="width: 35%"></div>
+		</div>
+	</div>
+
+	<div class="col s3 center-align">
+		Complete
+	</div>
+	
+	<div class="col s12 center-align">
+		Next: Phone and Timezone
+	</div>
+</div>
+
+<div class="hide-on-small-only">
+	<div class="col s2 center-align">
+		Start
+	</div>
+	<div class="col s8">
+		<div class="progress">
+			<div class="determinate" style="width: 35%"></div>
+		</div>
+	</div>
+
+	<div class="col s2 center-align">
+		Complete
+	</div>
+	
+	<div class="col s12 center-align">
+		Next: Phone and Timezone
+	</div>
+</div>
+
+
+
+
+
+
+<div class="col s12 m8">
+	<div class="card">
+		<div class="card-content">
+			<h5>Give your text a schedule!</h5>
+			<div class="hide-on-med-and-up">
+			Just hit "Done!", if you want to receive this text every day sometime between 9am and 9pm
+			<hr>
+			</div>
+			
+			<h5><i class="material-icons prefix">event</i> Date Range </h5> 
+			<div class="input-field col s6">
+				<input id="start_date" type="text" class="datepicker">
+				<label class="active" for="start_date">Start date</label>
+			</div>
+			<div class="input-field col s6">
+				<input id="end_date" type="text" class="datepicker">
+				<label class="active" for="end_date">End date</label>
+			</div>
+			<!-- <div class="col s4">
+				Text will continue forever unless you set a start date.
+			</div> -->
+			<div class="row"></div>
+			<div id="timing_options">
+				<!-- HOUR -->
+				<hr>
+				<div class="col s12">
+					<h5><i class="fa fa-clock-o" aria-hidden="true" id="specific_time_hours_highlight"></i> Send texts between <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'The text will be sent only within this time.  If the time is a range, the it sent at a random time in the range.'></i> --></h5> 
+					
+				</div>
+				<div class="input-field col s12  ">
+					<p class="timing_option_input range-field"><div class="timing_option_input" type="range" id="specific_time_hours"></div></p>
+					<input style ="width: 60px;" id="startTime" type="text" class="time center-align timing_option_input" /><span> - </span>  <input style ="width: 60px;" id="endTime" type="text" class="time center-align timing_option_input" /></span>
+				</div>
+
+				<!-- Number of repeats -->
+				<hr>
+
+				<div class="switch">
+					<label>Specific<input class= "timing_option_input" type="checkbox" id="timing_switch"> <span class="lever"></span>Periodic </label> <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Specific: Schedule texts for any given day.  Periodic: Schedule texts every so often'></i>
+				</div>
+
+				<div id = "timing_option_periodic" class="row">
+					<div class="col s12 ">
+						<h5>Periodic texts</h5> 
+					</div>
+					<div class="input-field col s12 l3 ">
+						<!-- <i class="material-icons prefix tooltipped" data-position="top" data-delay="50" data-tooltip="This is a time-range for when the text will be sent.">loop</i> -->
+
+
+						<select id="fuzzy_denomination"  placeholder="" class="timing_option_input browser-default">
+							<option value="minutes">Minutes</option>
+							<option value="hours">Hours</option>
+							<option value="days" selected="selected" >Days</option>
+							<option value="weeks">Weeks</option>
+							<option value="months">Months</option>
+						</select>
+					</div>
+
+					<div class="input-field col s12 l9 ">
+						<form action="#">
+							<p class="timing_option_input range-field">
+								<input type="range" id="ITI_mean" min="1" max="72" value = "3">
+							</p>
+						</form>
+						<span id="ITI_mean_output"></span> <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'This is the AVERAGE time between texts.'></i>
+						<form action="#">
+							<p class="timing_option_input range-field">
+								<input type="range" id="ITI_noise" steps= "1" min="1" max="4" value = "2"/>
+							</p>
+						</form>
+						<span id="ITI_noise_output"></span><i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-html="true" data-tooltip= 'This is the variability.  1=pretty much exact.  4=highly variable.</br></br>If the average time between texts is 3 hours and the variability is low, then you will receive the text pretty much every 3 hours (plus or minus a couple of minutes).</br></br>If the variability is high, then you could receive a text and then 1 hour later get a text, then 4 hours later get a text, then 3 hours later get a text.  On average you will receive the text every 3 hours, but it will be unpredictable.'></i>
+					</div>
+				</div>
+
+
+				<div id = "timing_option_specific" class = "row">
+					<div class="input-field col s12 ">
+						<h5><i class="fa fa-repeat" aria-hidden="true" id="timing_option_specific_highlight"></i> Texts of per day <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'This is the number of texts to be sent in the time range.  How many repetitions per day do you want?'></i> --></h5>      
+					</div>
+					<div class="input-field col s12 l3 ">
+						<select id="repeat_time" class="timing_option_input browser-default">
+							<option value="1" selected>1 text</option>
+							<option value="2">2 texts</option>
+							<option value="3">3 texts</option>
+							<option value="4">4 texts</option>
+							<option value="5">5 texts</option>
+							<option value="6">6 texts</option>
+						</select>
+					</div>
+
+
+					<div class="col s12">
+						<h5>Every <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'You can select the day of the week you want the text to be sent on.'></i> --></h5>
+					</div>
+					<div class="col s12">
+						<form action="#">
+							<p>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday" checked="checked" />
+								<label class="modal_check_label" for="Sunday">Sun</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" checked="checked"/>
+								<label class="modal_check_label" for="Monday">Mon</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" checked="checked"/>
+								<label class="modal_check_label" for="Tuesday">Tues</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" checked="checked"/>
+								<label class="modal_check_label" for="Wednesday">Wed</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" checked="checked" />
+								<label class="timing_option_input modal_check_label" for="Thursday">Thus</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" checked="checked"/>
+								<label class="timing_option_input modal_check_label" for="Friday">Fri</label>
+
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday" checked="checked" />
+								<label class="timing_option_input modal_check_label" for="Saturday">Sat</label>
+							</p>
+
+						</form>
+
+					</div>
+				</div>
+			</div>
+			<div class="right-align">
+				<a id="show_texts_programs" class="waves-effect waves-light btn">Back</a>
+				<a id="NUX_submit_timing" class="waves-effect waves-light btn">Done!</a>
+			</div>
+		</div>
+	</div>
+</div>	
+
+
+<div class="col s12 m4">
+	<div class="card">
+		<div class="card-content">
+		<div class="hide-on-small-only">
+		<p class="flow-text">
+			Just hit "Done!", if you want to receive this text every day sometime between 9am and 9pm.
+			</p>
+			</div>
+			<div class="row"></div>
+			<p class="flow-text">Don't worry, you can always change this or pause this text later.</p>
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$.ajax({
+			type: 'POST',
+			url: '/get_nux_legend/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'location': 'timing',
+		},
+		success : function(data) {
+			$('#NUX_legend').html(data['NUX_legend'])
+		}
+	})
+	});
+</script>
+
+
+<script>
+	$( "#show_texts_programs" ).click(function() {
+		console.log("LINK CLICKED")
+		$.ajax({
+			type: 'POST',
+			url: '/get_nux_texts/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+		},
+		success : function(data) {
+			$('#NUX_legend').html(data['NUX_legend']);
+			$('#NUX_signup').html(data['NUX_texts']);
+			$('#NUX_selector').html("");
+			$('#NUX_examples').html("");
+			$('#NUX_everything_else').html("");
+			window.location.hash = '';
+			window.location.hash = 'create_a_text';
+		}
+	})
+	})
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#start_date').val("{{today_date|safe}}");
+		$('textarea#textarea_{{counter}}').characterCounter();
+		$('#textarea_{{counter}}').trigger('autoresize');
+		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
+		$('.tooltipped').tooltip({delay: 50});
+
+	});
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('textarea#textarea1').characterCounter();
+		$('#textarea1').trigger('autoresize');
+		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
+
+		$('textarea#textarea_alt').characterCounter();
+		$('#textarea_alt').trigger('autoresize');
+		$('.materialize-textarea').trigger('autoresize')
+		Materialize.updateTextFields();
+		$('.materialize-textarea').trigger('autoresize');
+	});
+</script>
+
+<script>
+	$('.datepicker').pickadate({
+    selectMonths: false, // Creates a dropdown to control month
+    selectYears: 15, // Creates a dropdown of 15 years to control year,
+    today: 'Today',
+    clear: 'Clear',
+    close: 'Ok',
+    closeOnSelect: false // Close upon selecting a date,
+});
+</script>
+
+<!-- SLIDERS -->
+<script type="text/javascript">
+	var rangeValues =
+	{
+		"1": "Time between texts will be pretty much exact to what you select",
+		"2": "Time between texts will be close to what you select",
+		"3": "Time between texts will be variable",
+		"4": "Time between texts will be extremely variable"
+	};
+</script>
+
+<script type="text/javascript">
+	$('#timing_switch').click(function() {
+		if ($('#timing_switch').is(':checked') == true) {
+			$('#timing_option_specific').hide()
+			$('#timing_option_periodic').show()
+		} else {
+			$('#timing_option_specific').show()
+			$('#timing_option_periodic').hide()
+		}
+	})
+</script>
+<script type="text/javascript">
+	$(document).ready(function() {
+		if ($('#timing_switch').is(':checked') == true) {
+			$('#timing_option_specific').hide()
+			$('#timing_option_periodic').show()
+		} else {
+			$('#timing_option_specific').show()
+			$('#timing_option_periodic').hide()
+		}
+	});
+</script>
+
+
+<script type="text/javascript">
+	var slider = document.getElementById('specific_time_hours');
+</script>
+
+<script type="text/javascript">
+	$('#startTime').timepicker();
+	$('#endTime').timepicker();
+
+</script>
+
+
+<script type="text/javascript">
+	$('#NUX_submit_timing').click(function(){
+		var weekdays = [];
+		$('input[name=weekdays]:checked').each(function() {
+			weekdays.push($(this).val());
+		});
+
+
+
+		var hour_start =  slideTime_start()
+		var date_start = $('#start_date').val()
+		var date_end =  $('#end_date').val()
+		var hour_end =  slideTime_end()
+		var hour_start_value =  slider.noUiSlider.get()[0]
+		var hour_end_value =  slider.noUiSlider.get()[1]
+		var iti =  $('#ITI_mean').val()
+		var iti_noise = $('#ITI_noise').val()
+		var fuzzy_denomination = $('#fuzzy_denomination').val()
+		var fuzzy = $('#timing_switch').is(':checked')
+		var num_repeats = $('#repeat_time').val()
+		var weekdays = weekdays.join(',')
+
+		$.ajax({
+			type: 'POST',
+			url: '/get_nux_settings/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'text_content': '{{text_content}}',
+			'hour_start': hour_start,
+			'date_start': date_start,
+			'date_end': date_end,
+			'hour_end': hour_end,
+			'hour_start_value': hour_start_value,
+			'hour_end_value': hour_end_value,
+			'iti': iti,
+			'iti_noise': iti_noise,
+			'fuzzy_denomination': fuzzy_denomination,
+			'fuzzy': fuzzy,
+			'num_repeats': num_repeats,
+			'weekdays': weekdays,
+		},
+		success : function(data) {
+				// $('#NUX_legend').html(data['NUX_legend']);
+				$('#NUX_signup').html(data['NUX_settings']);
+				$('#NUX_legend').html(data['NUX_legend']);
+				$('#NUX_selector').html("");
+				$('#NUX_examples').html("");
+				window.location.hash = '';
+				window.location.hash = 'timing_for_text';
+			}
+		})
+	})
+</script>
+
+
+
+<script>
+	var timing_summary_update = function(){
+		var start_time = slideTime_start()
+		var end_time = slideTime_end()
+		var ITI_mean = $('#ITI_mean').val()
+		var ITI_noise = $('#ITI_noise').val()
+
+		var fuzzy = $('#timing_switch').is(':checked')
+		var num_repeats = $('#repeat_time').val()
+		var weekdays = [];
+		$('input[name=weekdays]:checked').each(function() {
+			weekdays.push($(this).val());
+		});
+
+		var fuzzy_denomination = $('#fuzzy_denomination').val()
+
+
+		if (fuzzy==true){
+			if (fuzzy_denomination=="minutes"){
+				var iti_standard = (60/ITI_mean) * 24 *7
+			} else if (fuzzy_denomination=="hours"){
+				var iti_standard = (24/ITI_mean)  *7
+			} else if (fuzzy_denomination =="days"){
+				var iti_standard = (7/ITI_mean)
+			} else if (fuzzy_denomination=="weeks"){
+				var iti_standard = ITI_mean
+			} else {
+				var iti_standard = ITI_mean/4
+			}
+			var timing_text = iti_standard.toFixed(1) + " per week (every " + ITI_mean + " " + fuzzy_denomination +")<br>Sent between " + start_time + " - " + end_time 
+		} else {
+			console.log("WEEKDAYS"+weekdays)
+			if (weekdays.length == 7){
+				var short_desc = "all days"
+			} else {
+				var short_desc = weekdays
+			}
+
+			var iti_standard = num_repeats * weekdays.length
+			var timing_text = iti_standard + " per week (" + num_repeats + " on " + short_desc + ")<br>Sent between " + start_time + " - " + end_time
+		}
+		$('#timing_summary').html(timing_text)
+	}
+</script>
+
+
+
+<script type="text/javascript">
+	var slider = document.getElementById('specific_time_hours');
+	if ("{{working_timing.hour_start_value}}"){
+		noUiSlider.create(slider, {
+			start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
+			connect: true,
+			step: 1,
+			range: {
+				'min': 0,
+				'max': 1439
+			},
+		});
+	} else {
+		noUiSlider.create(slider, {
+			start: [540, 1260],
+			connect: true,
+			step: 1,
+			range: {
+				'min': 0,
+				'max': 1439
+			},
+		});
+	}
+	var connect = slider.querySelectorAll('.noUi-connect');
+	var classes = ['c-1-color'];
+	for ( var i = 0; i < connect.length; i++ ) {
+		connect[i].classList.add(classes[i]);
+	}
+
+	slider.noUiSlider.on('update', function(){
+		var startTime = slideTime_start()
+		var endTime = slideTime_end()
+		$("#time").text(startTime + ' - ' + endTime);
+
+		$('#startTime').timepicker('setTime', startTime);
+		$('#endTime').timepicker('setTime', endTime);
+
+		$("#repeat_time_helper").text("between: " + startTime + ' - ' + endTime);
+		timing_summary_update()
+
+	});
+</script>
+
+<script type="text/javascript">
+	function slideTime_reverse(text_time){
+		if (text_time.indexOf("am") >= 0){
+			var hour = parseInt(text_time.split(":")[0])
+			var minute = text_time.split(":")[1]
+			minute = minute.split("am")[0]
+			console.log("HOUR"+hour)
+			if (hour == 12){
+				return parseInt(parseInt(minute))  
+			} else {
+				return parseInt(parseInt(60*hour) + parseInt(minute))
+
+			}
+
+		} else {
+
+			var hour = parseInt(text_time.split(":")[0])
+			var minute = text_time.split(":")[1]
+			minute = minute.split("pm")[0]
+			if (hour == 12){
+				return parseInt(parseInt(12*60) + parseInt(minute))
+			} else {
+				return parseInt(parseInt(12*60) + parseInt(60*hour) + parseInt(minute))
+			}
+		}
+	}
+
+	$( "#endTime" ).change(function() {
+    // $( "#endTime" ).change(function() {
+    	var slider = document.getElementById('specific_time_hours');
+    	slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+
+// });
+})
+
+	$( "#startTime" ).change(function() {
+    // $( "#startTime" ).change(function() {
+    	var slider = document.getElementById('specific_time_hours');
+    	slider.noUiSlider.set([slideTime_reverse($('#startTime').val()), slideTime_reverse($('#endTime').val())]);
+// });
+})
+
+</script>
+
+
+<script type="text/javascript">
+	var update_histogram = function(){
+    // on page load, set the text of the label based the value of the range
+    
+    $('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+    $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+    // $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
+} 
+</script>
+
+
+
+<script>
+	$(document).ready ( function(){
+		update_histogram()
+	})
+</script>
+
+<script type="text/javascript">
+	$('#ITI_mean').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+
+	$('#ITI_noise').on('change', function(){
+  // $('#new_text_histogram').empty()
+  // $('#histo_loading').show()
+  update_histogram()
+});
+</script>
+
+
+<script>
+	$('#fuzzy_denomination').change(function() {
+		if ($('#fuzzy_denomination').val()=="minutes"){
+			$("#ITI_mean").prop({min: 20, max: 120});
+		} 
+		if ($('#fuzzy_denomination').val()=="hours"){
+			$("#ITI_mean").prop({min: 1, max: 72});
+		} 
+		if ($('#fuzzy_denomination').val()=="days"){
+			$("#ITI_mean").prop({min: 1, max: 60});
+		} 
+		if ($('#fuzzy_denomination').val()=="weeks"){
+			$("#ITI_mean").prop({min: 1, max: 104});
+		} 
+		if ($('#fuzzy_denomination').val()=="months"){
+			$("#ITI_mean").prop({min: 1, max: 24});
+		} 
+		$('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
+		$('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
+
+	})
+</script>
+

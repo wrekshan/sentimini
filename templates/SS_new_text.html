@@ -9,24 +9,24 @@
 <script src={% static "js/nouislider.js" %}></script>
 <script src={% static "js/select2.full.min.js" %}></script>
 <link rel="stylesheet" href={% static "css/materialize-select2.css" %}>
-<script src={% static "js/picker.js" %}></script>
-<script src={% static "js/picker.date.js" %}></script>
+<!-- <script src={% static "js/picker.js" %}></script>
+<script src={% static "js/picker.date.js" %}></script> -->
 <script src={% static "js/editing_text_helpers.js" %} ></script>
 <link rel="stylesheet" href={% static "css/sentimini-css.css" %}>
 
 <div class="card">
 	<div class="card-content">
 		<!-- TEXT -->
+		
 		<div class="row">
 			<div class="col s12">
-			
 				<span class="card-title">
-					<h4>{{text_message}} <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Create a new text here.  You can also sign up for the suggested texts or programs'> </i> --></h4>
-
-					
+					<h4>{{text_message}}</h4>
 				</span>
 			</div>
+		</div>
 
+		<div class="row">
 			<form class="col s12">
 				<div class="input-field col s12">
 					<i id = "new_text_highlight" class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
@@ -38,73 +38,84 @@
 					{% endif %}
 				</div>
 			</form>
-
-
 		</div>
 
-		<!-- SAVE -->
 		
+		<!-- ALT FORMS -->
+		<div id = "alternate_form">
+			{% if alternative_texts %}
+			{% for atext in alternative_texts %}
+			<div  id="alt_{{forloop.counter}}">
+				<div class="row">
+					<form class="col s12">
+						<div class="input-field col s11">
+							<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
+							<textarea  name = {{atext.id}} style="height:12px; min-height: 12px;" id="textarea_{{forloop.counter}}" class="alternate_texts materialize-textarea" data-length="160">{{atext.alt_text}}</textarea>
+							<label class = "active" for="textarea_{{forloop.counter}}">Alternative text</label>	
+						</div>
+						<div class="col s1">
+							<div class="right-align">
+								<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{forloop.counter}}" width=100% id="remove_alt_{{forloop.counter}}"><i name="remove_alt_{{forloop.counter}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+
+
+			<span id="alt_counter" style="display: none;"" >{{forloop.counter|add:"1"}}</span>
+			{% endfor %}
+			{% else %}
+			<span id="alt_counter" style="display: none;"" >0</span>
+			{% endif %}
+		</div>
+
+
+<!-- 
 		<div class="right-align">
-			<span id="timing_summary">{{timing_summary}}</span></br>
-			<div id="text_save_buttons">
-				{% csrf_token %}
-				{% ifequal text_message "Edit Text" %}
-				<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
-				{% endifequal %}
-				<a id="show_options_top" class="show_options waves-effect waves-light btn">Show Options</a>
-				{% if user.is_authenticated %}
-				<a id="save_text_button" class="disabled waves-effect waves-light btn">Save</a>
-				{% else %}
-				<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
-				{% endif %}
+			<a id="add_alt_text" class="alt_text waves-effect waves-red chip">Add alternative text</a>
+		</div> -->
+		
+		<!-- SAVE -->
+		<div class="right-align">
+			<div class="row">
+				<span id="timing_summary">{{timing_summary}}</span>
+				<div id="text_save_buttons">
+					{% csrf_token %}
+					<a id="send_now_top" class="send_now chip waves-effect waves-red">Send Now</a>
+					<div id='sent_now_output_top'></div>
+					{% ifequal text_message "Edit Text" %}
+					<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
+					{% endifequal %}
+					<a id="show_options_top" class="show_options waves-effect waves-light btn">Show Options</a>
+					{% if user.is_authenticated %}
+					<a id="save_text_button" class="disabled waves-effect waves-light btn">Save</a>
+					{% else %}
+					<a href="/?sign_up/" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
+					{% endif %}
+				</div>
 			</div>
 		</div>
 
 
 		<div id="advanced_options" hidden>
-			
+			<!-- DATE RANGE -->
 			<hr>
-
-			
-			<h5> Alternate texts <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'You can add different versions of this text here.  When the message is sent, one of these forms will be randomly selected.</br></br>NOTE: Only the alternative forms of the texts will be sent.  The first line by "New Text" will be considered the title, but not an actual texts.' data-html="true"></i></h5>
-			<span id="alt_text_title_message"></span>
-			
-			<div id = "alternate_form">
-				{% if alternative_texts %}
-				{% for atext in alternative_texts %}
-				<div  id="alt_{{forloop.counter}}">
-				
-
-					<div class="input-field col s11">
-						<i class="fa fa-commenting-o prefix" aria-hidden="true"></i> 
-						<textarea  name = {{atext.id}} style="height:12px; min-height: 12px;" id="textarea_{{forloop.counter}}" class="alternate_texts materialize-textarea" data-length="160">{{atext.alt_text}}</textarea>
-						<label class = "active" for="textarea_{{forloop.counter}}">Alternative text</label>	
-					</div>
-					<div class="col s1">
-					<div class="right-align">
-						<div class = "waves-effect waves-red btn-flat chip remove-alt" name="remove_alt_{{forloop.counter}}" width=100% id="remove_alt_{{forloop.counter}}"><i name="remove_alt_{{forloop.counter}}" class="fa fa-times-circle" aria-hidden="true"></i></div>
-					</div>
-					</div>
-				</div>
-
-				<span id="alt_counter" style="display: none;"" >{{forloop.counter|add:"1"}}</span>
-				
-
-				{% endfor %}
-				{% else %}
-				<span id="alt_counter" style="display: none;"" >0</span>
-
-				{% endif %}
-				
-
-
+			<h5><i class="material-icons prefix">event</i> Date Range </h5> 
+			<div class="input-field col s6">
+				<input id="start_date" type="text" class="datepicker">
+                <label class="active" for="start_date">Start date</label>
+			</div>
+			<div class="input-field col s6">
+				<input id="end_date" type="text" class="datepicker">
+                <label class="active" for="end_date">End date</label>
 			</div>
 
-			<a id="add_alt_text" class="alt_text waves-effect waves-light chip">Add alternative text</a>
+
+			<div class="row"></div>
 
 
-
-			
+			<!-- TIMING OPTIONS CONTROLLED BY SWITCH -->
 			<div id="timing_options">
 				<!-- HOUR -->
 				<hr>
@@ -202,64 +213,66 @@
 					<div class="col s12">
 						<h5>Every <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'You can select the day of the week you want the text to be sent on.'></i> --></h5>
 					</div>
-					<div class="col s12"
-					<form action="#">
-						<p>
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
-							<label class="modal_check_label" for="Sunday">Sun</label>
+					<div class="col s12">
+						<form action="#">
+							<p>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Sunday" value=" Sunday"  />
+								<label class="modal_check_label" for="Sunday">Sun</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
-							<label class="modal_check_label" for="Monday">Mon</label>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Monday" value=" Monday" />
+								<label class="modal_check_label" for="Monday">Mon</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
-							<label class="modal_check_label" for="Tuesday">Tues</label>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Tuesday" value=" Tuesday" />
+								<label class="modal_check_label" for="Tuesday">Tues</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
-							<label class="modal_check_label" for="Wednesday">Wed</label>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Wednesday" value=" Wednesday" />
+								<label class="modal_check_label" for="Wednesday">Wed</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
-							<label class="timing_option_input modal_check_label" for="Thursday">Thus</label>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Thursday" value=" Thursday" />
+								<label class="timing_option_input modal_check_label" for="Thursday">Thus</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
-							<label class="timing_option_input modal_check_label" for="Friday">Fri</label>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Friday" value=" Friday" />
+								<label class="timing_option_input modal_check_label" for="Friday">Fri</label>
 
-							<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
-							<label class="timing_option_input modal_check_label" for="Saturday">Sat</label>
-						</p>
+								<input class="timing_option_input modal_check_box" name="weekdays" type="checkbox" id="Saturday" value=" Saturday"  />
+								<label class="timing_option_input modal_check_label" for="Saturday">Sat</label>
+							</p>
 
-					</form>
+						</form>
 
+					</div>
+				</div>  
+			</div>
+
+			<div class="right-align">
+				<!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
+				<!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
+				<div id="timing_save_buttons" class="row">
+					<a id="options_default_save" class="save_timing_default waves-effect waves-light"><i id="options_default_highlight" class="fa fa-cogs" aria-hidden="true"></i> Set timing as default</a> <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Any new texts will use these settings as a default.  If you text "new:" and your text then it will use the default settings.'></i> -->
 				</div>
-			</div>  
-		</div>
+				<div class="row">
+					{% if user.is_authenticated %}
+					<a id="send_now_bottom" class="send_now chip waves-effect waves-light">Send Now</a></br>
+					<div id='sent_now_output_bottom'></div>
+					{% ifequal text_message "Edit Text" %}
+					<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
+					{% endifequal %}
 
-		<div class="right-align">
-			<!-- <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a> -->
-			<!-- <a id="options_default_restore" class="restore_timing_default waves-effect waves-light btn">Restore default</a> -->
-			<div id="timing_save_buttons" class="row">
-				<a id="options_default_save" class="save_timing_default waves-effect waves-light"><i id="options_default_highlight" class="fa fa-cogs" aria-hidden="true"></i> Set timing as default</a> <!-- <i class="sent-tooltip tooltipped fa fa-info-circle" data-position="top" data-delay="50" data-tooltip= 'Any new texts will use these settings as a default.  If you text "new:" and your text then it will use the default settings.'></i> -->
+					<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
+
+					<a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save</a>
+					{% else %}
+					<a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
+					<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
+					<a href="/?sign_up/" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
+					{% endif %}
+				</div>
+
+
+				<div id="message"></div>
 			</div>
-			<div class="row">
-				{% if user.is_authenticated %}
-				{% ifequal text_message "Edit Text" %}
-				<a id="edit_text_to_input" class="edit_text_to_input waves-effect waves-light btn">Back</a>
-				{% endifequal %}
-
-				<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
-
-				<a id="options_text_save" class="disabled save_timing waves-effect waves-light btn">Save</a>
-				{% else %}
-				<a href="/consumer/home/" class=" waves-effect waves-light btn">Back</a>
-				<a id="show_options_bottom" class="show_options waves-effect waves-light btn">Hide Options</a>
-				<a href="{% url 'account_signup' %}" id="sign-up-link" class="btn waves-effect waves-light z-depth-4">Sign Up</a>
-				{% endif %}
-			</div>
-
-
-			<div id="message"></div>
 		</div>
 	</div>
-</div>
 </div>
 
 <!-- NEW TEXT MODAL -->
@@ -304,9 +317,31 @@
 </div>
 
 
+<script>
+	$('.datepicker').pickadate({
+    selectMonths: false, // Creates a dropdown to control month
+    selectYears: 15, // Creates a dropdown of 15 years to control year,
+    today: 'Today',
+    clear: 'Clear',
+    close: 'Ok',
+    closeOnSelect: false // Close upon selecting a date,
+});
+</script>
 
 
+ 
+<!-- 
+<script type="text/javascript">
+ $('.datepicker').pickadate({
+  closeOnSelect: true,
+  format: 'yyyy-mm-dd',
+  formatSubmit: 'yyyy-mm-dd',
+  
 
+});
+</script>
+
+ -->
 
 
 <script type="text/javascript">
@@ -348,6 +383,12 @@
 
 <script type="text/javascript">
 	$(document).ready(function() {
+		$('#start_date').val("{{today_date|safe}}");
+		  // var old_date = "{{editing_text.timing.date_start_value}}" 
+		  // $('#start_date').val(old_date);
+
+
+
 		$('textarea#textarea_{{counter}}').characterCounter();
 		$('#textarea_{{counter}}').trigger('autoresize');
 		Materialize.updateTextFields();
@@ -420,11 +461,17 @@
 </script>
 <script>
 	$('#save_text_button').click(function() {
-		console.log("SAVE CLICKED SS")
 		save_text_data()  
+	})
+</script>
+
+<script>
+	$('#options_text_save').click(function() {
+		// save_text_data()  
 	})
 
 </script>
+
 
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -449,20 +496,20 @@
 		if ($(location).attr('href').includes('/consumer/text/')) {
 
 			$.ajax({
-		      type: 'POST',
-		      url: '/consumer/get_text_specific_overview/',
-		      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-		      'id': "{{working_text.id}}",
+				type: 'POST',
+				url: '/consumer/get_text_specific_overview/',
+				data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+				'id': "{{working_text.id}}",
 
-		    },
-		    success : function(data) {
+			},
+			success : function(data) {
 		      // $('#quick_suggestions').html("");
 		      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 		      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
 
 		      
-		    }
-		  })
+		  }
+		})
 
 		} else {
 
@@ -472,19 +519,19 @@
 
 
 
-		$.ajax({
-			type: 'POST',
-			url: '/consumer/get_text_input/',
-			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-			'text_message': "New Text",},
-			success : function(data) {
-				$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-				setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
-				setTimeout(function() {	Materialize.updateTextFields();}, 305);      
-				setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);      
-			
-			}
-		})
+			$.ajax({
+				type: 'POST',
+				url: '/consumer/get_text_input/',
+				data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+				'text_message': "New Text",},
+				success : function(data) {
+					$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+					setTimeout(function() {$('#text_input').html(data['text_input']);}, 300);      
+					setTimeout(function() {	Materialize.updateTextFields();}, 305);      
+					setTimeout(function() {  $('.materialize-textarea').trigger('autoresize');;}, 310);      
+
+				}
+			})
 		}
 
 
@@ -515,35 +562,35 @@
 
 				if ($(location).attr('href').includes('/consumer/text/')) {
 
-			$.ajax({
-		      type: 'POST',
-		      url: '/consumer/get_text_specific_overview/',
-		      data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
-		      'id': "{{working_text.id}}",
+					$.ajax({
+						type: 'POST',
+						url: '/consumer/get_text_specific_overview/',
+						data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+						'id': "{{working_text.id}}",
 
-		    },
-		    success : function(data) {
+					},
+					success : function(data) {
 		      // $('#quick_suggestions').html("");
 		      $('#text_content_card').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 		      setTimeout(function() {$('#text_content_card').html(data['text_specific_overview']);}, 350);
 
 		      
-		    }
-		  })
+		  }
+		})
 
-		} else {
-			$.ajax({
-					type: 'POST',
-					url: '/consumer/get_text_datatable/',
-					data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
-					success : function(data) {
+				} else {
+					$.ajax({
+						type: 'POST',
+						url: '/consumer/get_text_datatable/',
+						data: {'csrfmiddlewaretoken': '{{ csrf_token }}'},
+						success : function(data) {
 
-						$('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
-						setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300); 
+							$('#text_datatable').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
+							setTimeout(function() {$('#text_datatable').html(data['text_datatable']);}, 300); 
 
-					}
-				})
-		}
+						}
+					})
+				}
     //     $.ajax({
     //   type: 'POST',
     //   url: '/consumer/get_quick_suggestions/',
@@ -555,6 +602,37 @@
 }
 })
 	}
+</script>
+
+<script>
+	$('.send_now').click(function(){
+
+		var alt_texts = [];
+		$('.alternate_texts').each(function() {
+			alt_texts.push($(this).val());
+		});
+
+		if (alt_texts.length == 0) {
+			var text = $('#textarea1').val()
+
+		} else {
+			var text = alt_texts[Math.floor(Math.random() * alt_texts.length)];
+
+		}
+
+		$.ajax({
+			type: 'POST',
+			url: '/consumer/send_text_now/',
+			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
+			'text': text,},
+			success : function(data) {
+				$('#sent_now_output_top').html("Sent!")
+				$('#sent_now_output_bottom').html("Sent!")
+
+			}
+		})
+
+	})
 </script>
 
 <!-- BUTTON CONTROL NEW TEXT-->
@@ -585,49 +663,78 @@
 </script>
 {% endif %}
 
+
+{% if user.is_authenticated %}
 {% if working_timing.monday %}
 <script type="text/javascript">
-	$('#Monday').prop('checked', true);
+  $('#Monday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.tuesday %}
 <script type="text/javascript">
-	$('#Tuesday').prop('checked', true);
+  $('#Tuesday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.wednesday %}
 <script type="text/javascript">
-	$('#Wednesday').prop('checked', true);
+  $('#Wednesday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.thursday %}
 <script type="text/javascript">
-	$('#Thursday').prop('checked', true);
+  $('#Thursday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.friday %}
 <script type="text/javascript">
-	$('#Friday').prop('checked', true);
+  $('#Friday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.saturday %}
 <script type="text/javascript">
-	$('#Saturday').prop('checked', true);
+  $('#Saturday').prop('checked', true);
 </script>
 {% endif %}
 
 {% if working_timing.sunday %}
 <script type="text/javascript">
-	$('#Sunday').prop('checked', true);
+  $('#Sunday').prop('checked', true);
 </script>
+{% endif %}
+{% else %}
+<script type="text/javascript">
+$('#Monday').prop('checked', true);
+$('#Tuesday').prop('checked', true);
+$('#Wednesday').prop('checked', true);
+$('#Thursday').prop('checked', true);
+$('#Friday').prop('checked', true);
+$('#Saturday').prop('checked', true);
+$('#Sunday').prop('checked', true);
+</script>
+
 {% endif %}
 
 
+
+
+{% if working_timing.date_start_value %}
+<script type="text/javascript">
+$('#start_date').val("{{working_timing.date_start_value|safe}}")
+Materialize.updateTextFields();
+</script>
+{% endif %}
+
+{% if working_timing.date_end_value %}
+<script type="text/javascript">
+$('#end_date').val("{{working_timing.date_end_value|safe}}")
+Materialize.updateTextFields();
+</script>
+{% endif %}
 
 
 
@@ -642,6 +749,7 @@
 		}
 	})
 </script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 		if ($('#timing_switch').is(':checked') == true) {
@@ -666,8 +774,6 @@
 
 <script type="text/javascript">
 	$('.show_options').click(function() {
-		console.log("SHOW CLICK")
-		console.log($(this).text())
 		if ($(this).text()=="Show Options"){
 			$('#advanced_options').show()
 			$('.show_options').text("Hide Options")
@@ -686,10 +792,9 @@
 
 <script type="text/javascript">
 
-
-
-
 	var timing_summary_update = function(){
+		var start_date = $('#start_date').val()
+		var end_date = $('#end_date').val()
 		var start_time = slideTime_start()
 		var end_time = slideTime_end()
 		var ITI_mean = $('#ITI_mean').val()
@@ -719,7 +824,6 @@
 			}
 			var timing_text = iti_standard.toFixed(1) + " per week (every " + ITI_mean + " " + fuzzy_denomination +")<br>Sent between " + start_time + " - " + end_time 
 		} else {
-			console.log("WEEKDAYS"+weekdays)
 			if (weekdays.length == 7){
 				var short_desc = "all days"
 			} else {
@@ -735,7 +839,6 @@
 
 <script type="text/javascript">
 	var slider = document.getElementById('specific_time_hours');
-	console.log("STRATING VALE"+"{{working_timing.hour_start_value}}")
 	if ("{{working_timing.hour_start_value}}"){
 		noUiSlider.create(slider, {
 			start: [{{working_timing.hour_start_value}}, {{working_timing.hour_end_value}}],
@@ -792,7 +895,6 @@
 			var hour = parseInt(text_time.split(":")[0])
 			var minute = text_time.split(":")[1]
 			minute = minute.split("am")[0]
-			console.log("HOUR"+hour)
 			if (hour == 12){
 				return parseInt(parseInt(minute))  
 			} else {
@@ -834,11 +936,8 @@
 
 <script type="text/javascript">
 	$('.timing_option_input').change(function(){
-		console.log("TIMING CHANGED")
 		timing_summary_update()
 	})
-
-
 </script>
 
 
@@ -847,7 +946,6 @@
 <script type="text/javascript">
 	var update_histogram = function(){
     // on page load, set the text of the label based the value of the range
-    
     $('#ITI_noise_output').html(rangeValues[$('#ITI_noise').val()]);
     $('#ITI_mean_output').html($('#ITI_mean').val() + " " + $('#fuzzy_denomination').val() + " between texts")
     // $('#ITI_noise_output').html($('#ITI_noise').val() + " percent noise")
@@ -880,10 +978,11 @@
 
 <script type="text/javascript">
 	$('.save_timing').click(function() {
+		var start_date = $('#start_date').val()
+		var end_date = $('#end_date').val()
+
 		var start_time = slideTime_start()
 		var end_time = slideTime_end()
-		console.log("start_time", start_time)
-		console.log("start_time_val", slider.noUiSlider.get()[0])
 		var ITI_mean = $('#ITI_mean').val()
 		var ITI_noise = $('#ITI_noise').val()
 
@@ -908,11 +1007,7 @@
 		var alt_texts_ids = [];
 		$('.alternate_texts').each(function() {
 			alt_texts_ids.push($(this).attr('name'));
-			console.log($(this).attr('name'))
 		});
-
-
-
 
 		$('#text_input').html('<div class = "center-align"><div class="row"></div><div id="preloader_new_text" class="preloader-wrapper big active "><div class="spinner-layer spinner-blue-only"><div class="circle-clipper left"><div class="circle"></div></div><div class="gap-patch"><div class="circle"></div></div><div class="circle-clipper right"><div class="circle"></div></div></div></div></div>')
 
@@ -925,6 +1020,8 @@
 			data: {'csrfmiddlewaretoken': '{{ csrf_token }}',
 			'id': '{{id}}',
 			'hour_start': start_time,
+			'date_start': start_date,
+			'date_end': end_date,
 			'text_content': text_content,
 			'hour_end': end_time,
 			'hour_start_value': slider.noUiSlider.get()[0],
